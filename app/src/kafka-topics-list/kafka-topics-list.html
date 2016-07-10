@@ -24,7 +24,7 @@
             <md-subheader class="md-no-sticky">3 line item (with hover)</md-subheader>
             <md-list-item class="md-2-line"
                           dir-paginate="topic in topics| orderBy:'name' | filter : search | itemsPerPage: 5"
-                          ng-click="null"
+                          ng-href="#/topic/{{topic.name}}"
                           pagination-id="topics">
                 <img src="https://unitedlayer.com/sites/default/files/dr-icons-01.png" style="width:24px;margin-right: 10px;">
                 <div class="md-list-item-text" layout="column">

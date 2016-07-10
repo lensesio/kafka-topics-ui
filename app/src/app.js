@@ -200,19 +200,15 @@ kafkaZooUIApp.config(function ($routeProvider, $httpProvider) {
 
   $routeProvider
     .when('/', {
-      templateUrl: 'partials/about.html'
-      // controller: 'MainCtrl'
-    })
-    .when('/about', {
-      templateUrl: 'partials/about.html'
+      templateUrl: 'src/home/home.html'
       // controller: 'MainCtrl'
     })
     .when('/create-topic', {
-      templateUrl: 'partials/create-topic.html',
+      templateUrl: 'src/kafka-topics-new/kafka-topics-new.html',
       controller: 'HeaderCtrl'
     })
     .when('/topic/:topicName', {
-      templateUrl: 'partials/topic.html',
+      templateUrl: 'src/kafka-topics-detail/kafka-topics-detail.html',
       controller: 'ViewTopicCtrl'
     }).otherwise({
     redirectTo: '/'
