@@ -1,0 +1,40 @@
+
+    <md-toolbar style="background-color: #ededed; color:#000;">
+        <div class="md-toolbar-tools">
+            <h3>
+                <span>Topics {{topics.length}}</span>
+            </h3>
+            <span flex></span>
+            <a md-ink-ripple
+               ng-show="true"
+               ng-href="#/create-topic"
+               class="md-raised md-primary md-button md-ink-ripple"
+               style="background-color: rgb(65, 191, 236);color: white;" type="button"
+               aria-label="new topic">New</a>
+        </div>
+
+    </md-toolbar>
+    <md-content>
+        <md-input-container class="md-block" style="margin-bottom:0px;padding-bottom:0px;">
+            <label>Search topics</label>
+            <input ng-model="search">
+        </md-input-container>
+
+        <md-list flex>
+            <md-subheader class="md-no-sticky">3 line item (with hover)</md-subheader>
+            <md-list-item class="md-2-line"
+                          dir-paginate="topic in topics| orderBy:'name' | filter : search | itemsPerPage: 5"
+                          ng-click="null"
+                          pagination-id="topics">
+                <img src="https://unitedlayer.com/sites/default/files/dr-icons-01.png" style="width:24px;margin-right: 10px;">
+                <div class="md-list-item-text" layout="column">
+                    <h3>{{topic.name}}</h3>
+                    <!--<h4>blah</h4>-->
+                    <p>{{countPartitionsForTopic(topic)}}&times;->P2&times;R
+                    </p>
+                </div>
+            </md-list-item>
+            <md-divider ></md-divider>
+            <dir-pagination-controls pagination-id="topics"></dir-pagination-controls>
+        </md-list>
+    </md-content>

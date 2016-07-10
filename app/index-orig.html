@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
+    <link rel="stylesheet" href="src/assets/css/styles.css">
+
+    <script src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-ui-ace/ui-ace.min.js"></script>
+    <script src="bower_components/spin.js/spin.min.js"></script>
+    <script src="bower_components/angular-spinner/angular-spinner.min.js"></script>
+    <script src="bower_components/angular-route/angular-route.min.js"></script>
+    <script src="bower_components/angular-material/angular-material.min.js"></script>
+    <script src="bower_components/angular-base64/angular-base64.min.js"></script>
+    <script src="bower_components/angularUtils-pagination/dirPagination.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!--<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>-->
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.min.js"></script>
+    <script src="src/env.js"></script>
+    <script src="src/app.js"></script>
+
+    <meta charset=utf-8/>
+    <title>Kafka Topic Manager</title>
+</head>
+
+<body ng-app="kafkaZooUIApp">
+
+<header class="header">
+    <div class="container-fluid">
+        <div class="dropdown">
+            <button md-ink-ripple
+                    class="dropbtn">
+                <img src="src/icons/landoop.svg" style="width:40px;float: left;padding-right:5px;">
+                <h4>
+                    <a style="color:white" ng-href="#/about" href="#/about">
+                        Kafka Topics
+                        <b class="caret"></b>
+                    </a>
+                </h4>
+            </button>
+            <div class="dropdown-content">
+                <h5>
+                    <img src="src/icons/schema-registry.svg" width="20px"
+                         style="color:white;float: left;margin-left: 20px;margin-top: 10px;">
+                    <a md-ink-ripple href="http://schema-registry-ui.landoop.com" style="color:white;padding-left:55px;">
+                        Schema registry</a>
+                </h5>
+                <h5>
+                    <img src="src/icons/kafka-connect.svg" width="20px"
+                         style="color:white;float: left;margin-left: 20px;margin-top: 10px;">
+                    <a md-ink-ripple href="http://kafka-connect-ui.landoop.com" style="color:white;padding-left:55px;">
+                        Kafka connectors</a>
+                </h5>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="header-section">
+</section>
+
+<div us-spinner="{radius:10, width:3, length: 5}" ng-show="showSpinner" style="height:100%"></div>
+
+<!-- Main container starts here -->
+<div class="container-fluid" ng-hide="showSpinner" style="min-height: calc(100vh - 110px)">
+    <div class="row">
+        <div class="col-md-4" ng-controller="MainCtrl">
+            <div class="form-group" style="margin: 2px;padding-bottom:10px;">
+                <input type="text"
+                       class="md-whiteframe-2dp form-control"
+                       style="border:0px !important"
+                       id="search" placeholder="search" ng-model="search">
+            </div>
+            <div class="list-group md-whiteframe-2dp"
+                 style="margin: 2px;border-radius: 4px;">
+                <a
+                        dir-paginate="topic in topics | orderBy:'topicName' | filter : search | itemsPerPage: 10"
+                        ng-href="#/topic/{{topic.name}}"
+                        class="list-group-item"
+                        pagination-id="topics"
+                        style="border-top: 1px solid #ddd;border-bottom: 0px;">
+                    {{countPartitionsForTopic(topic)}}&times;
+                    <span class="label label-primary">P</span>
+                    2&times;
+                    <!--<span style="margin-right:10px;" class="label label-primary">2</span>-->
+                    <img src="https://unitedlayer.com/sites/default/files/dr-icons-01.png" style="width:24px;margin-right: 10px;">
+                    {{topic.name}}
+                    </td>
+                </a>
+            </div>
+            <dir-pagination-controls pagination-id="topics"></dir-pagination-controls>
+            <div
+                    class="row" style="padding-left:10px;padding-top:5px;">
+                <a md-ink-ripple
+                   ng-show="true"
+                   ng-href="#/create-topic"
+                   class="md-raised md-primary md-button md-ink-ripple"
+                   style="background-color: rgb(65, 191, 236);color: white;" type="button"
+                   aria-label="new topic">
+          <span class="ng-scope">
+            New topic
+          </span>
+                    <div class="md-ripple-container">
+                    </div>
+                </a>
+            </div>
+        </div><!-- end of col -->
+
+        <div class="col-md-8">
+
+            <!--<div ng-controller="ViewTopicCtrl">-->
+            <div ng-view></div>
+
+
+            <!--When selectedTopic & topics -->
+            <div ng-show="true"> <!-- TODO: topicsOn && selectedTopic"> -->
+                <h3>NAME -> {{selectedTopic.name}}</h3>
+                <uib-tabset active="activeJustified">
+                    <uib-tab index="0" heading="Partitions">
+                        <br>
+                        <h5>Total Partitions: {{countPartitionsForTopic(selectedTopic);}}</h5>
+                        <table class="table table-hover table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center">Partition ID</th>
+                                <th class="text-center">Leader</th>
+                                <th class="text-center">Replications</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="(key, value) in selectedTopic.partitions | orderBy:'key'">
+                                <td>{{key}}</td>
+                                <td>{{getLeader(value);}}</td>
+                                <td>{{getTailPartitions(value);}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </uib-tab>
+                    <uib-tab index="1" heading="Config">
+                        <br>
+                        <table class="table table-hover table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center">Config Key</th>
+                                <th class="text-center">Value</th>
+                                <th class="text-center">Kafka Default</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="(key, value) in selectedTopic.config | orderBy:'key'">
+                                <td>
+                                    <label>
+                      <span uib-tooltip="{{getKafkaDefaultDescription(key);}}" tooltip-is-open="tooltipIsOpen"
+                            tooltip-placement="left"><span class="glyphicon glyphicon-info-sign"></span></span>
+                                    </label>
+                                    {{key}}
+                                </td>
+                                <td>{{value}}</td>
+                                <td>{{getKafkaDefaultValue(key);}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+
+                    </uib-tab>
+                    <uib-tab index="2" heading="Consumers">
+                        {{selectedTopic.consumers}}
+                    </uib-tab>
+                    <uib-tab index="3" heading="Providers">
+                        {{selectedTopic.providers}}
+                    </uib-tab>
+                    <uib-tab index="4" heading="Metrics">
+                        some metrics
+                    </uib-tab>
+                </uib-tabset>
+            </div>
+        </div>
+
+    </div>
+
+    <!--When selectedBroker & brokers -->
+    <div ng-show="!topicsOn && selectedBroker">
+        <h3>{{selectedBroker.brokerId}}</h3>
+        <table class="table table-hover table-striped table-bordered">
+            <tbody>
+            <tr ng-repeat="(key, value) in selectedBroker">
+                <td>{{key}}</td>
+                <td>{{value}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+</div> <!-- end of col -->
+
+</div> <!-- end of row -->
+</div> <!-- end of container -->
+
+<md-toolbar
+        style="height: 30px;min-height: 30px;max-height: 30px;padding-top:5px;background-color: #4F6375;color:white;"
+        ng-controller="HeaderCtrl">
+    <div layout="row" layout-align="" style="font-size: 11pt;" flex>
+        <div class="col-md-1"></div>
+        <div class="col-md-4">zookeeper.ensemble = {{schemaRegistryURL}}
+            <span ng-show="connectionFailure" style="color:red">CONNECTIVITY ERROR</span>
+        </div>
+        <!--<div class="col-md-4">COMPATIBILITY LEVEL = {{config.compatibilityLevel}}</div>-->
+    </div>
+</md-toolbar>
+
+</body>
+
+<!--CUSTOM-FOOTER-->
+</body>
+</html>
+
+
+<!-- Switch Between TOPICS / BROKERS
+<div class="btn-toolbar" role="toolbar">
+  <div class="btn-group" role="group">
+    <button type="button" ng-class="{'active': topicsOn}" class="btn btn-sm btn-default"
+            ng-click="changeView()">
+      <span class="glyphicon glyphicon-th"></span> Topics
+    </button>
+    <button type="button" ng-class="{'active': !topicsOn}" class="btn btn-sm btn-default"
+            ng-click="changeView()">
+      <span class="glyphicon glyphicon-list"></span> Brokers
+    </button>
+  </div>
+  <div class="panel-heading">  &nbsp;&nbsp;&nbsp; Total topics: {{topics.length}}</div>
+</div>
+-->
+
+<!-- When Brokeers selected
+<div ng-show="!topicsOn">
+  <div class="form-group">
+    <input type="text" class="form-control" id="searchBrokers" placeholder="search" ng-model="search">
+  </div>
+  <hr>
+  <h5>BROKERS</h5>
+  <div class="panel panel-default">
+    <div class="panel-heading">Total topics: {{brokers.length}}</div>
+    <table class="table table-hover table-striped table-bordered">
+      <thead>
+      <tr>
+        <th class="text-center">Broker</th>
+        <th class="text-center">Sth</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr
+        pagination-id="brokers"
+        dir-paginate="broker in brokers | orderBy:'brokerId' | filter : searchBrokers | itemsPerPage: 10"
+        ng-click="selectBroker(broker);">
+        <td>{{broker.brokerId}}</td>
+        <td class="text-center"><span class="label label-primary">sth</span></td>
+      </tr>
+      </tbody>
+    </table>
+    <dir-pagination-controls pagination-id="brokers"></dir-pagination-controls>
+  </div>
+</div>
+</div> <!-- end of col -->

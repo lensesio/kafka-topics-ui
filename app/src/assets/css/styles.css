@@ -1,0 +1,187 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #F5F5F5;
+}
+
+.ace_editor {
+    height: 460px;
+}
+
+header.header {
+    background-color: #217ebc;
+    min-height: 50px;
+    color: #ebebeb;
+    margin-bottom: 0;
+}
+
+.header-section {
+    background-color: #4F6375;
+    color: #ebebeb;
+    border-bottom: 1px solid #2b3e50;
+    padding: 7px 0;
+    margin-bottom: 20px;
+}
+
+.container-fluid-centered {
+    height: 100%;
+    display: table;
+    width: 100%;
+    padding: 0;
+}
+
+a:link, header.a:visited, header.a:hover, header.a:active {
+    text-decoration: none;
+}
+
+.row-fluid {
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.textareacode {
+    border-radius: 3px;
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+    border: 1px solid #ccc;
+    width: 95%;
+    font: 12px Consolas, Menlo, Courier, monospace;
+}
+
+.example {
+    position: relative;
+    margin: 15px 0 0;
+    padding: 39px 19px 14px;
+    background-color: #fff;
+    border-radius: 4px 4px 0 0;
+    border: 1px solid #ddd;
+    z-index: 2;
+}
+
+.example1:after {
+    content: "Register a Complex Schema";
+}
+
+.example2:after {
+    content: "Test Schema Compatibility";
+}
+
+.example:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #f5f5f5;
+    color: #9da0a4;
+    border-radius: 4px 0 4px 0;
+}
+
+.snippet {
+    position: relative;
+    overflow: visible;
+}
+
+pre {
+    margin-top: 0;
+    margin-bottom: 0;
+    font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+.centering {
+    float: none;
+    margin: 0 auto;
+}
+
+.bs-callout-warning {
+    border-left-color: #228415 !important;
+}
+
+.bs-callout {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+}
+
+/* Style The Dropdown Button */
+.dropbtn {
+    background-color: #4f6375;
+    color: white;
+    font-size: 16px;
+    padding: 4px;
+    border: none;
+    cursor: pointer;
+    min-width: 250px;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    z-index: 999;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: green;
+    min-width: 250px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: #6e8294
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+    background-color: #4f6375;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+    background-color: #4f6375;
+}
+md-card {
+    margin: 0;
+}
+
+md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
+    margin-top:55px;
+    margin-right:6px;
+    background-color: #d67c1c;
+    color: rgb(250,250,250);
+    text-align: center;
+}
+
+/** Pagination **/
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    background-color: #286090;
+}
+.label-primary {
+    background-color: #286090;
+}
+
+.list-group-item {
+    padding: 8px 15px;
+}
+
+.md-button.light-blue {
+    background-color: rgba(74, 163, 223, 1);
+}
