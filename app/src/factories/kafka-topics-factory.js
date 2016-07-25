@@ -19,6 +19,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
     topicName.startsWith("_confluent-monitoring", 0));
   }
 
+  // Convert to human readable KBytes
   function bytesToSize2(bytes) {
     var sizes = ['n/a', 'bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
     var i = +Math.floor(Math.log(bytes) / Math.log(1024));
@@ -107,7 +108,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
           resultingTextData = angular.toJson(things, true);
         }
 
-        $log.info("COMPLETED entire object " + JSON.stringify(things));
+        // $log.info("COMPLETED entire object " + JSON.stringify(things));
         deferred.resolve(angular.toJson(things, true));
         // we got it
       })
@@ -200,6 +201,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
       return deferred.promise;
     },
     getTopicDetails: function (topicNames) {
+      var deferred = $q.defer();
       var urlCalls = [];
       var topicDetails = [];
       start = new Date().getTime();
@@ -233,10 +235,11 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
 
         });
         end = new Date().getTime();
-        $log.info("Fetched details of " + topicList.length + " Topics in [" + (end - start) + "] mesec");
+        $log.info("Fetched details of " + topicDetails.length + " Topics in [" + (end - start) + "] msec");
         deferred.resolve(topicDetails);
       });
       // $scope.aceString = angular.toJson(response.data, true);
+      return deferred.promise;
     },
     // 3 step process for getting data off a kafka topic
     // 1. Create a consumer for Avro data, starting at the beginning of the topic's log.
