@@ -1,6 +1,6 @@
 kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $http, $base64, kafkaZooFactory) {
 
-  $log.info("ViewTopicCtrl - initializing for topic : " + $scope.topicName);
+  $log.info("ViewTopicCtrl - initializing for topic : " + $routeParams.topicName);
   $scope.topicName = $routeParams.topicName;
   $scope.showSpinner = true;
 
