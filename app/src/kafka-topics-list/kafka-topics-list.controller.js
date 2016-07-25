@@ -3,11 +3,26 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
     $log.debug("KafkaTopicsListCtrl - initializing");
     $mdToast.hide();
 
-    var promise = kafkaZooFactory.getTopicList(false);
-    promise.then(function (allTopics) {
-      $log.debug('Success fetching allTopics ' + JSON.stringify(allTopics));
-      $scope.topics = allTopics;
-      $rootScope.topicsCache = allTopics
+    // 1. Get topics
+    var topicsPromise = kafkaZooFactory.getTopicList();
+    topicsPromise.then(function (normalTopics, controlTopics) {
+      $log.debug('Normal topics = ' + JSON.stringify(normalTopics));
+      $scope.topics = normalTopics;
+      $rootScope.topicsCache = normalTopics
+    }, function (reason) {
+      $log.error('Failed: ' + reason);
+      kafkaZooFactory.showSimpleToast("No connectivity. Could not get topic names");
+    }, function (update) {
+      $log.info('Got notification: ' + update);
+    });
+
+    // 2. Get _schemas
+    var start = new Date().getTime();
+    var schemasPromise = kafkaZooFactory.consumeKafkaRest("json","_schemas");
+    schemasPromise.then(function(allSchemas) {
+      var end = new Date().getTime();
+      $rootScope.schemas = allSchemas;
+      $log.info("[" + (end-start) + "] msec - to get " + allSchemas.length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
     }, function (reason) {
       $log.error('Failed: ' + reason);
     }, function (update) {
