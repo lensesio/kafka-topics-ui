@@ -20,6 +20,12 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
     );
   }
 
+  function bytesToSize2(bytes) {
+    var sizes = ['n/a', 'bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+    var i = +Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, i)).toFixed(i ? 1 : 0) + ' ' + sizes[isNaN(bytes) ? 0 : i + 1];
+  }
+
   // Shorten Confluent Control Center topic name - to improve visualization
   function shortenControlCenterName(topicName) {
     topicName.replace('_confluent-controlcenter-0-', '...')
@@ -72,17 +78,12 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
 
     // `Boolean` - Whether we will display Kafka [ Control Topics || Normal Topics ]
     getTopicList: function (displayControlTopics) {
-
       var deferred = $q.defer();
-      var getData = {
-        method: 'GET',
-        url: ENV.KAFKA_REST + '/topics'
-      };
       $log.info('curl ' + ENV.KAFKA_REST + '/topics');
-
       setTimeout(function () {
         var topicList = [];
         var start = new Date().getTime();
+        var getData = {method: 'GET', url: ENV.KAFKA_REST + '/topics'};
         $http(getData)
           .then(
             function successCallback(response) {
@@ -153,9 +154,58 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
             });
 
       }, 10);
-
       return deferred.promise;
+    },
 
+    // KAFKA-REST CONSUME
+    startFetchingData: function (messagetype, topicName, consumer) {
+      var deferred = $q.defer();
+      if (['avro', 'json', 'binary'].indexOf(messagetype) < 0) {
+        $log.error("Unsupported message-type [" + messagetype + "]");
+      }
+      var instance = "instance";
+      var acceptMessageType = 'application/vnd.kafka.' + messagetype + '.v1+json';
+      var getData = {
+        method: 'GET',
+        url: ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/' + instance + '/topics/' + topicName,
+        headers: {'Accept': acceptMessageType}
+      };
+      //$log.debug(getData);
+      var curlGetAvroData = 'curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/' + instance + '/topics/' + topicName;
+      $log.info(curlGetAvroData);
+
+      setTimeout(function () {
+        var start = new Date().getTime();
+        var resultingTextData = "";
+        // [{"key":null,"value":{"name":"testUser"},"partition":0,"offset":0}]
+        // EXECUTE-2
+        $http(getData)
+          .then(
+            function successCallback(response) {
+              var end = new Date().getTime();
+              $log.info("Success in consuming " + messagetype + " data " + bytesToSize2(JSON.stringify(response).length) + " in [" + (end - start) + "] msec");
+              if (messagetype == "binary") {
+                var data = response.data;
+                var data2 = angular.forEach(data, function (d) {
+                  d.key = $base64.decode(d.key);
+                  d.value = $base64.decode(d.value);
+                });
+                resultingTextData = angular.toJson(data2, true);
+              } else {
+                resultingTextData = angular.toJson(response.data, true);
+              }
+              deferred.resolve(resultingTextData);
+            },
+            function errorCallback(response) {
+              $log.error("Error in consuming " + messagetype + " data : " + JSON.stringify(response));
+              if (response.data.error_code == 50002) {
+                kafkaZooFactory.showSimpleToast("This is not JSon");
+              } else {
+                kafkaZooFactory.showSimpleToast("This is not Avro")
+              }
+            });
+      }, 10);
+      return deferred.promise;
     }
 
     //   var data = '{"name": "my_consumer_instance", "format": "avro", "auto.offset.reset": "smallest"}';

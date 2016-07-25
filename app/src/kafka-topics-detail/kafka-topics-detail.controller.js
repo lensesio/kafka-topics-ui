@@ -3,6 +3,14 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     $scope.topicName = $routeParams.topicName;
     $log.info("ViewTopicCtrl - initializing for topic : " + $scope.topicName);
 
+    var topicsMap = {};
+    topicsMap["_schemas"]="json";
+    topicsMap["connect-configs"]="avro";
+    topicsMap["connect-offsets"]="avro";
+    topicsMap["connect-status"]="avro";
+
+    $log.info(topicsMap["_schemas"]);
+
     //tODO
     $scope.myTopic= $filter('filter')($rootScope.topicsCache, {name: $scope.topicName}, true);
 
@@ -22,60 +30,6 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
 
     $scope.changeView = function () {
       $scope.topicsOn = !$scope.topicsOn;
-    };
-
-    function bytesToSize2(bytes) {
-      var sizes = ['n/a', 'bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-      var i = +Math.floor(Math.log(bytes) / Math.log(1024));
-      return (bytes / Math.pow(1024, i)).toFixed(i ? 1 : 0) + ' ' + sizes[isNaN(bytes) ? 0 : i + 1];
-    }
-
-    // KAFKA-REST CONSUME
-    $scope.startFetchingData = function (messagetype, topicName, consumer) {
-
-      if (['avro', 'json', 'binary'].indexOf(messagetype) < 0) {
-        $log.error("Unsupported message-type [" + messagetype + "]");
-      }
-
-      var instance = "instance";
-      var acceptMessageType = 'application/vnd.kafka.' + messagetype + '.v1+json';
-
-      var getData = {
-        method: 'GET',
-        url: ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/' + instance + '/topics/' + topicName,
-        headers: {'Accept': acceptMessageType}
-      };
-      $log.debug(getData);
-      var curlGetAvroData = 'curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' +
-        ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/' + instance + '/topics/' + topicName;
-      $log.info(curlGetAvroData);
-
-      // [{"key":null,"value":{"name":"testUser"},"partition":0,"offset":0}]
-      // EXECUTE-2
-      $http(getData)
-        .then(
-          function successCallback(response) {
-            $log.info("Success in consuming " + messagetype + " data " + bytesToSize2(JSON.stringify(response).length));
-            if (messagetype == "binary") {
-              var data = response.data;
-              var data2 = angular.forEach(data, function (d) {
-                d.key = $base64.decode(d.key);
-                d.value = $base64.decode(d.value);
-              });
-              $scope.aceString = angular.toJson(data2, true);
-            } else {
-              $scope.aceString = angular.toJson(response.data, true);
-            }
-          },
-          function errorCallback(response) {
-            $log.error("Error in consuming " + messagetype + " data : " + JSON.stringify(response));
-            if (response.data.error_code == 50002) {
-              kafkaZooFactory.showSimpleToast("This is not JSon");
-            } else {
-              kafkaZooFactory.showSimpleToast("This is not Avro")
-            }
-          });
-
     };
 
     // 1. Create a consumer for Avro data, starting at the beginning of the topic's log.
@@ -119,14 +73,23 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
         .then(
           function successCallback(response) {
             // this callback will be called asynchronously when the response is available
-            $log.info("Success in creating avro consumer " + JSON.stringify(response));
-            $scope.startFetchingData(messagetype, topicName, consumer + "-" + messagetype);
+            $log.info("Success in creating " + messagetype + " consumer " + JSON.stringify(response));
+            var textDataPromise = kafkaZooFactory.startFetchingData(messagetype, topicName, consumer + "-" + messagetype);
+            textDataPromise.then(function (data) {
+              $log.info("Peiler got -> " + data);
+              $scope.aceString = data;
+            }, function (reason) {
+              $log.error('Failed: ' + reason);
+            }, function (update) {
+              $log.info('Got notification: ' + update);
+            });
           },
           function errorCallback(response, statusText) {
             if (response.status == 409) {
               $log.info("409 detected! " + response.data.message);
               kafkaZooFactory.showSimpleToast(response.data.message);
-              $scope.startFetchingData(messagetype, topicName, consumer + "-" + messagetype);
+              //var textData = kafkaZooFactory.startFetchingData(messagetype, topicName, consumer + "-" + messagetype);
+              //$scope.aceString = textData;
             }
           }
         );
