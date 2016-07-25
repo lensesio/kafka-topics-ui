@@ -12,6 +12,16 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
       $log.debug('Normal topics = ' + JSON.stringify(normalTopics));
       $scope.topics = normalTopics;
       $rootScope.topicsCache = normalTopics;
+      var topicDetailsPromise = kafkaZooFactory.getTopicDetails(normalTopics);
+      topicDetailsPromise.then(function (topicDetails) {
+        $rootScope.topicDetails = topicDetails;
+        $log.info("Got topic details");
+      }, function (reason) {
+        $log.error('Failed: ' + reason);
+      }, function (update) {
+        $log.info('Got notification: ' + update);
+      });
+
     }
   }, function (reason) {
     $log.error('Failed: ' + reason);
@@ -40,6 +50,38 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
     } else {
       return Object.keys(topicObj.partitions).length;
     }
+  };
+
+  $scope.hasExtraConfig = function (topicName) {
+    var peiler = {};
+    angular.forEach($rootScope.topicDetails, function (detail) {
+      if (detail.name === topicName) {
+        peiler = detail.configs;
+      }
+    });
+    return (JSON.stringify(peiler).replace("{}", ""));
+  };
+
+  $scope.getDataType = function (topicName) {
+    var peiler = {};
+    angular.forEach($rootScope.topicDetails, function (detail) {
+      if (detail.name === topicName) {
+        // $log.debug(detail);
+        // $log.debug("++++ " + $rootScope.schemas);
+        angular.forEach(angular.fromJson($rootScope.schemas), function (schema) {
+          $log.info("SSS=> " + JSON.stringify(schema));
+          if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) {
+            $log.info("FOUND YOU !! " + topicName);
+            peiler="avro";
+          }
+          // $log.info(schema);
+          // if (schema.)
+        });
+        //   peiler = detail.configs;
+      }
+      // $rootScope.schemas = allSchemas;
+    });
+    return peiler;
   };
 
   // $scope.topics = ENV.topics;

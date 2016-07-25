@@ -12,6 +12,19 @@ var kafkaTopicsUIApp = angular.module('kafkaTopicsUIApp', [
   'ngOboe'
 ]);
 
+// ng-show="x | isEmpty"
+kafkaTopicsUIApp.filter('isEmpty', function () {
+  var bar;
+  return function (obj) {
+    for (bar in obj) {
+      if (obj.hasOwnProperty(bar)) {
+        return false;
+      }
+    }
+    return true;
+  };
+});
+
 kafkaTopicsUIApp.controller('MenuCtrl', function ($scope) {
   $scope.apps = [];
   var thisApp = "Kafka Topics UI";
