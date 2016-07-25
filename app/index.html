@@ -1,70 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Kafka Topics UI</title>
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
-    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="src/assets/css/styles.css">
-    <meta charset=utf-8/>
-    <meta name="viewport" content="width=device-width">
-    <meta name="description" content="Kafka Topics UI">
-    <meta name="keywords" content="kafka,schema registry,topics,kafka management,avro">
-    <meta name="author" content="Landoop Team">
-    <link rel="shortcut icon" href="src/assets/icons/favicon-32x32.png">
+  <title>Kafka Topics UI</title>
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
+  <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="src/assets/css/styles.css">
+  <meta charset=utf-8/>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="Kafka Topics UI">
+  <meta name="keywords" content="kafka,schema registry,topics,kafka management,avro">
+  <meta name="author" content="Landoop Team">
+  <link rel="shortcut icon" href="src/assets/icons/favicon-32x32.png">
 </head>
 
 <body ng-app="kafkaTopicsUIApp">
 
 <!--Header Starts here-->
 <header class="header">
-    <div layout="row" layout-xs="column" layout-align="end center">
-        <div flex="nogrow" ng-controller="MenuCtrl">
-            <md-menu ng-show="apps">
-                <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)" ng-disabled="{{disableAppsMenu}}">
-                    <i class="fa fa-bars" aria-hidden="true"></i>
-                </md-button>
-                <md-menu-content width="5">
-                    <md-menu-item ng-repeat="app in apps">
-                        <md-button ng-if="app.enabled" ng-href="{{app.url}}">
-                            <md-icon style="margin:6px 10px 0 0">
-                                <i class="fa {{app.icon}}" aria-hidden="true"></i>
-                            </md-icon> <b ng-show="app.name.length > 0">{{app.name}}</b>
-                        </md-button>
-                    </md-menu-item>
-                </md-menu-content>
-            </md-menu>
-        </div>
-        <div flex>
-            <h5><a href="/#/" style="color:#fff;text-decoration:none;">KAFKA TOPICS</a></h5>
-        </div>
+  <div layout="row" layout-xs="column" layout-align="end center">
+    <div flex="nogrow" ng-controller="MenuCtrl">
+      <md-menu ng-show="apps">
+        <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)"
+                   ng-disabled="{{disableAppsMenu}}">
+          <i class="fa fa-bars" aria-hidden="true"></i>
+        </md-button>
+        <md-menu-content width="5">
+          <md-menu-item ng-repeat="app in apps">
+            <md-button ng-if="app.enabled" ng-href="{{app.url}}">
+              <md-icon style="margin:6px 10px 0 0">
+                <i class="fa {{app.icon}}" aria-hidden="true"></i>
+              </md-icon>
+              <b ng-show="app.name.length > 0">{{app.name}}</b>
+            </md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
     </div>
+    <div flex>
+      <h5><a href="/#/" style="color:#fff;text-decoration:none;">KAFKA TOPICS</a></h5>
+    </div>
+  </div>
 </header>
 
-
 <!--Main Content Starts here-->
-
 <div layout="row" layout-margin layout-sm="column" layout-xs="column">
-    <div flex-gt-sm="33">
-        <div ng-controller="KafkaTopicsListCtrl">
-            <div ng-include="'src/left-list.html'"></div>
-        </div>
-        <br>
+  <div flex-gt-sm="33">
+    <div ng-controller="KafkaTopicsListCtrl">
+      <div ng-include="'src/left-list.html'"></div>
     </div>
-    <div flex-gt-sm="66" flex>
-        <!--<div ng-controller="SubjectsCtrl">-->
-            <ng-view></ng-view>
-        <!--</div>-->
-    </div>
+    <br>
+  </div>
+  <div flex-gt-sm="66" flex>
+    <!--<div ng-controller="SubjectsCtrl">-->
+    <ng-view></ng-view>
+    <!--</div>-->
+  </div>
 </div>
 
 <div layout-margin flex>
-    <div flex="nogrow"><img src="http://www.landoop.com/images/landoop-dark.svg" style="width:20px;float: left;padding-right:5px;"></div>
-    <div flex><p class="md-caption">Powered by <a href="http:www.landoop.com" target="_blank">LANDOOP</a></p></div>
+  <div flex="nogrow">
+    <img src="http://www.landoop.com/images/landoop-dark.svg" style="width:20px;float: left;padding-right:5px;"></div>
+  <div flex><p class="md-caption">Powered by <a href="http:www.landoop.com" target="_blank">LANDOOP</a></p></div>
 </div>
 
 <!--CUSTOM-FOOTER-->
-
 
 <script src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
 <script src="bower_components/angular/angular.min.js"></script>
@@ -77,6 +77,8 @@
 <script src="bower_components/angularUtils-pagination/dirPagination.js"></script>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower_components/oboe/dist/oboe-browser.min.js"></script>
+<script src="bower_components/angular-oboe/dist/angular-oboe.min.js"></script>
 <!--<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>-->
 <script src="bower_components/angular-animate/angular-animate.min.js"></script>
 <script src="bower_components/angular-aria/angular-aria.min.js"></script>

@@ -8,7 +8,8 @@ var kafkaTopicsUIApp = angular.module('kafkaTopicsUIApp', [
   'ngMaterial',
   'ngAnimate',
   'ngAria',
-  'base64'
+  'base64',
+  'ngOboe'
 ]);
 
 kafkaTopicsUIApp.controller('MenuCtrl', function ($scope) {
