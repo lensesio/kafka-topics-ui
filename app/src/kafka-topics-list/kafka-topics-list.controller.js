@@ -1,4 +1,4 @@
-kafkaZooUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $routeParams, $mdToast, $log, kafkaZooFactory) {
+kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $routeParams, $mdToast, $log, kafkaZooFactory) {
 
     $log.debug("KafkaTopicsListCtrl - initializing");
     $mdToast.hide();

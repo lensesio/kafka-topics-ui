@@ -1,6 +1,6 @@
 'use strict';
 
-var kafkaZooUIApp = angular.module('kafkaZooUIApp', [
+var kafkaTopicsUIApp = angular.module('kafkaTopicsUIApp', [
   'ui.ace',
   'angularSpinner',
   'angularUtils.directives.dirPagination',
@@ -9,24 +9,24 @@ var kafkaZooUIApp = angular.module('kafkaZooUIApp', [
   'ngAnimate',
   'ngAria',
   'base64'
-])
+]);
 
-kafkaZooUIApp.controller('MenuCtrl', function ($scope) {
-   $scope.apps = [];
-   var thisApp = "Kafka Topics"
-   angular.forEach(ENV.APPS, function (app) {
-      if (app.enabled && !(app.name == thisApp)) {
-         $scope.apps.push(app);
-      }
-   });
+kafkaTopicsUIApp.controller('MenuCtrl', function ($scope) {
+  $scope.apps = [];
+  var thisApp = "Kafka Topics UI";
+  angular.forEach(ENV.APPS, function (app) {
+    if (app.enabled && !(app.name == thisApp)) {
+      $scope.apps.push(app);
+    }
+  });
 
-   $scope.disableAppsMenu = true;
-   if ($scope.apps.length > 0) {
-      $scope.disableAppsMenu = false;
-   }
+  $scope.disableAppsMenu = true;
+  if ($scope.apps.length > 0) {
+    $scope.disableAppsMenu = false;
+  }
 });
 
-kafkaZooUIApp.config(function ($routeProvider, $httpProvider) {
+kafkaTopicsUIApp.config(function ($routeProvider, $httpProvider) {
   $httpProvider.defaults.useXDomain = true;
   delete $httpProvider.defaults.headers.common['X-Requested-With'];
   $routeProvider
@@ -44,7 +44,3 @@ kafkaZooUIApp.config(function ($routeProvider, $httpProvider) {
     redirectTo: '/'
   });
 });
-
-
-
-

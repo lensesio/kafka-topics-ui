@@ -1,4 +1,4 @@
-kafkaZooUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $http, $base64, kafkaZooFactory) {
+kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $http, $base64, kafkaZooFactory) {
 
     $scope.topicName = $routeParams.topicName;
     $log.info("ViewTopicCtrl - initializing for topic : " + $scope.topicName);
@@ -107,7 +107,8 @@ kafkaZooUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter,
         data: data,
         headers: {'Content-Type': messageContentType}
       };
-      $log.debug(postCreateConsumer);
+      $log.info("Creating Kafka Rest consumer for " + messagetype + " data");
+      // $log.debug(postCreateConsumer);
 
       var curlCreateConsumer = 'curl -X POST -H "Content-Type: ' + messageContentType + '" ' +
         "--data '" + data + "' " + ENV.KAFKA_REST + '/consumers/' + consumer + '-' + messagetype;
