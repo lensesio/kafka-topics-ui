@@ -38,11 +38,13 @@
 </header>
 
 
-<div ng-controller="MainCtrl">
 <!--Main Content Starts here-->
+
 <div layout="row" layout-margin layout-sm="column" layout-xs="column">
     <div flex-gt-sm="33">
-        <div ng-include="'src/left-list.html'"></div>
+        <div ng-controller="KafkaTopicsListCtrl">
+            <div ng-include="'src/left-list.html'"></div>
+        </div>
         <br>
     </div>
     <div flex-gt-sm="66" flex>
@@ -52,17 +54,10 @@
     </div>
 </div>
 
-
-</div>
-
 <div layout-margin flex>
     <div flex="nogrow"><img src="http://www.landoop.com/images/landoop-dark.svg" style="width:20px;float: left;padding-right:5px;"></div>
     <div flex><p class="md-caption">Powered by <a href="http:www.landoop.com" target="_blank">LANDOOP</a></p></div>
 </div>
-
-
-
-
 
 <!--CUSTOM-FOOTER-->
 
@@ -83,5 +78,9 @@
 <script src="bower_components/angular-aria/angular-aria.min.js"></script>
 <script src="src/env.js"></script>
 <script src="src/app.js"></script>
+<script src="src/factories/kafka-topics-factory.js"></script>
+<script src="src/kafka-topics-list/kafka-topics-list.controller.js"></script>
+<script src="src/kafka-topics-detail/kafka-topics-detail.controller.js"></script>
+
 </body>
 </html>

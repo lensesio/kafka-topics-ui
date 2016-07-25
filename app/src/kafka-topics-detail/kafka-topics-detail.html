@@ -5,7 +5,6 @@
             <b>Topic: </b> {{topicName}}
         </h3>
     </md-toolbar>
-
     <div layout="row" width="50%">
     <md-button flex class="md-raised" ng-click='consumeKafkaRest("avro", topicName);'>get avro</md-button>
     <md-button flex class="md-raised" ng-click='consumeKafkaRest("json", topicName);'>get json</md-button>
