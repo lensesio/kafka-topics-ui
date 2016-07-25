@@ -1,4 +1,4 @@
-kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $http, $log, $base64, $q) {
+kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $http, $log, $base64, $q, Oboe) {
 
   var last = {
     bottom: false,
@@ -28,7 +28,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
   // Shorten Confluent Control Center topic name - to improve visualization
   function shortenControlCenterName(topicName) {
     topicName.replace('_confluent-controlcenter-0-', '...')
-    // .replace('aggregate-topic-partition', 'aggregate-topic')
+      // .replace('aggregate-topic-partition', 'aggregate-topic')
       .replace('MonitoringMessageAggregatorWindows', 'monitor-msg')
       .replace('aggregatedTopicPartitionTableWindows', 'aggregate-window')
       .replace('monitoring-aggregate-rekey', 'monitor-rekey')
@@ -57,39 +57,82 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
     var curlGetAvroData = '  curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/' + instance + '/topics/' + topicName;
     $log.debug(curlGetAvroData);
 
-    setTimeout(function () {
-      var start = new Date().getTime();
-      var resultingTextData = "";
-      // [{"key":null,"value":{"name":"testUser"},"partition":0,"offset":0}]
-      // EXECUTE-2
-      $http(getData)
-        .then(
-          function successCallback(response) {
-            var end = new Date().getTime();
-            $log.info("[" + (end - start) + "] msec to consume " + messagetype + " data " + bytesToSize2(JSON.stringify(response).length) + " from topic " + topicName);
-            if (messagetype == "binary") {
-              var data = response.data;
-              var data2 = angular.forEach(data, function (d) {
-                d.key = $base64.decode(d.key);
-                d.value = $base64.decode(d.value);
-              });
-              resultingTextData = angular.toJson(data2, true);
-            } else {
-              resultingTextData = angular.toJson(response.data, true);
-            }
-            deferred.resolve(resultingTextData);
-          },
-          function errorCallback(response) {
-            $log.error("Error in consuming " + messagetype + " data : " + JSON.stringify(response));
-            if (response.data.error_code == 50002) {
-              if (response.data.message.indexOf("Error deserializing Avro message") > -1)
-                deferred.resolve("This is not Avro"); // this.showSimpleToast("This is not JSon");
-            } else {
-              deferred.resolve("This is not JSon"); // this.showSimpleToast("This is not JSon");
-              // this.showSimpleToast("This is not Avro")
-            }
+    // Oboe - stream data in (1000 rows)
+    var totals = 0;
+    var start = new Date().getTime();
+    var myUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/' + instance + '/topics/' + topicName +"?max_bytes=500000";
+    var allResults = [];
+    $log.debug("Oboe-ing at " + myUrl);
+    oboe({
+      url: myUrl,
+      headers: {"Accept": acceptMessageType}
+    })
+    /* For every array item ..
+      .node('!.*', function (values) {
+        allResults.push(values);
+        totals = totals + 1;
+        var resultingTextData = "";
+        if (messagetype == "binary") {
+          var data2 = angular.forEach(data, function (d) {
+            d.key = $base64.decode(values.key);
+            d.value = $base64.decode(values.value);
           });
-    }, 10);
+          resultingTextData = angular.toJson(data2, true);
+        } else {
+          resultingTextData = angular.toJson(values, true);
+        }
+        allResults.push(resultingTextData);
+        // $scope.aceString = $scope.aceString +"\n" + values;
+        if (totals < 3) {
+          //  {"key":0,"value":{"itemID":6,"storeCode":"Ashford-New-Rents","count":100},"partition":0,"offset":1002760034}
+          //  [{"key":null,"value":{"name":"testUser"},"partition":0,"offset":0}]
+          $log.info(totals + " row => ", JSON.stringify(values));
+        }
+        if (totals == 1000) {
+          var end = new Date().getTime();
+          $log.info("[" + (end - start) + "] msec to fetch 1000 rows (now aborting)");
+          deferred.resolve(allResults);
+          this.abort();
+        }
+      })*/
+      .done(function (things) {
+        var decodedData = "";
+        if (messagetype == "binary") {
+          var data2 = angular.forEach(things, function (d) {
+            d.key = $base64.decode(d.key);
+            d.value = $base64.decode(d.value);
+          });
+          resultingTextData = angular.toJson(data2, true);
+        } else {
+          resultingTextData = angular.toJson(things, true);
+        }
+
+        $log.info("COMPLETED entire object " + JSON.stringify(things));
+        deferred.resolve(angular.toJson(things, true));
+        // we got it
+      })
+      .fail(function () {
+        $log.info("Peiler2");
+
+        // we don't got it
+      });
+
+    //   // EXECUTE-2
+    //   $http(getData)
+    //     .then(
+    //       function successCallback(response) {
+    //         $log.info("[" + (end - start) + "] msec to consume " + messagetype + " data " + bytesToSize2(JSON.stringify(response).length) + " from topic " + topicName);
+    //       },
+    //       function errorCallback(response) {
+    //         $log.error("Error in consuming " + messagetype + " data : " + JSON.stringify(response));
+    //         if (response.data.error_code == 50002) {
+    //           if (response.data.message.indexOf("Error deserializing Avro message") > -1)
+    //             deferred.resolve("This is not Avro"); // this.showSimpleToast("This is not JSon");
+    //         } else {
+    //           deferred.resolve("This is not JSon"); // this.showSimpleToast("This is not JSon");
+    //           // this.showSimpleToast("This is not Avro")
+    //         }
+    //       });
     return deferred.promise;
   }
 
@@ -242,7 +285,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
               $log.info("Success in creating " + messagetype + " consumer " + JSON.stringify(response));
               var textDataPromise = startFetchingData(messagetype, topicName, consumer + "-" + messagetype);
               textDataPromise.then(function (data) {
-                //$log.info("Peiler got2 -> " + data);
+                // $log.info("Peiler got2 -> " + data);
                 deferred.resolve(data);
               }, function (reason) {
                 $log.error('Failed: ' + reason);
@@ -259,7 +302,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
               }
             }
           );
-      }, 60);
+      }, 10);
 
       return deferred.promise;
 
