@@ -1,4 +1,4 @@
-kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $http, $log, $q) {
+kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $http, $log, $base64, $q) {
 
   var last = {
     bottom: false,
@@ -82,9 +82,11 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
           function errorCallback(response) {
             $log.error("Error in consuming " + messagetype + " data : " + JSON.stringify(response));
             if (response.data.error_code == 50002) {
-              this.showSimpleToast("This is not JSon");
+              if (response.data.message.indexOf("Error deserializing Avro message") > -1)
+                deferred.resolve("This is not Avro"); // this.showSimpleToast("This is not JSon");
             } else {
-              this.showSimpleToast("This is not Avro")
+              deferred.resolve("This is not JSon"); // this.showSimpleToast("This is not JSon");
+              // this.showSimpleToast("This is not Avro")
             }
           });
     }, 10);
@@ -148,7 +150,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
             },
             function errorCallback(response) {
               $log.error("Error in getting topics from kafka-rest : " + JSON.stringify(response));
-              deferred.resolve(response);
+              deferred.reject("Error in getting topics from kafka-rest");
             });
       }, 10);
       $rootScope.showSpinner = false;

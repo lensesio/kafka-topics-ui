@@ -2,7 +2,7 @@
 
   <md-toolbar style="background-color: #ededed; color:#000;">
     <h3 class="md-toolbar-tools" style="margin-top:10px;text-align:center;">
-      <b>Topic: </b> {{topicName}}
+      <b>Topic: </b> {{topicName}} &nbsp;&nbsp;&nbsp; <b>Type: </b> {{topicType}}
     </h3>
   </md-toolbar>
 
@@ -81,9 +81,9 @@
     </div>
   </md-content>
   <div layout="row" width="50%">
-    <md-button flex class="md-raised" ng-click='consumeKafkaRest("avro", topicName);'>get avro</md-button>
-    <md-button flex class="md-raised" ng-click='consumeKafkaRest("json", topicName);'>get json</md-button>
-    <md-button flex class="md-raised" ng-click='consumeKafkaRest("binary", topicName);'>get binary</md-button>
+    <md-button class="md-raised" ng-click='consumeKafkaRest("avro", topicName);'>get avro</md-button>
+    <md-button class="md-raised" ng-click='consumeKafkaRest("json", topicName);'>get json</md-button>
+    <md-button class="md-raised" ng-click='consumeKafkaRest("binary", topicName);'>get binary</md-button>
   </div>
 
 </md-card>

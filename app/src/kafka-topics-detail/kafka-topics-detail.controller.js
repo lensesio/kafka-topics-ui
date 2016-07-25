@@ -1,8 +1,14 @@
 kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $http, $base64, kafkaZooFactory) {
 
+    $log.info("ViewTopicCtrl - initializing for topic : " + $scope.topicName);
     $scope.topicName = $routeParams.topicName;
     $scope.showSpinner = true;
-    $log.info("ViewTopicCtrl - initializing for topic : " + $scope.topicName);
+
+    if ($scope.topicName == "_schemas") {
+      $scope.topicType = "json";
+    } else if (isInArray($scope.topicName, ["connect-configs","connect-offsets","connect-status"])) {
+      $scope.topicType = "binary";
+    }
 
     function isInArray(value, array) {
       return array.indexOf(value) > -1;
@@ -15,7 +21,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       schemasPromise.then(function (allSchemas) {
         var end = new Date().getTime();
         $scope.aceString = allSchemas;
-        $log.info("[" + (end - start) + "] msec - to get " + allSchemas.length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
+        $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
         $scope.showSpinner = false;
       }, function (reason) {
         $log.error('Failed: ' + reason);
@@ -23,15 +29,15 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
         $log.info('Got notification: ' + update);
       });
     } else
-    // If connect topics -> Avro
+    // If connect topics -> Binary
     if (isInArray($scope.topicName, ["connect-configs","connect-offsets","connect-status"])) {
       var start = new Date().getTime();
-      var schemasPromise = kafkaZooFactory.consumeKafkaRest("avro", $scope.topicName);
+      var schemasPromise = kafkaZooFactory.consumeKafkaRest("binary", $scope.topicName);
       schemasPromise.then(function (allSchemas) {
         $scope.showSpinner = false;
         var end = new Date().getTime();
         $scope.aceString = allSchemas;
-        $log.info("[" + (end - start) + "] msec - to get " + allSchemas.length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
+        $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
       }, function (reason) {
         $log.error('Failed: ' + reason);
       }, function (update) {
@@ -41,9 +47,9 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
 
     var topicsMap = {};
     topicsMap["_schemas"]="json";
-    topicsMap["connect-configs"]="avro";
-    topicsMap["connect-offsets"]="avro";
-    topicsMap["connect-status"]="avro";
+    topicsMap["connect-configs"]="binary";
+    topicsMap["connect-offsets"]="binary";
+    topicsMap["connect-status"]="binary";
     // $log.info(topicsMap["_schemas"]);
 
     //tODO
@@ -70,9 +76,9 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     // 3. Finally, clean up.
     // [ avro | json | binary ]
     $scope.consumeKafkaRest = function (messagetype, topicName) {
+      $scope.showSpinner=true;
       var dataPromise = kafkaZooFactory.consumeKafkaRest(messagetype,topicName);
       dataPromise.then(function (data) {
-        $log.info("Peiler2 got -> " + data);
         $scope.aceString = data;
         $scope.rows = data;
         $scope.showSpinner=false;

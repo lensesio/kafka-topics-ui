@@ -57,3 +57,5 @@ If you use `nginx` to serve this ui, let angular manage routing with
 ## License
 
 The project is licensed under the Apache 2 license.
+
+journalctl -u confluent-kafka-rest-proxy --since "10 min ago" -f

@@ -6,9 +6,13 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
     // 1. Get topics
     var topicsPromise = kafkaZooFactory.getTopicList();
     topicsPromise.then(function (normalTopics, controlTopics) {
-      $log.debug('Normal topics = ' + JSON.stringify(normalTopics));
-      $scope.topics = normalTopics;
-      $rootScope.topicsCache = normalTopics
+      if (normalTopics.toString().indexOf("Error in getting topics from kafka-rest") > -1) {
+        kafkaZooFactory.showSimpleToast("Error in getting topics from kafka-rest");
+      } else {
+        $log.debug('Normal topics = ' + JSON.stringify(normalTopics));
+        $scope.topics = normalTopics;
+        $rootScope.topicsCache = normalTopics;
+      }
     }, function (reason) {
       $log.error('Failed: ' + reason);
       kafkaZooFactory.showSimpleToast("No connectivity. Could not get topic names");
@@ -22,7 +26,7 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
     schemasPromise.then(function(allSchemas) {
       var end = new Date().getTime();
       $rootScope.schemas = allSchemas;
-      $log.info("[" + (end-start) + "] msec - to get " + allSchemas.length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
+      $log.info("[" + (end-start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
     }, function (reason) {
       $log.error('Failed: ' + reason);
     }, function (update) {
