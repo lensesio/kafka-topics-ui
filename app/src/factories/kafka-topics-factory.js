@@ -98,33 +98,14 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
         } else {
           resultingTextData = angular.toJson(things, true);
         }
-
         // $log.info("COMPLETED entire object " + JSON.stringify(things));
         deferred.resolve(angular.toJson(things, true));
-        // we got it
       })
       .fail(function () {
-        $log.info("Peiler2");
-
-        // we don't got it
+        $log.error("Failed consuming " + messagetype + " data from topic " + topicName);
+        deferred.reject("Failed consuming " + messagetype + " data from topic " + topicName);
       });
 
-    //   // EXECUTE-2
-    //   $http(getData)
-    //     .then(
-    //       function successCallback(response) {
-    //         $log.info("[" + (end - start) + "] msec to consume " + messagetype + " data " + bytesToSize2(JSON.stringify(response).length) + " from topic " + topicName);
-    //       },
-    //       function errorCallback(response) {
-    //         $log.error("Error in consuming " + messagetype + " data : " + JSON.stringify(response));
-    //         if (response.data.error_code == 50002) {
-    //           if (response.data.message.indexOf("Error deserializing Avro message") > -1)
-    //             deferred.resolve("This is not Avro"); // this.showSimpleToast("This is not JSon");
-    //         } else {
-    //           deferred.resolve("This is not JSon"); // this.showSimpleToast("This is not JSon");
-    //           // this.showSimpleToast("This is not Avro")
-    //         }
-    //       });
     return deferred.promise;
   }
 
@@ -153,7 +134,11 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
                 }
               });
               $log.info("[" + (end - start) + "] msec to get " + topicNames.length + " topic names. " + controlTopics.length + " control topics and " + normalTopics.length + " Normal topics");
-              deferred.resolve(normalTopics, controlTopics);
+              var result = {
+                normal: normalTopics,
+                control: controlTopics
+              };
+              deferred.resolve(result);
             },
             function errorCallback(response) {
               $log.error("Error in getting topics from kafka-rest : " + JSON.stringify(response));
@@ -198,7 +183,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
 
         });
         end = new Date().getTime();
-        $log.info("[" + (end-start) + "] msec to fetch details of " + topicDetails.length + " topics");
+        $log.info("[" + (end - start) + "] msec to fetch details of " + topicDetails.length + " topics");
         deferred.resolve(topicDetails);
       });
       // $scope.aceString = angular.toJson(response.data, true);
@@ -284,14 +269,14 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
               // Delete the consumer
               var deleteMyConsumer = {
                 method: 'DELETE',
-                url: ENV.KAFKA_REST + '/consumers/' + consumer + '-' +  messagetype + '/instances/instance'
+                url: ENV.KAFKA_REST + '/consumers/' + consumer + '-' + messagetype + '/instances/instance'
               };
               var start = new Date().getTime();
               $http(deleteMyConsumer)
                 .then(
                   function successCallback(response) {
                     var end = new Date().getTime();
-                    $log.info("[" + (end-start) + "] msec to delete the consumer " + JSON.stringify(response));
+                    $log.info("[" + (end - start) + "] msec to delete the consumer " + JSON.stringify(response));
                   },
                   function errorCallback(error) {
                     $log.error("Error in deleting consumer : " + JSON.stringify(error));

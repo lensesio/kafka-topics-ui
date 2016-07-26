@@ -5,12 +5,17 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
 
   // 1. Get topics
   var topicsPromise = kafkaZooFactory.getTopicList();
-  topicsPromise.then(function (normalTopics, controlTopics) {
+  topicsPromise.then(function (result) {
+    var normalTopics=result.normal;
+    var controlTopics=result.control;
+
     if (normalTopics.toString().indexOf("Error in getting topics from kafka-rest") > -1) {
       toastFactory.showSimpleToast("Error in getting topics from kafka-rest");
     } else {
-      $log.debug('Normal topics = ' + JSON.stringify(normalTopics));
+      $log.debug("Normal topics  = " + JSON.stringify(normalTopics));
+      $log.debug("Control topics = " + JSON.stringify(controlTopics));
       $scope.topics = normalTopics;
+      $scope.controlTopics = controlTopics;
       $rootScope.topicsCache = normalTopics;
       var topicDetailsPromise = kafkaZooFactory.getTopicDetails(normalTopics);
       topicDetailsPromise.then(function (topicDetails) {
