@@ -13,57 +13,63 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     $scope.editor.$blockScrolling = Infinity;
   };
 
-  $log.debug("topicType="+JSON.stringify($scope.topicType));
+  $log.debug("topicType=" + JSON.stringify($scope.topicType));
   // If value exists in an array
   function isInArray(value, array) {
     return array.indexOf(value) > -1;
   }
 
-  // If _schemas
-  if ($scope.topicName == "_schemas") {
-    var start = new Date().getTime();
-    var schemasPromise = kafkaZooFactory.consumeKafkaRest("json", "_schemas");
-    schemasPromise.then(function (allSchemas) {
+  // At start-up this controller consumes data
+  var start = new Date().getTime();
+  if (($scope.topicType == "json") || ($scope.topicType == "binary") || ($scope.topicType == "avro")) {
+    var dataPromise = kafkaZooFactory.consumeKafkaRest($scope.topicType, $scope.topicName);
+    dataPromise.then(function (allData) {
       var end = new Date().getTime();
-      $scope.aceString = allSchemas;
-      $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
+      $scope.aceString = allData;
+      $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
       $scope.showSpinner = false;
     }, function (reason) {
       $log.error('Failed: ' + reason);
     }, function (update) {
       $log.info('Got notification: ' + update);
     });
-  } else
-  // If connect topics -> Binary
-  if (isInArray($scope.topicName, ["connect-configs", "connect-offsets", "connect-status"])) {
-    var start = new Date().getTime();
-    var schemasPromise = kafkaZooFactory.consumeKafkaRest("binary", $scope.topicName);
-    schemasPromise.then(function (allSchemas) {
-      $scope.showSpinner = false;
+  } else {
+    $log.warn("We don't really know the data type of topic" + $scope.topicName + " so we will attempt all options..");
+    // If we don't know we need to guess by trying Avro -> JSon -> Binary
+    var dataPromiseAvro = kafkaZooFactory.consumeKafkaRest("avro", $scope.topicName);
+    dataPromiseAvro.then(function (allData) {
+      $log.info("Avro detected");
       var end = new Date().getTime();
-      $scope.aceString = allSchemas;
-      $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
-    }, function (reason) {
-      $log.error('Failed: ' + reason);
-    }, function (update) {
-      $log.info('Got notification: ' + update);
-    });
-  } else if ($scope.topicType == "avro") {
-    $log.debug("topicType == avro");
-    var start = new Date().getTime();
-    var schemasPromise = kafkaZooFactory.consumeKafkaRest("avro", $scope.topicName);
-    schemasPromise.then(function (allSchemas) {
+      $scope.topicType = "avro";
+      $scope.aceString = allData;
+      $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
       $scope.showSpinner = false;
-      var end = new Date().getTime();
-      $scope.aceString = allSchemas;
-      $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
     }, function (reason) {
-      $log.error('Failed: ' + reason);
-    }, function (update) {
-      $log.info('Got notification: ' + update);
+      $log.error('Failed with Avro - going to try with Json this time (' + reason + ')');
+      var dataPromiseAvro = kafkaZooFactory.consumeKafkaRest("json", $scope.topicName);
+      dataPromiseAvro.then(function (allData) {
+        $log.info("JSon detected");
+        var end = new Date().getTime();
+        $scope.topicType = "json";
+        $scope.aceString = allData;
+        $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
+        $scope.showSpinner = false;
+      }, function (reason) {
+        $log.error('Failed with JSon as well - going to try with Binary this time (' + reason + ')');
+        var dataPromiseAvro = kafkaZooFactory.consumeKafkaRest("binary", $scope.topicName);
+        dataPromiseAvro.then(function (allData) {
+          $log.info("Binary detected");
+          var end = new Date().getTime();
+          $scope.topicType = "binary";
+          $scope.aceString = allData;
+          $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
+          $scope.showSpinner = false;
+        }, function (reason) {
+          $log.error('Failed with Binary as well ?! :(  (' + reason + ')');
+        });
+      });
     });
   }
-
 
   //tODO
   $scope.myTopic = $filter('filter')($rootScope.topicsCache, {name: $scope.topicName}, true);

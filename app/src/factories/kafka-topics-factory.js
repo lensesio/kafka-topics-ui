@@ -52,7 +52,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
     // Oboe - stream data in (1000 rows)
     var totals = 0;
     var start = new Date().getTime();
-    var myUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + "?max_bytes=500000";
+    var myUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + "?max_bytes=150000";
     var allResults = [];
     $log.debug("Oboe-ing at " + myUrl);
     oboe({
@@ -198,7 +198,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
 
         });
         end = new Date().getTime();
-        $log.info("Fetched details of " + topicDetails.length + " Topics in [" + (end - start) + "] msec");
+        $log.info("[" + (end-start) + "] msec to fetch details of " + topicDetails.length + " topics");
         deferred.resolve(topicDetails);
       });
       // $scope.aceString = angular.toJson(response.data, true);

@@ -15,7 +15,6 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
       var topicDetailsPromise = kafkaZooFactory.getTopicDetails(normalTopics);
       topicDetailsPromise.then(function (topicDetails) {
         $rootScope.topicDetails = topicDetails;
-        $log.info("Got topic details");
       }, function (reason) {
         $log.error('Failed: ' + reason);
       }, function (update) {
