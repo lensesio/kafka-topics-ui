@@ -2,27 +2,30 @@ var ENV = {
   BASE_URL: "http://localhost:9000",
   KAFKA_REST: "https://kafka-rest-proxy.demo.landoop.com",
 
+  JSON_TOPICS: ["_schemas"],
+  BINARY_TOPICS: ["connect-configs", "connect-offsets", "connect-status"],
 
-    APPS : [
-      {
-          name : "Schema Registry",
-          enabled : true,
-          url : "###",
-          icon : "fa-file-text"
-      },
-      {
-          name : "Kafka Connectors",
-          enabled : false,
-          url : "###",
-          icon: "fa-random"
-      },
-      {
-          name : "Kafka Topics",
-          enabled : true,
-          url : "###",
-          icon : "fa-th-list"
-      }
-    ],
+
+  APPS: [
+    {
+      name: "Schema Registry",
+      enabled: true,
+      url: "###",
+      icon: "fa-file-text"
+    },
+    {
+      name: "Kafka Connectors",
+      enabled: false,
+      url: "###",
+      icon: "fa-random"
+    },
+    {
+      name: "Kafka Topics",
+      enabled: true,
+      url: "###",
+      icon: "fa-th-list"
+    }
+  ],
   // kafka-rest-proxy.demo.landoop.com
 
 // # Get a list of topics

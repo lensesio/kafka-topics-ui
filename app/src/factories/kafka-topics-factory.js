@@ -1,14 +1,6 @@
-kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $http, $log, $base64, $q, Oboe) {
+kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $http, $log, $base64, $q, Oboe, toastFactory) {
 
-  var last = {
-    bottom: false,
-    top: true,
-    left: false,
-    right: true
-  };
-
-  $rootScope.showCreateSubjectButton = true;
-  $rootScope.toastPosition = angular.extend({}, last);
+  // $rootScope.showCreateTopicButton = true;
 
   // Figure out it it's a control topic, or normal topic
   function isControlTopic(topicName) {
@@ -47,21 +39,20 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
     if (['avro', 'json', 'binary'].indexOf(messagetype) < 0) {
       $log.error("Unsupported message-type [" + messagetype + "]");
     }
-    var instance = "instance";
     var acceptMessageType = 'application/vnd.kafka.' + messagetype + '.v1+json';
     var getData = {
       method: 'GET',
-      url: ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/' + instance + '/topics/' + topicName,
+      url: ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName,
       headers: {'Accept': acceptMessageType}
     };
     //$log.debug(getData);
-    var curlGetAvroData = '  curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/' + instance + '/topics/' + topicName;
+    var curlGetAvroData = '  curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName;
     $log.debug(curlGetAvroData);
 
     // Oboe - stream data in (1000 rows)
     var totals = 0;
     var start = new Date().getTime();
-    var myUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/' + instance + '/topics/' + topicName +"?max_bytes=500000";
+    var myUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + "?max_bytes=500000";
     var allResults = [];
     $log.debug("Oboe-ing at " + myUrl);
     oboe({
@@ -69,33 +60,33 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
       headers: {"Accept": acceptMessageType}
     })
     /* For every array item ..
-      .node('!.*', function (values) {
-        allResults.push(values);
-        totals = totals + 1;
-        var resultingTextData = "";
-        if (messagetype == "binary") {
-          var data2 = angular.forEach(data, function (d) {
-            d.key = $base64.decode(values.key);
-            d.value = $base64.decode(values.value);
-          });
-          resultingTextData = angular.toJson(data2, true);
-        } else {
-          resultingTextData = angular.toJson(values, true);
-        }
-        allResults.push(resultingTextData);
-        // $scope.aceString = $scope.aceString +"\n" + values;
-        if (totals < 3) {
-          //  {"key":0,"value":{"itemID":6,"storeCode":"Ashford-New-Rents","count":100},"partition":0,"offset":1002760034}
-          //  [{"key":null,"value":{"name":"testUser"},"partition":0,"offset":0}]
-          $log.info(totals + " row => ", JSON.stringify(values));
-        }
-        if (totals == 1000) {
-          var end = new Date().getTime();
-          $log.info("[" + (end - start) + "] msec to fetch 1000 rows (now aborting)");
-          deferred.resolve(allResults);
-          this.abort();
-        }
-      })*/
+     .node('!.*', function (values) {
+     allResults.push(values);
+     totals = totals + 1;
+     var resultingTextData = "";
+     if (messagetype == "binary") {
+     var data2 = angular.forEach(data, function (d) {
+     d.key = $base64.decode(values.key);
+     d.value = $base64.decode(values.value);
+     });
+     resultingTextData = angular.toJson(data2, true);
+     } else {
+     resultingTextData = angular.toJson(values, true);
+     }
+     allResults.push(resultingTextData);
+     // $scope.aceString = $scope.aceString +"\n" + values;
+     if (totals < 3) {
+     //  {"key":0,"value":{"itemID":6,"storeCode":"Ashford-New-Rents","count":100},"partition":0,"offset":1002760034}
+     //  [{"key":null,"value":{"name":"testUser"},"partition":0,"offset":0}]
+     $log.info(totals + " row => ", JSON.stringify(values));
+     }
+     if (totals == 1000) {
+     var end = new Date().getTime();
+     $log.info("[" + (end - start) + "] msec to fetch 1000 rows (now aborting)");
+     deferred.resolve(allResults);
+     this.abort();
+     }
+     })*/
       .done(function (things) {
         var decodedData = "";
         if (messagetype == "binary") {
@@ -140,34 +131,6 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
   // Factory should return
   return {
 
-    sanitizePosition: function () {
-      var current = $rootScope.toastPosition;
-      if (current.bottom && last.top) current.top = false;
-      if (current.top && last.bottom) current.bottom = false;
-      if (current.right && last.left) current.left = false;
-      if (current.left && last.right) current.right = false;
-      last = angular.extend({}, current);
-    },
-    hideToast: function () {
-      $mdToast.hide();
-    },
-    showSimpleToast: function (message) {
-      $mdToast.show(
-        $mdToast.simple()
-          .textContent(message)
-          .position(this.getToastPosition())
-          .hideDelay(4000)
-      );
-    },
-    getToastPosition: function () {
-      this.sanitizePosition();
-
-      return Object.keys($rootScope.toastPosition)
-        .filter(function (pos) {
-          return $rootScope.toastPosition[pos];
-        })
-        .join(' ');
-    },
     getTopicList: function () { // Return (Normal-Topics,Control-Topics)
       var deferred = $q.defer();
       $log.debug('  curl ' + ENV.KAFKA_REST + '/topics');
@@ -241,10 +204,8 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
       // $scope.aceString = angular.toJson(response.data, true);
       return deferred.promise;
     },
-    // 3 step process for getting data off a kafka topic
-    // 1. Create a consumer for Avro data, starting at the beginning of the topic's log.
+    // 1. Create a consumer for Avro or Json or Binary data, starting at the beginning of the topic's log.
     // 2. Then consume some data from a topic, which is decoded, translated to JSON, and included in the response.
-    // The schema used for deserialization is fetched automatically from the schema registry.
     // 3. Finally, clean up.
     // [ avro | json | binary ]
     consumeKafkaRest: function (messagetype, topicName) {
@@ -262,7 +223,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
       } else if (messagetype == "binary") {
         messageContentType = 'application/vnd.kafka.binary.v1+json';
       } else {
-        $log.error("Unsupported type at consumeKafkaRest(messagetype)");
+        $log.error("Unsupported type at consumeKafkaRest " + messagetype);
       }
 
       var data = '{"name": "' + instance + '", "format": "' + messagetype + '", "auto.offset.reset": "smallest"}';
@@ -280,87 +241,72 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
       $log.debug(curlCreateConsumer);
 
       setTimeout(function () {
-        // EXECUTE-1
+        // Create a consumer and fetch data
         $http(postCreateConsumer)
           .then(
             function successCallback(response) {
-              // this callback will be called asynchronously when the response is available
               $log.info("Success in creating " + messagetype + " consumer " + JSON.stringify(response));
+              // Start fetching data
               var textDataPromise = startFetchingData(messagetype, topicName, consumer + "-" + messagetype);
               textDataPromise.then(function (data) {
-                // $log.info("Peiler got2 -> " + data);
+                //$log.info("Consumed data -> " + data);
                 deferred.resolve(data);
               }, function (reason) {
                 $log.error('Failed: ' + reason);
               }, function (update) {
                 $log.info('Got notification: ' + update);
               });
+              // Delete the consumer
+              var deleteMyConsumer = {
+                method: 'DELETE',
+                url: ENV.KAFKA_REST + '/consumers/' + consumer + '-' +  messagetype + '/instances/instance'
+              };
+              $http(deleteMyConsumer)
+                .then(
+                  function successCallback(response) {
+                    $log.info("Success in deleting consumer " + JSON.stringify(response));
+                  },
+                  function errorCallback(response) {
+                    $log.error("Error in deleting consumer : " + JSON.stringify(error));
+                  }
+                );
             },
             function errorCallback(response, statusText) {
               if (response.status == 409) {
                 $log.info("409 detected! " + response.data.message);
-                kafkaZooFactory.showSimpleToast(response.data.message);
-                //var textData = kafkaZooFactory.startFetchingData(messagetype, topicName, consumer + "-" + messagetype);
-                //$scope.aceString = textData;
+                toastFactory.showSimpleToast(response.data.message);
               }
             }
           );
       }, 10);
 
       return deferred.promise;
+    },
 
-
-      // EXECUTE-3
-      // $http(deleteMyAvroConsumer)
-      //   .then(
-      //     function successCallback(response) {
-      //       $log.info("Success in deleting avro consumer " + JSON.stringify(response));
-      //     },
-      //     function errorCallback(response) {
-      //       // called asynchronously if an error occurs
-      //       // or server returns response with an error status.
-      //       $log.error("Error in creating avro consumer : " + JSON.stringify(error));
-      //     }
-      //   )
-      // var deleteMyAvroConsumer = {
-      //   method: 'DELETE',
-      //   url: ENV.KAFKA_REST + '/consumers/rest_proxy_ui_consumer/instances/my_consumer_instance'
-      // };
-      //
-      // $log.debug(deleteMyAvroConsumer);
-      //$log.info("Success in creating avro consumer " + JSON.stringify(response));
+    getDataType: function (topicName) {
+      var dataType = {};
+      // Check if we know the topic data type a priory
+      if (ENV.JSON_TOPICS.indexOf(topicName) > -1) {
+        dataType = "json";
+      } else if (ENV.BINARY_TOPICS.indexOf(topicName) > -1) {
+        dataType = "binary";
+      } else {
+        angular.forEach($rootScope.topicDetails, function (detail) {
+          if (detail.name === topicName) {
+            angular.forEach(angular.fromJson($rootScope.schemas), function (schema) {
+              if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) {
+                //$log.info("FOUND YOU !! " + topicName);
+                dataType = "avro";
+              }
+            });
+          }
+        });
+      }
+      if (dataType == "") {
+        $log.warn("Could not find the message type of topic [" + topicName + "]");
+      }
+      return dataType;
     }
-
-    //   var data = '{"name": "my_consumer_instance", "format": "avro", "auto.offset.reset": "smallest"}';
-    //   var curlCreateConsumer = 'curl -X POST -H "Content-Type: application/vnd.kafka.v1+json" \ ' +
-    //     "--data '" + data + "' \ " +
-    //     ENV.KAFKA_REST + '/consumers/rest_proxy_ui_consumer';
-    //   $log.debug(curlCreateConsumer);
-    //
-    //   // EXECUTE-1
-    //   $http(postCreateAvroConsumer)
-    //     .then(
-    //       function successCallback(response) {
-    //         // this callback will be called asynchronously when the response is available
-    //         $log.info("Success in creating avro consumer " + JSON.stringify(response));
-    //       },
-    //       function errorCallback(response) {
-    //         $log.info("Error in deleting avro consumer : " + JSON.stringify(response) +
-    //           "\n data: " + JSON.stringify(response.data) +
-    //           "\n status: " + response.status +
-    //           "\n headers: " + response.headers +
-    //           "\n config: " + JSON.stringify(response.headers) +
-    //           "\n statusText: " + response.statusText);
-    //       }
-    //     );
-    //
-    //   // return $http(postCreateAvroConsumer)
-    //   //   .then(function (response) {
-    //   //     return response.data;
-    //   //   }, function (response) {
-    //   //     return response;
-    //   //   });
-    // }
 
   }
 });

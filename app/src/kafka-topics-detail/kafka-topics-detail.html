@@ -56,7 +56,8 @@
               <tr>
                 <th>Key</th>
                 <th>Value</th>
-                <th>-</th>
+                <th>Partition</th>
+                <th>Offset</th>
               </tr>
               <!--<th ng-show="row.key != undefined" ng-repeat="row in rows">-->
               <!--{{row.key.subject}}-->
@@ -64,10 +65,12 @@
               </tr>
               </thead>
               <tbody>
-              <tr ng-repeat="i in subjectObject.Schema.fields">
-                <td>{{i.name}}</td>
-                <td>{{i.type}}</td>
-                <td>{{i.default}}</td>
+              AA->{{rows}}
+              <tr ng-repeat="i in rows">
+                <td>{{i.key}}</td>
+                <td>{{i.value}}</td>
+                <td>{{i.partition}}</td>
+                <td>{{i.offset}}</td>
                 <td class="md-card-image md-caption">{{i.doc}}</td>
               </tr>
               </tbody>

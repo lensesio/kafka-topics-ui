@@ -4,12 +4,10 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   $scope.topicName = $routeParams.topicName;
   $scope.showSpinner = true;
 
-  if ($scope.topicName == "_schemas") {
-    $scope.topicType = "json";
-  } else if (isInArray($scope.topicName, ["connect-configs", "connect-offsets", "connect-status"])) {
-    $scope.topicType = "binary";
-  }
+  $scope.topicType = kafkaZooFactory.getDataType($scope.topicName);
 
+  $log.debug("topicType="+JSON.stringify($scope.topicType));
+  // If value exists in an array
   function isInArray(value, array) {
     return array.indexOf(value) > -1;
   }
@@ -43,14 +41,22 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     }, function (update) {
       $log.info('Got notification: ' + update);
     });
+  } else if ($scope.topicType == "avro") {
+    $log.debug("topicType == avro");
+    var start = new Date().getTime();
+    var schemasPromise = kafkaZooFactory.consumeKafkaRest("avro", $scope.topicName);
+    schemasPromise.then(function (allSchemas) {
+      $scope.showSpinner = false;
+      var end = new Date().getTime();
+      $scope.aceString = allSchemas;
+      $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
+    }, function (reason) {
+      $log.error('Failed: ' + reason);
+    }, function (update) {
+      $log.info('Got notification: ' + update);
+    });
   }
 
-  var topicsMap = {};
-  topicsMap["_schemas"] = "json";
-  topicsMap["connect-configs"] = "binary";
-  topicsMap["connect-offsets"] = "binary";
-  topicsMap["connect-status"] = "binary";
-  // $log.info(topicsMap["_schemas"]);
 
   //tODO
   $scope.myTopic = $filter('filter')($rootScope.topicsCache, {name: $scope.topicName}, true);
@@ -61,10 +67,6 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   $scope.topicsOn = true;
   $scope.zookeeperInfo = "zookeeper.landoop.com.info.goes.here";
   $scope.brokers = ENV.BROKERS;
-
-  $scope.isAvro = false;
-  $scope.isJson = false;
-  $scope.isBinary = false;
 
   $scope.changeView = function () {
     $scope.topicsOn = !$scope.topicsOn;
@@ -80,7 +82,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     var dataPromise = kafkaZooFactory.consumeKafkaRest(messagetype, topicName);
     dataPromise.then(function (data) {
       $scope.aceString = data;
-      $scope.rows = data;
+      $rootScope.rows = angular.toJson(JSON.stringify(data));
       $scope.showSpinner = false;
     }, function (reason) {
       $log.error('Failed: ' + reason);

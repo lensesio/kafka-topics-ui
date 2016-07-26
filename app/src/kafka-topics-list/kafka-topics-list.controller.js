@@ -1,4 +1,4 @@
-kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $routeParams, $mdToast, $log, kafkaZooFactory) {
+kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $routeParams, $mdToast, $log, kafkaZooFactory, toastFactory) {
 
   $log.debug("KafkaTopicsListCtrl - initializing");
   $mdToast.hide();
@@ -7,7 +7,7 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
   var topicsPromise = kafkaZooFactory.getTopicList();
   topicsPromise.then(function (normalTopics, controlTopics) {
     if (normalTopics.toString().indexOf("Error in getting topics from kafka-rest") > -1) {
-      kafkaZooFactory.showSimpleToast("Error in getting topics from kafka-rest");
+      toastFactory.showSimpleToast("Error in getting topics from kafka-rest");
     } else {
       $log.debug('Normal topics = ' + JSON.stringify(normalTopics));
       $scope.topics = normalTopics;
@@ -25,7 +25,7 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
     }
   }, function (reason) {
     $log.error('Failed: ' + reason);
-    kafkaZooFactory.showSimpleToast("No connectivity. Could not get topic names");
+    toastFactory.showSimpleToast("No connectivity. Could not get topic names");
   }, function (update) {
     $log.info('Got notification: ' + update);
   });
@@ -63,25 +63,7 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
   };
 
   $scope.getDataType = function (topicName) {
-    var peiler = {};
-    angular.forEach($rootScope.topicDetails, function (detail) {
-      if (detail.name === topicName) {
-        // $log.debug(detail);
-        // $log.debug("++++ " + $rootScope.schemas);
-        angular.forEach(angular.fromJson($rootScope.schemas), function (schema) {
-          $log.info("SSS=> " + JSON.stringify(schema));
-          if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) {
-            $log.info("FOUND YOU !! " + topicName);
-            peiler="avro";
-          }
-          // $log.info(schema);
-          // if (schema.)
-        });
-        //   peiler = detail.configs;
-      }
-      // $rootScope.schemas = allSchemas;
-    });
-    return peiler;
+    return kafkaZooFactory.getDataType(topicName);
   };
 
   // $scope.topics = ENV.topics;
