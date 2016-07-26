@@ -6,6 +6,13 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
 
   $scope.topicType = kafkaZooFactory.getDataType($scope.topicName);
 
+  $scope.editor;
+
+  $scope.aceLoaded = function (_editor) {
+    $scope.editor = _editor;
+    $scope.editor.$blockScrolling = Infinity;
+  };
+
   $log.debug("topicType="+JSON.stringify($scope.topicType));
   // If value exists in an array
   function isInArray(value, array) {

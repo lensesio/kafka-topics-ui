@@ -204,6 +204,31 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
       // $scope.aceString = angular.toJson(response.data, true);
       return deferred.promise;
     },
+    getDataType: function (topicName) {
+      var dataType = {};
+      // Check if we know the topic data type a priory
+      if (ENV.JSON_TOPICS.indexOf(topicName) > -1) {
+        dataType = "json";
+      } else if (ENV.BINARY_TOPICS.indexOf(topicName) > -1) {
+        dataType = "binary";
+      } else {
+        // If topicDetails are not available wait
+        angular.forEach($rootScope.topicDetails, function (detail) {
+          if (detail.name === topicName) {
+            angular.forEach(angular.fromJson($rootScope.schemas), function (schema) {
+              if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) {
+                //$log.info("FOUND YOU !! " + topicName);
+                dataType = "avro";
+              }
+            });
+          }
+        });
+      }
+      if (dataType == "") {
+        $log.warn("Could not find the message type of topic [" + topicName + "]");
+      }
+      return dataType;
+    },
     // 1. Create a consumer for Avro or Json or Binary data, starting at the beginning of the topic's log.
     // 2. Then consume some data from a topic, which is decoded, translated to JSON, and included in the response.
     // 3. Finally, clean up.
@@ -261,12 +286,14 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
                 method: 'DELETE',
                 url: ENV.KAFKA_REST + '/consumers/' + consumer + '-' +  messagetype + '/instances/instance'
               };
+              var start = new Date().getTime();
               $http(deleteMyConsumer)
                 .then(
                   function successCallback(response) {
-                    $log.info("Success in deleting consumer " + JSON.stringify(response));
+                    var end = new Date().getTime();
+                    $log.info("[" + (end-start) + "] msec to delete the consumer " + JSON.stringify(response));
                   },
-                  function errorCallback(response) {
+                  function errorCallback(error) {
                     $log.error("Error in deleting consumer : " + JSON.stringify(error));
                   }
                 );
@@ -281,31 +308,6 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
       }, 10);
 
       return deferred.promise;
-    },
-
-    getDataType: function (topicName) {
-      var dataType = {};
-      // Check if we know the topic data type a priory
-      if (ENV.JSON_TOPICS.indexOf(topicName) > -1) {
-        dataType = "json";
-      } else if (ENV.BINARY_TOPICS.indexOf(topicName) > -1) {
-        dataType = "binary";
-      } else {
-        angular.forEach($rootScope.topicDetails, function (detail) {
-          if (detail.name === topicName) {
-            angular.forEach(angular.fromJson($rootScope.schemas), function (schema) {
-              if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) {
-                //$log.info("FOUND YOU !! " + topicName);
-                dataType = "avro";
-              }
-            });
-          }
-        });
-      }
-      if (dataType == "") {
-        $log.warn("Could not find the message type of topic [" + topicName + "]");
-      }
-      return dataType;
     }
 
   }
