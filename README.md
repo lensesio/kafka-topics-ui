@@ -2,7 +2,7 @@
 
 [![release](http://github-release-version.herokuapp.com/github/landoop/schema-registry-ui/release.svg?style=flat)](https://github.com/landoop/schema-registry-ui/releases/latest)
 
-Web UI for viewing Kafka topics using Confluent's Kafka Rest built in angular - https://github.com/confluentinc/kafka-rest
+Web UI for viewing Kafka topics using the Kafka Rest Proxy built in angular - https://github.com/confluentinc/kafka-rest
 
   <a href="http://kafka-topics-ui.landoop.com">
     <img src="http://landoop.github.io/schema-registry-ui/demo-button.jpg" width="75"/>
@@ -10,11 +10,13 @@ Web UI for viewing Kafka topics using Confluent's Kafka Rest built in angular - 
 
 ### Features
 
-* Schema registration and compatibility checks
-* Generate CURL commands
-* Search Subjects & Schemas
-* Avro + Table schema views
-* Routed urls
+* Viewing Avro, JSon and Binary Kafka topics
+* Table and JSon views
+* Download data from Kafka topics
+* Schema Registry UI integration
+* Stream from beginning or real-time capturing
+* Automatically topic data identification (Avro|Json|Binary)
+* Identify and visualize topics with config overrides
 
 ## Preview
 
@@ -22,7 +24,7 @@ Web UI for viewing Kafka topics using Confluent's Kafka Rest built in angular - 
 
 ## Configuration
 
-* By default `schema-registry-ui` points to the schema-registry at http://localhost:8081 To point it to a different schema-registry, update `app/src/env.js`
+* By default `kafka-topics-ui` points to the kafka-rest server at http://localhost:8081 To point it to a different schema-registry, update `app/src/env.js`
 * Enable CORS in the schema-registry by adding to `/opt/confluent-2.0.1/etc/schema-registry/schema-registry.properties` the following and restart the service
 
 ```

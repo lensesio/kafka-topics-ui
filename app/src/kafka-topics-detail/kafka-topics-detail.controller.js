@@ -1,4 +1,4 @@
-kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $sce, $log, $mdToast, $mdDialog, $http, $base64, kafkaZooFactory) {
+kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, $base64, kafkaZooFactory) {
 
   $log.info("ViewTopicCtrl - initializing for topic : " + $routeParams.topicName);
   $scope.topicName = $routeParams.topicName;
@@ -89,7 +89,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     } else if ($scope.topicName == "connect-status") {
       $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
     } else {
-      $scope.customMessage = "Topic holds <b></b> data";
+      $scope.customMessage = "Topic with data";
     }
   }
 
@@ -119,7 +119,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       } else {
         // if (row.value.toString().indexOf("\":") != -1) {
         angular.forEach(row.value, function (value, key) {
-          $log.info("Key-Value = " + key + " value=" + value);
+          // $log.info("Key-Value = " + key + " value=" + value);
           if (!isInArray(key, allTopicKeys)) {
             allTopicKeys.push(key);
           }
@@ -152,15 +152,14 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       } else {
         x.a1 = [];
         angular.forEach(row.value, function (value, key) {
-          $log.info("Key-Value = " + key + " value=" + value);
+          // $log.info("Key-Value = " + key + " value=" + value);
           x.a1.push(value);
           // }
         });
       }
-
       allTopicValues.push(x);
     });
-    $log.debug("XXX " + JSON.stringify(allTopicValues));
+    // $log.debug("XXX " + JSON.stringify(allTopicValues));
     $scope.allTopicValues = allTopicValues;
     return allTopicValues;
   };

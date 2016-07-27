@@ -40,19 +40,19 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
       $log.error("Unsupported message-type [" + messagetype + "]");
     }
     var acceptMessageType = 'application/vnd.kafka.' + messagetype + '.v1+json';
-    var getData = {
-      method: 'GET',
-      url: ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName,
-      headers: {'Accept': acceptMessageType}
-    };
+    // var getData = {
+    //   method: 'GET',
+    //   url: ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName,
+    //   headers: {'Accept': acceptMessageType}
+    // };
     //$log.debug(getData);
-    var curlGetAvroData = '  curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName;
+    var curlGetAvroData = '  curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + ENV.MAX_BYTES;
     $log.debug(curlGetAvroData);
 
     // Oboe - stream data in (1000 rows)
     var totals = 0;
     var start = new Date().getTime();
-    var myUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + "?max_bytes=5000";
+    var myUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + ENV.MAX_BYTES;
     var allResults = [];
     $log.debug("Oboe-ing at " + myUrl);
     oboe({

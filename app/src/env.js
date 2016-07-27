@@ -2,6 +2,7 @@ var ENV = {
   BASE_URL: "http://localhost:9000",
   KAFKA_REST: "https://kafka-rest-proxy.demo.landoop.com",
   SCHEMA_REGISTRY_UI: "http://schema-registry-ui.landoop.com",
+  MAX_BYTES: "?max_bytes=50000",
 
   JSON_TOPICS: ["_schemas"],
   BINARY_TOPICS: ["connect-configs", "connect-offsets", "connect-status", "_confluent-controlcenter", "__confluent.support.metr"],
@@ -10,7 +11,7 @@ var ENV = {
     {
       name: "Schema Registry",
       enabled: true,
-      url: "###",
+      url: "http://schema-registry-ui.landoop.com",
       icon: "fa-file-text"
     },
     {
@@ -18,12 +19,6 @@ var ENV = {
       enabled: false,
       url: "###",
       icon: "fa-random"
-    },
-    {
-      name: "Kafka Topics",
-      enabled: true,
-      url: "###",
-      icon: "fa-th-list"
     }
   ],
 
