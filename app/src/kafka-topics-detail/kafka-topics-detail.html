@@ -64,14 +64,6 @@
         <md-tab-body>
           <md-content class="md-padding">
             <md-card>
-              <md-card-header>
-                <md-card-avatar>
-                  <md-icon class="md-avatar-icon"
-                           style="padding:0;background-color:white"></md-icon>
-                  <!--&lt;!&ndash;md-svg-icon="src/assets/icons/avro.svg"-->
-                </md-card-avatar>
-              </md-card-header>
-              <!--class="md-card-image"-->
               <md-card-content style="padding:0">
                 <md-menu ng-show="apps">
                   <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)"
@@ -89,12 +81,8 @@
                     </md-menu-item>
                   </md-menu-content>
                 </md-menu>
-
-                <p class="md-card-image md-caption">{{subjectObject.Schema.doc}}</p>
               </md-card-content>
-
             </md-card>
-            <!--<br><br>-->
             <table class="table table-bordered table-striped table-hover">
               <thead>
               <tr>
@@ -132,11 +120,60 @@
               </tr>
               </tbody>
             </table>
-            <!--A {{row}}-->
+          </md-content>
+        </md-tab-body>
+      </md-tab>
+      <!-- Custom rendering for connect-configs topic -->
+      <md-tab data-ng-if="topicName=='connect-configs'">
+        <md-tab-label>
+          <i class="fa fa-table" aria-hidden="true"></i> Table
+        </md-tab-label>
+        <md-tab-body>
+          <md-content class="md-padding">
+            <md-card>
+              <md-card-content style="padding:0">
+                <md-menu ng-show="apps">
+                  <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                  </md-button>
+                  <md-menu-content width="5">
+                  </md-menu-content>
+                </md-menu>
+              </md-card-content>
+
+            </md-card>
+            <!-- Connectors -->
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+              <tr>
+                <th class="text-center">Offset</th>
+                <th class="text-center">Key</th>
+                <th class="text-center">Partition</th>
+                <th class="text-center">Name</th>
+                <th class="text-center">Topic</th>
+                <th class="text-center">Tasks Max</th>
+                <th class="text-center">File</th>
+                <th class="text-center">Connector Class</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="i in getConnectors(rows,'connector-') track by $index">
+                <td class="text-center">{{i.offset}}</td>
+                <td class="text-center"><b>{{i.key}}</b></td>
+                <td class="text-center">{{i.partition}}</td>
+                <td class="text-center">{{getConnector(i).name}}</td>
+                <td class="text-center">{{getConnector(i).topic}}</td>
+                <td class="text-center">{{getConnector(i).tasksmax}}</td>
+                <td class="text-center">{{getConnector(i).file}}</td>
+                <td class="text-center">{{getConnector(i).class}}</td>
+              </tr>
+              </tbody>
+            </table>
 
           </md-content>
         </md-tab-body>
       </md-tab>
+
       <md-tab md-on-select="onTabSelected(1)" label="Data">
         <div id="left"
              ng-model="aceString" ng-readonly="true" ui-ace="{

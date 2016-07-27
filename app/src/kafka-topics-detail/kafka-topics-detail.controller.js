@@ -81,9 +81,40 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   function setCustomMessage() {
     if ($scope.topicName == "_schemas") {
       $scope.customMessage = "Topic <b>_schemas</b> holds <b>6</b> registered schemas in the schema-registry"
+    } else if ($scope.topicName == "connect-configs") {
+      $scope.customMessage = "Topic <b>connect-configs</b> holds <b>6</b> connector configurations"
     }
   }
 
+  // text can be 'connector-' 'task-' 'commit-'
+  $scope.getConnectors = function (rows, search) {
+    var defaultValue = [];
+    angular.forEach(rows, function (row) {
+      if (row.key.indexOf(search) == 0) {
+        defaultValue.push(row);
+      }
+    });
+    return (defaultValue);
+  };
+
+  $scope.getConnector = function (row) {
+    var data = JSON.parse(row.value).properties;
+    var topics = "";
+    if (data.topic != null) {
+      topics = topics + data.topic;
+    } else if (data.topics != null) {
+      topics = topics + data.topics;
+    }
+    // TODO: This run's 10ns of times ! $log.error(data);
+    var a = {
+      name: data.name,
+      topic: topics,
+      tasksmax: data['tasks.max'],
+      file: data.file,
+      class: data['connector.class']
+    };
+    return a;
+  };
 
   // At start-up this controller consumes data
   var start = new Date().getTime();
