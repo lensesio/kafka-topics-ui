@@ -1,4 +1,4 @@
-kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $http, $base64, kafkaZooFactory) {
+kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, $base64, kafkaZooFactory) {
 
   $log.info("ViewTopicCtrl - initializing for topic : " + $routeParams.topicName);
   $scope.topicName = $routeParams.topicName;
@@ -11,6 +11,65 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   $scope.aceLoaded = function (_editor) {
     $scope.editor = _editor;
     $scope.editor.$blockScrolling = Infinity;
+  };
+
+  $scope.isSchemaLong = function (schema) {
+    return ((schema != null) && (schema.length >= 42))
+  };
+
+  $scope.getSchemaRegistryUrl = function (subject, version) {
+    return ENV.SCHEMA_REGISTRY_UI + "/#/subject/" + subject + "/version/" + version;
+  };
+
+  $scope.getData = function (topicName) {
+    $log.info("Download requested for " + $scope.aceString.length + " bytes ");
+    var json = $scope.aceString;
+    var blob = new Blob([json], {type: "application/json;charset=utf-8;"});
+    var downloadLink = angular.element('<a></a>');
+    downloadLink.attr('href', window.URL.createObjectURL(blob));
+    downloadLink.attr('download', topicName + '.json');
+    downloadLink[0].click();
+  };
+
+  // DIALOG //////
+  var originatorEv;
+
+  $scope.openMenu = function ($mdOpenMenu, ev) {
+    originatorEv = ev;
+    $mdOpenMenu(ev);
+  };
+
+  $scope.notificationsEnabled = true;
+  $scope.toggleNotifications = function () {
+    $scope.notificationsEnabled = !$scope.notificationsEnabled;
+  };
+
+  $scope.streamFromBeginning = function () {
+    $mdDialog.show(
+      $mdDialog.alert()
+        .targetEvent(originatorEv)
+        .clickOutsideToClose(true)
+        .parent('body')
+        .title('Stream from beginning of topic')
+        .textContent('It will take a few moments ...  Have a cookie!')
+        .ok('That was easy')
+    );
+
+    originatorEv = null;
+  };
+
+  $scope.streamInRealTime = function () {
+    $log.info("Streaming in real time");
+    // This never happens.
+  };
+  ///////////////////////
+
+  $scope.getShort = function (schema) {
+    if (schema == null) {
+      return "";
+    } else {
+      return schema.substring(0, 42);
+    }
   };
 
   $log.debug("topicType=" + JSON.stringify($scope.topicType));
@@ -26,6 +85,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     dataPromise.then(function (allData) {
       var end = new Date().getTime();
       $scope.aceString = allData;
+      $scope.rows = JSON.parse(allData);
       $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
       $scope.showSpinner = false;
     }, function (reason) {
@@ -51,6 +111,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
                 var end = new Date().getTime();
                 $scope.topicType = "binary";
                 $scope.aceString = allData;
+                $scope.rows = allData;
                 $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
                 $scope.showSpinner = false;
               }, function (reason) {
@@ -61,6 +122,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
               var end = new Date().getTime();
               $scope.topicType = "json";
               $scope.aceString = allData;
+              $scope.rows = allData;
               $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
               $scope.showSpinner = false;
             }
@@ -71,6 +133,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
         var end = new Date().getTime();
         $scope.topicType = "avro";
         $scope.aceString = allData;
+        $scope.rows = allData;
         $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
         $scope.showSpinner = false;
       }
@@ -102,7 +165,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     var dataPromise = kafkaZooFactory.consumeKafkaRest(messagetype, topicName);
     dataPromise.then(function (data) {
       $scope.aceString = data;
-      $rootScope.rows = angular.toJson(JSON.stringify(data));
+      $scope.rows = data;
       $scope.showSpinner = false;
     }, function (reason) {
       $log.error('Failed: ' + reason);

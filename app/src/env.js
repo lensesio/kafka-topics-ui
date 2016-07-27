@@ -1,10 +1,10 @@
 var ENV = {
   BASE_URL: "http://localhost:9000",
   KAFKA_REST: "https://kafka-rest-proxy.demo.landoop.com",
+  SCHEMA_REGISTRY_UI: "http://schema-registry-ui.landoop.com",
 
   JSON_TOPICS: ["_schemas"],
-  BINARY_TOPICS: ["connect-configs", "connect-offsets", "connect-status"],
-
+  BINARY_TOPICS: ["connect-configs", "connect-offsets", "connect-status", "_confluent-controlcenter", "__confluent.support.metr"],
 
   APPS: [
     {
@@ -26,12 +26,7 @@ var ENV = {
       icon: "fa-th-list"
     }
   ],
-  // kafka-rest-proxy.demo.landoop.com
 
-// # Get a list of topics
-// $ curl http://kafka-rest-proxy.demo.landoop.com/topics
-//   ["test","test2","test3"]
-//
 // # Get info about one topic
 // $ curl http://kafka-rest-proxy.demo.landoop.com/topics/__consumer_offsets
 // {"name":"connect-test","configs":{},"partitions":[{"partition":0,"leader":0,"replicas":[{"broker":0,"leader":true,"in_sync":true}]},{"partition":1,"leader":0,"replicas":[{"broker":1,"leader":true,"in_sync":true}]}]}

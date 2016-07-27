@@ -9,6 +9,10 @@ html, body {
     height: 460px;
 }
 
+.ace_gutter {
+    background: #f9f9f9 !important;
+}
+
 header.header {
     background-color: #217ebc;
     min-height: 50px;
@@ -184,4 +188,14 @@ md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
 
 .md-button.light-blue {
     background-color: rgba(74, 163, 223, 1);
+}
+
+md-chips.md-default-theme .md-chips, md-chips .md-chips {
+    box-shadow: 0 0px;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    vertical-align: middle;
 }

@@ -194,7 +194,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
       // Check if we know the topic data type a priory
       if (ENV.JSON_TOPICS.indexOf(topicName) > -1) {
         dataType = "json";
-      } else if (ENV.BINARY_TOPICS.indexOf(topicName) > -1) {
+      } else if (ENV.BINARY_TOPICS.indexOf(topicName.substring(0,24)) > -1) {
         dataType = "binary";
       } else {
         // If topicDetails are not available wait

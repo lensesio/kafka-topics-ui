@@ -1,4 +1,4 @@
-<md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
+<md-card style="min-height:700px;" md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
 
   <md-toolbar style="background-color: #ededed; color:#000;">
     <h3 class="md-toolbar-tools" style="margin-top:10px;text-align:center;">
@@ -9,69 +9,130 @@
   <md-content flex layout-padding>
     <div us-spinner="{radius:10, width:3, length: 5}" ng-show="showSpinner" style="height:100%"></div>
     <md-tabs ng-hide="showSpinner" md-dynamic-height md-border-bottom md-selected="tabIndex">
-      <md-tab label="Data">
-        <div id="left"
-             ng-model="aceString" ng-readonly="true" ui-ace="{
-                          useWrapMode: true,
-                          showGutter: false,
-                          theme:'chrome',
-                          mode: 'json',
-                          firstLineNumber: 1,
-                          onLoad: aceLoaded,
-                          onChange: aceChanged
-                          }"></div>
-      </md-tab>
-      <md-tab md-on-select="onTabSelected(1)">
+      <md-tab>
         <md-tab-label>
           <i class="fa fa-table" aria-hidden="true"></i> Table
         </md-tab-label>
         <md-tab-body>
           <md-content class="md-padding">
-            <!--put table here-->
-            <!-- 3a. data table -->
             <md-card>
               <md-card-header>
                 <md-card-avatar>
                   <md-icon class="md-avatar-icon"
                            style="padding:0;background-color:white"></md-icon>
-                  <!--md-svg-icon="src/assets/icons/avro.svg"-->
+                  <!--&lt;!&ndash;md-svg-icon="src/assets/icons/avro.svg"-->
 
                 </md-card-avatar>
                 <md-card-header-text>
-                  <span class="md-title"><b>type:</b> {{subjectObject.Schema.type}}</span>
-                  <span class="md-title"><b>name:</b> {{subjectObject.Schema.name}}</span>
-                  <span class="md-title"><b>namespace:</b> {{subjectObject.Schema.namespace}}</span>
+                  <span class="md-title">Topic <b>_schemas</b> holds <b>{{rows.length}}</b> registered schemas in the schema-registry.</span>
                 </md-card-header-text>
+
+                <md-button
+                  download="true"
+                  ng-click="getData(topicName)"
+                  md-ink-ripple=""
+                  ng-show="true"
+                  class="md-raised md-primary md-button md-ink-ripple"
+                  style="background-color: rgb(65, 191, 236);color: white;"
+                  type="button"
+                  aria-label="new topic"
+                  aria-hidden="false">Download
+                  <div class="md-ripple-container"></div>
+                </md-button>
+
+                <md-menu style="padding:0">
+                  <md-button
+                    md-ink-ripple=""
+                    ng-show="true"
+                    class="md-raised md-primary md-button md-ink-ripple"
+                    style="background-color: rgb(65, 191, 236);color: white;"
+                    type="button"
+                    aria-label="new topic"
+                    ng-click="openMenu($mdOpenMenu, $event)"
+                    aria-hidden="false">Stream data
+                    <div class="md-ripple-container"></div>
+                  </md-button>
+                  <!--<md-button aria-label="Open phone interactions menu"-->
+                             <!--class="md-icon-button"-->
+                             <!--style="color:white;width: 100%;min-width: 100px;padding:0;"-->
+                  <!--<md-icon md-menu-origin="">STREAM</md-icon>-->
+                  <!--</md-button>-->
+                  <md-menu-content width="4">
+                    <md-menu-item>
+                      <md-button ng-click="streamFromBeginning($event)">
+                        <md-icon md-menu-align-target=""></md-icon>
+                        Stream from beginning
+                      </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                      <md-button ng-click="streamInRealTime()">
+                        <md-icon></md-icon>
+                        Stream in real-time
+                      </md-button>
+                    </md-menu-item>
+                  </md-menu-content>
+                </md-menu>
+
               </md-card-header>
               <!--class="md-card-image"-->
-              <md-card-content>
-                </div>
+              <md-card-content style="padding:0">
+
+                <md-menu ng-show="apps">
+                  <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)"
+                             ng-disabled="false">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                  </md-button>
+                  <md-menu-content width="5">
+                    <md-menu-item ng-repeat="app in apps">
+                      <md-button ng-if="app.enabled" ng-href="{{app.url}}">
+                        <md-icon style="margin:6px 10px 0 0">
+                          <i class="fa {{app.icon}}" aria-hidden="true"></i>
+                        </md-icon>
+                        <b ng-show="app.name.length > 0">{{app.name}}</b>
+                      </md-button>
+                    </md-menu-item>
+                  </md-menu-content>
+                </md-menu>
+
                 <p class="md-card-image md-caption">{{subjectObject.Schema.doc}}</p>
               </md-card-content>
 
             </md-card>
-            <br><br>
+            <!--<br><br>-->
             <table class="table table-bordered table-striped table-hover">
               <thead>
               <tr>
-                <th>Key</th>
-                <th>Value</th>
-                <th>Partition</th>
-                <th>Offset</th>
-              </tr>
-              <!--<th ng-show="row.key != undefined" ng-repeat="row in rows">-->
-              <!--{{row.key.subject}}-->
-              <!--</th>-->
+                <th class="text-center">Offset</th>
+                <th class="text-center">Subject</th>        <!-- kv. -->
+                <th class="text-center">Partition</th>
+                <th class="text-center">Magic</th>     <!-- k. -->
+                <th class="text-center">Type</th>      <!-- k. -->
+                <th class="text-center">Version</th> <!-- kv. -->
+                <th class="text-center">Data</th>           <!-- v. -->
               </tr>
               </thead>
               <tbody>
-              AA->{{rows}}
-              <tr ng-repeat="i in rows">
-                <td>{{i.key}}</td>
-                <td>{{i.value}}</td>
-                <td>{{i.partition}}</td>
-                <td>{{i.offset}}</td>
-                <td class="md-card-image md-caption">{{i.doc}}</td>
+              <!--AA->{{rows}}-->
+              <tr ng-repeat="i in rows track by $index">
+                <td class="text-center">{{i.offset}}</td>
+                <td class="text-center"><b>{{i.key.subject}}</b></td>
+                <td class="text-center">{{i.partition}}</td>
+                <td class="text-center">{{i.key.magic}}</td>
+                <td class="text-center">{{i.key.keytype}}</td>
+                <td class="text-center">{{i.value.version}}</td>
+                <td class="text-center" ng-show="isSchemaLong(i.value.schema)">
+                  <a md-ink-ripple=""
+                     ng-show="true"
+                     ng-href="{{getSchemaRegistryUrl(i.key.subject,i.value.version)}}"
+                     target="_blank"
+                     class="md-raised md-primary md-button md-ink-ripple"
+                     style="background-color: rgb(65, 191, 236);color: white;margin:0"
+                     type="button" aria-label="new topic"
+                     aria-hidden="false">View
+                    <div class="md-ripple-container"></div>
+                  </a>
+                </td>
+                <td class="text-center" ng-show="!isSchemaLong(i.value.schema)">{{i.value.schema}}</td>
               </tr>
               </tbody>
             </table>
@@ -80,32 +141,28 @@
           </md-content>
         </md-tab-body>
       </md-tab>
+      <md-tab md-on-select="onTabSelected(1)" label="Data">
+        <div id="left"
+             ng-model="aceString" ng-readonly="true" ui-ace="{
+                          useWrapMode: true,
+                          showGutter: true,
+                          theme:'chrome',
+                          mode: 'json',
+                          firstLineNumber: 1,
+                          onLoad: aceLoaded,
+                          onChange: aceChanged
+                          }"></div>
+      </md-tab>
     </md-tabs>
     <div>
     </div>
   </md-content>
+
+  <!--
   <div layout="row" width="50%">
     <md-button class="md-raised" ng-click='consumeKafkaRest("avro", topicName);'>get avro</md-button>
     <md-button class="md-raised" ng-click='consumeKafkaRest("json", topicName);'>get json</md-button>
     <md-button class="md-raised" ng-click='consumeKafkaRest("binary", topicName);'>get binary</md-button>
   </div>
-
+  -->
 </md-card>
-
-
-<!--<div class="row" style="padding-bottom:20px;">-->
-<!--<div class="btn-toolbar" role="toolbar" style="margin-left: 5px;">-->
-
-<!--&lt;!&ndash; 1. subject-name &ndash;&gt;-->
-<!--<div style="padding-top: 5px;margin-left: 10px;margin-right: 10px;float: left;min-width:250px;">-->
-<!--<b>Topic:</b> {{topicName}}-->
-<!--</div>-->
-
-<!--<button ng-click='consumeKafkaRest("avro", topicName);'>get avro</button>-->
-<!--<button ng-click='consumeKafkaRest("json", topicName);'>get json</button>-->
-<!--<button ng-click='consumeKafkaRest("binary", topicName);'>get binary</button>-->
-
-
-<!--</div>-->
-
-<!--</div> &lt;!&ndash; end if selected subject &ndash;&gt;-->
