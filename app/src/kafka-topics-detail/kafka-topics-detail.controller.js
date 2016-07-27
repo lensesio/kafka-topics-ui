@@ -88,6 +88,8 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       $scope.customMessage = "Topic <b>connect-offsets</b> holds the offsets of your active connectors. Displaying <b>" + rows.length + "</b> rows";
     } else if ($scope.topicName == "connect-status") {
       $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
+    } else {
+      $scope.customMessage = "Topic holds <b></b> data";
     }
   }
 
@@ -100,6 +102,67 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       }
     });
     return (defaultValue);
+  };
+
+  // Get the keys ..
+  $scope.getTopicKeys = function (rows) {
+    var allTopicKeys = ["key", "partition", "offset"];
+    angular.forEach(angular.fromJson(rows), function (row) {
+      // $log.info("data= " + JSON.stringify(row.value));
+      if (JSON.stringify(row.value) != null && JSON.stringify(row.value).indexOf("{\\") == 1) {
+        angular.forEach(JSON.parse(row.value), function (value, key) {
+          //$log.info("Key-Value = " + key + " value=" + value);
+          if (!isInArray(key, allTopicKeys)) {
+            allTopicKeys.push(key);
+          }
+        });
+      } else {
+        // if (row.value.toString().indexOf("\":") != -1) {
+        angular.forEach(row.value, function (value, key) {
+          $log.info("Key-Value = " + key + " value=" + value);
+          if (!isInArray(key, allTopicKeys)) {
+            allTopicKeys.push(key);
+          }
+        });
+        // } else {
+        //   if (!isInArray("value", allTopicKeys)) {
+        //     allTopicKeys.push("value");
+        //   }
+        // }
+      }
+    });
+    $scope.totalKeys = allTopicKeys.length;
+    return allTopicKeys;
+  };
+
+  $scope.getTopicValues = function (rows) {
+    var allTopicValues = [];
+    angular.forEach(angular.fromJson(rows), function (row) {
+      var x = {};
+      x.key = row.key;
+      x.partition = row.partition;
+      x.offset = row.offset;
+      // $log.error("s->" + JSON.stringify(row.value) + "   " + JSON.stringify(row.value).indexOf('{\\') );
+      if (JSON.stringify(row.value) != null && JSON.stringify(row.value).indexOf("{\\") == 1) {
+        x.a1 = [];
+        angular.forEach(JSON.parse(row.value), function (peiler) {
+          $log.debug("peiler = " + peiler);
+          x.a1.push(peiler);
+        });
+      } else {
+        x.a1 = [];
+        angular.forEach(row.value, function (value, key) {
+          $log.info("Key-Value = " + key + " value=" + value);
+          x.a1.push(value);
+          // }
+        });
+      }
+
+      allTopicValues.push(x);
+    });
+    $log.debug("XXX " + JSON.stringify(allTopicValues));
+    $scope.allTopicValues = allTopicValues;
+    return allTopicValues;
   };
 
   // Get `connect-status`
@@ -193,6 +256,12 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     return a;
   };
 
+  $scope.isNormalTopic = function (topicName) {
+    return (topicName != '_schemas') &&
+      (topicName != 'connect-configs') &&
+      (topicName != 'connect-status');
+  };
+
   // At start-up this controller consumes data
   var start = new Date().getTime();
   if (($scope.topicType == "json") || ($scope.topicType == "binary") || ($scope.topicType == "avro")) {
@@ -202,6 +271,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       $scope.aceString = allData;
       $scope.rows = JSON.parse(allData);
       setCustomMessage($scope.rows);
+      $scope.getTopicValues($scope.rows);
       $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
       $scope.showSpinner = false;
     }, function (reason) {
@@ -229,6 +299,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
                 $scope.aceString = allData;
                 $scope.rows = allData;
                 setCustomMessage($scope.rows);
+                $scope.getTopicValues($scope.rows);
                 $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
                 $scope.showSpinner = false;
               }, function (reason) {
@@ -241,18 +312,20 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
               $scope.aceString = allData;
               $scope.rows = allData;
               setCustomMessage($scope.rows);
+              $scope.getTopicValues($scope.rows);
               $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
               $scope.showSpinner = false;
             }
           }, function (reason) {
           });
       } else {
-        $log.info("Avro detected" + allData);
+        // $log.info("Avro detected" + allData);
         var end = new Date().getTime();
         $scope.topicType = "avro";
         $scope.aceString = allData;
         $scope.rows = allData;
         setCustomMessage($scope.rows);
+        $scope.getTopicValues($scope.rows);
         $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
         $scope.showSpinner = false;
       }
@@ -287,14 +360,14 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
         $scope.rows = data;
         $scope.showSpinner = false;
         setCustomMessage($scope.rows);
+        $scope.getTopicValues($scope.rows);
       }, function (reason) {
         $log.error('Failed: ' + reason);
       }, function (update) {
         $log.info('Got notification: ' + update);
       }
     );
-  }
-  ;
+  };
 
   // TOPICS
   $scope.selectedTopic;

@@ -87,12 +87,12 @@
               <thead>
               <tr>
                 <th class="text-center">Offset</th>
-                <th class="text-center">Subject</th>        <!-- kv. -->
+                <th class="text-center">Subject</th> <!-- kv. -->
                 <th class="text-center">Partition</th>
-                <th class="text-center">Magic</th>     <!-- k. -->
-                <th class="text-center">Type</th>      <!-- k. -->
+                <th class="text-center">Magic</th>   <!-- k. -->
+                <th class="text-center">Type</th>    <!-- k. -->
                 <th class="text-center">Version</th> <!-- kv. -->
-                <th class="text-center">Data</th>           <!-- v. -->
+                <th class="text-center">Schema</th>  <!-- v. -->
               </tr>
               </thead>
               <tbody>
@@ -155,8 +155,8 @@
                 <th class="text-center">Name</th>
                 <th class="text-center">Topic</th>
                 <th class="text-center">File</th>
-                <th class="text-center">Connector Class</th>
                 <th class="text-center">Tasks Max</th>
+                <th class="text-center">Connector Class</th>
               </tr>
               </thead>
               <tbody>
@@ -167,8 +167,8 @@
                 <td class="text-center">{{getConnector(i).name}}</td>
                 <td class="text-center">{{getConnector(i).topic}}</td>
                 <td class="text-center">{{getConnector(i).file}}</td>
-                <td class="text-center">{{getConnector(i).class}}</td>
                 <td class="text-center">{{getConnector(i).tasksmax}}</td>
+                <td class="text-center">{{getConnector(i).class}}</td>
               </tr>
               <tr>
                 <td>Tasks</td>
@@ -180,8 +180,8 @@
                 <th class="text-center"></th>
                 <th class="text-center">Topic</th>
                 <th class="text-center">File</th>
-                <th class="text-center">Task Class</th>
                 <th class="text-center"></th>
+                <th class="text-center">Task Class</th>
               </tr>
               <tr ng-repeat="i in getConnectors(rows,'task-') track by $index">
                 <td class="text-center">{{i.offset}}</td>
@@ -190,8 +190,8 @@
                 <td class="text-center"></td>
                 <td class="text-center">{{getTask(i).topic}}</td>
                 <td class="text-center">{{getTask(i).file}}</td>
-                <td class="text-center">{{getTask(i).class}}</td>
                 <td class="text-center"></td>
+                <td class="text-center">{{getTask(i).class}}</td>
               </tr>
               <tr>
                 <td>Commits</td>
@@ -310,6 +310,57 @@
               <tbody>
               </tbody>
             </table>
+
+          </md-content>
+        </md-tab-body>
+      </md-tab>
+      <!-- Custom rendering for OTHER topics -->
+      <md-tab ng-if="isNormalTopic(topicName)">
+        <md-tab-label>
+          <i class="fa fa-table" aria-hidden="true"></i> Table
+        </md-tab-label>
+        <md-tab-body>
+          <md-content class="md-padding">
+            <md-card>
+              <md-card-content style="padding:0">
+                <md-menu ng-show="apps">
+                  <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                  </md-button>
+                  <md-menu-content width="5">
+                  </md-menu-content>
+                </md-menu>
+              </md-card-content>
+
+            </md-card>
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+              <tr>
+                <th class="text-center" ng-repeat="x in getTopicKeys(rows) track by $index">{{x}}</th>
+              </tr>
+              </thead>
+              <tbody>
+              <!--{{getTopicValues(rows)}}-->
+              <tr ng-repeat="data in allTopicValues track by $index"/>
+
+              <td class="text-center">{{data.key}}</td>
+              <td class="text-center">{{data.partition}}</td>
+              <td class="text-center">{{data.offset}}</td>
+              <!--<td ng-if="data.a1.length >=1"class="text-center">{{data.a1[0}}</td>-->
+              <!--<td ng-if="data.a1.length >= 1" class="text-center">{{data.a1</td>-->
+              <td ng-repeat="a in data.a1 track by $index" class="text-center">{{a}}</td>
+              <!--<td ng-if="totalKeys >=7" class="text-center">{{data.a4}}</td>-->
+              <!--<tr class="text-center" ng-repeat="y in getTopicValues(rows) track by $index">{{y}}</tr>-->
+
+              <!--<tr ng-repeat="xxx in getTopicValues(rows) track by $index">-->
+              <!--{{xxx}}-->
+              <!--<td class="text-center">{{i.key}}</td>-->
+              <!--<td class="text-center">{{i.partition}}</td>-->
+              <!--<td class="text-center">{{i.offset}}</td>-->
+              <!--</tr>-->
+              </tbody>
+            </table>
+            <!-- Tasks -->
 
           </md-content>
         </md-tab-body>

@@ -52,7 +52,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
     // Oboe - stream data in (1000 rows)
     var totals = 0;
     var start = new Date().getTime();
-    var myUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + "?max_bytes=150000";
+    var myUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + "?max_bytes=5000";
     var allResults = [];
     $log.debug("Oboe-ing at " + myUrl);
     oboe({
