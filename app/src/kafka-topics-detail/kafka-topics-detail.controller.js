@@ -78,11 +78,13 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     return array.indexOf(value) > -1;
   }
 
-  function setCustomMessage() {
+  function setCustomMessage(rows) {
     if ($scope.topicName == "_schemas") {
-      $scope.customMessage = "Topic <b>_schemas</b> holds <b>6</b> registered schemas in the schema-registry"
+      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + rows.length + "</b> registered schemas in the <a href='" + ENV.SCHEMA_REGISTRY_UI + "' target='_blank'>schema-registry</a>"
     } else if ($scope.topicName == "connect-configs") {
-      $scope.customMessage = "Topic <b>connect-configs</b> holds <b>6</b> connector configurations"
+      // var connectors =
+      $scope.customMessage = "Topic <b>connect-configs</b> holds <b>" + $scope.getConnectors(rows, 'connector-').length + "</b> connector configurations" +
+        " and <b>" + $scope.getConnectors(rows,'task-').length + "</b> task configurations";
     }
   }
 
@@ -116,6 +118,32 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     return a;
   };
 
+  $scope.getTask = function (row) {
+    var data = JSON.parse(row.value).properties;
+    var topics = "";
+    if (data.topic != null) {
+      topics = topics + data.topic;
+    } else if (data.topics != null) {
+      topics = topics + data.topics;
+    }
+    // TODO: This run's 10ns of times ! $log.error(data);
+    var a = {
+      topic: topics,
+      file: data.file,
+      class: data['task.class']
+    };
+    return a;
+  };
+
+  $scope.getCommit = function (row) {
+    var data = JSON.parse(row.value);
+    // TODO: This run's 10ns of times ! $log.error(data);
+    var a = {
+      tasks: data.tasks
+    };
+    return a;
+  };
+
   // At start-up this controller consumes data
   var start = new Date().getTime();
   if (($scope.topicType == "json") || ($scope.topicType == "binary") || ($scope.topicType == "avro")) {
@@ -124,7 +152,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       var end = new Date().getTime();
       $scope.aceString = allData;
       $scope.rows = JSON.parse(allData);
-      setCustomMessage();
+      setCustomMessage($scope.rows);
       $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
       $scope.showSpinner = false;
     }, function (reason) {
@@ -151,7 +179,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
                 $scope.topicType = "binary";
                 $scope.aceString = allData;
                 $scope.rows = allData;
-                setCustomMessage();
+                setCustomMessage($scope.rows);
                 $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
                 $scope.showSpinner = false;
               }, function (reason) {
@@ -163,7 +191,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
               $scope.topicType = "json";
               $scope.aceString = allData;
               $scope.rows = allData;
-              setCustomMessage();
+              setCustomMessage($scope.rows);
               $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
               $scope.showSpinner = false;
             }
@@ -175,7 +203,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
         $scope.topicType = "avro";
         $scope.aceString = allData;
         $scope.rows = allData;
-        setCustomMessage();
+        setCustomMessage($scope.rows);
         $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
         $scope.showSpinner = false;
       }
@@ -209,7 +237,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
         $scope.aceString = data;
         $scope.rows = data;
         $scope.showSpinner = false;
-        setCustomMessage();
+        setCustomMessage($scope.rows);
       }, function (reason) {
         $log.error('Failed: ' + reason);
       }, function (update) {

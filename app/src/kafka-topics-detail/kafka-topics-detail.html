@@ -146,14 +146,17 @@
             <table class="table table-bordered table-striped table-hover">
               <thead>
               <tr>
+                <td>Connectors</td>
+              </tr>
+              <tr>
                 <th class="text-center">Offset</th>
                 <th class="text-center">Key</th>
                 <th class="text-center">Partition</th>
                 <th class="text-center">Name</th>
                 <th class="text-center">Topic</th>
-                <th class="text-center">Tasks Max</th>
                 <th class="text-center">File</th>
                 <th class="text-center">Connector Class</th>
+                <th class="text-center">Tasks Max</th>
               </tr>
               </thead>
               <tbody>
@@ -163,10 +166,63 @@
                 <td class="text-center">{{i.partition}}</td>
                 <td class="text-center">{{getConnector(i).name}}</td>
                 <td class="text-center">{{getConnector(i).topic}}</td>
-                <td class="text-center">{{getConnector(i).tasksmax}}</td>
                 <td class="text-center">{{getConnector(i).file}}</td>
                 <td class="text-center">{{getConnector(i).class}}</td>
+                <td class="text-center">{{getConnector(i).tasksmax}}</td>
               </tr>
+              <tr>
+                <td>Tasks</td>
+              </tr>
+              <tr>
+                <th class="text-center">Offset</th>
+                <th class="text-center">Key</th>
+                <th class="text-center">Partition</th>
+                <th class="text-center"></th>
+                <th class="text-center">Topic</th>
+                <th class="text-center">File</th>
+                <th class="text-center">Task Class</th>
+                <th class="text-center"></th>
+              </tr>
+              <tr ng-repeat="i in getConnectors(rows,'task-') track by $index">
+                <td class="text-center">{{i.offset}}</td>
+                <td class="text-center"><b>{{i.key}}</b></td>
+                <td class="text-center">{{i.partition}}</td>
+                <td class="text-center"></td>
+                <td class="text-center">{{getTask(i).topic}}</td>
+                <td class="text-center">{{getTask(i).file}}</td>
+                <td class="text-center">{{getTask(i).class}}</td>
+                <td class="text-center"></td>
+              </tr>
+              <tr>
+                <td>Commits</td>
+              <tr>
+                <th class="text-center">Offset</th>
+                <th class="text-center">Key</th>
+                <th class="text-center">Partition</th>
+                <th class="text-center">Tasks</th>
+                <th class="text-center"></th>
+                <th class="text-center"></th>
+                <th class="text-center"></th>
+                <th class="text-center"></th>
+              </tr>
+              <tr ng-repeat="i in getConnectors(rows,'commit-') track by $index">
+                <td class="text-center">{{i.offset}}</td>
+                <td class="text-center"><b>{{i.key}}</b></td>
+                <td class="text-center">{{i.partition}}</td>
+                <td class="text-center">{{getCommit(i).tasks}}</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+              </tr>
+              </tbody>
+            </table>
+            <!-- Tasks -->
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+
+              </thead>
+              <tbody>
               </tbody>
             </table>
 
