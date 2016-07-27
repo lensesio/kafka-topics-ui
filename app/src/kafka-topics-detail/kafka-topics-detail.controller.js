@@ -1,4 +1,4 @@
-kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, $base64, kafkaZooFactory) {
+kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $sce, $log, $mdToast, $mdDialog, $http, $base64, kafkaZooFactory) {
 
   $log.info("ViewTopicCtrl - initializing for topic : " + $routeParams.topicName);
   $scope.topicName = $routeParams.topicName;
@@ -78,6 +78,13 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     return array.indexOf(value) > -1;
   }
 
+  function setCustomMessage() {
+    if ($scope.topicName == "_schemas") {
+      $scope.customMessage = "Topic <b>_schemas</b> holds <b>6</b> registered schemas in the schema-registry"
+    }
+  }
+
+
   // At start-up this controller consumes data
   var start = new Date().getTime();
   if (($scope.topicType == "json") || ($scope.topicType == "binary") || ($scope.topicType == "avro")) {
@@ -86,6 +93,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       var end = new Date().getTime();
       $scope.aceString = allData;
       $scope.rows = JSON.parse(allData);
+      setCustomMessage();
       $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
       $scope.showSpinner = false;
     }, function (reason) {
@@ -112,6 +120,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
                 $scope.topicType = "binary";
                 $scope.aceString = allData;
                 $scope.rows = allData;
+                setCustomMessage();
                 $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
                 $scope.showSpinner = false;
               }, function (reason) {
@@ -123,6 +132,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
               $scope.topicType = "json";
               $scope.aceString = allData;
               $scope.rows = allData;
+              setCustomMessage();
               $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
               $scope.showSpinner = false;
             }
@@ -134,6 +144,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
         $scope.topicType = "avro";
         $scope.aceString = allData;
         $scope.rows = allData;
+        setCustomMessage();
         $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
         $scope.showSpinner = false;
       }
@@ -164,15 +175,18 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     $scope.showSpinner = true;
     var dataPromise = kafkaZooFactory.consumeKafkaRest(messagetype, topicName);
     dataPromise.then(function (data) {
-      $scope.aceString = data;
-      $scope.rows = data;
-      $scope.showSpinner = false;
-    }, function (reason) {
-      $log.error('Failed: ' + reason);
-    }, function (update) {
-      $log.info('Got notification: ' + update);
-    });
-  };
+        $scope.aceString = data;
+        $scope.rows = data;
+        $scope.showSpinner = false;
+        setCustomMessage();
+      }, function (reason) {
+        $log.error('Failed: ' + reason);
+      }, function (update) {
+        $log.info('Got notification: ' + update);
+      }
+    );
+  }
+  ;
 
   // TOPICS
   $scope.selectedTopic;

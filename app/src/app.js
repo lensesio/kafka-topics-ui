@@ -25,6 +25,12 @@ kafkaTopicsUIApp.filter('isEmpty', function () {
   };
 });
 
+kafkaTopicsUIApp.filter("sanitize", ['$sce', function($sce) {
+  return function(htmlCode){
+    return $sce.trustAsHtml(htmlCode);
+  }
+}]);
+
 kafkaTopicsUIApp.controller('MenuCtrl', function ($scope) {
   $scope.apps = [];
   var thisApp = "Kafka Topics UI";

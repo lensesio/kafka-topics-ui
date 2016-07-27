@@ -7,9 +7,57 @@
   </md-toolbar>
 
   <md-content flex layout-padding>
+    <!-- Spinner -->
     <div us-spinner="{radius:10, width:3, length: 5}" ng-show="showSpinner" style="height:100%"></div>
-    <md-tabs ng-hide="showSpinner" md-dynamic-height md-border-bottom md-selected="tabIndex">
-      <md-tab>
+    <!-- Custom Info Panel + Download + Stream buttons -->
+    <div flex="100" ng-hide="showSpinner">
+      <span class="md-title" style="font-size: 14px;" ng-bind-html="customMessage | sanitize"></span>
+      <md-button
+        download="true"
+        ng-click="getData(topicName)"
+        md-ink-ripple=""
+        ng-show="true"
+        class="md-raised md-primary md-button md-ink-ripple"
+        style="background-color: rgb(65, 191, 236);color: white;padding:0;float: right;margin-top: -10px;"
+        type="button"
+        aria-label="Download data"
+        aria-hidden="false">Download
+        <div class="md-ripple-container"></div>
+      </md-button>
+
+      <md-menu style="padding:0">
+        <md-button
+          md-ink-ripple=""
+          ng-show="true"
+          class="md-raised md-primary md-button md-ink-ripple"
+          style="background-color: rgb(65, 191, 236);color: white;float: right;margin-top: -10px;"
+          type="button"
+          aria-label="Stream data from topic"
+          ng-click="openMenu($mdOpenMenu, $event)"
+          aria-hidden="false">Stream data
+          <div class="md-ripple-container"></div>
+        </md-button>
+        <md-menu-content width="4">
+          <md-menu-item>
+            <md-button ng-click="streamFromBeginning($event)">
+              <md-icon md-menu-align-target=""></md-icon>
+              Stream from beginning
+            </md-button>
+          </md-menu-item>
+          <md-menu-item>
+            <md-button ng-click="streamInRealTime()">
+              <md-icon></md-icon>
+              Stream in real-time
+            </md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
+    </div>
+    <br>
+
+    <md-tabs ng-hide="showSpinner" style="margin-top: -15px;" md-dynamic-height md-border-bottom md-selected="tabIndex">
+      <!-- Custom rendering for _schemas topic -->
+      <md-tab data-ng-if="topicName=='_schemas'">
         <md-tab-label>
           <i class="fa fa-table" aria-hidden="true"></i> Table
         </md-tab-label>
@@ -21,62 +69,10 @@
                   <md-icon class="md-avatar-icon"
                            style="padding:0;background-color:white"></md-icon>
                   <!--&lt;!&ndash;md-svg-icon="src/assets/icons/avro.svg"-->
-
                 </md-card-avatar>
-                <md-card-header-text>
-                  <span class="md-title">Topic <b>_schemas</b> holds <b>{{rows.length}}</b> registered schemas in the schema-registry.</span>
-                </md-card-header-text>
-
-                <md-button
-                  download="true"
-                  ng-click="getData(topicName)"
-                  md-ink-ripple=""
-                  ng-show="true"
-                  class="md-raised md-primary md-button md-ink-ripple"
-                  style="background-color: rgb(65, 191, 236);color: white;"
-                  type="button"
-                  aria-label="new topic"
-                  aria-hidden="false">Download
-                  <div class="md-ripple-container"></div>
-                </md-button>
-
-                <md-menu style="padding:0">
-                  <md-button
-                    md-ink-ripple=""
-                    ng-show="true"
-                    class="md-raised md-primary md-button md-ink-ripple"
-                    style="background-color: rgb(65, 191, 236);color: white;"
-                    type="button"
-                    aria-label="new topic"
-                    ng-click="openMenu($mdOpenMenu, $event)"
-                    aria-hidden="false">Stream data
-                    <div class="md-ripple-container"></div>
-                  </md-button>
-                  <!--<md-button aria-label="Open phone interactions menu"-->
-                             <!--class="md-icon-button"-->
-                             <!--style="color:white;width: 100%;min-width: 100px;padding:0;"-->
-                  <!--<md-icon md-menu-origin="">STREAM</md-icon>-->
-                  <!--</md-button>-->
-                  <md-menu-content width="4">
-                    <md-menu-item>
-                      <md-button ng-click="streamFromBeginning($event)">
-                        <md-icon md-menu-align-target=""></md-icon>
-                        Stream from beginning
-                      </md-button>
-                    </md-menu-item>
-                    <md-menu-item>
-                      <md-button ng-click="streamInRealTime()">
-                        <md-icon></md-icon>
-                        Stream in real-time
-                      </md-button>
-                    </md-menu-item>
-                  </md-menu-content>
-                </md-menu>
-
               </md-card-header>
               <!--class="md-card-image"-->
               <md-card-content style="padding:0">
-
                 <md-menu ng-show="apps">
                   <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)"
                              ng-disabled="false">
