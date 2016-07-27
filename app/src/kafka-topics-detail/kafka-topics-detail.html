@@ -229,6 +229,91 @@
           </md-content>
         </md-tab-body>
       </md-tab>
+      <!-- Custom rendering for connect-status topic -->
+      <md-tab data-ng-if="topicName=='connect-status'">
+        <md-tab-label>
+          <i class="fa fa-table" aria-hidden="true"></i> Table
+        </md-tab-label>
+        <md-tab-body>
+          <md-content class="md-padding">
+            <md-card>
+              <md-card-content style="padding:0">
+                <md-menu ng-show="apps">
+                  <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                  </md-button>
+                  <md-menu-content width="5">
+                  </md-menu-content>
+                </md-menu>
+              </md-card-content>
+
+            </md-card>
+            <h3>Compacted View</h3>
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+              <tr>
+                <th class="text-center">Offset</th>
+                <th class="text-center">Key</th>
+                <th class="text-center">Partition</th>
+                <th class="text-center">State</th>
+                <th class="text-center">Trace</th>
+                <th class="text-center">Worker ID</th>
+                <th class="text-center">Generation</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="i in getCompactedConnectStatus(rows,'') track by $index">
+
+                <td class="text-center">{{i.offset}}</td>
+                <td class="text-center"><b>{{i.key}}</b></td>
+                <td class="text-center">{{i.partition}}</td>
+                <td class="text-center">{{i.state}}</td>
+                <td class="text-center">{{i.trace}}</td>
+                <td class="text-center">{{i.workerId}}</td>
+                <td class="text-center">{{i.generation}}</td>
+              </tr>
+              </tbody>
+            </table>
+
+            <h3>Full View</h3>
+            <!-- Connector-Status -->
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+              <tr>
+                <th class="text-center">Offset</th>
+                <th class="text-center">Key</th>
+                <th class="text-center">Partition</th>
+                <th class="text-center">State</th>
+                <th class="text-center">Trace</th>
+                <th class="text-center">Worker ID</th>
+                <th class="text-center">Generation</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="i in getConnectStatus(rows,'') track by $index">
+
+                <td class="text-center">{{i.offset}}</td>
+                <td class="text-center"><b>{{i.key}}</b></td>
+                <td class="text-center">{{i.partition}}</td>
+                <td class="text-center">{{i.state}}</td>
+                <td class="text-center">{{i.trace}}</td>
+                <td class="text-center">{{i.workerId}}</td>
+                <td class="text-center">{{i.generation}}</td>
+              </tr>
+              </tbody>
+            </table>
+            <!-- Tasks -->
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+
+          </md-content>
+        </md-tab-body>
+      </md-tab>
 
       <md-tab md-on-select="onTabSelected(1)" label="Data">
         <div id="left"

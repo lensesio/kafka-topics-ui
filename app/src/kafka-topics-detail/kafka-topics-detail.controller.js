@@ -82,9 +82,12 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     if ($scope.topicName == "_schemas") {
       $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + rows.length + "</b> registered schemas in the <a href='" + ENV.SCHEMA_REGISTRY_UI + "' target='_blank'>schema-registry</a>"
     } else if ($scope.topicName == "connect-configs") {
-      // var connectors =
       $scope.customMessage = "Topic <b>connect-configs</b> holds <b>" + $scope.getConnectors(rows, 'connector-').length + "</b> connector configurations" +
-        " and <b>" + $scope.getConnectors(rows,'task-').length + "</b> task configurations";
+        " and <b>" + $scope.getConnectors(rows, 'task-').length + "</b> task configurations";
+    } else if ($scope.topicName == "connect-offsets") {
+      $scope.customMessage = "Topic <b>connect-offsets</b> holds the offsets of your active connectors. Displaying <b>" + rows.length + "</b> rows";
+    } else if ($scope.topicName == "connect-status") {
+      $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
     }
   }
 
@@ -97,6 +100,52 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       }
     });
     return (defaultValue);
+  };
+
+  // Get `connect-status`
+  $scope.getConnectStatus = function (rows, search) {
+    var connectStatuses = [];
+    angular.forEach(rows, function (row) {
+      var data = JSON.parse(row.value);
+      if (search == '') {
+        row.state = data.state;
+        row.trace = data.trace;
+        row.workerId = data.worker_id;
+        row.generation = data.generation;
+        connectStatuses.push(row);
+      } else if (search == "RUNNING") {
+        if (data.state == "RUNNING") {
+          row.state = data.state;
+          row.trace = data.trace;
+          row.workerId = data.worker_id;
+          row.generation = data.generation;
+          connectStatuses.push(row);
+        }
+      } else if (search == "UNASSIGNED") {
+        if (data.state == "UNASSIGNED") {
+          row.state = data.state;
+          row.trace = data.trace;
+          row.workerId = data.worker_id;
+          row.generation = data.generation;
+          connectStatuses.push(row);
+        }
+      }
+    });
+    return (connectStatuses);
+  };
+
+  $scope.getCompactedConnectStatus = function (rows) {
+    // var rowsInverted = rows.slice().reverse();
+    var allKeys = [];
+    var allStatuses = $scope.getConnectStatus(rows, '').reverse();
+    var compactedStatuses = [];
+    angular.forEach(allStatuses, function (row) {
+      if (allKeys.indexOf(row.key) == -1) {
+        allKeys.push(row.key);
+        compactedStatuses.push(row);
+      }
+    });
+    return compactedStatuses;
   };
 
   $scope.getConnector = function (row) {
