@@ -1,6 +1,6 @@
 kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $http, $log, $base64, $q, Oboe, toastFactory) {
 
-  // $rootScope.showCreateTopicButton = true;
+  //$rootScope.showCreateTopicButton = true;
 
   // Figure out it it's a control topic, or normal topic
   function isControlTopic(topicName) {
@@ -12,8 +12,8 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
   }
 
   // Convert to human readable KBytes
-  function bytesToSize2(bytes) {
-    var sizes = ['n/a', 'bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+  function bytesToSize(bytes) {
+    var sizes = ['n/a', 'bytes', 'KBytes', 'MBytes', 'GBytes', 'TBytes', 'PBytes', 'EBytes', 'ZBytes', 'YBytes'];
     var i = +Math.floor(Math.log(bytes) / Math.log(1024));
     return (bytes / Math.pow(1024, i)).toFixed(i ? 1 : 0) + ' ' + sizes[isNaN(bytes) ? 0 : i + 1];
   }
@@ -112,6 +112,9 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
   // Factory should return
   return {
 
+    bytesToSize: function(bytes) {
+      return bytesToSize(bytes);
+    },
     getTopicList: function () { // Return (Normal-Topics,Control-Topics)
       var deferred = $q.defer();
       $log.debug('  curl ' + ENV.KAFKA_REST + '/topics');

@@ -2,7 +2,7 @@
 
 [![release](http://github-release-version.herokuapp.com/github/landoop/kafka-topics-ui/release.svg?style=flat)](https://github.com/landoop/kafka-topics-ui/releases/latest)
 
-UI for viewing **Kafka topics** using the Kafka Rest Proxy built in angular - https://github.com/confluentinc/kafka-rest
+UI for viewing **Kafka topics** using the Kafka Rest proxy built in angular - https://github.com/confluentinc/kafka-rest
 
   <a href="http://kafka-topics-ui.landoop.com">
     <img src="http://landoop.github.io/schema-registry-ui/demo-button.jpg" width="75"/>
@@ -13,11 +13,11 @@ UI for viewing **Kafka topics** using the Kafka Rest Proxy built in angular - ht
 * Viewing Avro, JSon and Binary Kafka topics
 * Table and JSon views
 * Download data from Kafka topics
-* Stream from beginning or real-time capturing
 * Automatically topic data identification (Avro|Json|Binary)
 * Base64 decoding and parsing of binary messages
 * Identify and visualize topics with config overrides
 * [schema-registry-ui](https://github.com/Landoop/schema-registry-ui) integration
+* [TODO] Stream from beginning or real-time capturing
 
 ## Preview
 
@@ -26,12 +26,23 @@ UI for viewing **Kafka topics** using the Kafka Rest Proxy built in angular - ht
 ## Configuration
 
 * By default `kafka-topics-ui` points to the kafka-rest server at http://localhost:8082 To point it to a different kafka-rest server, update `app/src/env.js`
-* Enable CORS in the kafka-rest server by adding to `/opt/confluent/etc/kafka-rest/kafka-rest.properties` the following and restart the service
+* Enable CORS
 
-```
-access.control.allow.methods=GET,POST,OPTIONS
-access.control.allow.origin=*
-```
+If using nginx
+
+    location / {
+      add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+      add_header 'Access-Control-Allow-Credentials' 'true' always;
+      add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+      add_header 'Access-Control-Allow-Headers' 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With' always;
+
+      proxy_pass http://kafka-rest-server-url:8082;
+      proxy_redirect off;
+
+      proxy_set_header  X-Real-IP  $remote_addr;
+      proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header  Host $http_host;
+    }
 
 ## Run
 
@@ -54,7 +65,7 @@ If you use `nginx` to serve this ui, let angular manage routing with
 
     location / {
         try_files $uri $uri/ /index.html =404;
-        root /folder-with-schema-registry-ui/;
+        root /folder-with-kafka-topics-ui/;
     }
 
 ## License

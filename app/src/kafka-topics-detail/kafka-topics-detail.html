@@ -45,7 +45,7 @@
             </md-button>
           </md-menu-item>
           <md-menu-item>
-            <md-button ng-click="streamInRealTime()">
+            <md-button ng-click="streamInRealTime()" disabled="true">
               <md-icon></md-icon>
               Stream in real-time
             </md-button>
@@ -257,7 +257,7 @@
               </md-card-content>
 
             </md-card>
-            <h3>Compacted View</h3>
+            <h4>Compacted View</h4>
             <table class="table table-bordered table-striped table-hover">
               <thead>
               <tr>
@@ -284,7 +284,7 @@
               </tbody>
             </table>
 
-            <h3>Full View</h3>
+            <h4>Full View</h4>
             <!-- Connector-Status -->
             <table class="table table-bordered table-striped table-hover">
               <thead>
@@ -360,13 +360,6 @@
               <td ng-repeat="a in data.a1 track by $index" class="text-center">{{a}}</td>
               <!--<td ng-if="totalKeys >=7" class="text-center">{{data.a4}}</td>-->
               <!--<tr class="text-center" ng-repeat="y in getTopicValues(rows) track by $index">{{y}}</tr>-->
-
-              <!--<tr ng-repeat="xxx in getTopicValues(rows) track by $index">-->
-              <!--{{xxx}}-->
-              <!--<td class="text-center">{{i.key}}</td>-->
-              <!--<td class="text-center">{{i.partition}}</td>-->
-              <!--<td class="text-center">{{i.offset}}</td>-->
-              <!--</tr>-->
               </tbody>
             </table>
             <!-- Tasks -->
