@@ -146,7 +146,10 @@
             <table class="table table-bordered table-striped table-hover">
               <thead>
               <tr>
-                <td>Connectors</td>
+                <td
+                  style="border-top:1px solid white; border-left:1px solid white; border-right:1px solid white;border-bottom: 1px;">
+                  <h4>Connectors</h4>
+                </td>
               </tr>
               <tr>
                 <th class="text-center">Offset</th>
@@ -171,7 +174,10 @@
                 <td class="text-center">{{getConnector(i).class}}</td>
               </tr>
               <tr>
-                <td>Tasks</td>
+                <td
+                  style="border-top:1px solid white; border-left:1px solid white; border-right:1px solid white;background-color: white;">
+                  <h4>Tasks</h4>
+                </td>
               </tr>
               <tr>
                 <th class="text-center">Offset</th>
@@ -194,16 +200,19 @@
                 <td class="text-center">{{getTask(i).class}}</td>
               </tr>
               <tr>
-                <td>Commits</td>
-              <tr>
-                <th class="text-center">Offset</th>
-                <th class="text-center">Key</th>
-                <th class="text-center">Partition</th>
-                <th class="text-center">Tasks</th>
-                <th class="text-center"></th>
-                <th class="text-center"></th>
-                <th class="text-center"></th>
-                <th class="text-center"></th>
+                <td
+                  style="border-top:1px solid white; border-left:1px solid white; border-right:1px solid white;background-color: white;">
+                  <h4>Commits</h4>
+                </td>
+              </tr>
+              <th class="text-center">Offset</th>
+              <th class="text-center">Key</th>
+              <th class="text-center">Partition</th>
+              <th class="text-center">Tasks</th>
+              <th class="text-center"></th>
+              <th class="text-center"></th>
+              <th class="text-center"></th>
+              <th class="text-center"></th>
               </tr>
               <tr ng-repeat="i in getConnectors(rows,'commit-') track by $index">
                 <td class="text-center">{{i.offset}}</td>
