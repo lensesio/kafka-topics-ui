@@ -63,7 +63,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   $scope.hasExtraConfig = function (topicName) {
     var extra = kafkaZooFactory.hasExtraConfig(topicName);
     if (extra != '') {
-      $log.debug("Topic details " + topicName + " HAS EXTRA CONFIG " + extra);
+      // $log.debug("Topic details " + topicName + " HAS EXTRA CONFIG " + extra);
     }
     return extra;
   };
@@ -114,6 +114,15 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     return array.indexOf(value) > -1;
   }
 
+  function isJson(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
   function setCustomMessage(rows) {
     if ($scope.topicName == "_schemas") {
       $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + rows.length + "</b> registered schemas in the <a href='" + ENV.SCHEMA_REGISTRY_UI + "' target='_blank'>schema-registry</a>"
@@ -125,7 +134,11 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     } else if ($scope.topicName == "connect-status") {
       $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
     } else {
-      $scope.customMessage = "Displaying " + JSON.parse(rows).length + " rows ";// + kafkaZooFactory.bytesToSize(rows.length);
+      if (isJson(rows)) {
+        $scope.customMessage = "Displaying " + JSON.parse(rows).length + " rows ";// + kafkaZooFactory.bytesToSize(rows.length);
+      } else {
+        $scope.customMessage = "Displaying " + rows.length + " rows ";// + kafkaZooFactory.bytesToSize(rows.length);
+      }
     }
   }
 
@@ -183,16 +196,16 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       x.offset = row.offset;
       // $log.error("s->" + JSON.stringify(row.value) + "   " + JSON.stringify(row.value).indexOf('{\\') );
       if (JSON.stringify(row.value) != null && JSON.stringify(row.value).indexOf("{\\") == 1) {
-        x.a1 = [];
+        x.extraDataFlattened = [];
         angular.forEach(JSON.parse(row.value), function (peiler) {
           //$log.debug("peiler = " + peiler);
-          x.a1.push(peiler);
+          x.extraDataFlattened.push(peiler);
         });
       } else {
-        x.a1 = [];
+        x.extraDataFlattened = [];
         angular.forEach(row.value, function (value, key) {
           // $log.info("Key-Value = " + key + " value=" + value);
-          x.a1.push(value);
+          x.extraDataFlattened.push(value);
           // }
         });
       }
@@ -297,7 +310,10 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   $scope.isNormalTopic = function (topicName) {
     return (topicName != '_schemas') &&
       (topicName != 'connect-configs') &&
-      (topicName != 'connect-status');
+      (topicName != 'connect-status') &&
+      (topicName != '__consumer_offsets') &&
+      (topicName.indexOf("_confluent") != 0) &&
+      (topicName.indexOf("__confluent") != 0);
   };
 
   // At start-up this controller consumes data

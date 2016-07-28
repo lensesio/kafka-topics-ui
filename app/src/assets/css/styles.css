@@ -233,3 +233,7 @@ a.md-button.md-default-theme.md-warn.md-raised, a.md-button.md-warn.md-raised, a
     color: rgb(255,255,255);
     background-color: rgba(169,169,169,0.1);
 }
+
+md-list-item.md-2-line, md-list-item.md-2-line>.md-no-style {
+    min-height: 0px;
+}

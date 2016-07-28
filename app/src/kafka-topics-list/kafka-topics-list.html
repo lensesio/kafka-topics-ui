@@ -21,10 +21,12 @@
 
         <md-list flex>
             <md-list-item class="md-2-line"
-                          dir-paginate="topic in topics| orderBy:'name' | filter : search | itemsPerPage: 5"
+                          dir-paginate="topic in topics| orderBy:'name' | filter : search | itemsPerPage: 6"
                           ng-href="#/topic/{{topic}}"
                           pagination-id="topics">
-                <img src="https://unitedlayer.com/sites/default/files/dr-icons-01.png" style="width:24px;margin-right: 10px;">
+              <i ng-show="!isNormalTopic(topic)" class="fa fa-cogs" style="padding-right: 5px;color:#9e9e9e" aria-hidden="true"></i>
+              <img ng-show="isNormalTopic(topic)" src="src/assets/icons/kafka.svg" style="color:#9e9e9e;width: 17px;padding-right: 5px;color:#8c9eff" aria-hidden="true"></img>
+              <!--<img src="https://unitedlayer.com/sites/default/files/dr-icons-01.png" style="width:24px;margin-right: 10px;">-->
               <md-chips>
                 <md-chip ng-show="hasExtraConfig(topic) != ''"
                          style="background-color:#f44336;color:white;border-radius: 6px;margin-right: 65px;"
@@ -37,8 +39,8 @@
               </md-chips>
               <div class="md-list-item-text" layout="column">
                     <h3>{{topic}}</h3>
-                    <p>partitions: {{countPartitionsForTopic(topic)}}
-                    replication: x</p>
+                    <p style="color:#bbbbcc">partitions: {{countPartitionsForTopic(topic)}}
+                    replication: {{countReplicationForTopic(topic)}}</p>
                </div>
             </md-list-item>
             <md-divider ></md-divider>

@@ -6,8 +6,8 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
   // 1. Get topics
   var topicsPromise = kafkaZooFactory.getTopicList();
   topicsPromise.then(function (result) {
-    var normalTopics=result.normal;
-    var controlTopics=result.control;
+    var normalTopics = result.normal;
+    var controlTopics = result.control;
 
     if (normalTopics.toString().indexOf("Error in getting topics from kafka-rest") > -1) {
       toastFactory.showSimpleToast("Error in getting topics from kafka-rest");
@@ -17,7 +17,7 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
       $scope.topics = normalTopics;
       $scope.controlTopics = controlTopics;
       $rootScope.topicsCache = normalTopics;
-      var topicDetailsPromise = kafkaZooFactory.getTopicDetails(normalTopics);
+      var topicDetailsPromise = kafkaZooFactory.getTopicDetails(normalTopics.concat(controlTopics));
       topicDetailsPromise.then(function (topicDetails) {
         $rootScope.topicDetails = topicDetails;
       }, function (reason) {
@@ -47,13 +47,37 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
     $log.info('Got notification: ' + update);
   });
 
-  $scope.countPartitionsForTopic = function (topicObj) {
-    //$log.debug('Counting partitions for topic : ' + JSON.stringify(topicObj));
-    if ((topicObj == undefined) || (topicObj.partitions == undefined)) {
-      return 0;
-    } else {
-      return Object.keys(topicObj.partitions).length;
-    }
+  $scope.countPartitionsForTopic = function (topicName) {
+    var partitions = 0;
+    // $log.debug('Counting partitions for topic : ' + topicName);
+    angular.forEach($rootScope.topicDetails, function (topicDetail) {
+      if (topicDetail.name == topicName) {
+        // $log.debug(topicDetail);
+        partitions = topicDetail.partitions.length;
+      }
+    });
+    return partitions;
+  };
+
+  $scope.isNormalTopic = function (topicName) {
+    return (topicName != '_schemas') &&
+      (topicName != 'connect-configs') &&
+      (topicName != 'connect-status') &&
+      (topicName != '__consumer_offsets') &&
+      (topicName.indexOf("_confluent") != 0) &&
+      (topicName.indexOf("__confluent") != 0);
+  };
+
+  $scope.countReplicationForTopic = function (topicName) {
+    var replication = 0;
+    //$log.debug('Checking replication factor for topic : ' + topicName);
+    angular.forEach($rootScope.topicDetails, function (topicDetail) {
+      if (topicDetail.name == topicName) {
+        // $log.debug("--->" + JSON.stringify(topicDetail.partitions[0].replicas));
+        replication = topicDetail.partitions[0].replicas.length;
+      }
+    });
+    return replication;
   };
 
   $scope.hasExtraConfig = function (topicName) {

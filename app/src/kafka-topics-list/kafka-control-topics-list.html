@@ -21,10 +21,10 @@
 
         <md-list flex>
             <md-list-item class="md-2-line"
-                          dir-paginate="topic in controlTopics| orderBy:'name' | filter : search | itemsPerPage: 5"
+                          dir-paginate="topic in controlTopics| orderBy:'name' | filter : search | itemsPerPage: 6"
                           ng-href="#/topic/{{topic}}"
                           pagination-id="controlTopics">
-                <img src="https://unitedlayer.com/sites/default/files/dr-icons-01.png" style="width:24px;margin-right: 10px;">
+              <i class="fa fa-cogs" style="padding-right: 5px;color:#8c9eff" aria-hidden="true"></i>
               <md-chips>
                 <md-chip ng-show="hasExtraConfig(topic) != ''"
                          style="background-color:#f44336;color:white;border-radius: 6px;margin-right: 65px;"
@@ -37,8 +37,8 @@
               </md-chips>
               <div class="md-list-item-text" layout="column">
                     <h3>{{topic}}</h3>
-                    <p>partitions: {{countPartitionsForTopic(topic)}}
-                    replication: x</p>
+                    <p style="color:#bbbbcc">partitions: {{countPartitionsForTopic(topic)}}
+                    replication: {{countReplicationForTopic(topic)}}</p>
                </div>
             </md-list-item>
             <md-divider ></md-divider>

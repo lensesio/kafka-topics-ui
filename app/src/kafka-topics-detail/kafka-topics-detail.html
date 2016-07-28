@@ -352,16 +352,12 @@
               </thead>
               <tbody>
               <!--{{getTopicValues(rows)}}-->
-              <tr ng-repeat="data in allTopicValues track by $index"/>
-
-              <td class="text-center">{{data.key}}</td>
-              <td class="text-center">{{data.partition}}</td>
-              <td class="text-center">{{data.offset}}</td>
-              <!--<td ng-if="data.a1.length >=1"class="text-center">{{data.a1[0}}</td>-->
-              <!--<td ng-if="data.a1.length >= 1" class="text-center">{{data.a1</td>-->
-              <td ng-repeat="a in data.a1 track by $index" class="text-center">{{a}}</td>
-              <!--<td ng-if="totalKeys >=7" class="text-center">{{data.a4}}</td>-->
-              <!--<tr class="text-center" ng-repeat="y in getTopicValues(rows) track by $index">{{y}}</tr>-->
+              <tr ng-repeat="data in allTopicValues track by $index">
+                <td class="text-center">{{data.key}}</td>
+                <td class="text-center">{{data.partition}}</td>
+                <td class="text-center">{{data.offset}}</td>
+                <td ng-repeat="extra in data.extraDataFlattened track by $index" class="text-center">{{extra}}</td>
+              </tr>
               </tbody>
             </table>
           </md-content>
