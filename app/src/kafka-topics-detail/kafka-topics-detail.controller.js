@@ -146,7 +146,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       if (JSON.stringify(row.value) != null && JSON.stringify(row.value).indexOf("{\\") == 1) {
         x.a1 = [];
         angular.forEach(JSON.parse(row.value), function (peiler) {
-          $log.debug("peiler = " + peiler);
+          //$log.debug("peiler = " + peiler);
           x.a1.push(peiler);
         });
       } else {

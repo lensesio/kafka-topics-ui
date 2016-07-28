@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="iconic-group injected-svg iconic iconic-md iconic-main" width="128" height="128" viewBox="0 0 128 128" data-src="/iconic/svg/group.svg">
+    <g class="iconic-metadata">
+        <title>Group</title>
+    </g>
+    <defs>
+        <clipPath id="iconic-size-lg-group-clip-0-1">
+            <path stroke="white" d="M82 48v34h-34v12h46v-46z"></path>
+        </clipPath>
+        <clipPath id="iconic-size-md-group-clip-0-1">
+            <path stroke="white" d="M21 12v9.031h-9v3.969h13v-13z"></path>
+        </clipPath>
+        <clipPath id="iconic-size-sm-group-clip-0-1">
+            <path stroke="white" d="M11 6v5h-5v2h7v-7z"></path>
+        </clipPath>
+    </defs>
+    <g class="iconic-group-lg iconic-container iconic-lg" data-width="128" data-height="128" display="inline">
+        <path stroke="white" stroke-width="2" class="iconic-group-container iconic-property-accent iconic-property-stroke" d="M1 1h126v126h-126z" fill="none"></path>
+        <path d="M78.5 80h-43c-.828 0-1.5-.672-1.5-1.5v-43c0-.828.672-1.5 1.5-1.5h43c.828 0 1.5.672 1.5 1.5v43c0 .828-.672 1.5-1.5 1.5z" class="iconic-group-item iconic-group-item-1 iconic-property-fill"></path>
+        <path d="M92.5 94h-43c-.828 0-1.5-.672-1.5-1.5v-43c0-.828.672-1.5 1.5-1.5h43c.828 0 1.5.672 1.5 1.5v43c0 .828-.672 1.5-1.5 1.5z" clip-path="url(#iconic-size-lg-group-clip-0-1)" class="iconic-group-item iconic-group-item-2 iconic-property-fill"></path>
+    </g>
+    <g class="iconic-group-md iconic-container iconic-md" data-width="32" data-height="32" display="none" transform="scale(4)">
+        <path stroke="white" class="iconic-group-container iconic-property-accent iconic-property-stroke" d="M.5.5h31v31h-31z" fill="none"></path>
+        <path d="M19.5 20h-12c-.276 0-.5-.224-.5-.5v-12c0-.276.224-.5.5-.5h12c.276 0 .5.224.5.5v12c0 .276-.224.5-.5.5z" class="iconic-group-item iconic-group-item-1 iconic-property-fill"></path>
+        <path d="M24.5 25h-12c-.276 0-.5-.224-.5-.5v-12c0-.276.224-.5.5-.5h12c.276 0 .5.224.5.5v12c0 .276-.224.5-.5.5z" clip-path="url(#iconic-size-md-group-clip-0-1)" class="iconic-group-item iconic-group-item-2 iconic-property-fill"></path>
+    </g>
+    <g class="iconic-group-sm iconic-container iconic-sm" data-width="16" data-height="16" display="none" transform="scale(8)">
+        <path stroke="white" class="iconic-group-container iconic-property-accent iconic-property-stroke" d="M.5.5h15v15h-15z" fill="none"></path>
+        <path class="iconic-group-item iconic-group-item-1 iconic-property-fill" d="M3 3h7v7h-7z"></path>
+        <path clip-path="url(#iconic-size-sm-group-clip-0-1)" class="iconic-group-item iconic-group-item-2 iconic-property-fill" d="M6 6h7v7h-7z"></path>
+    </g>
+</svg>

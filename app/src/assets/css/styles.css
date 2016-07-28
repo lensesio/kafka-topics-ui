@@ -206,6 +206,12 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
     text-transform: capitalize;
 }
 
+.md-button.md-fab {
+    width: 42px;
+    height: 42px;
+    background-color: white;
+}
+
 .fabSpeedDial .md-fab:hover, .fabSpeedDial .md-fab.md-focused {
     background-color: #000 !important;
 }
@@ -221,4 +227,9 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
     height: 300px;
     margin-left: auto;
     margin-right: auto;
+}
+
+a.md-button.md-default-theme.md-warn.md-raised, a.md-button.md-warn.md-raised, a.md-button.md-default-theme.md-warn.md-fab, a.md-button.md-warn.md-fab, .md-button.md-default-theme.md-warn.md-raised, .md-button.md-warn.md-raised, .md-button.md-default-theme.md-warn.md-fab, .md-button.md-warn.md-fab {
+    color: rgb(255,255,255);
+    background-color: rgba(169,169,169,0.1);
 }

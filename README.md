@@ -1,8 +1,8 @@
 # kafka-topics-ui
 
-[![release](http://github-release-version.herokuapp.com/github/landoop/schema-registry-ui/release.svg?style=flat)](https://github.com/landoop/schema-registry-ui/releases/latest)
+[![release](http://github-release-version.herokuapp.com/github/landoop/kafka-topics-ui/release.svg?style=flat)](https://github.com/landoop/kafka-topics-ui/releases/latest)
 
-Web UI for viewing Kafka topics using the Kafka Rest Proxy built in angular - https://github.com/confluentinc/kafka-rest
+UI for viewing **Kafka topics** using the Kafka Rest Proxy built in angular - https://github.com/confluentinc/kafka-rest
 
   <a href="http://kafka-topics-ui.landoop.com">
     <img src="http://landoop.github.io/schema-registry-ui/demo-button.jpg" width="75"/>
@@ -13,10 +13,11 @@ Web UI for viewing Kafka topics using the Kafka Rest Proxy built in angular - ht
 * Viewing Avro, JSon and Binary Kafka topics
 * Table and JSon views
 * Download data from Kafka topics
-* Schema Registry UI integration
 * Stream from beginning or real-time capturing
 * Automatically topic data identification (Avro|Json|Binary)
+* Base64 decoding and parsing of binary messages
 * Identify and visualize topics with config overrides
+* [schema-registry-ui](https://github.com/Landoop/schema-registry-ui) integration
 
 ## Preview
 
@@ -24,8 +25,8 @@ Web UI for viewing Kafka topics using the Kafka Rest Proxy built in angular - ht
 
 ## Configuration
 
-* By default `kafka-topics-ui` points to the kafka-rest server at http://localhost:8081 To point it to a different schema-registry, update `app/src/env.js`
-* Enable CORS in the schema-registry by adding to `/opt/confluent-2.0.1/etc/schema-registry/schema-registry.properties` the following and restart the service
+* By default `kafka-topics-ui` points to the kafka-rest server at http://localhost:8082 To point it to a different kafka-rest server, update `app/src/env.js`
+* Enable CORS in the kafka-rest server by adding to `/opt/confluent/etc/kafka-rest/kafka-rest.properties` the following and restart the service
 
 ```
 access.control.allow.methods=GET,POST,OPTIONS
@@ -59,5 +60,3 @@ If you use `nginx` to serve this ui, let angular manage routing with
 ## License
 
 The project is licensed under the Apache 2 license.
-
-journalctl -u confluent-kafka-rest-proxy --since "10 min ago" -f

@@ -40,6 +40,10 @@ kafkaTopicsUIApp.controller('MenuCtrl', function ($scope) {
     }
   });
 
+  $scope.demo = {
+    isOpen: false
+  };
+
   $scope.disableAppsMenu = $scope.apps.length <= 0;
 });
 
