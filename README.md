@@ -21,11 +21,14 @@ UI for viewing **Kafka topics** using the Kafka Rest proxy built in angular - ht
 
 ## Preview
 
-<img src="http://landoop.github.io/schema-registry-ui/v0.3.animation.gif">
+<a href="http://kafka-topics-ui.landoop.com" target="_blank">
+    <img src="https://raw.githubusercontent.com/Landoop/kafka-topics-ui/gh-pages/v0.1/kafka-topics-ui-0.1.gif">
+</a>
 
 ## Configuration
 
-* By default `kafka-topics-ui` points to the kafka-rest server at http://localhost:8082 To point it to a different kafka-rest server, update `app/src/env.js`
+* By default `kafka-topics-ui` points to a **kafka-rest** server at `http://localhost:8082`
+ To point it to a different kafka-rest server, update `app/src/env.js`
 * Enable CORS
 
 If using nginx
