@@ -17,6 +17,7 @@ UI for viewing **Kafka topics** using the Kafka Rest proxy built in angular - ht
 * Base64 decoding and parsing of binary messages
 * Identify and visualize topics with config overrides
 * [schema-registry-ui](https://github.com/Landoop/schema-registry-ui) integration
+* Displays number of partitions and replication factor per topic
 * [TODO] Stream from beginning or real-time capturing
 
 ## Preview

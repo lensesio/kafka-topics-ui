@@ -112,7 +112,16 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
   // Factory should return
   return {
 
-    bytesToSize: function(bytes) {
+    hasExtraConfig: function (topicName) {
+      var extraTopicConfig = {};
+      angular.forEach($rootScope.topicDetails, function (detail) {
+        if (detail.name === topicName) {
+          extraTopicConfig = detail.configs;
+        }
+      });
+      return (JSON.stringify(extraTopicConfig).replace("{}", ""));
+    },
+    bytesToSize: function (bytes) {
       return bytesToSize(bytes);
     },
     getTopicList: function () { // Return (Normal-Topics,Control-Topics)
@@ -197,7 +206,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
       // Check if we know the topic data type a priory
       if (ENV.JSON_TOPICS.indexOf(topicName) > -1) {
         dataType = "json";
-      } else if (ENV.BINARY_TOPICS.indexOf(topicName.substring(0,24)) > -1) {
+      } else if (ENV.BINARY_TOPICS.indexOf(topicName.substring(0, 24)) > -1) {
         dataType = "binary";
       } else {
         // If topicDetails are not available wait

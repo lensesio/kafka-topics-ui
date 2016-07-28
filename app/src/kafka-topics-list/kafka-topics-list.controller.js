@@ -57,13 +57,8 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
   };
 
   $scope.hasExtraConfig = function (topicName) {
-    var peiler = {};
-    angular.forEach($rootScope.topicDetails, function (detail) {
-      if (detail.name === topicName) {
-        peiler = detail.configs;
-      }
-    });
-    return (JSON.stringify(peiler).replace("{}", ""));
+    var extra = kafkaZooFactory.hasExtraConfig(topicName);
+    return extra;
   };
 
   $scope.getDataType = function (topicName) {

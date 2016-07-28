@@ -45,18 +45,54 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   };
 
   $scope.streamFromBeginning = function () {
-    $mdDialog.show(
-      $mdDialog.alert()
-        .targetEvent(originatorEv)
-        .clickOutsideToClose(true)
-        .parent('body')
-        .title('Stream from beginning of topic')
-        .textContent('It will take a few moments ...  Have a cookie!')
-        .ok('That was easy')
-    );
+    var kbytesFromBeginning = $mdDialog.alert()
+      .title('Stream from beginning of topic')
+      .textContent('Will fetch 100 KBytes of data from topic')
+      .targetEvent(originatorEv)
+      .clickOutsideToClose(true)
+      .ok('Okay!');
+
+    $mdDialog.show(kbytesFromBeginning).then(function () {
+      $log.info("Streaming from beginning");
+      $scope.consumeKafkaRest($scope.topicType, $scope.topicName);
+    });
 
     originatorEv = null;
   };
+
+  $scope.hasExtraConfig = function (topicName) {
+    var extra = kafkaZooFactory.hasExtraConfig(topicName);
+    if (extra != '') {
+      $log.debug("Topic details " + topicName + " HAS EXTRA CONFIG " + extra);
+    }
+    return extra;
+  };
+
+  $scope.getExtraConfig = function (topicName) {
+    var extra = kafkaZooFactory.hasExtraConfig(topicName);
+    return JSON.parse(extra);
+  };
+
+  $scope.getDefautConfigValue = function(configKey) {
+    var defaultConfigValue = "";
+    angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
+      if (kafkaDefault.property == configKey) {
+        defaultConfigValue = kafkaDefault.default;
+      }
+    });
+    return defaultConfigValue;
+  };
+
+  $scope.getConfigDescription = function(configKey) {
+    var configDescription = "";
+    angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
+      if (kafkaDefault.property == configKey) {
+        configDescription = kafkaDefault.description;
+      }
+    });
+    return configDescription;
+  };
+
 
   $scope.streamInRealTime = function () {
     $log.info("Streaming in real time");
@@ -89,18 +125,21 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     } else if ($scope.topicName == "connect-status") {
       $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
     } else {
-      $scope.customMessage = "Topic with data";
+      $scope.customMessage = "Displaying " + JSON.parse(rows).length + " rows ";// + kafkaZooFactory.bytesToSize(rows.length);
     }
   }
 
   // text can be 'connector-' 'task-' 'commit-'
   $scope.getConnectors = function (rows, search) {
     var defaultValue = [];
-    angular.forEach(rows, function (row) {
-      if (row.key.indexOf(search) == 0) {
-        defaultValue.push(row);
-      }
-    });
+    //$log.error(rows);
+    if (rows != undefined) {
+      angular.forEach(rows, function (row) {
+        if (row.key.indexOf(search) == 0) {
+          defaultValue.push(row);
+        }
+      });
+    }
     return (defaultValue);
   };
 
@@ -219,14 +258,14 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       topics = topics + data.topics;
     }
     // TODO: This run's 10ns of times ! $log.error(data);
-    var a = {
+    var connectorData = {
       name: data.name,
       topic: topics,
       tasksmax: data['tasks.max'],
       file: data.file,
       class: data['connector.class']
     };
-    return a;
+    return connectorData;
   };
 
   $scope.getTask = function (row) {
@@ -238,21 +277,21 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       topics = topics + data.topics;
     }
     // TODO: This run's 10ns of times ! $log.error(data);
-    var a = {
+    var taskData = {
       topic: topics,
       file: data.file,
       class: data['task.class']
     };
-    return a;
+    return taskData;
   };
 
   $scope.getCommit = function (row) {
     var data = JSON.parse(row.value);
     // TODO: This run's 10ns of times ! $log.error(data);
-    var a = {
+    var commitData = {
       tasks: data.tasks
     };
-    return a;
+    return commitData;
   };
 
   $scope.isNormalTopic = function (topicName) {

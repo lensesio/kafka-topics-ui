@@ -24,7 +24,8 @@
         aria-hidden="false">Download
         <div class="md-ripple-container"></div>
       </md-button>
-
+      <!--
+      TODO
       <md-menu style="padding:0">
         <md-button
           md-ink-ripple=""
@@ -52,6 +53,7 @@
           </md-menu-item>
         </md-menu-content>
       </md-menu>
+      -->
     </div>
     <br>
 
@@ -362,12 +364,10 @@
               <!--<tr class="text-center" ng-repeat="y in getTopicValues(rows) track by $index">{{y}}</tr>-->
               </tbody>
             </table>
-            <!-- Tasks -->
-
           </md-content>
         </md-tab-body>
       </md-tab>
-
+      <!-- DATA in JSon rendering -->
       <md-tab md-on-select="onTabSelected(1)" label="Data">
         <div id="left"
              ng-model="aceString" ng-readonly="true" ui-ace="{
@@ -379,6 +379,53 @@
                           onLoad: aceLoaded,
                           onChange: aceChanged
                           }"></div>
+      </md-tab>
+      <!-- Custom rendering for Config overrides -->
+      <md-tab ng-if="hasExtraConfig(topicName) != ''">
+        <md-tab-label>
+          <i class="fa fa-table" aria-hidden="true"></i> Configuration
+        </md-tab-label>
+        <md-tab-body>
+          <md-content class="md-padding">
+            <md-card>
+              <md-card-content style="padding:0">
+                <md-menu ng-show="apps">
+                  <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                  </md-button>
+                  <md-menu-content width="5">
+                  </md-menu-content>
+                </md-menu>
+              </md-card-content>
+
+            </md-card>
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+              <tr>
+                <th class="text-center">Key</th>
+                <th class="text-center">Value</th>
+                <th class="text-center">Default Value</th>
+                <th class="text-center">Description</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="(key,value) in getExtraConfig(topicName) track by $index">
+                <td class="text-center">
+                  <md-chip
+                    style="padding: 4px;color: white; border-radius: 6px; background-color: rgb(244, 67, 54);"
+                    class="md-secondary md-caption ng-scope md-chip" aria-hidden="false">{{key}}
+                    <span class="md-visually-hidden ng-binding ng-scope"></span>
+                  </md-chip>
+                </td>
+                <td class="text-center">{{value}}</td>
+                <td class="text-center">{{getDefautConfigValue(key)}}</td>
+                <td>{{getConfigDescription(key)}}</td>
+              </tr>
+              </tbody>
+            </table>
+
+          </md-content>
+        </md-tab-body>
       </md-tab>
     </md-tabs>
     <div>
