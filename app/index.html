@@ -12,7 +12,7 @@
   <meta name="keywords"
         content="kafka,schema registry,topics,kafka-topic,kafka-rest,kafka-rest-proxy,kafka management,avro">
   <meta name="author" content="Landoop Team">
-  <link rel="shortcut icon" href="src/assets/icons/favicon-32x32.png">
+  <link rel="shortcut icon" href="src/assets/icons/favicon.png">
 </head>
 
 <body ng-app="kafkaTopicsUIApp">
@@ -21,8 +21,10 @@
 <header class="header">
   <div layout="row" layout-xs="column" layout-align="" style="height:50px">
     <div flex="nogrow" ng-controller="MenuCtrl">
-
-      <md-fab-speed-dial ng-show="apps" ng-disabled="{{disableAppsMenu}}" class="md-scale" md-direction="down"
+      <md-fab-speed-dial ng-show="apps"
+                         ng-disabled="{{disableAppsMenu}}"
+                         class="md-scale"
+                         md-direction="down"
                          md-open="demo.isOpen" ng-cloak style="margin-top: -2px;">
         <md-fab-trigger>
           <md-button aria-label="menu" class="md-fab md-warn">
@@ -30,8 +32,12 @@
           </md-button>
         </md-fab-trigger>
         <md-fab-actions>
-          <md-button aria-label="Schema Registry" class="md-fab md-raised md-mini" href="http://schema-registry-ui.landoop.com" target="_blank">
-            <md-tooltip md-direction="right" style="padding-left:20px;" md-visible="demo.isOpen">Schema Registry</md-tooltip>
+          <md-button aria-label="Schema Registry"
+                     class="md-fab md-raised md-mini"
+                     href="http://schema-registry-ui.landoop.com"
+                     target="_blank">
+            <md-tooltip md-direction="right" style="padding-left:20px;" md-visible="demo.isOpen">Schema Registry
+            </md-tooltip>
             <md-icon md-svg-src="src/assets/icons/schemaregistry.svg" aria-label="Schema Registry"></md-icon>
           </md-button>
         </md-fab-actions>
@@ -75,6 +81,7 @@
   </div>
 </div>
 
+<!-- Landoop team promo -->
 <div layout-margin flex>
   <div flex="nogrow">
     <img src="http://www.landoop.com/images/landoop-dark.svg" style="width:20px;float: left;padding-right:5px;"></div>
@@ -92,15 +99,13 @@
 <script src="bower_components/angular-spinner/angular-spinner.min.js"></script>
 <script src="bower_components/angular-route/angular-route.min.js"></script>
 <script src="bower_components/angular-material/angular-material.min.js"></script>
-<script src="bower_components/angular-base64/angular-base64.min.js"></script>
 <script src="bower_components/angularUtils-pagination/dirPagination.js"></script>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
-<!--<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>-->
-<script src="bower_components/oboe/dist/oboe-browser.min.js"></script>
-<script src="bower_components/angular-oboe/dist/angular-oboe.min.js"></script>
-<!--<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>-->
 <script src="bower_components/angular-animate/angular-animate.min.js"></script>
 <script src="bower_components/angular-aria/angular-aria.min.js"></script>
+<script src="bower_components/angular-base64/angular-base64.min.js"></script>
+<script src="bower_components/oboe/dist/oboe-browser.min.js"></script>
+<script src="bower_components/angular-oboe/dist/angular-oboe.min.js"></script>
 <script src="src/env.js"></script>
 <script src="src/app.js"></script>
 <script src="src/factories/kafka-topics-factory.js"></script>

@@ -10,13 +10,12 @@ UI for viewing **Kafka topics** using the Kafka Rest proxy built in angular - ht
 
 ### Features
 
-* Viewing Avro, JSon and Binary Kafka topics
-* Table and JSon views
-* Download data from Kafka topics
-* Automatically topic data identification (Avro|Json|Binary)
-* Base64 decoding and parsing of binary messages
-* Identify and visualize topics with config overrides
-* [schema-registry-ui](https://github.com/Landoop/schema-registry-ui) integration
+* Identifies and visualizes Kafka topics and config overrides
+* Automatically detects data types (Avro|Json|Binary)
+* Base64 decodes and parses of binary topics
+* Provides Table and JSon views
+* Allows downloading data from Kafka topics
+* Integrated with [schema-registry-ui](https://github.com/Landoop/schema-registry-ui)
 * Displays number of partitions and replication factor per topic
 * [TODO] Stream from beginning or real-time capturing
 
