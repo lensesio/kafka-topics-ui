@@ -131,7 +131,10 @@
           <i class="fa fa-table" aria-hidden="true"></i> Table
         </md-tab-label>
         <md-tab-body>
-          <md-content class="md-padding">
+          <md-content ng-show="{{getConnectors(rows,'connector-').length ==0}}" class="md-padding">
+                <h5>No kafka-connector is currently active</h5>
+          </md-content>
+          <md-content ng-hide="{{getConnectors(rows,'connector-').length ==0}}" class="md-padding">
             <md-card>
               <md-card-content style="padding:0">
                 <md-menu ng-show="apps">

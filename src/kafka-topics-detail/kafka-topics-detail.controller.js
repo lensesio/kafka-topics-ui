@@ -220,29 +220,34 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   $scope.getConnectStatus = function (rows, search) {
     var connectStatuses = [];
     angular.forEach(rows, function (row) {
-      var data = JSON.parse(row.value);
-      if (search == '') {
-        row.state = data.state;
-        row.trace = data.trace;
-        row.workerId = data.worker_id;
-        row.generation = data.generation;
-        connectStatuses.push(row);
-      } else if (search == "RUNNING") {
-        if (data.state == "RUNNING") {
+      if (row.value != undefined && row.value.indexOf("{\"") != -1) {
+        var data = JSON.parse(row.value);
+        if (search == '') {
           row.state = data.state;
           row.trace = data.trace;
           row.workerId = data.worker_id;
           row.generation = data.generation;
           connectStatuses.push(row);
+        } else if (search == "RUNNING") {
+          if (data.state == "RUNNING") {
+            row.state = data.state;
+            row.trace = data.trace;
+            row.workerId = data.worker_id;
+            row.generation = data.generation;
+            connectStatuses.push(row);
+          }
+        } else if (search == "UNASSIGNED") {
+          if (data.state == "UNASSIGNED") {
+            row.state = data.state;
+            row.trace = data.trace;
+            row.workerId = data.worker_id;
+            row.generation = data.generation;
+            connectStatuses.push(row);
+          }
         }
-      } else if (search == "UNASSIGNED") {
-        if (data.state == "UNASSIGNED") {
-          row.state = data.state;
-          row.trace = data.trace;
-          row.workerId = data.worker_id;
-          row.generation = data.generation;
-          connectStatuses.push(row);
-        }
+      } else {
+        //TODO
+        //$log.debug("Don't know what to do with -> " + JSON.stringify(row));
       }
     });
     return (connectStatuses);
