@@ -12,6 +12,49 @@ var kafkaTopicsUIApp = angular.module('kafkaTopicsUIApp', [
   'ngOboe'
 ]);
 
+kafkaTopicsUIApp.controller('MenuCtrl', function ($scope, $log) {
+  $scope.apps = [];
+  angular.forEach(ENV.APPS, function (app) {
+    if (app.urlSchema != undefined && app.urlSchema != "") {
+      app.url = app.urlSchema;
+    } else if (app.urlTopics != undefined && app.urlTopics != "") {
+      app.url = app.urlTopics;
+    } else if (app.urlConnect != undefined && app.urlConnect != "") {
+      app.url = app.urlConnect;
+    } else if (app.urlAlerts != undefined && app.urlAlerts != "") {
+      app.url = app.urlAlerts;
+    } else if (app.urlManager != undefined && app.urlManager != "") {
+      app.url = app.urlManager;
+    } else if (app.urlMonitoring != undefined && app.urlMonitoring != "") {
+      app.url = app.urlMonitoring;
+    }
+    if (app.url != undefined) {
+      $scope.apps.push(app);
+      $log.debug("Menu app enabled -> " + app.name);
+    }
+  });
+  $scope.disableAppsMenu = $scope.apps.length <= 0;
+});
+
+kafkaTopicsUIApp.config(function ($routeProvider) {
+  $routeProvider
+    .when('/', {
+      templateUrl: 'src/home/home.html',
+      controller: 'HomeCtrl'
+    })
+    .when('/create-topic', {
+      templateUrl: 'src/kafka-topics-new/kafka-topics-new.html',
+      controller: 'HeaderCtrl'
+    })
+    .when('/topic/:topicName', {
+      templateUrl: 'src/kafka-topics-detail/kafka-topics-detail.html',
+      controller: 'ViewTopicCtrl'
+    }).otherwise({
+    redirectTo: '/'
+  });
+  // $locationProvider.html5Mode(true);
+});
+
 // ng-show="x | isEmpty"
 kafkaTopicsUIApp.filter('isEmpty', function () {
   var bar;
@@ -25,43 +68,8 @@ kafkaTopicsUIApp.filter('isEmpty', function () {
   };
 });
 
-kafkaTopicsUIApp.filter("sanitize", ['$sce', function($sce) {
-  return function(htmlCode){
+kafkaTopicsUIApp.filter("sanitize", ['$sce', function ($sce) {
+  return function (htmlCode) {
     return $sce.trustAsHtml(htmlCode);
   }
 }]);
-
-kafkaTopicsUIApp.controller('MenuCtrl', function ($scope) {
-  $scope.apps = [];
-  var thisApp = "Kafka Topics UI";
-  angular.forEach(ENV.APPS, function (app) {
-    if (app.enabled && !(app.name == thisApp)) {
-      $scope.apps.push(app);
-    }
-  });
-
-  $scope.demo = {
-    isOpen: false
-  };
-
-  $scope.disableAppsMenu = $scope.apps.length <= 0;
-});
-
-kafkaTopicsUIApp.config(function ($routeProvider, $httpProvider) {
-  $httpProvider.defaults.useXDomain = true;
-  delete $httpProvider.defaults.headers.common['X-Requested-With'];
-  $routeProvider
-    .when('/', {
-      templateUrl: 'src/home/home.html'
-    })
-    .when('/create-topic', {
-      templateUrl: 'src/kafka-topics-new/kafka-topics-new.html',
-      controller: 'HeaderCtrl'
-    })
-    .when('/topic/:topicName', {
-      templateUrl: 'src/kafka-topics-detail/kafka-topics-detail.html',
-      controller: 'ViewTopicCtrl'
-    }).otherwise({
-    redirectTo: '/'
-  });
-});

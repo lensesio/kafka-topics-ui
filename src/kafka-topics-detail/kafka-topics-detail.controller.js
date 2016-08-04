@@ -130,7 +130,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       $scope.customMessage = "Topic <b>connect-configs</b> holds <b>" + $scope.getConnectors(rows, 'connector-').length + "</b> connector configurations" +
         " and <b>" + $scope.getConnectors(rows, 'task-').length + "</b> task configurations";
     } else if ($scope.topicName == "connect-offsets") {
-      $scope.customMessage = "Topic <b>connect-offsets</b> holds the offsets of your active connectors. Displaying <b>" + rows.length + "</b> rows";
+      $scope.customMessage = "Topic <b>connect-offsets</b> holds the offsets of your connectors. Displaying <b>" + rows.length + "</b> rows";
     } else if ($scope.topicName == "connect-status") {
       $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
     } else {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 512 512">
+    <g>
+        <title>background</title>
+        <rect fill="none" id="canvas_background" height="514" width="514" y="-1" x="-1"/>
+    </g>
+
+    <g>
+        <title>Layer 1</title>
+        <rect id="svg_1" fill="#F4AD47" height="48" width="492.308" y="403.846" x="9.846"/>
+        <rect id="svg_2" fill="#E8594F" height="97.231" width="178.462" y="379.231" x="166.769"/>
+        <rect id="svg_3" fill="#F4AD47" height="48" width="492.308" y="229.846" x="12.846"/>
+        <rect id="svg_4" fill="#E8594F" height="97.231" width="178.462" y="205.231" x="169.769"/>
+        <rect id="svg_7" fill="#F4AD47" height="48" width="492.308" y="65.846" x="12.846"/>
+        <rect id="svg_8" fill="#E8594F" height="97.231" width="178.462" y="41.231" x="169.769"/>
+    </g>
+</svg>

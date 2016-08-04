@@ -57,8 +57,8 @@ If using nginx
 
     git clone https://github.com/Landoop/kafka-topics-ui.git
     cd kafka-topics-ui
-    bower install
-    http-server app
+    npm install
+    http-server .
 
 Web UI will be available at `http://localhost:8080`
 

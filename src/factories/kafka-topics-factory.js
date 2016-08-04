@@ -306,6 +306,5 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
 
       return deferred.promise;
     }
-
   }
 });
