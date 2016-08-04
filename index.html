@@ -21,9 +21,10 @@
 <header class="header">
   <div layout="row" layout-xs="column" layout-align="" style="height:50px">
     <div flex="nogrow" ng-controller="MenuCtrl">
-      <md-fab-speed-dial ng-show="apps"
+
+      <md-fab-speed-dial
                          ng-disabled="{{disableAppsMenu}}"
-                         class="md-scale"
+                         ng-class="md-scale"
                          md-direction="down"
                          md-open="demo.isOpen" ng-cloak style="margin-top: -2px;">
         <md-fab-trigger>
@@ -37,7 +38,7 @@
                      href="http://schema-registry-ui.landoop.com">
             <md-tooltip md-direction="right" style="padding-left:20px;" md-visible="demo.isOpen">Schema Registry
             </md-tooltip>
-            <md-icon md-svg-src="src/assets/icons/schemaregistry.svg" aria-label="Schema Registry"></md-icon>
+            <md-icon md-svg-src="src/assets/icons/schema-registry.svg" aria-label="Schema Registry"></md-icon>
           </md-button>
         </md-fab-actions>
       </md-fab-speed-dial>
