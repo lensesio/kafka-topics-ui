@@ -49,9 +49,9 @@
 </header>
 
 <!--Main Content Starts here-->
-<div layout="row" layout-margin layout-sm="column" layout-xs="column" ng-controller="KafkaTopicsListCtrl">
+<div layout="row" layout-margin layout-sm="column" layout-xs="column" ng-controller="KafkaTopicsConfigCtrl">
   <div flex-gt-sm="33">
-    <div ng-include="'src/left-list.html'"></div>
+    <div ng-controller="KafkaTopicsListCtrl" ng-include="'src/left-list.html'"></div>
     <br>
     <div ng-include="'src/kafka-topics-config/kafka-topics-config.html'"></div>
   </div>
