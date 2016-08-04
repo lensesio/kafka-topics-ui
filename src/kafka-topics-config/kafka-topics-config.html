@@ -1,7 +1,9 @@
-<md-card>
+<md-card ng-controller="KafkaTopicsConfigCtrl">
     <md-content flex layout-padding>
         <div>
-            <b>URL :</b> {{schemaRegistryURL}} <br>
+            <b>Kafka Rest :</b> {{kafkaRest}} <br>
+            <b>Schema Registry :</b> {{schemaRegistryURL}} <br>
+            <b>Kafka Brokers :</b> {{brokers}} <br>
             <span ng-show="connectionFailure" style="color:red">CONNECTIVITY ERROR</span><br>
         </div>
     </md-content>
