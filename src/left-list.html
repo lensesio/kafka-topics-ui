@@ -1,11 +1,10 @@
 <md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
-
-<md-tabs md-dynamic-height md-border-bottom>
+  <md-tabs md-dynamic-height md-border-bottom>
     <md-tab label="Topics">
-        <div ng-include="'src/kafka-topics-list/kafka-topics-list.html'"></div>
+      <div ng-include="'src/kafka-topics-list/kafka-topics-list.html'"></div>
     </md-tab>
     <md-tab label="Control topics">
-        <div ng-include="'src/kafka-topics-list/kafka-control-topics-list.html'"></div>
+      <div ng-include="'src/kafka-topics-list/kafka-control-topics-list.html'"></div>
     </md-tab>
-</md-tabs>
+  </md-tabs>
 </md-card>

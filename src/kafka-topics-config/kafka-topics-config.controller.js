@@ -7,7 +7,7 @@ kafkaTopicsUIApp.controller('KafkaTopicsConfigCtrl', function ($scope, $http, $l
   $scope.connectionFailure = false;
 
   //Get the brokers this kafka-rest server connects to
-  $http.get(ENV.KAFKA_REST+ '/brokers').then(
+  $http.get(ENV.KAFKA_REST + '/brokers').then(
     function successCallback(response) {
       $scope.brokers = response.data.brokers.length;
       $log.debug("Number of Brokers -> " + response.data.brokers.length);

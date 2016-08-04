@@ -73,7 +73,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     return JSON.parse(extra);
   };
 
-  $scope.getDefautConfigValue = function(configKey) {
+  $scope.getDefautConfigValue = function (configKey) {
     var defaultConfigValue = "";
     angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
       if (kafkaDefault.property == configKey) {
@@ -83,7 +83,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     return defaultConfigValue;
   };
 
-  $scope.getConfigDescription = function(configKey) {
+  $scope.getConfigDescription = function (configKey) {
     var configDescription = "";
     angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
       if (kafkaDefault.property == configKey) {
