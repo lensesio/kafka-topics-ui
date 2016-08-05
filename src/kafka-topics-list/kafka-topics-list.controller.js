@@ -1,7 +1,7 @@
 kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $routeParams, $mdToast, $log, kafkaZooFactory, toastFactory) {
 
-  $log.debug("KafkaTopicsListCtrl - initializing");
-  $mdToast.hide();
+  $log.debug("KafkaTopicsListCtrl - initializing - getting existing topics");
+  toastFactory.hideToast();
 
   // 1. Get topics
   var topicsPromise = kafkaZooFactory.getTopicList();

@@ -1,6 +1,7 @@
-kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $http, $log, $base64, $q, Oboe, toastFactory) {
+kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $http, $log, $base64, $q, Oboe, toastFactory) {
 
   //$rootScope.showCreateTopicButton = true;
+  $rootScope.allCurlCommands = "";
 
   // Figure out it it's a control topic, or normal topic
   function isControlTopic(topicName) {
@@ -39,20 +40,14 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
     if (['avro', 'json', 'binary'].indexOf(messagetype) < 0) {
       $log.error("Unsupported message-type [" + messagetype + "]");
     }
-    var acceptMessageType = 'application/vnd.kafka.' + messagetype + '.v1+json';
-    // var getData = {
-    //   method: 'GET',
-    //   url: ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName,
-    //   headers: {'Accept': acceptMessageType}
-    // };
-    //$log.debug(getData);
-    var curlGetAvroData = '  curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + ENV.MAX_BYTES;
-    $log.debug(curlGetAvroData);
 
-    // Oboe - stream data in (1000 rows)
+    // Oboe - stream data in (roughly 1000 rows)
     var totals = 0;
     var start = new Date().getTime();
+    var acceptMessageType = 'application/vnd.kafka.' + messagetype + '.v1+json';
     var myUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + ENV.MAX_BYTES;
+    var curlGetData = 'curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + myUrl;
+    $log.debug("  " + curlGetData);
     var allResults = [];
     $log.debug("Oboe-ing at " + myUrl);
     oboe({
@@ -88,7 +83,8 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
      }
      })*/
       .done(function (things) {
-        var decodedData = "";
+        $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
+          "// Fetching " + messagetype + " data\n" + curlGetData + "\n";
         if (messagetype == "binary") {
           var data2 = angular.forEach(things, function (d) {
             d.key = $base64.decode(d.key);
@@ -231,6 +227,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
     // 3. Finally, clean up.
     // [ avro | json | binary ]
     consumeKafkaRest: function (messagetype, topicName) {
+      $rootScope.allCurlCommands = "";
       var deferred = $q.defer();
 
       var instance = "instance"; // For creating new --from-beginning
@@ -258,9 +255,9 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
       $log.info("Creating Kafka Rest consumer for " + messagetype + " data");
       // $log.debug(postCreateConsumer);
 
-      var curlCreateConsumer = '  curl -X POST -H "Content-Type: ' + messageContentType + '" ' +
+      var curlCreateConsumer = 'curl -X POST -H "Content-Type: ' + messageContentType + '" ' +
         "--data '" + data + "' " + ENV.KAFKA_REST + '/consumers/' + consumer + '-' + messagetype;
-      $log.debug(curlCreateConsumer);
+      $log.debug("  " + curlCreateConsumer);
 
       setTimeout(function () {
         // Create a consumer and fetch data
@@ -268,32 +265,42 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $mdToast, $htt
           .then(
             function successCallback(response) {
               $log.info("Success in creating " + messagetype + " consumer " + JSON.stringify(response));
+              $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
+                "// Creating " + messagetype + " consumer\n" + curlCreateConsumer + "\n";
               // Start fetching data
               var textDataPromise = startFetchingData(messagetype, topicName, consumer + "-" + messagetype);
               textDataPromise.then(function (data) {
                 //$log.info("Consumed data -> " + data);
                 deferred.resolve(data);
+
+                // Delete the consumer
+                var deleteUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '-' + messagetype + '/instances/instance';
+                var deleteMyConsumer = {
+                  method: 'DELETE',
+                  url: deleteUrl
+                };
+                var curlDeleteConsumer = 'curl -X DELETE ' + deleteUrl;
+                $log.debug("  " + curlDeleteConsumer);
+                var start = new Date().getTime();
+                $http(deleteMyConsumer)
+                  .then(
+                    function successCallback(response) {
+                      $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
+                        "// Deleting " + messagetype + " consumer \n" + curlDeleteConsumer + "\n";
+                      var end = new Date().getTime();
+                      $log.info("[" + (end - start) + "] msec to delete the consumer " + JSON.stringify(response));
+                    },
+                    function errorCallback(error) {
+                      $log.error("Error in deleting consumer : " + JSON.stringify(error));
+                    }
+                  );
+
               }, function (reason) {
                 $log.error('Failed: ' + reason);
               }, function (update) {
                 $log.info('Got notification: ' + update);
               });
-              // Delete the consumer
-              var deleteMyConsumer = {
-                method: 'DELETE',
-                url: ENV.KAFKA_REST + '/consumers/' + consumer + '-' + messagetype + '/instances/instance'
-              };
-              var start = new Date().getTime();
-              $http(deleteMyConsumer)
-                .then(
-                  function successCallback(response) {
-                    var end = new Date().getTime();
-                    $log.info("[" + (end - start) + "] msec to delete the consumer " + JSON.stringify(response));
-                  },
-                  function errorCallback(error) {
-                    $log.error("Error in deleting consumer : " + JSON.stringify(error));
-                  }
-                );
+
             },
             function errorCallback(response, statusText) {
               if (response.status == 409) {
