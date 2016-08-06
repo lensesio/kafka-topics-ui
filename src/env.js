@@ -1,7 +1,7 @@
 var ENV = {
 
   // Replace with the URL where a Kafka REST service is listening
-  KAFKA_REST: "https://kafka-rest-proxy.demo.landoop.com",
+  KAFKA_REST: "http://localhost:8082", // https://kafka-rest-proxy.demo.landoop.com",
 
   // Replace with the URL where the schema-registry-ui
   SCHEMA_REGISTRY_UI: "http://schema-registry-ui.landoop.com",
@@ -18,7 +18,7 @@ var ENV = {
     {
       name: "Schema Registry",
       icon: "src/assets/icons/schema-registry.svg",
-      urlSchema: "http://schema-registry-ui.landoop.com" // https://kafka-topics-ui.landoop.com // coming soon
+      urlSchema: "http://schema-registry-ui.landoop.com"
     },
     {
       name: "Kafka Connectors",
