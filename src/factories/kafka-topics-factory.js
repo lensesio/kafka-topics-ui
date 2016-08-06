@@ -259,6 +259,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $http, $log, $
         "--data '" + data + "' " + ENV.KAFKA_REST + '/consumers/' + consumer + '-' + messagetype;
       $log.debug("  " + curlCreateConsumer);
 
+      var deleteConsumer = false;
       setTimeout(function () {
         // Create a consumer and fetch data
         $http(postCreateConsumer)
@@ -271,30 +272,8 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $http, $log, $
               var textDataPromise = startFetchingData(messagetype, topicName, consumer + "-" + messagetype);
               textDataPromise.then(function (data) {
                 //$log.info("Consumed data -> " + data);
+                deleteConsumer = true;
                 deferred.resolve(data);
-
-                // Delete the consumer
-                var deleteUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '-' + messagetype + '/instances/instance';
-                var deleteMyConsumer = {
-                  method: 'DELETE',
-                  url: deleteUrl
-                };
-                var curlDeleteConsumer = 'curl -X DELETE ' + deleteUrl;
-                $log.debug("  " + curlDeleteConsumer);
-                var start = new Date().getTime();
-                $http(deleteMyConsumer)
-                  .then(
-                    function successCallback(response) {
-                      $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
-                        "// Deleting " + messagetype + " consumer \n" + curlDeleteConsumer + "\n";
-                      var end = new Date().getTime();
-                      $log.info("[" + (end - start) + "] msec to delete the consumer " + JSON.stringify(response));
-                    },
-                    function errorCallback(error) {
-                      $log.error("Error in deleting consumer : " + JSON.stringify(error));
-                    }
-                  );
-
               }, function (reason) {
                 $log.error('Failed: ' + reason);
               }, function (update) {
@@ -309,7 +288,31 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $http, $log, $
               }
             }
           );
-      }, 10);
+      }, 1);
+
+      if (deleteConsumer) {
+        // Delete the consumer
+        var deleteUrl = ENV.KAFKA_REST + '/consumers/' + consumer + '-' + messagetype + '/instances/instance';
+        var deleteMyConsumer = {
+          method: 'DELETE',
+          url: deleteUrl
+        };
+        var curlDeleteConsumer = 'curl -X DELETE ' + deleteUrl;
+        $log.debug("  " + curlDeleteConsumer);
+        var start = new Date().getTime();
+        $http(deleteMyConsumer)
+          .then(
+            function successCallback(response) {
+              $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
+                "// Deleting " + messagetype + " consumer \n" + curlDeleteConsumer + "\n";
+              var end = new Date().getTime();
+              $log.info("[" + (end - start) + "] msec to delete the consumer " + JSON.stringify(response));
+            },
+            function errorCallback(error) {
+              $log.error("Error in deleting consumer : " + JSON.stringify(error));
+            }
+          );
+      }
 
       return deferred.promise;
     }

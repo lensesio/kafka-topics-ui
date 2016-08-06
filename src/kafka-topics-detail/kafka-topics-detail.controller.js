@@ -159,55 +159,54 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   // Get the keys ..
   $scope.getTopicKeys = function (rows) {
     var allTopicKeys = ["key", "partition", "offset"];
-    angular.forEach(angular.fromJson(rows), function (row) {
-      // $log.info("data= " + JSON.stringify(row.value));
-      if (JSON.stringify(row.value) != null && JSON.stringify(row.value).indexOf("{\\") == 1) {
-        angular.forEach(JSON.parse(row.value), function (value, key) {
-          //$log.info("Key-Value = " + key + " value=" + value);
-          if (!isInArray(key, allTopicKeys)) {
-            allTopicKeys.push(key);
+    if (rows != undefined) {
+      angular.forEach(angular.fromJson(rows), function (row) {
+        // $log.info("data= " + JSON.stringify(row.value));
+        if (JSON.stringify(row.value) != null && JSON.stringify(row.value).indexOf("{\\") == 0) {
+          angular.forEach(JSON.parse(row.value), function (value, key) {
+            //$log.info("Key-Value = " + key + " value=" + value);
+            if (!isInArray(key, allTopicKeys)) {
+              allTopicKeys.push(key);
+            }
+          });
+        } else {
+          // $log.info(" value=" + row.value);
+          if (!isInArray("value", allTopicKeys)) {
+            allTopicKeys.push("value");
           }
-        });
-      } else {
-        // if (row.value.toString().indexOf("\":") != -1) {
-        angular.forEach(row.value, function (value, key) {
-          // $log.info("Key-Value = " + key + " value=" + value);
-          if (!isInArray(key, allTopicKeys)) {
-            allTopicKeys.push(key);
-          }
-        });
-        // } else {
-        //   if (!isInArray("value", allTopicKeys)) {
-        //     allTopicKeys.push("value");
-        //   }
-        // }
-      }
-    });
-    $scope.totalKeys = allTopicKeys.length;
+        }
+        // TODO
+      });
+      // $log.info("Completeeeed " + JSON.stringify(rows).length);
+      $scope.totalKeys = allTopicKeys.length;
+    }
+    // else {
+    //   $log.debug("Undefined");
+    // }
     return allTopicKeys;
   };
 
   $scope.getTopicValues = function (rows) {
     var allTopicValues = [];
     angular.forEach(angular.fromJson(rows), function (row) {
+      // $log.debug(row + "    " + JSON.stringify(row.value));
       var x = {};
       x.key = row.key;
       x.partition = row.partition;
       x.offset = row.offset;
-      // $log.error("s->" + JSON.stringify(row.value) + "   " + JSON.stringify(row.value).indexOf('{\\') );
-      if (JSON.stringify(row.value) != null && JSON.stringify(row.value).indexOf("{\\") == 1) {
+      if (JSON.stringify(row.value) != null && JSON.stringify(row.value).indexOf("{\"") == 0) {
         x.extraDataFlattened = [];
-        angular.forEach(JSON.parse(row.value), function (peiler) {
+        // $log.error("Value is JSon->" + JSON.stringify(row.value));
+        angular.forEach(row.value, function (peiler) {
           //$log.debug("peiler = " + peiler);
           x.extraDataFlattened.push(peiler);
         });
       } else {
         x.extraDataFlattened = [];
-        angular.forEach(row.value, function (value, key) {
-          // $log.info("Key-Value = " + key + " value=" + value);
-          x.extraDataFlattened.push(value);
-          // }
-        });
+        // $log.info("Key= " + key + " value= " + value);
+        if (row.value != undefined) {
+          x.extraDataFlattened.push(row.value);
+        }
       }
       allTopicValues.push(x);
     });
@@ -327,11 +326,13 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
     var dataPromise = kafkaZooFactory.consumeKafkaRest($scope.topicType, $scope.topicName);
     dataPromise.then(function (allData) {
       var end = new Date().getTime();
+      $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
       $scope.aceString = allData;
       $scope.rows = JSON.parse(allData);
       setCustomMessage($scope.rows);
       $scope.getTopicValues($scope.rows);
-      $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
+      end = new Date().getTime();
+      $log.info("[" + (end - start) + "] msec - to get & render"); //  + JSON.stringify(allSchemas)
       $scope.showSpinner = false;
     }, function (reason) {
       $log.error('Failed: ' + reason);

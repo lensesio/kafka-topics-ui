@@ -24,8 +24,7 @@
         aria-hidden="false">Download
         <div class="md-ripple-container"></div>
       </md-button>
-      <!--
-      TODO
+      <!-- Stream from beginning
       <md-menu style="padding:0">
         <md-button
           md-ink-ripple=""
@@ -350,7 +349,7 @@
             <table class="table table-bordered table-striped table-hover">
               <thead>
               <tr>
-                <th class="text-center" ng-repeat="x in getTopicKeys(rows) track by $index">{{x}}</th>
+                <th class="text-center" ng-repeat="topicKey in getTopicKeys(rows)">{{topicKey}}</th>
               </tr>
               </thead>
               <tbody>
@@ -426,6 +425,21 @@
           </md-content>
         </md-tab-body>
       </md-tab>
+      <!-- Custom rendering to display CURL commands -->
+      <md-tab label="Curl">
+        <div id="left2"
+             ng-model="allCurlCommands" ng-readonly="true" ui-ace="{
+                          useWrapMode: true,
+                          showGutter: true,
+                          theme:'chrome',
+                          mode: 'batchfile',
+                          firstLineNumber: 1,
+                          onLoad: aceLoaded,
+                          onChange: aceChanged
+                          }"></div>
+      </md-tab>
+
+
     </md-tabs>
     <div>
     </div>
