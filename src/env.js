@@ -1,26 +1,47 @@
 var ENV = {
-  BASE_URL: "http://localhost:9000",
-  KAFKA_REST: "https://kafka-rest-proxy.demo.landoop.com",
+
+  // Replace with the URL where a Kafka REST service is listening
+  KAFKA_REST: "http://localhost:8082", // https://kafka-rest-proxy.demo.landoop.com",
+
+  // Replace with the URL where the schema-registry-ui
   SCHEMA_REGISTRY_UI: "http://schema-registry-ui.landoop.com",
+
+  // Sets the defaul maximum amount of bytes to fetch from each topic
   MAX_BYTES: "?max_bytes=50000",
 
+  // Pre-configure the Data Type on particular well-known topics
   JSON_TOPICS: ["_schemas"],
   BINARY_TOPICS: ["connect-configs", "connect-offsets", "connect-status", "_confluent-controlcenter", "__confluent.support.metr"],
 
+  // If url is defined then top-left icon becomes a menu - linking into those URLs
   APPS: [
     {
       name: "Schema Registry",
-      enabled: true,
-      url: "http://schema-registry-ui.landoop.com",
-      icon: "fa-file-text"
+      icon: "src/assets/icons/schema-registry.svg",
+      urlSchema: "http://schema-registry-ui.landoop.com"
     },
     {
       name: "Kafka Connectors",
-      enabled: false,
-      url: "###",
-      icon: "fa-random"
+      icon: "src/assets/icons/kafka-connect.svg",
+      urlConnect: "" // https://kafka-connect-ui.landoop.com // coming soon
+    },
+    {
+      name: "Kafka Monitoring",
+      icon: "src/assets/icons/kafka-monitoring.svg",
+      urlMonitoring: "" // https://kafka-monitor-ui.landoop.com" // coming soon
+    },
+    {
+      name: "Kafka Alerts",
+      icon: "src/assets/icons/kafka-alerts.svg",
+      urlAlerts: "" // https://kafka-alerts-ui.landoop.com" // coming soon
+    },
+    {
+      name: "Kafka Manager",
+      icon: "src/assets/icons/kafka-manager.svg",
+      urlManager: "" // https://kafka-manager-ui.landoop.com" // coming soon
     }
   ],
+
 
 // # Get info about one topic
 // $ curl http://kafka-rest-proxy.demo.landoop.com/topics/__consumer_offsets

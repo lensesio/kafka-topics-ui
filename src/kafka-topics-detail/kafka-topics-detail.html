@@ -24,8 +24,7 @@
         aria-hidden="false">Download
         <div class="md-ripple-container"></div>
       </md-button>
-      <!--
-      TODO
+      <!-- Stream from beginning
       <md-menu style="padding:0">
         <md-button
           md-ink-ripple=""
@@ -131,7 +130,10 @@
           <i class="fa fa-table" aria-hidden="true"></i> Table
         </md-tab-label>
         <md-tab-body>
-          <md-content class="md-padding">
+          <md-content ng-show="{{getConnectors(rows,'connector-').length ==0}}" class="md-padding">
+            <h5>No kafka-connector is currently active</h5>
+          </md-content>
+          <md-content ng-hide="{{getConnectors(rows,'connector-').length ==0}}" class="md-padding">
             <md-card>
               <md-card-content style="padding:0">
                 <md-menu ng-show="apps">
@@ -347,7 +349,7 @@
             <table class="table table-bordered table-striped table-hover">
               <thead>
               <tr>
-                <th class="text-center" ng-repeat="x in getTopicKeys(rows) track by $index">{{x}}</th>
+                <th class="text-center" ng-repeat="topicKey in getTopicKeys(rows)">{{topicKey}}</th>
               </tr>
               </thead>
               <tbody>
@@ -423,6 +425,21 @@
           </md-content>
         </md-tab-body>
       </md-tab>
+      <!-- Custom rendering to display CURL commands -->
+      <md-tab label="Curl">
+        <div id="left2"
+             ng-model="allCurlCommands" ng-readonly="true" ui-ace="{
+                          useWrapMode: true,
+                          showGutter: true,
+                          theme:'chrome',
+                          mode: 'batchfile',
+                          firstLineNumber: 1,
+                          onLoad: aceLoaded,
+                          onChange: aceChanged
+                          }"></div>
+      </md-tab>
+
+
     </md-tabs>
     <div>
     </div>

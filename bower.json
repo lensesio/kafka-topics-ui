@@ -1,39 +1,33 @@
 {
-  "name": "kafka-topic-manager",
+  "name": "kafka-topics-ui",
   "authors": [
     "Christina Daskalaki <christina@landoop.com>",
     "Antonios Chalkiopoulos <antonios@landoop.com>",
     "Marios Andreopoulos <marios@landoop.com>"
   ],
-  "description": "A user interface for managing Kafka Topics",
-  "main": "",
+  "description": "A user interface for reading data from Kafka Topics",
+  "main": "index.html",
   "license": "Apache-2.0",
   "homepage": "http://kafka-topics-ui.landoop.com",
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
-    "test",
-    "tests"
+    "bower_components"
   ],
   "dependencies": {
     "angular": "~1.5.*",
+    "angular-route": "^1.5.*",
+    "angular-animate": "^1.5.*",
+    "angular-aria": "^1.5.*",
     "angular-ui-ace": "bower",
     "bootstrap": "^3.3.6",
     "angular-spinner": "^0.8.1",
-    "angularUtils-pagination": "angular-utils-pagination#^0.11.1",
     "angular-material": "^1.0.9",
-    "angular-animate": "^1.5.7",
-    "angular-aria": "^1.5.7",
-    "angular-route": "^1.5.7",
+    "angularUtils-pagination": "angular-utils-pagination#^0.11.1",
     "font-awesome": "fontawesome#^4.6.3",
     "angular-oboe": "*"
   },
-  "resolutions": {
-    "angular": "~1.5.*"
-  },
   "devDependencies": {
-    "ui.bootstrap": "^1.3.3",
     "angular-base64": "^2.0.5"
   }
 }

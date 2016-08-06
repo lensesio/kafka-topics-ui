@@ -1,7 +1,7 @@
-kafkaTopicsUIApp.service('toastFactory', function ($rootScope, $mdToast, $log) {
+kafkaTopicsUIApp.service('toastFactory', function ($rootScope, $mdToast) {
 
   var last = {
-    bottom: true,
+    bottom: false,
     top: true,
     left: false,
     right: true

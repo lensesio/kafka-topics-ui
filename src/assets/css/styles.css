@@ -23,9 +23,9 @@ header.header {
 .header-section {
     background-color: #4F6375;
     color: #ebebeb;
-    border-bottom: 1px solid #2b3e50;
-    padding: 7px 0;
-    margin-bottom: 20px;
+    border-bottom: 0 solid #2b3e50;
+    padding: 4px 0;
+    margin-bottom: 0;
 }
 
 .container-fluid-centered {
@@ -136,7 +136,7 @@ pre {
     position: absolute;
     background-color: green;
     min-width: 250px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
 /* Links inside the dropdown */
@@ -175,31 +175,29 @@ md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
     text-align: center;
 }
 
-/** Pagination **/
-.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
-    background-color: #286090;
-}
-
-.label-primary {
-    background-color: #286090;
-}
-
-.list-group-item {
-    padding: 8px 15px;
+md-chips.md-default-theme .md-chips, md-chips .md-chips {
+    box-shadow: none;
 }
 
 .md-button.light-blue {
     background-color: rgba(74, 163, 223, 1);
 }
 
-md-chips.md-default-theme .md-chips, md-chips .md-chips {
-    box-shadow: 0 0px;
+/** Pagination **/
+.label-primary {
+    background-color: #286090;
 }
 
-.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    vertical-align: middle;
+.md-whiteframe-2dp {
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
+}
+
+.md-whiteframe-2dp:focus {
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.4), 0 2px 2px 0 rgba(0, 0, 0, 0.28), 0 3px 1px -2px rgba(0, 0, 0, 0.24);
+}
+
+.md-button.light-blue {
+    background-color: rgba(74, 163, 223, 1);
 }
 
 .fabSpeedDial.text-capitalize {
@@ -230,10 +228,17 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
 }
 
 a.md-button.md-default-theme.md-warn.md-raised, a.md-button.md-warn.md-raised, a.md-button.md-default-theme.md-warn.md-fab, a.md-button.md-warn.md-fab, .md-button.md-default-theme.md-warn.md-raised, .md-button.md-warn.md-raised, .md-button.md-default-theme.md-warn.md-fab, .md-button.md-warn.md-fab {
-    color: rgb(255,255,255);
-    background-color: rgba(169,169,169,0.1);
+    color: rgb(255, 255, 255);
+    background-color: rgba(169, 169, 169, 0.1);
 }
 
-md-list-item.md-2-line, md-list-item.md-2-line>.md-no-style {
-    min-height: 0px;
+/* Custom topics-ui CSS */
+md-list-item.md-2-line, md-list-item.md-2-line > .md-no-style {
+    min-height: 0;
+}
+
+.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    vertical-align: middle;
 }

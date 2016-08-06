@@ -19,6 +19,13 @@ UI for viewing **Kafka topics** using the Kafka Rest proxy built in angular - ht
 * Displays number of partitions and replication factor per topic
 * [TODO] Stream from beginning or real-time capturing
 
+### Other Landoop projects
+
+|                    Project                                     |         Description            |
+|----------------------------------------------------------------| -------------------------------|
+| [schema-registry-ui](https://github.com/Landoop/schema-registry-ui)  | View Kafka Schemas registered on the Schema Registry |
+| [Confluent-On-Cloudera](https://github.com/Landoop/Confluent-On-Cloudera) | Install and Manage the Confluent Platform on Hadoop Cloudera CDH clusters |
+
 ## Preview
 
 <a href="http://kafka-topics-ui.landoop.com" target="_blank">
@@ -28,7 +35,7 @@ UI for viewing **Kafka topics** using the Kafka Rest proxy built in angular - ht
 ## Configuration
 
 * By default `kafka-topics-ui` points to a **kafka-rest** server at `http://localhost:8082`
- To point it to a different kafka-rest server, update `app/src/env.js`
+ To point it to a different kafka-rest server, update `src/env.js`
 * Enable CORS
 
 If using nginx
@@ -50,19 +57,27 @@ If using nginx
 ## Run
 
 #### Prerequisites
+
 * You need to download dependencies with `bower`. Find out more [here](http://bower.io)
 * You need a `web server` to serve the app.
 
-#### Steps
+### Steps
 
     git clone https://github.com/Landoop/kafka-topics-ui.git
     cd kafka-topics-ui
-    bower install
-    http-server app
+    npm install
+    http-server .
 
 Web UI will be available at `http://localhost:8080`
 
-#### Nginx config
+## Deploy
+
+    npm install
+    grunt
+
+All files will be under folder `dist`
+
+### Nginx config
 
 If you use `nginx` to serve this ui, let angular manage routing with
 
@@ -70,6 +85,11 @@ If you use `nginx` to serve this ui, let angular manage routing with
         try_files $uri $uri/ /index.html =404;
         root /folder-with-kafka-topics-ui/;
     }
+
+### Docker
+
+We are also releasing and maintaining docker images at the public Docker Hub
+https://hub.docker.com/r/landoop/kafka-topics-ui/
 
 ## License
 
