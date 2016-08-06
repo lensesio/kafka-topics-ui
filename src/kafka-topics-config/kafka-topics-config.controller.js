@@ -1,7 +1,7 @@
 kafkaTopicsUIApp.controller('KafkaTopicsConfigCtrl', function ($scope, $http, $log) {
 
   $log.debug("Starting schema-registry config controller");
-  $scope.schemaRegistryURL = ENV.SCHEMA_REGISTRY_UI;
+  $scope.schemaRegistryURL = ENV.APPS[0].urlSchema;
   $scope.kafkaRest = ENV.KAFKA_REST;
   $scope.brokers = {};
   $scope.connectionFailure = false;

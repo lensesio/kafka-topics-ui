@@ -1,10 +1,7 @@
 var ENV = {
 
   // Replace with the URL where a Kafka REST service is listening
-  KAFKA_REST: "http://localhost:8082", // https://kafka-rest-proxy.demo.landoop.com",
-
-  // Replace with the URL where the schema-registry-ui
-  SCHEMA_REGISTRY_UI: "http://schema-registry-ui.landoop.com",
+  KAFKA_REST: "http://localhost:8082", // https://kafka-rest-proxy.demo.landoop.com
 
   // Sets the defaul maximum amount of bytes to fetch from each topic
   MAX_BYTES: "?max_bytes=50000",
@@ -18,7 +15,7 @@ var ENV = {
     {
       name: "Schema Registry",
       icon: "src/assets/icons/schema-registry.svg",
-      urlSchema: "http://schema-registry-ui.landoop.com"
+      urlSchema: "http://schema-registry-ui.landoop.com" // schema-registry-ui is integrated into this application
     },
     {
       name: "Kafka Connectors",
