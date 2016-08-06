@@ -85,6 +85,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $http, $log, $
       .done(function (things) {
         $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
           "// Fetching " + messagetype + " data\n" + curlGetData + "\n";
+        var resultingTextData = "";
         if (messagetype == "binary") {
           var data2 = angular.forEach(things, function (d) {
             d.key = $base64.decode(d.key);
@@ -160,7 +161,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $http, $log, $
       var deferred = $q.defer();
       var urlCalls = [];
       var topicDetails = [];
-      start = new Date().getTime();
+      var start = new Date().getTime();
       angular.forEach(topicNames, function (topicName) {
         urlCalls.push($http.get(ENV.KAFKA_REST + '/topics/' + topicName));
       });
@@ -190,7 +191,7 @@ kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $http, $log, $
           //      },{"partition":1,"...
 
         });
-        end = new Date().getTime();
+        var end = new Date().getTime();
         $log.info("[" + (end - start) + "] msec to fetch details of " + topicDetails.length + " topics");
         deferred.resolve(topicDetails);
       });
