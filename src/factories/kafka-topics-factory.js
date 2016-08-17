@@ -1,4 +1,4 @@
-kafkaTopicsUIApp.factory('kafkaZooFactory', function ($rootScope, $http, $log, $base64, $q, Oboe, toastFactory) {
+angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $base64, $q, Oboe, toastFactory) {
 
   //$rootScope.showCreateTopicButton = true;
   $rootScope.allCurlCommands = "";

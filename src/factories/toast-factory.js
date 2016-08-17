@@ -1,4 +1,4 @@
-kafkaTopicsUIApp.service('toastFactory', function ($rootScope, $mdToast) {
+angularAPP.service('toastFactory', function ($rootScope, $mdToast) {
 
   var last = {
     bottom: false,

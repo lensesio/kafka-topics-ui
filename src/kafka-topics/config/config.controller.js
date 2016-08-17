@@ -1,4 +1,4 @@
-kafkaTopicsUIApp.controller('KafkaTopicsConfigCtrl', function ($scope, $http, $log) {
+angularAPP.controller('KafkaTopicsConfigCtrl', function ($scope, $http, $log) {
 
   $log.debug("Starting schema-registry config controller");
   $scope.schemaRegistryURL = ENV.SCHEMA_REGISTRY_UI;

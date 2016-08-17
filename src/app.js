@@ -1,6 +1,6 @@
 'use strict';
 
-var kafkaTopicsUIApp = angular.module('kafkaTopicsUIApp', [
+var angularAPP = angular.module('angularAPP', [
   'ui.ace',
   'angularSpinner',
   'angularUtils.directives.dirPagination',
@@ -12,10 +12,10 @@ var kafkaTopicsUIApp = angular.module('kafkaTopicsUIApp', [
   'ngOboe'
 ]);
 
-kafkaTopicsUIApp.controller('MenuCtrl', function ($scope, $log) {
+angularAPP.controller('MenuCtrl', function ($scope, $log) {
 });
 
-kafkaTopicsUIApp.config(function ($routeProvider) {
+angularAPP.config(function ($routeProvider) {
   $routeProvider
     .when('/', {
       templateUrl: 'src/kafka-topics/home/home.html',
@@ -35,7 +35,7 @@ kafkaTopicsUIApp.config(function ($routeProvider) {
 });
 
 // ng-show="x | isEmpty"
-kafkaTopicsUIApp.filter('isEmpty', function () {
+angularAPP.filter('isEmpty', function () {
   var bar;
   return function (obj) {
     for (bar in obj) {
@@ -47,7 +47,7 @@ kafkaTopicsUIApp.filter('isEmpty', function () {
   };
 });
 
-kafkaTopicsUIApp.filter("sanitize", ['$sce', function ($sce) {
+angularAPP.filter("sanitize", ['$sce', function ($sce) {
   return function (htmlCode) {
     return $sce.trustAsHtml(htmlCode);
   }

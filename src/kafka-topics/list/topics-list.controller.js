@@ -1,10 +1,10 @@
-kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $routeParams, $mdToast, $log, kafkaZooFactory, toastFactory) {
+angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $routeParams, $mdToast, $log, KafkaRestProxyFactory, toastFactory) {
 
   $log.debug("KafkaTopicsListCtrl - initializing - getting existing topics");
   toastFactory.hideToast();
 
   // 1. Get topics
-  var topicsPromise = kafkaZooFactory.getTopicList();
+  var topicsPromise = KafkaRestProxyFactory.getTopicList();
   topicsPromise.then(function (result) {
     var normalTopics = result.normal;
     var controlTopics = result.control;
@@ -17,7 +17,7 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
       $scope.topics = normalTopics;
       $scope.controlTopics = controlTopics;
       $rootScope.topicsCache = normalTopics;
-      var topicDetailsPromise = kafkaZooFactory.getTopicDetails(normalTopics.concat(controlTopics));
+      var topicDetailsPromise = KafkaRestProxyFactory.getTopicDetails(normalTopics.concat(controlTopics));
       topicDetailsPromise.then(function (topicDetails) {
         $rootScope.topicDetails = topicDetails;
       }, function (reason) {
@@ -36,7 +36,7 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
 
   // 2. Get _schemas
   var start = new Date().getTime();
-  var schemasPromise = kafkaZooFactory.consumeKafkaRest("json", "_schemas");
+  var schemasPromise = KafkaRestProxyFactory.consumeKafkaRest("json", "_schemas");
   schemasPromise.then(function (allSchemas) {
     var end = new Date().getTime();
     $rootScope.schemas = allSchemas;
@@ -81,12 +81,12 @@ kafkaTopicsUIApp.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
   };
 
   $scope.hasExtraConfig = function (topicName) {
-    var extra = kafkaZooFactory.hasExtraConfig(topicName);
+    var extra = KafkaRestProxyFactory.hasExtraConfig(topicName);
     return extra;
   };
 
   $scope.getDataType = function (topicName) {
-    return kafkaZooFactory.getDataType(topicName);
+    return KafkaRestProxyFactory.getDataType(topicName);
   };
 
   // $scope.topics = ENV.topics;

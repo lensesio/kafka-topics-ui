@@ -1,10 +1,10 @@
-kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, $base64, kafkaZooFactory) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, $base64, KafkaRestProxyFactory) {
 
   $log.info("ViewTopicCtrl - initializing for topic : " + $routeParams.topicName);
   $scope.topicName = $routeParams.topicName;
   $scope.showSpinner = true;
 
-  $scope.topicType = kafkaZooFactory.getDataType($scope.topicName);
+  $scope.topicType = KafkaRestProxyFactory.getDataType($scope.topicName);
 
   $scope.editor;
 
@@ -61,7 +61,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   };
 
   $scope.hasExtraConfig = function (topicName) {
-    var extra = kafkaZooFactory.hasExtraConfig(topicName);
+    var extra = KafkaRestProxyFactory.hasExtraConfig(topicName);
     if (extra != '') {
       // $log.debug("Topic details " + topicName + " HAS EXTRA CONFIG " + extra);
     }
@@ -69,7 +69,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   };
 
   $scope.getExtraConfig = function (topicName) {
-    var extra = kafkaZooFactory.hasExtraConfig(topicName);
+    var extra = KafkaRestProxyFactory.hasExtraConfig(topicName);
     return JSON.parse(extra);
   };
 
@@ -135,9 +135,9 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
       $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
     } else {
       if (isJson(rows)) {
-        $scope.customMessage = "Displaying " + JSON.parse(rows).length + " rows ";// + kafkaZooFactory.bytesToSize(rows.length);
+        $scope.customMessage = "Displaying " + JSON.parse(rows).length + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
       } else {
-        $scope.customMessage = "Displaying " + rows.length + " rows ";// + kafkaZooFactory.bytesToSize(rows.length);
+        $scope.customMessage = "Displaying " + rows.length + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
       }
     }
   }
@@ -323,7 +323,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   // At start-up this controller consumes data
   var start = new Date().getTime();
   if (($scope.topicType == "json") || ($scope.topicType == "binary") || ($scope.topicType == "avro")) {
-    var dataPromise = kafkaZooFactory.consumeKafkaRest($scope.topicType, $scope.topicName);
+    var dataPromise = KafkaRestProxyFactory.consumeKafkaRest($scope.topicType, $scope.topicName);
     dataPromise.then(function (allData) {
       var end = new Date().getTime();
       $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
@@ -342,16 +342,16 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   } else {
     $log.warn("We don't really know the data type of topic" + $scope.topicName + " so we will attempt all options..");
     // If we don't know we need to guess by trying Avro -> JSon -> Binary
-    var dataPromiseAvro = kafkaZooFactory.consumeKafkaRest("avro", $scope.topicName);
+    var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("avro", $scope.topicName);
     dataPromiseAvro.then(function (allData) {
       if (JSON.stringify(allData).indexOf("error_code") > 0) {
         $log.warn('Failed with Avro - going to try with Json this time (' + allData + ')');
-        var dataPromiseAvro = kafkaZooFactory.consumeKafkaRest("json", $scope.topicName);
+        var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("json", $scope.topicName);
         dataPromiseAvro.then(
           function (allData) {
             if (JSON.stringify(allData).indexOf("error_code") > 0) {
               $log.error('Failed with JSon as well - going to try with Binary this time (' + allData + ')');
-              var dataPromiseAvro = kafkaZooFactory.consumeKafkaRest("binary", $scope.topicName);
+              var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("binary", $scope.topicName);
               dataPromiseAvro.then(function (allData) {
                 $log.info("Binary detected");
                 var end = new Date().getTime();
@@ -414,7 +414,7 @@ kafkaTopicsUIApp.controller('ViewTopicCtrl', function ($scope, $rootScope, $filt
   // [ avro | json | binary ]
   $scope.consumeKafkaRest = function (messagetype, topicName) {
     $scope.showSpinner = true;
-    var dataPromise = kafkaZooFactory.consumeKafkaRest(messagetype, topicName);
+    var dataPromise = KafkaRestProxyFactory.consumeKafkaRest(messagetype, topicName);
     dataPromise.then(function (data) {
         $scope.aceString = data;
         $scope.rows = data;
