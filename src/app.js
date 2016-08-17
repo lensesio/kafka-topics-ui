@@ -39,7 +39,7 @@ kafkaTopicsUIApp.controller('MenuCtrl', function ($scope, $log) {
 kafkaTopicsUIApp.config(function ($routeProvider) {
   $routeProvider
     .when('/', {
-      templateUrl: 'src/home/home.html',
+      templateUrl: 'src/kafka-topics/home/home.html',
       controller: 'HomeCtrl'
     })
     .when('/create-topic', {
