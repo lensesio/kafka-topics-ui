@@ -13,27 +13,6 @@ var kafkaTopicsUIApp = angular.module('kafkaTopicsUIApp', [
 ]);
 
 kafkaTopicsUIApp.controller('MenuCtrl', function ($scope, $log) {
-  $scope.apps = [];
-  angular.forEach(ENV.APPS, function (app) {
-    if (app.urlSchema != undefined && app.urlSchema != "") {
-      app.url = app.urlSchema;
-    } else if (app.urlTopics != undefined && app.urlTopics != "") {
-      app.url = app.urlTopics;
-    } else if (app.urlConnect != undefined && app.urlConnect != "") {
-      app.url = app.urlConnect;
-    } else if (app.urlAlerts != undefined && app.urlAlerts != "") {
-      app.url = app.urlAlerts;
-    } else if (app.urlManager != undefined && app.urlManager != "") {
-      app.url = app.urlManager;
-    } else if (app.urlMonitoring != undefined && app.urlMonitoring != "") {
-      app.url = app.urlMonitoring;
-    }
-    if (app.url != undefined) {
-      $scope.apps.push(app);
-      $log.debug("Menu app enabled -> " + app.name);
-    }
-  });
-  $scope.disableAppsMenu = $scope.apps.length <= 0;
 });
 
 kafkaTopicsUIApp.config(function ($routeProvider) {
