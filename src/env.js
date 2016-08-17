@@ -1,7 +1,7 @@
 var ENV = {
 
   // Replace with the URL where a Kafka REST service is listening
-  KAFKA_REST: "http://localhost:8082", // https://kafka-rest-proxy.demo.landoop.com
+  KAFKA_REST: "https://kafka-rest-proxy.demo.landoop.com", // http://localhost:8082
 
   // Sets the defaul maximum amount of bytes to fetch from each topic
   MAX_BYTES: "?max_bytes=50000",

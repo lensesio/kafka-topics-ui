@@ -43,11 +43,11 @@ kafkaTopicsUIApp.config(function ($routeProvider) {
       controller: 'HomeCtrl'
     })
     .when('/create-topic', {
-      templateUrl: 'src/kafka-topics-new/kafka-topics-new.html',
+      templateUrl: 'src/kafka-topics/new/new-topic.html',
       controller: 'HeaderCtrl'
     })
     .when('/topic/:topicName', {
-      templateUrl: 'src/kafka-topics-detail/kafka-topics-detail.html',
+      templateUrl: 'src/kafka-topics/view/view.html',
       controller: 'ViewTopicCtrl'
     }).otherwise({
     redirectTo: '/'

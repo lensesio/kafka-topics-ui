@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Kafka Topics UI</title>
+  <title>Kafka Topics UI - Browse Kafka Data</title>
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
@@ -53,12 +53,12 @@
   <div flex-gt-sm="33">
     <div ng-controller="KafkaTopicsListCtrl" ng-include="'src/left-list.html'"></div>
     <br>
-    <div ng-include="'src/kafka-topics-config/kafka-topics-config.html'"></div>
+    <div ng-include="'src/kafka-topics/config/config.html'"></div>
   </div>
   <div flex-gt-sm="66" flex>
     <ng-view></ng-view>
     <br>
-    <div ng-include="'src/kafka-topics-config/kafka-topics-config.html'" show-sm hide-gt-sm></div>
+    <div ng-include="'src/kafka-topics/config/config.html'" show-sm hide-gt-sm></div>
   </div>
 </div>
 
@@ -67,7 +67,7 @@
   <div flex="nogrow">
     <img ng-src="src/assets/icons/landoop-dark.svg" style="width:20px;float: left;padding-right:5px;"></div>
   <div flex>
-    <p class="md-caption">Powered by <a href="http://www.landoop.com/capabilities/kafka" target="_blank">LANDOOP</a></p>
+    <p class="md-caption">Powered by <a href="http://www.landoop.com/capabilities/kafka" target="_blank">Landoop</a></p>
   </div>
 </div>
 
@@ -92,9 +92,9 @@
 <script src="src/env.js"></script>
 <script src="src/app.js"></script>
 <script src="src/home/home.controller.js"></script>
-<script src="src/kafka-topics-detail/kafka-topics-detail.controller.js"></script>
-<script src="src/kafka-topics-config/kafka-topics-config.controller.js"></script>
-<script src="src/kafka-topics-list/kafka-topics-list.controller.js"></script>
+<script src="src/kafka-topics/view/view.controller.js"></script>
+<script src="src/kafka-topics/config/config.controller.js"></script>
+<script src="src/kafka-topics/list/topics-list.controller.js"></script>
 <script src="src/factories/kafka-topics-factory.js"></script>
 <script src="src/factories/toast-factory.js"></script>
 <!-- endbuild -->
