@@ -183,8 +183,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    */
   function createNewConsumer(consumerGroup, consumerName, format, autoOffsetReset, enableAutoCommit) {
 
-    var uniqueConsumer = "Consumer-" + (new Date()).getTime() + '-' + format;
-    var url = KAFKA_REST + '/consumers/' + uniqueConsumer;
+    var url = KAFKA_REST + '/consumers/' + consumerName;
     $log.info("Creating Kafka Rest consumer for " + format + " data");
 
     $rootScope.allCurlCommands = "";
@@ -312,10 +311,10 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
 
     // Oboe - stream data in (roughly 1000 rows)
     var totals = 0;
-    var start = new Date().getTime();
     var curlGetData = 'curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + url;
     $log.debug("  " + curlGetData);
     var allResults = [];
+    var start = new Date().getTime();
     $log.debug("Oboe-ing at " + url);
 
     var deferred = $q.defer();
@@ -604,6 +603,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
       var deferred = $q.defer();
       createNewConsumer(consumer, consumerName, format, "smallest",true).then( // TODO (true)
         function success(data) {
+          //data.instance_id + " base_uri = " + response.data.base_uri
           startFetchingData(format, topicName, consumerName).then(
             function success(data) {
               //$log.info("Consumed data -> " + data);
