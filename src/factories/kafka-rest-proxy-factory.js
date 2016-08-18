@@ -1,6 +1,6 @@
 /**
  * Kafka-Rest-Proxy angularJS Factory
- * version 0.7-SNAPSHOT (17.Aug.2016)
+ * version 0.7-SNAPSHOT (18.Aug.2016)
  *
  * @author antonios@landoop.com
  */
@@ -421,17 +421,22 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
   }
 
   function shortenControlCenterName(topicName) {
-    topicName.replace('_confluent-controlcenter-0-', '...')
-      // .replace('aggregate-topic-partition', 'aggregate-topic')
-      .replace('MonitoringMessageAggregatorWindows', 'monitor-msg')
-      .replace('aggregatedTopicPartitionTableWindows', 'aggregate-window')
-      .replace('monitoring-aggregate-rekey', 'monitor-rekey')
-      .replace('MonitoringStream', 'monitor-stream')
-      .replace('MonitoringVerifierStore', 'monitor-verifier')
-      .replace('...Group', '...group')
-      .replace('FIFTEEN_SECONDS', '15sec')
-      .replace('ONE_HOUR', '1hour')
-      .replace('ONE_WEEK', '1week');
+    if (isControlTopic(topicName)) {
+      return topicName
+        .replace('_confluent-controlcenter-0-', '...')
+        // .replace('aggregate-topic-partition', 'aggregate-topic')
+        .replace('MonitoringMessageAggregatorWindows', 'monitor-msg')
+        .replace('aggregatedTopicPartitionTableWindows', 'aggregate-window')
+        .replace('monitoring-aggregate-rekey', 'monitor-rekey')
+        .replace('MonitoringStream', 'monitor-stream')
+        .replace('MonitoringVerifierStore', 'monitor-verifier')
+        .replace('...Group', '...group')
+        .replace('FIFTEEN_SECONDS', '15sec')
+        .replace('ONE_HOUR', '1hour')
+        .replace('ONE_WEEK', '1week');
+    } else {
+      return topicName;
+    }
   }
 
   // Private method for step-2 of consuming data
@@ -512,8 +517,11 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
   return {
 
     // Proxy methods
-    getBrokers: function() {
+    getBrokers: function () {
       return getBrokers();
+    },
+    bytesToSize: function (bytes) {
+      return bytesToSize(bytes);
     },
     hasExtraConfig: function (topicName) {
       var extraTopicConfig = {};
@@ -523,9 +531,6 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
         }
       });
       return (JSON.stringify(extraTopicConfig).replace("{}", ""));
-    },
-    bytesToSize: function (bytes) {
-      return bytesToSize(bytes);
     },
     getTopicList: function () { // Return (Normal-Topics,Control-Topics)
       var deferred = $q.defer();
@@ -562,47 +567,41 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
       $rootScope.showSpinner = false;
       return deferred.promise;
     },
-    getTopicDetails: function (topicNames) {
-      var deferred = $q.defer();
-      var urlCalls = [];
-      var topicDetails = [];
+
+    /**
+     * Composite method, that fetches information about particular topics
+     * and adds some enhanced metadata
+     */
+    getAllTopicInformation: function (topicNames) {
+
       var start = new Date().getTime();
-      angular.forEach(topicNames, function (topicName) {
-        urlCalls.push($http.get(KAFKA_REST + '/topics/' + topicName));
+
+      var topicsInformation = []; // Array of topic-information with enhanced metadata
+
+      var deferred = $q.defer();
+      var promises = topicNames.map(function (topicName) {
+        return getTopicMetadata(topicName);
       });
-      $q.all(urlCalls).then(function (results) {
-        angular.forEach(results, function (result) {
-          // $log.debug("Got" + JSON.stringify(result.data));
-          if (result.data.name.startsWith("_confluent-controlcenter-0-", 0)) {
-            result.data.shortName = shortenControlCenterName(result.data.name);
-          } else {
-            result.data.shortName = result.data.name;
-          }
-          topicDetails.push(result.data);
-          // {"
-          //   name":"connect-test","
-          //   configs":{},
-          //   "partitions":[
-          //     {
-          //          "partition":0,
-          //          "leader":0,
-          //           "replicas":[
-          //               {
-          //                  "broker":0,
-          //                  "leader":true,
-          //                  "in_sync":true
-          //               }
-          //           ]
-          //      },{"partition":1,"...
+      $q.all(promises).then(
+        function success(topicMetadataArray) {
+
+          // Add enhanced metadata: (shortName)
+          angular.forEach(topicMetadataArray, function (topicMetadata) {
+            topicMetadata.shortName = shortenControlCenterName(topicMetadata.name);
+            topicsInformation.push(topicMetadata);
+            // @see ### TOPIC-INFORMATION ### in SAMPLES.txt
+          });
+          $log.debug("  ..pipeline got " + topicMetadataArray.length + " topic metadata in [ " + (new Date().getTime() - start) + " ] msec");
+          deferred.resolve(topicsInformation);
+        },
+        function failure(error) {
 
         });
-        var end = new Date().getTime();
-        $log.info("[" + (end - start) + "] msec to fetch details of " + topicDetails.length + " topics");
-        deferred.resolve(topicDetails);
-      });
-      // $scope.aceString = angular.toJson(response.data, true);
+
       return deferred.promise;
+
     },
+
     getDataType: function (topicName) {
       var dataType = {};
       // Check if we know the topic data type a priory

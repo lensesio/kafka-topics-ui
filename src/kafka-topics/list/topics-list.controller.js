@@ -3,36 +3,36 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
   $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
 
-  // 1. Get topics
-  var topicsPromise = KafkaRestProxyFactory.getTopicList();
-  topicsPromise.then(function (result) {
-    var normalTopics = result.normal;
-    var controlTopics = result.control;
+  /**
+   * At start-up get all topic-information
+   */
+  KafkaRestProxyFactory.getTopicList().then(
+    function success(result) {
+      var normalTopics = result.normal;
+      var controlTopics = result.control;
 
-    if (normalTopics.toString().indexOf("Error in getting topics from kafka-rest") > -1) {
-      toastFactory.showSimpleToast("Error in getting topics from kafka-rest");
-    } else {
-      //$log.debug("Normal topics  = " + JSON.stringify(normalTopics));
-      //$log.debug("Control topics = " + JSON.stringify(controlTopics));
-      $scope.topics = normalTopics;
-      $scope.controlTopics = controlTopics;
-      $rootScope.topicsCache = normalTopics;
-      var topicDetailsPromise = KafkaRestProxyFactory.getTopicDetails(normalTopics.concat(controlTopics));
-      topicDetailsPromise.then(function (topicDetails) {
-        $rootScope.topicDetails = topicDetails;
-      }, function (reason) {
-        $log.error('Failed: ' + reason);
-      }, function (update) {
-        $log.info('Got notification: ' + update);
-      });
+      if (normalTopics.toString().indexOf("Error in getting topics from kafka-rest") > -1) {
+        toastFactory.showSimpleToast("Error in getting topics from kafka-rest");
+      } else {
+        //$log.debug("Normal topics  = " + JSON.stringify(normalTopics));
+        //$log.debug("Control topics = " + JSON.stringify(controlTopics));
+        $scope.topics = normalTopics;
+        $scope.controlTopics = controlTopics;
+        $rootScope.topicsCache = normalTopics;
+        KafkaRestProxyFactory.getAllTopicInformation(normalTopics.concat(controlTopics)).then(
+          function success(topicDetails) {
+            $rootScope.topicDetails = topicDetails;
+          }, function failure(reason) {
+            $log.error('Failed: ' + reason);
+          });
 
-    }
-  }, function (reason) {
-    $log.error('Failed: ' + reason);
-    toastFactory.showSimpleToast("No connectivity. Could not get topic names");
-  }, function (update) {
-    $log.info('Got notification: ' + update);
-  });
+      }
+    }, function (reason) {
+      $log.error('Failed: ' + reason);
+      toastFactory.showSimpleToast("No connectivity. Could not get topic names");
+    }, function (update) {
+      $log.info('Got notification: ' + update);
+    });
 
   // 2. Get _schemas
   var start = new Date().getTime();
@@ -81,8 +81,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
   };
 
   $scope.hasExtraConfig = function (topicName) {
-    var extra = KafkaRestProxyFactory.hasExtraConfig(topicName);
-    return extra;
+    return KafkaRestProxyFactory.hasExtraConfig(topicName);
   };
 
   $scope.getDataType = function (topicName) {
