@@ -1,0 +1,21 @@
+#################################
+####### TOPIC-INFORMATION #######
+#################################
+ {
+   "name":"connect-test","
+   "configs":{},
+   "partitions":[
+    {
+       "partition":0,
+       "leader":0,
+       "replicas":[
+         {
+            "broker":0,
+            "leader":true,
+            "in_sync":true
+         }
+        ]
+    },
+    { "partition":1, "..." }
+   ]
+}
