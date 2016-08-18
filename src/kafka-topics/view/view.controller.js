@@ -125,7 +125,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   function setCustomMessage(rows) {
     if ($scope.topicName == "_schemas") {
-      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + rows.length + "</b> registered schemas in the <a href='" + KAFKA_REST_ENV.APPS[0].urlSchema + "' target='_blank'>schema-registry</a>"
+      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + rows.length + "</b> registered schemas in the <a href='" + UI_SCHEMA_REGISTRY + "' target='_blank'>schema-registry</a>"
     } else if ($scope.topicName == "connect-configs") {
       $scope.customMessage = "Topic <b>connect-configs</b> holds <b>" + $scope.getConnectors(rows, 'connector-').length + "</b> connector configurations" +
         " and <b>" + $scope.getConnectors(rows, 'task-').length + "</b> task configurations";
