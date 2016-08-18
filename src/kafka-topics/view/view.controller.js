@@ -1,6 +1,6 @@
 angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, $base64, KafkaRestProxyFactory) {
 
-  $log.info("ViewTopicCtrl - initializing for topic : " + $routeParams.topicName);
+  $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
   $scope.showSpinner = true;
 

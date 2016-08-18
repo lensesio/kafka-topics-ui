@@ -1,19 +1,21 @@
 angularAPP.controller('KafkaTopicsConfigCtrl', function ($scope, $http, $log) {
 
-  $log.debug("Starting schema-registry config controller");
+  $log.info("Starting kafka-topics controller : config");
+
   $scope.schemaRegistryURL = UI_SCHEMA_REGISTRY;
   $scope.kafkaRest = KAFKA_REST;
   $scope.brokers = {};
   $scope.connectionFailure = false;
 
-  //Get the brokers this kafka-rest server connects to
-  $http.get(KAFKA_REST + '/brokers').then(
-    function successCallback(response) {
-      $scope.brokers = response.data.brokers.length;
-      $log.debug("Number of Brokers -> " + response.data.brokers.length);
+  /**
+   * At start up get the Brokers that the kafka-rest server is using
+   */
+  KafkaRestProxyFactory.getBrokers().then(
+    function success(brokers) {
+      $scope.brokers = brokers;
     },
-    function errorCallback(response) {
-      $log.error("Failure with : " + JSON.stringify(response));
+    function failure() {
       $scope.connectionFailure = true;
     });
+
 });

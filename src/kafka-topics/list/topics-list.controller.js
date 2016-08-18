@@ -1,6 +1,6 @@
 angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $routeParams, $mdToast, $log, KafkaRestProxyFactory, toastFactory) {
 
-  $log.debug("KafkaTopicsListCtrl - initializing - getting existing topics");
+  $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
 
   // 1. Get topics
@@ -12,8 +12,8 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
     if (normalTopics.toString().indexOf("Error in getting topics from kafka-rest") > -1) {
       toastFactory.showSimpleToast("Error in getting topics from kafka-rest");
     } else {
-      $log.debug("Normal topics  = " + JSON.stringify(normalTopics));
-      $log.debug("Control topics = " + JSON.stringify(controlTopics));
+      //$log.debug("Normal topics  = " + JSON.stringify(normalTopics));
+      //$log.debug("Control topics = " + JSON.stringify(controlTopics));
       $scope.topics = normalTopics;
       $scope.controlTopics = controlTopics;
       $rootScope.topicsCache = normalTopics;

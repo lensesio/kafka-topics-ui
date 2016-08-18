@@ -1,4 +1,4 @@
 angularAPP.controller('HomeCtrl', function ($log, toastFactory) {
-  $log.debug("Starting HomeCtrl");
+  $log.info("Starting kafka-topics controller : home");
   toastFactory.hideToast();
 });

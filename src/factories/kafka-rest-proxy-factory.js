@@ -371,6 +371,34 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     return deferred.promise;
   }
 
+  // Brokers
+
+  /**
+   * Consume messages from a topic
+   * @see http://docs.confluent.io/3.0.0/kafka-rest/docs/api.html#get--brokers
+   */
+  function getBrokers() {
+
+    var url = KAFKA_REST + '/brokers';
+    $log.debug("  curl -X GET " + url);
+    var start = new Date().getTime();
+
+    var deferred = $q.defer();
+    $http.get(url).then(
+      function success(response) {
+        $log.debug("  curl -X GET " + url + " in [ " + " ] msec responding - " + response.data.brokers);
+        deferred.resolve(response.data);
+      },
+      function failure(response) {
+        $log.error("Failure with : " + JSON.stringify(response));
+        deferred.reject();
+      });
+
+    return deferred.promise;
+
+  }
+
+
   /**
    *
    * Some non API related methods
@@ -483,6 +511,10 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
   // Factory should return
   return {
 
+    // Proxy methods
+    getBrokers: function() {
+      return getBrokers();
+    },
     hasExtraConfig: function (topicName) {
       var extraTopicConfig = {};
       angular.forEach($rootScope.topicDetails, function (detail) {
@@ -500,8 +532,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
       $log.debug('  curl ' + KAFKA_REST + '/topics');
       setTimeout(function () {
         var start = new Date().getTime();
-        var getData = {method: 'GET', url: KAFKA_REST + '/topics'};
-        $http(getData)
+        $http.get(KAFKA_REST + '/topics')
           .then(
             function successCallback(response) {
               var end = new Date().getTime();
