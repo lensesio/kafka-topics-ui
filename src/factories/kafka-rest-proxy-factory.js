@@ -308,7 +308,6 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     // Oboe - stream data in (roughly 1000 rows)
     var totals = 0;
     var start = new Date().getTime();
-    var myUrl = KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + KAFKA_REST_ENV.MAX_BYTES;
     var curlGetData = 'curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + myUrl;
     $log.debug("  " + curlGetData);
     var allResults = [];
@@ -316,7 +315,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
 
     var deferred = $q.defer();
     oboe({
-      url: myUrl,
+      url: url,
       headers: {"Accept": acceptMessageType}
     })
     /* For every array item ..
@@ -348,20 +347,22 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
      }
      })*/
       .done(function (things) {
-        $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
-          "// Fetching " + messagetype + " data\n" + curlGetData + "\n";
-        var resultingTextData = "";
-        if (messagetype == "binary") {
-          var data2 = angular.forEach(things, function (d) {
-            d.key = $base64.decode(d.key);
-            d.value = $base64.decode(d.value);
-          });
-          resultingTextData = angular.toJson(data2, true);
-        } else {
-          resultingTextData = angular.toJson(things, true);
-        }
-        // $log.info("COMPLETED entire object " + JSON.stringify(things));
-        deferred.resolve(angular.toJson(things, true));
+        deferred.resolve(things);
+
+        // $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
+        //   "// Fetching " + messagetype + " data\n" + curlGetData + "\n";
+        // var resultingTextData = "";
+        // if (messagetype == "binary") {
+        //   var data2 = angular.forEach(things, function (d) {
+        //     d.key = $base64.decode(d.key);
+        //     d.value = $base64.decode(d.value);
+        //   });
+        //   resultingTextData = angular.toJson(data2, true);
+        // } else {
+        //   resultingTextData = angular.toJson(things, true);
+        // }
+        // // $log.info("COMPLETED entire object " + JSON.stringify(things));
+        // deferred.resolve(angular.toJson(things, true));
       })
       .fail(function () {
         $log.error("Failed consuming " + messagetype + " data from topic " + topicName);
@@ -439,55 +440,16 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     }
   }
 
-  // Private method for step-2 of consuming data
+  /**
+   * More of a method for view.controller.js
+   * Private method for step-2 of consuming data
+   */
   function startFetchingData(messagetype, topicName, consumer) {
-    var deferred = $q.defer();
-    if (['avro', 'json', 'binary'].indexOf(messagetype) < 0) {
-      $log.error("Unsupported message-type [" + messagetype + "]");
-    }
 
-    // Oboe - stream data in (roughly 1000 rows)
-    var totals = 0;
-    var start = new Date().getTime();
-    var acceptMessageType = 'application/vnd.kafka.' + messagetype + '.v1+json';
-    var myUrl = KAFKA_REST + '/consumers/' + consumer + '/instances/instance/topics/' + topicName + KAFKA_REST_ENV.MAX_BYTES;
-    var curlGetData = 'curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + myUrl;
-    $log.debug("  " + curlGetData);
-    var allResults = [];
-    $log.debug("Oboe-ing at " + myUrl);
-    oboe({
-      url: myUrl,
-      headers: {"Accept": acceptMessageType}
-    })
-    /* For every array item ..
-     .node('!.*', function (values) {
-     allResults.push(values);
-     totals = totals + 1;
-     var resultingTextData = "";
-     if (messagetype == "binary") {
-     var data2 = angular.forEach(data, function (d) {
-     d.key = $base64.decode(values.key);
-     d.value = $base64.decode(values.value);
-     });
-     resultingTextData = angular.toJson(data2, true);
-     } else {
-     resultingTextData = angular.toJson(values, true);
-     }
-     allResults.push(resultingTextData);
-     // $scope.aceString = $scope.aceString +"\n" + values;
-     if (totals < 3) {
-     //  {"key":0,"value":{"itemID":6,"storeCode":"Ashford-New-Rents","count":100},"partition":0,"offset":1002760034}
-     //  [{"key":null,"value":{"name":"testUser"},"partition":0,"offset":0}]
-     $log.info(totals + " row => ", JSON.stringify(values));
-     }
-     if (totals == 1000) {
-     var end = new Date().getTime();
-     $log.info("[" + (end - start) + "] msec to fetch 1000 rows (now aborting)");
-     deferred.resolve(allResults);
-     this.abort();
-     }
-     })*/
-      .done(function (things) {
+    var deferred = $q.defer();
+
+    consumeMessagesFromTopic(consumer, "instance", topicName, format).then(
+      function success(things) {
         $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
           "// Fetching " + messagetype + " data\n" + curlGetData + "\n";
         var resultingTextData = "";
@@ -502,11 +464,12 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
         }
         // $log.info("COMPLETED entire object " + JSON.stringify(things));
         deferred.resolve(angular.toJson(things, true));
-      })
-      .fail(function () {
+      },
+      function failure(message) {
         $log.error("Failed consuming " + messagetype + " data from topic " + topicName);
         deferred.reject("Failed consuming " + messagetype + " data from topic " + topicName);
-      });
+      }
+    );
 
     return deferred.promise;
   }
