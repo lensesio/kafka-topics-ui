@@ -1,4 +1,4 @@
-angularAPP.controller('KafkaTopicsConfigCtrl', function ($scope, $http, $log) {
+angularAPP.controller('KafkaTopicsConfigCtrl', function ($scope, $http, $log, KafkaRestProxyFactory) {
 
   $log.info("Starting kafka-topics controller : config");
 
@@ -12,7 +12,7 @@ angularAPP.controller('KafkaTopicsConfigCtrl', function ($scope, $http, $log) {
    */
   KafkaRestProxyFactory.getBrokers().then(
     function success(brokers) {
-      $scope.brokers = brokers;
+      $scope.brokers = brokers.brokers;
     },
     function failure() {
       $scope.connectionFailure = true;

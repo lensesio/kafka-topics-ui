@@ -1,6 +1,6 @@
 {
   "name": "kafka-topics-ui",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A user interface for reading data from Kafka Topics",
   "readme": "README.md",
   "main": "Gruntfile.js",
@@ -27,6 +27,7 @@
     "schema",
     "registry",
     "kafka",
+    "topics",
     "avro"
   ],
   "author": "Landoop team",

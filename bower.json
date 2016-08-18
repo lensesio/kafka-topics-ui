@@ -25,9 +25,7 @@
     "angular-material": "^1.0.9",
     "angularUtils-pagination": "angular-utils-pagination#^0.11.1",
     "font-awesome": "fontawesome#^4.6.3",
+    "angular-base64": "^2.0.5",
     "angular-oboe": "*"
-  },
-  "devDependencies": {
-    "angular-base64": "^2.0.5"
   }
 }
