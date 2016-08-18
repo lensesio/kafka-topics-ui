@@ -1,17 +1,22 @@
-var ENV = {
 
-  // Replace with the URL where a Kafka REST service is listening
-  KAFKA_REST: "https://kafka-rest-proxy.demo.landoop.com", // http://localhost:8082
+// Replace with the URL where a Kafka REST service is listening
+var KAFKA_REST = "https://kafka-rest-proxy.demo.landoop.com"; // http://localhost:8082
 
-  // Links across applications
-  SCHEMA_REGISTRY_UI: "http://schema-registry-ui.landoop.com",
+// UI to your `schema-registry-ui` app
+var UI_SCHEMA_REGISTRY = "http://schema-registry-ui.landoop.com"; // Leave empty to disable integration
+
+var KAFKA_REST_ENV = {
 
   // Sets the defaul maximum amount of bytes to fetch from each topic
   MAX_BYTES: "?max_bytes=50000",
 
   // Pre-configure the Data Type on particular well-known topics
   JSON_TOPICS: ["_schemas"],
+
   BINARY_TOPICS: ["connect-configs", "connect-offsets", "connect-status", "_confluent-controlcenter", "__confluent.support.metr"],
+
+  // If a topic starts with this particular prefix - it's a control topic
+  CONTROL_TOPICS: ["_confluent-controlcenter", "__confluent", "__consumer_offsets", "_confluent-monitoring"],
 
 // # Get info about one topic
 // $ curl http://kafka-rest-proxy.demo.landoop.com/topics/__consumer_offsets

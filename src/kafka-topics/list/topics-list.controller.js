@@ -89,6 +89,6 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
     return KafkaRestProxyFactory.getDataType(topicName);
   };
 
-  // $scope.topics = ENV.topics;
+  // $scope.topics = KAFKA_REST_ENV.topics;
   //schemaRegistryFactory.visibleCreateSubjectButton(true);
 });

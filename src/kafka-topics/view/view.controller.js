@@ -18,7 +18,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   $scope.getSchemaRegistryUrl = function (subject, version) {
-    return ENV.APPS[0].urlSchema + "/#/subject/" + subject + "/version/" + version;
+    return UI_SCHEMA_REGISTRY + "/#/subject/" + subject + "/version/" + version;
   };
 
   $scope.getData = function (topicName) {
@@ -125,7 +125,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   function setCustomMessage(rows) {
     if ($scope.topicName == "_schemas") {
-      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + rows.length + "</b> registered schemas in the <a href='" + ENV.APPS[0].urlSchema + "' target='_blank'>schema-registry</a>"
+      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + rows.length + "</b> registered schemas in the <a href='" + KAFKA_REST_ENV.APPS[0].urlSchema + "' target='_blank'>schema-registry</a>"
     } else if ($scope.topicName == "connect-configs") {
       $scope.customMessage = "Topic <b>connect-configs</b> holds <b>" + $scope.getConnectors(rows, 'connector-').length + "</b> connector configurations" +
         " and <b>" + $scope.getConnectors(rows, 'task-').length + "</b> task configurations";
@@ -401,7 +401,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.kafkaDefaults = KAFKA_DEFAULTS; //TODO
   $scope.topicsOn = true;
   $scope.zookeeperInfo = "zookeeper.landoop.com.info.goes.here";
-  $scope.brokers = ENV.BROKERS;
+  $scope.brokers = KAFKA_REST_ENV.BROKERS;
 
   $scope.changeView = function () {
     $scope.topicsOn = !$scope.topicsOn;
