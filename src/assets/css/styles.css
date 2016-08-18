@@ -183,6 +183,11 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
     background-color: rgba(74, 163, 223, 1);
 }
 
+/* Essential for dirPagination material design */
+.md-button {
+    min-width:30px;
+}
+
 /** Pagination **/
 .label-primary {
     background-color: #286090;
