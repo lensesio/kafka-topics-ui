@@ -6,27 +6,24 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
   /**
    * At start-up get all topic-information
    */
-  KafkaRestProxyFactory.getTopicList().then(
-    function success(result) {
-      var normalTopics = result.normal;
-      var controlTopics = result.control;
+  KafkaRestProxyFactory.getTopicNames().then(
+    function success(allTopicNames) {
 
-      if (normalTopics.toString().indexOf("Error in getting topics from kafka-rest") > -1) {
-        toastFactory.showSimpleToast("Error in getting topics from kafka-rest");
-      } else {
-        //$log.debug("Normal topics  = " + JSON.stringify(normalTopics));
-        //$log.debug("Control topics = " + JSON.stringify(controlTopics));
-        $scope.topics = normalTopics;
-        $scope.controlTopics = controlTopics;
-        $rootScope.topicsCache = normalTopics;
-        KafkaRestProxyFactory.getAllTopicInformation(normalTopics.concat(controlTopics)).then(
-          function success(topicDetails) {
-            $rootScope.topicDetails = topicDetails;
-          }, function failure(reason) {
-            $log.error('Failed: ' + reason);
-          });
+      var normalTopics = KafkaRestProxyFactory.getNormalTopics(allTopicNames);
+      var controlTopics = KafkaRestProxyFactory.getControlTopics(allTopicNames);
 
-      }
+      //$log.debug("Normal topics  = " + JSON.stringify(normalTopics));
+      //$log.debug("Control topics = " + JSON.stringify(controlTopics));
+      $scope.topics = normalTopics;
+      $scope.controlTopics = controlTopics;
+      $rootScope.topicsCache = normalTopics;
+      KafkaRestProxyFactory.getAllTopicInformation(normalTopics.concat(controlTopics)).then(
+        function success(topicDetails) {
+          $rootScope.topicDetails = topicDetails;
+        }, function failure(reason) {
+          $log.error('Failed: ' + reason);
+        });
+
     }, function (reason) {
       $log.error('Failed: ' + reason);
       toastFactory.showSimpleToast("No connectivity. Could not get topic names");

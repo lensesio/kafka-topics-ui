@@ -12,7 +12,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    * Get all topic names
    * @see http://docs.confluent.io/3.0.0/kafka-rest/docs/api.html#get--topics
    */
-  function getTopics() {
+  function getTopicNames() {
 
     var url = KAFKA_REST + '/topics';
     $log.debug('  curl -X GET ' + url);
@@ -523,6 +523,29 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     bytesToSize: function (bytes) {
       return bytesToSize(bytes);
     },
+    getTopicNames: function () {
+      return getTopicNames();
+    },
+    getNormalTopics: function (topicNames) {
+      var normalTopics = [];
+      angular.forEach(topicNames, function (topicName) {
+        if (!isControlTopic(topicName)) {
+          normalTopics.push(topicName)
+        }
+        if (normalTopics.toString().indexOf("Error in getting topics from kafka-rest") > -1) {
+          $log.error("Error in getting topics from kafka-rest");
+        }
+      });
+      return normalTopics;
+    },
+    getControlTopics: function (topicNames) {
+      var controlTopics = [];
+      angular.forEach(topicNames, function (topicName) {
+        if (isControlTopic(topicName))
+          controlTopics.push(topicName)
+      });
+      return controlTopics;
+    },
     hasExtraConfig: function (topicName) {
       var extraTopicConfig = {};
       angular.forEach($rootScope.topicDetails, function (detail) {
@@ -531,41 +554,6 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
         }
       });
       return (JSON.stringify(extraTopicConfig).replace("{}", ""));
-    },
-    getTopicList: function () { // Return (Normal-Topics,Control-Topics)
-      var deferred = $q.defer();
-      $log.debug('  curl ' + KAFKA_REST + '/topics');
-      setTimeout(function () {
-        var start = new Date().getTime();
-        $http.get(KAFKA_REST + '/topics')
-          .then(
-            function successCallback(response) {
-              var end = new Date().getTime();
-              var topicNames = response.data;
-              var normalTopics = [];
-              var controlTopics = [];
-              // Currently 35 Control Topics
-              angular.forEach(topicNames, function (topicName) {
-                if (isControlTopic(topicName)) {
-                  controlTopics.push(topicName);
-                } else {
-                  normalTopics.push(topicName);
-                }
-              });
-              $log.info("[" + (end - start) + "] msec to get " + topicNames.length + " topic names. " + controlTopics.length + " control topics and " + normalTopics.length + " Normal topics");
-              var result = {
-                normal: normalTopics,
-                control: controlTopics
-              };
-              deferred.resolve(result);
-            },
-            function errorCallback(response) {
-              $log.error("Error in getting topics from kafka-rest : " + JSON.stringify(response));
-              deferred.reject("Error in getting topics from kafka-rest");
-            });
-      }, 10);
-      $rootScope.showSpinner = false;
-      return deferred.promise;
     },
 
     /**
