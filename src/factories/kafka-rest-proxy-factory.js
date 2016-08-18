@@ -275,21 +275,27 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
   function deleteConsumerInstance(consumerName) {
 
     var url = KAFKA_REST + '/consumers/' + consumer + '-' + messagetype + '/instances/instance';
-    $log.debug('  curl -X DELETE ' + url);
+    var curlDeleteConsumer = '  curl -X DELETE ' + url;
+    $log.debug(curlDeleteConsumer);
     var start = new Date().getTime();
 
     var deferred = $q.defer();
     $http.delete(url).then(
       function successCallback(response) {
         $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
-          "// Deleting " + messagetype + " consumer \ncurl -X DELETE " + url + "\n";
+          "// Deleting " + messagetype + " consumer \ncurl -X DELETE " + curlDeleteConsumer + "\n";
         $log.debug("  curl -X DELETE " + url + " in [ " + (new Date().getTime() - start) + "] msec");
         deferred.resolve(response.data);
       },
       function failure(error) {
-        $log.error("Error in deleting consumer : " + JSON.stringify(error));
+        var msg = "Error in deleting consumer : " + JSON.stringify(error);
+        $log.error(msg);
+        deferred.reject(msg);
       }
     );
+
+    return deferred.promise;
+
   }
 
   /**
@@ -308,10 +314,10 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     // Oboe - stream data in (roughly 1000 rows)
     var totals = 0;
     var start = new Date().getTime();
-    var curlGetData = 'curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + myUrl;
+    var curlGetData = 'curl -vs --stderr - -X GET -H "Accept: ' + acceptMessageType + '" ' + url;
     $log.debug("  " + curlGetData);
     var allResults = [];
-    $log.debug("Oboe-ing at " + myUrl);
+    $log.debug("Oboe-ing at " + url);
 
     var deferred = $q.defer();
     oboe({
@@ -347,6 +353,9 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
      }
      })*/
       .done(function (things) {
+        $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
+          "// Fetching " + format + " data\n" + curlGetData + "\n";
+
         deferred.resolve(things);
 
         // $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
@@ -444,30 +453,28 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    * More of a method for view.controller.js
    * Private method for step-2 of consuming data
    */
-  function startFetchingData(messagetype, topicName, consumer) {
+  function startFetchingData(format, topicName, consumer) {
 
     var deferred = $q.defer();
 
     consumeMessagesFromTopic(consumer, "instance", topicName, format).then(
       function success(things) {
-        $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
-          "// Fetching " + messagetype + " data\n" + curlGetData + "\n";
-        var resultingTextData = "";
-        if (messagetype == "binary") {
+        // var resultingTextData = "";
+        if (format == "binary") {
           var data2 = angular.forEach(things, function (d) {
             d.key = $base64.decode(d.key);
             d.value = $base64.decode(d.value);
           });
-          resultingTextData = angular.toJson(data2, true);
+          // resultingTextData = angular.toJson(data2, true);
         } else {
-          resultingTextData = angular.toJson(things, true);
+          // resultingTextData = angular.toJson(things, true);
         }
         // $log.info("COMPLETED entire object " + JSON.stringify(things));
         deferred.resolve(angular.toJson(things, true));
       },
       function failure(message) {
-        $log.error("Failed consuming " + messagetype + " data from topic " + topicName);
-        deferred.reject("Failed consuming " + messagetype + " data from topic " + topicName);
+        $log.error("Failed consuming " + format + " data from topic " + topicName);
+        deferred.reject("Failed consuming " + format + " data from topic " + topicName);
       }
     );
 
@@ -488,6 +495,9 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     },
     getTopicNames: function () {
       return getTopicNames();
+    },
+    deleteConsumerInstance: function (consumerName) {
+      return deleteConsumerInstance(consumerName);
     },
     getNormalTopics: function (topicNames) {
       var normalTopics = [];
@@ -616,58 +626,46 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
       $log.debug("  " + curlCreateConsumer);
 
       var deleteConsumer = false;
-      setTimeout(function () {
-        // Create a consumer and fetch data
-        $http(postCreateConsumer)
-          .then(
-            function successCallback(response) {
-              $log.info("Success in creating " + messagetype + " consumer " + JSON.stringify(response));
-              $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
-                "// Creating " + messagetype + " consumer\n" + curlCreateConsumer + "\n";
-              // Start fetching data
-              var textDataPromise = startFetchingData(messagetype, topicName, consumer + "-" + messagetype);
-              textDataPromise.then(function (data) {
-                //$log.info("Consumed data -> " + data);
-                deleteConsumer = true;
-                deferred.resolve(data);
-              }, function (reason) {
-                $log.error('Failed: ' + reason);
-              }, function (update) {
-                $log.info('Got notification: ' + update);
-              });
 
-            },
-            function errorCallback(response, statusText) {
-              if (response.status == 409) {
-                $log.info("409 detected! " + response.data.message);
-                toastFactory.showSimpleToast(response.data.message);
-              }
+      // Create a consumer and fetch data
+      $http(postCreateConsumer)
+        .then(
+          function successCallback(response) {
+            $log.info("Success in creating " + messagetype + " consumer " + JSON.stringify(response));
+            $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
+              "// Creating " + messagetype + " consumer\n" + curlCreateConsumer + "\n";
+            // Start fetching data
+            var textDataPromise = startFetchingData(messagetype, topicName, consumer + "-" + messagetype);
+            textDataPromise.then(function (data) {
+              //$log.info("Consumed data -> " + data);
+              deleteConsumer = true;
+              deferred.resolve(data);
+            }, function (reason) {
+              $log.error('Failed: ' + reason);
+            }, function (update) {
+              $log.info('Got notification: ' + update);
+            });
+
+          },
+          function errorCallback(response, statusText) {
+            if (response.status == 409) {
+              $log.info("409 detected! " + response.data.message);
+              toastFactory.showSimpleToast(response.data.message);
             }
-          );
-      }, 1);
+          }
+        );
 
+      // At the end .. let's see if we need to clean-up
       if (deleteConsumer) {
-        // Delete the consumer
-        var deleteUrl = KAFKA_REST + '/consumers/' + consumer + '-' + messagetype + '/instances/instance';
-        var deleteMyConsumer = {
-          method: 'DELETE',
-          url: deleteUrl
-        };
-        var curlDeleteConsumer = 'curl -X DELETE ' + deleteUrl;
-        $log.debug("  " + curlDeleteConsumer);
-        var start = new Date().getTime();
-        $http(deleteMyConsumer)
-          .then(
-            function successCallback(response) {
-              $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
-                "// Deleting " + messagetype + " consumer \n" + curlDeleteConsumer + "\n";
-              var end = new Date().getTime();
-              $log.info("[" + (end - start) + "] msec to delete the consumer " + JSON.stringify(response));
-            },
-            function errorCallback(error) {
-              $log.error("Error in deleting consumer : " + JSON.stringify(error));
-            }
-          );
+        KafkaRestProxyFactory.deleteConsumerInstance(consumerName).then(
+          function success() {
+
+          },
+          function failure() {
+
+          }
+        );
+
       }
 
       return deferred.promise;
