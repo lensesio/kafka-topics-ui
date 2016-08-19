@@ -15,39 +15,68 @@
 
   </md-toolbar>
   <md-content>
-    <md-input-container class="md-block" style="margin-bottom:0;padding-bottom:0;">
+    <md-input-container class="md-block" style="margin-bottom:-15px;padding-bottom:0;">
       <label>Search topics</label>
       <input ng-model="search">
     </md-input-container>
 
     <md-list flex>
       <md-list-item class="md-2-line"
-                    dir-paginate="topic in topics| orderBy:'name' | filter : search | itemsPerPage: 6"
+                    dir-paginate="topic in topics| orderBy:'name' | filter : search | itemsPerPage: 7"
                     ng-href="#/topic/{{topic}}"
-                    pagination-id="topics">
-        <i ng-show="!isNormalTopic(topic)" class="fa fa-cogs" style="padding-right: 5px;color:#9e9e9e"
-           aria-hidden="true"></i>
-        <img ng-show="isNormalTopic(topic)" src="src/assets/icons/kafka.svg"
-             style="width: 17px;padding-right: 5px;color:#8c9eff" aria-hidden="true"/>
-        <!--<img src="https://unitedlayer.com/sites/default/files/dr-icons-01.png" style="width:24px;margin-right: 10px;">-->
-        <md-chips>
-          <md-chip ng-show="hasExtraConfig(topic) != ''"
-                   style="background-color:#f44336;color:white;border-radius: 6px;margin-right: 65px;"
-                   class="md-secondary md-caption">config
-          </md-chip>
-          <md-chip style="background-color:#d6e7f9;color:black;border-radius: 6px;"
-                   class="md-secondary md-caption">{{getDataType(topic)}}
-          </md-chip>
-          <!--{{hasExtraConfig(topic)}}-->
-        </md-chips>
-        <div class="md-list-item-text" layout="column">
-          <h3>{{topic}}</h3>
-          <p style="color:#bbbbcc">partitions: {{countPartitionsForTopic(topic)}}
-            replication: {{countReplicationForTopic(topic)}}</p>
+                    pagination-id="topics"
+                    style="border-bottom: 1px solid rgba(0, 0, 0, .1);">
+        <div ng-show="getDataType(topic) != '{}'" class="md-raised md-warn md-button md-ink-ripple"
+             style="box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 85%;line-height:17px;min-height: 18px;text-transform: none;margin-left:0;background-color: #8cc4ff;color: white;text-align: left;width:45px"
+             type="button" aria-label="Primary">
+          <center>{{getDataType(topic)}}</center>
         </div>
+
+        <!-- cute / sexy topic bar -->
+        <div class="md-raised md-warn md-button md-ink-ripple"
+             flex
+             style="min-width: 160px;font-size: 100%;line-height: 40px;margin:0;background-color: white;color: black;text-align: left;box-shadow: 0 0 0px 0 rgba(0,0,0,.26);"
+             type="button" aria-label="Primary">
+          <div style="display: inline-block;">
+
+          <center>
+            {{topic}}
+          </center>
+          </div>
+          <!-- highlight with-config-overrides -->
+          <div ng-show="hasExtraConfig(topic) != ''" class="md-raised md-warn md-button md-ink-ripple"
+               style="box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:17px;min-height: 18px;text-transform: none;background-color: rgba(255, 0, 0, 0.6);color: white;text-align: left;float:right;margin-top: 10px;"
+               type="button" aria-label="Primary">
+            <span>
+            config
+          </span>
+            </div>
+        </div>
+
+        <!-- display partitions & replication factor -->
+        <div>
+          <div class="md-raised md-warn md-button md-ink-ripple"
+               style="float:left;margin: 0;box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:15px;min-height: 16px;text-transform: none;color: darkslategray;text-align: left;margin:0;"
+               type="button" aria-label="Primary">
+            partition = {{countPartitionsForTopic(topic)}}
+            <md-tooltip md-direction="top" style="padding-left:10px;" md-visible="ctrl.isOpen">Partitions</md-tooltip>
+          </div>
+          <div class="md-raised md-warn md-button md-ink-ripple"
+               style="float:left;clear: left;box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:15px;min-height: 16px;text-transform: none;color: darkslategray;text-align: left;margin:0;"
+               type="button" aria-label="Primary">
+            replication = {{countReplicationForTopic(topic)}}
+            <md-tooltip md-direction="bottom" style="padding-left:10px;" md-visible="">Replication factor</md-tooltip>
+          </div>
+        </div>
+
       </md-list-item>
     </md-list>
-    <!--<md-divider></md-divider>-->
-    <dir-pagination-controls pagination-id="topics" style="margin: 20px 20px;"></dir-pagination-controls>
+    <dir-pagination-controls pagination-id="topics" style="margin:0;"></dir-pagination-controls>
+    <md-switch ng-model="data.cb1" aria-label="Switch 1" style="margin:0;padding-left: 10px;padding-bottom: 10px;">
+      <div ng-if="!data.cb1">Normal Topics</div>
+      <div ng-if="data.cb1">Control Topics</div>
+      <!--Control topics-->
+      <!--{{ data.cb1 }}-->
+    </md-switch>
   </md-content>
 </md-card>
