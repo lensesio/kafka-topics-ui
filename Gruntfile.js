@@ -50,6 +50,8 @@ module.exports = function (grunt) {
           'bower_components/angular-material-data-table/dist/md-data-table.min.css',
           'bower_components/angular-material-data-table/dist/md-data-table.min.js',
 
+          'bower_components/angular-ui-grid/ui-grid.min.css',
+          'bower_components/angular-ui-grid/ui-grid.min.js',
           'bower_components/angular-base64/angular-base64.min.js',
           'bower_components/oboe/dist/oboe-browser.min.js',
           'bower_components/angular-oboe/dist/angular-oboe.min.js'
