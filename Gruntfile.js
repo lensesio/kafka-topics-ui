@@ -46,7 +46,9 @@ module.exports = function (grunt) {
           'bower_components/angular-ui-ace/ui-ace.min.js',
           'bower_components/spin.js/spin.min.js',
           'bower_components/angular-material/angular-material.min.js',
-          'bower_components/angularUtils-pagination/dirPagination.js',
+          // 'bower_components/angularUtils-pagination/dirPagination.js',
+          'bower_components/angular-material-data-table/dist/md-data-table.min.css',
+          'bower_components/angular-material-data-table/dist/md-data-table.min.js',
 
           'bower_components/angular-base64/angular-base64.min.js',
           'bower_components/oboe/dist/oboe-browser.min.js',

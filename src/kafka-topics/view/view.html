@@ -1,4 +1,4 @@
-<md-card style="min-height:700px;" md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
+<md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
 
   <md-toolbar style="background-color: #ededed; color:#000;">
     <h3 class="md-toolbar-tools">
@@ -52,7 +52,7 @@
     </h3>
   </md-toolbar>
 
-  <md-content flex layout-padding style="padding: 2px;">
+  <div flex style="padding: 2px;padding-bottom:20px;">
     <!-- Spinner -->
     <div us-spinner="{radius:10, width:3, length: 5}" ng-show="showSpinner" style="height:100%"></div>
     <!-- Custom Info Panel + Download + Stream buttons -->
@@ -92,7 +92,7 @@
     <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom
              md-selected="tabIndex">
       <div ng-include="'src/kafka-topics/view/templates/_schemas.html'"></div>
-      <div ng-include="'src/kafka-topics/view/templates/connect-config.html'"></div>
+      <div ng-include="'src/kafka-topics/view/templates/connect-configs.html'"></div>
       <div ng-include="'src/kafka-topics/view/templates/connect-status.html'"></div>
       <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
       <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
@@ -117,7 +117,7 @@
     </md-tabs>
     <div>
     </div>
-  </md-content>
+  </div>
 
   <!--
   <div layout="row" width="50%">

@@ -73,8 +73,9 @@
     </md-list>
     <dir-pagination-controls pagination-id="topics" style="margin:0;"></dir-pagination-controls>
     <md-switch ng-model="data.cb1" aria-label="Switch 1" style="margin:0;padding-left: 10px;padding-bottom: 10px;">
-      <div ng-if="!data.cb1">Normal Topics</div>
-      <div ng-if="data.cb1">Control Topics</div>
+      <div ng-if="!data.cb1">System Topics</div>
+      <div ng-if="data.cb1"><b>System Topics</b></div>
+      <!--<div ng-if="data.cb1">Control Topics</div>-->
       <!--Control topics-->
       <!--{{ data.cb1 }}-->
     </md-switch>

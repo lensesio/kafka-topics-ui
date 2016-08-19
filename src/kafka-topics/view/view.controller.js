@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, KafkaRestProxyFactory) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
@@ -125,7 +125,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   function setCustomMessage(rows) {
     if ($scope.topicName == "_schemas") {
-      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + rows.length + "</b> registered schemas in the <a href='" + UI_SCHEMA_REGISTRY + "' target='_blank'>schema-registry</a>"
+      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + rows.length + "</b> registered schemas for the <a href='" + UI_SCHEMA_REGISTRY + "' target='_blank'>schema-registry</a>"
     } else if ($scope.topicName == "connect-configs") {
       $scope.customMessage = "Topic <b>connect-configs</b> holds <b>" + $scope.getConnectors(rows, 'connector-').length + "</b> connector configurations" +
         " and <b>" + $scope.getConnectors(rows, 'task-').length + "</b> task configurations";
@@ -468,5 +468,28 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.selectBroker = function (brokerObj) {
     $scope.selectedBroker = brokerObj
   }
+
+
+  /**
+   * TODO: Move to utils
+   */
+
+  // This one is called each time - the user clicks on an md-table header (applies sorting)
+  $scope.logOrder = function (a) {
+    // $log.info("Ordering event " + a);
+    sortSchema(a);
+  };
+
+  function sortSchema(type) {
+    var reverse = 1;
+    if (type.indexOf('-') == 0) {
+      // remove the - symbol
+      type = type.substring(1, type.length);
+      reverse = -1;
+    }
+    // $log.info(type + " " + reverse);
+    $scope.schema = UtilsFactory.sortByKey($scope.schema, type, reverse);
+  }
+
 
 });

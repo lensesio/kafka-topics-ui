@@ -7,6 +7,7 @@ var angularAPP = angular.module('angularAPP', [
   'ngRoute',
   'ngMaterial',
   'ngAnimate',
+  'md.data.table',
   'ngAria',
   'base64',
   'ngOboe'
