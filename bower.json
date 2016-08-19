@@ -29,5 +29,8 @@
     "angular-base64": "^2.0.5",
     "angular-oboe": "*",
     "angular-ui-grid": "^3.2.1"
+  },
+  "resolutions": {
+    "angular": "1.5.*"
   }
 }
