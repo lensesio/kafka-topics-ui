@@ -22,7 +22,7 @@
     "angular-ui-ace": "bower",
     "bootstrap": "^3.3.6",
     "angular-spinner": "^0.8.1",
-    "angular-material": "^1.0.9",
+    "angular-material": "1.0.9",
     "angularUtils-pagination": "angular-utils-pagination#^0.11.1",
     "font-awesome": "fontawesome#^4.6.3",
     "angular-material-data-table": "^0.10.9",
