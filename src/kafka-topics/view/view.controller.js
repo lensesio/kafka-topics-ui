@@ -18,7 +18,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   $scope.getSchemaRegistryUrl = function (subject, version) {
-    return UI_SCHEMA_REGISTRY + "/#/subject/" + subject + "/version/" + version;
+    return UI_SCHEMA_REGISTRY + "/#/schema/" + subject + "/version/" + version;
   };
 
   $scope.getData = function (topicName) {

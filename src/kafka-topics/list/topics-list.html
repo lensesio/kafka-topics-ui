@@ -27,7 +27,7 @@
                     pagination-id="topics"
                     style="border-bottom: 1px solid rgba(0, 0, 0, .1);">
         <div ng-show="getDataType(topic) != '{}'" class="md-raised md-warn md-button md-ink-ripple"
-             style="box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 85%;line-height:17px;min-height: 18px;text-transform: none;margin-left:0;background-color: #8cc4ff;color: white;text-align: left;width:45px"
+             style="box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 85%;line-height:17px;min-height: 18px;text-transform: capitalize;margin-left:0;background-color: rgba(33,126,188,.85);color: white;text-align: left;width:45px"
              type="button" aria-label="Primary">
           <center>{{getDataType(topic)}}</center>
         </div>
@@ -36,8 +36,8 @@
         <div class="md-raised md-warn md-button md-ink-ripple"
              flex
              style="min-width: 160px;font-size: 100%;line-height: 40px;margin:0;background-color: white;color: black;text-align: left;box-shadow: 0 0 0px 0 rgba(0,0,0,.26);"
-             type="button" aria-label="Primary">
-          <div style="display: inline-block;">
+             aria-label="Primary">
+          <div style="display: inline-block;text-transform: none;">
 
           <center>
             {{topic}}

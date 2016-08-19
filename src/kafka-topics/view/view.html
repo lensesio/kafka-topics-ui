@@ -1,431 +1,104 @@
 <md-card style="min-height:700px;" md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
 
   <md-toolbar style="background-color: #ededed; color:#000;">
-    <h3 class="md-toolbar-tools" style="margin-top:10px;text-align:center;">
-      <b>Topic: </b> {{topicName}} &nbsp;&nbsp;&nbsp; <b>Type: </b> {{topicType}}
-    </h3>
-  </md-toolbar>
+    <h3 class="md-toolbar-tools">
+      Topic
+      <div class="md-raised md-warn md-button md-ink-ripple"
+           style="cursor: default;font-size: 80%;margin:0;margin-left: 7px;background-color: #fafafa;color: black;text-align: left;box-shadow: 0 0 0px 0 rgba(0,0,0,.26);"
+           type="button" aria-label="Primary">
+        <div style="display: inline-block;text-transform: none;" class="text-center">
+          {{topicName}}
+        </div>
+      </div>
+      <div style="padding:10px">with</div>
 
-  <md-content flex layout-padding>
-    <!-- Spinner -->
-    <div us-spinner="{radius:10, width:3, length: 5}" ng-show="showSpinner" style="height:100%"></div>
-    <!-- Custom Info Panel + Download + Stream buttons -->
-    <div flex="100" ng-hide="showSpinner">
-      <span class="md-title" style="font-size: 14px;" ng-bind-html="customMessage | sanitize"></span>
+      <div ng-show="getDataType(topic) != '{}'" class="md-raised md-warn md-button md-ink-ripple"
+           style="cursor: default;text-transform: capitalize;margin-left: 0;background-color: rgba(33,126,188,.85);box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:17px;min-height: 18px;color: white;text-align: left;width:45px"
+           aria-label="Primary" aria-hidden="false">
+        <center class="ng-binding">{{topicType}}</center>
+      </div>
+
+      <!-- highlight with-config-overrides -->
+      <div ng-show="hasExtraConfig(topic) != ''" class="md-raised md-warn md-button md-ink-ripple ng-hide"
+           style="box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:17px;min-height: 18px;text-transform: none;background-color: rgba(255, 0, 0, 0.6);color: white;text-align: left;float:right;margin-top: 10px;"
+           type="button" aria-label="Primary" aria-hidden="true">
+            <span>
+            config
+          </span>
+      </div>
+
+      <div flex></div>
+
+
       <md-button
         download="true"
         ng-click="getData(topicName)"
         md-ink-ripple=""
         ng-show="true"
-        class="md-raised md-primary md-button md-ink-ripple"
-        style="background-color: rgb(65, 191, 236);color: white;padding:0;float: right;margin-top: -10px;"
+        class="icon md-ink-ripple"
+        style="padding-right: 10px;padding-top: 10px;padding-left: 10px;margin-right: 5px;background: white;"
         type="button"
         aria-label="Download data"
-        aria-hidden="false">Download
+        aria-hidden="false">
+        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+          <path fill="#000000" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
+        </svg>
+        <!--Download-->
+
         <div class="md-ripple-container"></div>
       </md-button>
-      <!-- Stream from beginning
-      <md-menu style="padding:0">
-        <md-button
-          md-ink-ripple=""
-          ng-show="true"
-          class="md-raised md-primary md-button md-ink-ripple"
-          style="background-color: rgb(65, 191, 236);color: white;float: right;margin-top: -10px;"
-          type="button"
-          aria-label="Stream data from topic"
-          ng-click="openMenu($mdOpenMenu, $event)"
-          aria-hidden="false">Stream data
-          <div class="md-ripple-container"></div>
-        </md-button>
-        <md-menu-content width="4">
-          <md-menu-item>
-            <md-button ng-click="streamFromBeginning($event)">
-              <md-icon md-menu-align-target=""></md-icon>
-              Stream from beginning
-            </md-button>
-          </md-menu-item>
-          <md-menu-item>
-            <md-button ng-click="streamInRealTime()" disabled="true">
-              <md-icon></md-icon>
-              Stream in real-time
-            </md-button>
-          </md-menu-item>
-        </md-menu-content>
-      </md-menu>
-      -->
-    </div>
-    <br>
 
-    <md-tabs ng-hide="showSpinner" style="margin-top: -15px;" md-dynamic-height md-border-bottom md-selected="tabIndex">
-      <!-- Custom rendering for _schemas topic -->
-      <md-tab data-ng-if="topicName=='_schemas'">
-        <md-tab-label>
-          <i class="fa fa-table" aria-hidden="true"></i> Table
-        </md-tab-label>
-        <md-tab-body>
-          <md-content class="md-padding">
-            <md-card>
-              <md-card-content style="padding:0">
-                <md-menu ng-show="apps">
-                  <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)"
-                             ng-disabled="false">
-                    <i class="fa fa-bars" aria-hidden="true"></i>
-                  </md-button>
-                  <md-menu-content width="5">
-                    <md-menu-item ng-repeat="app in apps">
-                      <md-button ng-if="app.enabled" ng-href="{{app.url}}">
-                        <md-icon style="margin:6px 10px 0 0">
-                          <i class="fa {{app.icon}}" aria-hidden="true"></i>
-                        </md-icon>
-                        <b ng-show="app.name.length > 0">{{app.name}}</b>
-                      </md-button>
-                    </md-menu-item>
-                  </md-menu-content>
-                </md-menu>
-              </md-card-content>
-            </md-card>
-            <table class="table table-bordered table-striped table-hover">
-              <thead>
-              <tr>
-                <th class="text-center">Offset</th>
-                <th class="text-center">Subject</th> <!-- kv. -->
-                <th class="text-center">Partition</th>
-                <th class="text-center">Magic</th>   <!-- k. -->
-                <th class="text-center">Type</th>    <!-- k. -->
-                <th class="text-center">Version</th> <!-- kv. -->
-                <th class="text-center">Schema</th>  <!-- v. -->
-              </tr>
-              </thead>
-              <tbody>
-              <!--AA->{{rows}}-->
-              <tr ng-repeat="i in rows track by $index">
-                <td class="text-center">{{i.offset}}</td>
-                <td class="text-center"><b>{{i.key.subject}}</b></td>
-                <td class="text-center">{{i.partition}}</td>
-                <td class="text-center">{{i.key.magic}}</td>
-                <td class="text-center">{{i.key.keytype}}</td>
-                <td class="text-center">{{i.value.version}}</td>
-                <td class="text-center" ng-show="isSchemaLong(i.value.schema)">
-                  <a md-ink-ripple=""
-                     ng-show="true"
-                     ng-href="{{getSchemaRegistryUrl(i.key.subject,i.value.version)}}"
-                     target="_blank"
-                     class="md-raised md-primary md-button md-ink-ripple"
-                     style="background-color: rgb(65, 191, 236);color: white;margin:0"
-                     type="button" aria-label="new topic"
-                     aria-hidden="false">View
-                    <div class="md-ripple-container"></div>
-                  </a>
-                </td>
-                <td class="text-center" ng-show="!isSchemaLong(i.value.schema)">{{i.value.schema}}</td>
-              </tr>
-              </tbody>
-            </table>
-          </md-content>
-        </md-tab-body>
-      </md-tab>
-      <!-- Custom rendering for connect-configs topic -->
-      <md-tab data-ng-if="topicName=='connect-configs'">
-        <md-tab-label>
-          <i class="fa fa-table" aria-hidden="true"></i> Table
-        </md-tab-label>
-        <md-tab-body>
-          <md-content ng-show="{{getConnectors(rows,'connector-').length ==0}}" class="md-padding">
-            <h5>No kafka-connector is currently active</h5>
-          </md-content>
-          <md-content ng-hide="{{getConnectors(rows,'connector-').length ==0}}" class="md-padding">
-            <md-card>
-              <md-card-content style="padding:0">
-                <md-menu ng-show="apps">
-                  <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
-                    <i class="fa fa-bars" aria-hidden="true"></i>
-                  </md-button>
-                  <md-menu-content width="5">
-                  </md-menu-content>
-                </md-menu>
-              </md-card-content>
+      <!--<b>Type: </b> {{topicType}}-->
+    </h3>
+  </md-toolbar>
 
-            </md-card>
-            <!-- Connectors -->
-            <table class="table table-bordered table-striped table-hover">
-              <thead>
-              <tr>
-                <td
-                  style="border-top:1px solid white; border-left:1px solid white; border-right:1px solid white;border-bottom: 1px;">
-                  <h4>Connectors</h4>
-                </td>
-              </tr>
-              <tr>
-                <th class="text-center">Offset</th>
-                <th class="text-center">Key</th>
-                <th class="text-center">Partition</th>
-                <th class="text-center">Name</th>
-                <th class="text-center">Topic</th>
-                <th class="text-center">File</th>
-                <th class="text-center">Tasks Max</th>
-                <th class="text-center">Connector Class</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr ng-repeat="i in getConnectors(rows,'connector-') track by $index">
-                <td class="text-center">{{i.offset}}</td>
-                <td class="text-center"><b>{{i.key}}</b></td>
-                <td class="text-center">{{i.partition}}</td>
-                <td class="text-center">{{getConnector(i).name}}</td>
-                <td class="text-center">{{getConnector(i).topic}}</td>
-                <td class="text-center">{{getConnector(i).file}}</td>
-                <td class="text-center">{{getConnector(i).tasksmax}}</td>
-                <td class="text-center">{{getConnector(i).class}}</td>
-              </tr>
-              <tr>
-                <td
-                  style="border-top:1px solid white; border-left:1px solid white; border-right:1px solid white;background-color: white;">
-                  <h4>Tasks</h4>
-                </td>
-              </tr>
-              <tr>
-                <th class="text-center">Offset</th>
-                <th class="text-center">Key</th>
-                <th class="text-center">Partition</th>
-                <th class="text-center"></th>
-                <th class="text-center">Topic</th>
-                <th class="text-center">File</th>
-                <th class="text-center"></th>
-                <th class="text-center">Task Class</th>
-              </tr>
-              <tr ng-repeat="i in getConnectors(rows,'task-') track by $index">
-                <td class="text-center">{{i.offset}}</td>
-                <td class="text-center"><b>{{i.key}}</b></td>
-                <td class="text-center">{{i.partition}}</td>
-                <td class="text-center"></td>
-                <td class="text-center">{{getTask(i).topic}}</td>
-                <td class="text-center">{{getTask(i).file}}</td>
-                <td class="text-center"></td>
-                <td class="text-center">{{getTask(i).class}}</td>
-              </tr>
-              <tr>
-                <td
-                  style="border-top:1px solid white; border-left:1px solid white; border-right:1px solid white;background-color: white;">
-                  <h4>Commits</h4>
-                </td>
-              </tr>
-              <th class="text-center">Offset</th>
-              <th class="text-center">Key</th>
-              <th class="text-center">Partition</th>
-              <th class="text-center">Tasks</th>
-              <th class="text-center"></th>
-              <th class="text-center"></th>
-              <th class="text-center"></th>
-              <th class="text-center"></th>
-              </tr>
-              <tr ng-repeat="i in getConnectors(rows,'commit-') track by $index">
-                <td class="text-center">{{i.offset}}</td>
-                <td class="text-center"><b>{{i.key}}</b></td>
-                <td class="text-center">{{i.partition}}</td>
-                <td class="text-center">{{getCommit(i).tasks}}</td>
-                <td class="text-center"></td>
-                <td class="text-center"></td>
-                <td class="text-center"></td>
-                <td class="text-center"></td>
-              </tr>
-              </tbody>
-            </table>
-            <!-- Tasks -->
-            <table class="table table-bordered table-striped table-hover">
-              <thead>
+  <md-content flex layout-padding style="padding: 2px;">
+    <!-- Spinner -->
+    <div us-spinner="{radius:10, width:3, length: 5}" ng-show="showSpinner" style="height:100%"></div>
+    <!-- Custom Info Panel + Download + Stream buttons -->
+    <!--<div flex="100" ng-hide="showSpinner">-->
+    <!-- Stream from beginning
+    <md-menu style="padding:0">
+      <md-button
+        md-ink-ripple=""
+        ng-show="true"
+        class="md-raised md-primary md-button md-ink-ripple"
+        style="background-color: rgb(65, 191, 236);color: white;float: right;margin-top: -10px;"
+        type="button"
+        aria-label="Stream data from topic"
+        ng-click="openMenu($mdOpenMenu, $event)"
+        aria-hidden="false">Stream data
+        <div class="md-ripple-container"></div>
+      </md-button>
+      <md-menu-content width="4">
+        <md-menu-item>
+          <md-button ng-click="streamFromBeginning($event)">
+            <md-icon md-menu-align-target=""></md-icon>
+            Stream from beginning
+          </md-button>
+        </md-menu-item>
+        <md-menu-item>
+          <md-button ng-click="streamInRealTime()" disabled="true">
+            <md-icon></md-icon>
+            Stream in real-time
+          </md-button>
+        </md-menu-item>
+      </md-menu-content>
+    </md-menu>
+    -->
+    <!--</div>-->
+    <!--<br>-->
 
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
+    <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom
+             md-selected="tabIndex">
+      <div ng-include="'src/kafka-topics/view/templates/_schemas.html'"></div>
+      <div ng-include="'src/kafka-topics/view/templates/connect-config.html'"></div>
+      <div ng-include="'src/kafka-topics/view/templates/connect-status.html'"></div>
+      <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
+      <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
+      <div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>
 
-          </md-content>
-        </md-tab-body>
-      </md-tab>
-      <!-- Custom rendering for connect-status topic -->
-      <md-tab data-ng-if="topicName=='connect-status'">
-        <md-tab-label>
-          <i class="fa fa-table" aria-hidden="true"></i> Table
-        </md-tab-label>
-        <md-tab-body>
-          <md-content class="md-padding">
-            <md-card>
-              <md-card-content style="padding:0">
-                <md-menu ng-show="apps">
-                  <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
-                    <i class="fa fa-bars" aria-hidden="true"></i>
-                  </md-button>
-                  <md-menu-content width="5">
-                  </md-menu-content>
-                </md-menu>
-              </md-card-content>
-
-            </md-card>
-            <h4>Compacted View</h4>
-            <table class="table table-bordered table-striped table-hover">
-              <thead>
-              <tr>
-                <th class="text-center">Offset</th>
-                <th class="text-center">Key</th>
-                <th class="text-center">Partition</th>
-                <th class="text-center">State</th>
-                <th class="text-center">Trace</th>
-                <th class="text-center">Worker ID</th>
-                <th class="text-center">Generation</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr ng-repeat="i in getCompactedConnectStatus(rows,'') track by $index">
-
-                <td class="text-center">{{i.offset}}</td>
-                <td class="text-center"><b>{{i.key}}</b></td>
-                <td class="text-center">{{i.partition}}</td>
-                <td class="text-center">{{i.state}}</td>
-                <td class="text-center">{{i.trace}}</td>
-                <td class="text-center">{{i.workerId}}</td>
-                <td class="text-center">{{i.generation}}</td>
-              </tr>
-              </tbody>
-            </table>
-
-            <h4>Full View</h4>
-            <!-- Connector-Status -->
-            <table class="table table-bordered table-striped table-hover">
-              <thead>
-              <tr>
-                <th class="text-center">Offset</th>
-                <th class="text-center">Key</th>
-                <th class="text-center">Partition</th>
-                <th class="text-center">State</th>
-                <th class="text-center">Trace</th>
-                <th class="text-center">Worker ID</th>
-                <th class="text-center">Generation</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr ng-repeat="i in getConnectStatus(rows,'') track by $index">
-
-                <td class="text-center">{{i.offset}}</td>
-                <td class="text-center"><b>{{i.key}}</b></td>
-                <td class="text-center">{{i.partition}}</td>
-                <td class="text-center">{{i.state}}</td>
-                <td class="text-center">{{i.trace}}</td>
-                <td class="text-center">{{i.workerId}}</td>
-                <td class="text-center">{{i.generation}}</td>
-              </tr>
-              </tbody>
-            </table>
-            <!-- Tasks -->
-            <table class="table table-bordered table-striped table-hover">
-              <thead>
-
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-
-          </md-content>
-        </md-tab-body>
-      </md-tab>
-      <!-- Custom rendering for OTHER topics -->
-      <md-tab ng-if="isNormalTopic(topicName)">
-        <md-tab-label>
-          <i class="fa fa-table" aria-hidden="true"></i> Table
-        </md-tab-label>
-        <md-tab-body>
-          <md-content class="md-padding">
-            <md-card>
-              <md-card-content style="padding:0">
-                <md-menu ng-show="apps">
-                  <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
-                    <i class="fa fa-bars" aria-hidden="true"></i>
-                  </md-button>
-                  <md-menu-content width="5">
-                  </md-menu-content>
-                </md-menu>
-              </md-card-content>
-
-            </md-card>
-            <table class="table table-bordered table-striped table-hover">
-              <thead>
-              <tr>
-                <th class="text-center" ng-repeat="topicKey in getTopicKeys(rows)">{{topicKey}}</th>
-              </tr>
-              </thead>
-              <tbody>
-              <!--{{getTopicValues(rows)}}-->
-              <tr ng-repeat="data in allTopicValues track by $index">
-                <td class="text-center">{{data.key}}</td>
-                <td class="text-center">{{data.partition}}</td>
-                <td class="text-center">{{data.offset}}</td>
-                <td ng-repeat="extra in data.extraDataFlattened track by $index" class="text-center">{{extra}}</td>
-              </tr>
-              </tbody>
-            </table>
-          </md-content>
-        </md-tab-body>
-      </md-tab>
-      <!-- DATA in JSon rendering -->
-      <md-tab md-on-select="onTabSelected(1)" label="Data">
-        <div id="left"
-             ng-model="aceString" ng-readonly="true" ui-ace="{
-                          useWrapMode: true,
-                          showGutter: true,
-                          theme:'chrome',
-                          mode: 'json',
-                          firstLineNumber: 1,
-                          onLoad: aceLoaded,
-                          onChange: aceChanged
-                          }"></div>
-      </md-tab>
-      <!-- Custom rendering for Config overrides -->
-      <md-tab ng-if="hasExtraConfig(topicName) != ''">
-        <md-tab-label>
-          <i class="fa fa-table" aria-hidden="true"></i> Configuration
-        </md-tab-label>
-        <md-tab-body>
-          <md-content class="md-padding">
-            <md-card>
-              <md-card-content style="padding:0">
-                <md-menu ng-show="apps">
-                  <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
-                    <i class="fa fa-bars" aria-hidden="true"></i>
-                  </md-button>
-                  <md-menu-content width="5">
-                  </md-menu-content>
-                </md-menu>
-              </md-card-content>
-
-            </md-card>
-            <table class="table table-bordered table-striped table-hover">
-              <thead>
-              <tr>
-                <th class="text-center">Key</th>
-                <th class="text-center">Value</th>
-                <th class="text-center">Default Value</th>
-                <th class="text-center">Description</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr ng-repeat="(key,value) in getExtraConfig(topicName) track by $index">
-                <td class="text-center">
-                  <md-chip
-                    style="padding: 4px;color: white; border-radius: 6px; background-color: rgb(244, 67, 54);"
-                    class="md-secondary md-caption ng-scope md-chip" aria-hidden="false">{{key}}
-                    <span class="md-visually-hidden ng-binding ng-scope"></span>
-                  </md-chip>
-                </td>
-                <td class="text-center">{{value}}</td>
-                <td class="text-center">{{getDefautConfigValue(key)}}</td>
-                <td>{{getConfigDescription(key)}}</td>
-              </tr>
-              </tbody>
-            </table>
-
-          </md-content>
-        </md-tab-body>
-      </md-tab>
-      <!-- Custom rendering to display CURL commands -->
+      <!-- Custom rendering to display CURL commands
       <md-tab label="Curl">
         <div id="left2"
              ng-model="allCurlCommands" ng-readonly="true" ui-ace="{
@@ -438,6 +111,7 @@
                           onChange: aceChanged
                           }"></div>
       </md-tab>
+      -->
 
 
     </md-tabs>

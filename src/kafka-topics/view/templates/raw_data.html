@@ -1,0 +1,13 @@
+<!-- RAW DATA in JSon rendering -->
+<md-tab md-on-select="onTabSelected(1)" label="Raw Data">
+  <div id="left"
+       ng-model="aceString" ng-readonly="true" ui-ace="{
+                          useWrapMode: true,
+                          showGutter: true,
+                          theme:'chrome',
+                          mode: 'json',
+                          firstLineNumber: 1,
+                          onLoad: aceLoaded,
+                          onChange: aceChanged
+                          }"></div>
+</md-tab>

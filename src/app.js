@@ -52,3 +52,10 @@ angularAPP.filter("sanitize", ['$sce', function ($sce) {
     return $sce.trustAsHtml(htmlCode);
   }
 }]);
+
+angularAPP.config(function ($mdThemingProvider) {
+  $mdThemingProvider.theme('default')
+    .primaryPalette('blue-grey')
+    .accentPalette('blue')
+    .warnPalette('grey');
+});

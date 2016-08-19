@@ -168,10 +168,10 @@ md-card {
 }
 
 md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
-    margin-top: 55px;
-    margin-right: 6px;
-    background-color: #d67c1c;
-    color: rgb(250, 250, 250);
+    margin-top: 70px;
+    margin-right: 25px;
+    background-color: white;
+    color: black;
     text-align: center;
 }
 
@@ -191,6 +191,10 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
 /** Pagination **/
 .label-primary {
     background-color: #286090;
+}
+
+.md-whiteframe-1dp, .md-whiteframe-z1 {
+    box-shadow: none;
 }
 
 .md-whiteframe-2dp {
@@ -246,4 +250,12 @@ md-list-item.md-2-line, md-list-item.md-2-line > .md-no-style {
     padding-top: 10px;
     padding-bottom: 10px;
     vertical-align: middle;
+}
+
+md-card md-card-title {
+    padding-bottom: 10px;
+}
+
+.md-tooltip ._md-content {
+    height: auto;
 }

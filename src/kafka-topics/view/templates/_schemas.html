@@ -1,0 +1,69 @@
+<!-- Custom rendering for _schemas topic -->
+<md-tab data-ng-if="topicName=='_schemas'">
+  <md-tab-label style="color: rgb(96,125,139);">
+    <i class="fa fa-table" aria-hidden="true" style="padding-right:10px;"></i> Topic
+  </md-tab-label>
+  <md-tab-body>
+    <md-content class="md-padding">
+      <span class="md-title" style="font-size: 14px;" ng-bind-html="customMessage | sanitize"></span>
+      <br>
+      <md-card>
+        <md-card-content style="padding:0">
+          <md-menu ng-show="apps">
+            <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)"
+                       ng-disabled="false">
+              <i class="fa fa-bars" style="padding-right:10px;" aria-hidden="true"></i>
+            </md-button>
+            <md-menu-content width="5">
+              <md-menu-item ng-repeat="app in apps">
+                <md-button ng-if="app.enabled" ng-href="{{app.url}}">
+                  <md-icon style="margin:6px 10px 0 0">
+                    <i class="fa {{app.icon}}" style="padding-right:10px;" aria-hidden="true"></i>
+                  </md-icon>
+                  <b ng-show="app.name.length > 0">{{app.name}}</b>
+                </md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+        </md-card-content>
+      </md-card>
+      <table class="table table-bordered table-striped table-hover">
+        <thead>
+        <tr>
+          <th class="text-center">Offset</th>
+          <th class="text-center">Subject</th> <!-- kv. -->
+          <th class="text-center">Partition</th>
+          <th class="text-center">Magic</th>   <!-- k. -->
+          <th class="text-center">Type</th>    <!-- k. -->
+          <th class="text-center">Version</th> <!-- kv. -->
+          <th class="text-center">Schema</th>  <!-- v. -->
+        </tr>
+        </thead>
+        <tbody>
+        <!--AA->{{rows}}-->
+        <tr ng-repeat="i in rows track by $index">
+          <td class="text-center">{{i.offset}}</td>
+          <td class="text-center"><b>{{i.key.subject}}</b></td>
+          <td class="text-center">{{i.partition}}</td>
+          <td class="text-center">{{i.key.magic}}</td>
+          <td class="text-center">{{i.key.keytype}}</td>
+          <td class="text-center">{{i.value.version}}</td>
+          <td class="text-center" ng-show="isSchemaLong(i.value.schema)">
+            <a md-ink-ripple=""
+               ng-show="true"
+               ng-href="{{getSchemaRegistryUrl(i.key.subject,i.value.version)}}"
+               target="_blank"
+               class="md-raised md-primary md-button md-ink-ripple"
+               style="background-color: rgb(65, 191, 236);color: white;margin:0"
+               type="button" aria-label="new topic"
+               aria-hidden="false">View
+              <div class="md-ripple-container"></div>
+            </a>
+          </td>
+          <td class="text-center" ng-show="!isSchemaLong(i.value.schema)">{{i.value.schema}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </md-content>
+  </md-tab-body>
+</md-tab>

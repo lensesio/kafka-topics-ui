@@ -1,0 +1,41 @@
+<!-- Custom rendering for OTHER topics -->
+<md-tab ng-if="isNormalTopic(topicName)">
+  <md-tab-label>
+    <i class="fa fa-table" style="padding-right:10px;" aria-hidden="true"></i> Table
+  </md-tab-label>
+  <md-tab-body>
+    <md-content class="md-padding">
+      <span class="md-title" style="font-size: 14px;" ng-bind-html="customMessage | sanitize"></span>
+      <br>
+
+      <md-card>
+        <md-card-content style="padding:0">
+          <md-menu ng-show="apps">
+            <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
+              <i class="fa fa-bars" style="padding-right:10px;" aria-hidden="true"></i>
+            </md-button>
+            <md-menu-content width="5">
+            </md-menu-content>
+          </md-menu>
+        </md-card-content>
+
+      </md-card>
+      <table class="table table-bordered table-striped table-hover">
+        <thead>
+        <tr>
+          <th class="text-center" ng-repeat="topicKey in getTopicKeys(rows)">{{topicKey}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!--{{getTopicValues(rows)}}-->
+        <tr ng-repeat="data in allTopicValues track by $index">
+          <td class="text-center">{{data.key}}</td>
+          <td class="text-center">{{data.partition}}</td>
+          <td class="text-center">{{data.offset}}</td>
+          <td ng-repeat="extra in data.extraDataFlattened track by $index" class="text-center">{{extra}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </md-content>
+  </md-tab-body>
+</md-tab>
