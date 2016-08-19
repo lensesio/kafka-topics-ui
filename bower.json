@@ -27,6 +27,7 @@
     "font-awesome": "fontawesome#^4.6.3",
     "angular-material-data-table": "^0.10.9",
     "angular-base64": "^2.0.5",
-    "angular-oboe": "*"
+    "angular-oboe": "*",
+    "angular-ui-grid": "^3.2.1"
   }
 }

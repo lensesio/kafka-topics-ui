@@ -3,6 +3,37 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
   $scope.showSpinner = true;
+/************* UI-GRID **************/
+  $scope.gridOptions = {
+    enableSorting: true,
+    enableColumnResizing: true,
+    // rowHeight: 3,
+    columnDefs: [
+      {field: 'offset', maxWidth: 75, cellClass: 'grid-center', headerCellClass: 'grid-header-landoop'},
+      {field: 'partition', maxWidth: 75, cellClass: 'grid-center', headerCellClass: 'grid-header-landoop-small'},
+      {field: 'key', cellClass: 'red', width: 150, headerCellClass: 'grid-header-landoop'},
+      {
+        field: 'value', headerCellClass: 'grid-header-landoop',
+        cellTooltip: function (row, col) {
+          return 'a' + row.entity.value;
+        }
+        // , headerTooltip:
+        // function( col ) {
+        //   return 'Header: ' + col.displayName;
+        // }
+      }
+
+      //   { field: 'company',
+      //     cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
+      //       if (grid.getCellValue(row,col) === 'Velity') {
+      //         return 'blue';
+      //       }
+      //     }
+      //   }
+    ]
+    // columnDefs: [ [0].cellFilter = 'date'
+  };
+  // *********** UI- GRID **********
 
   $scope.topicType = KafkaRestProxyFactory.getDataType($scope.topicName);
 
@@ -124,22 +155,37 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   }
 
   function setCustomMessage(rows) {
+    var totalRows = 0;
     if ($scope.topicName == "_schemas") {
-      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + rows.length + "</b> registered schemas for the <a href='" + UI_SCHEMA_REGISTRY + "' target='_blank'>schema-registry</a>"
+      totalRows = rows.length;
+      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + totalRows + "</b> registered schemas for the <a href='" + UI_SCHEMA_REGISTRY + "' target='_blank'>schema-registry</a>"
     } else if ($scope.topicName == "connect-configs") {
+      totalRows = rows.length;
       $scope.customMessage = "Topic <b>connect-configs</b> holds <b>" + $scope.getConnectors(rows, 'connector-').length + "</b> connector configurations" +
         " and <b>" + $scope.getConnectors(rows, 'task-').length + "</b> task configurations";
     } else if ($scope.topicName == "connect-offsets") {
-      $scope.customMessage = "Topic <b>connect-offsets</b> holds the offsets of your connectors. Displaying <b>" + rows.length + "</b> rows";
+      totalRows = rows.length;
+      $scope.customMessage = "Topic <b>connect-offsets</b> holds the offsets of your connectors. Displaying <b>" + totalRows + "</b> rows";
     } else if ($scope.topicName == "connect-status") {
-      $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
+      totalRows = rows.length;
+      // $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
+      $scope.customMessage = "";
     } else {
       if (isJson(rows)) {
-        $scope.customMessage = "Displaying " + JSON.parse(rows).length + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
+        totalRows = JSON.parse(rows).length;
+        $scope.customMessage = "Displaying " + totalRows + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
       } else {
-        $scope.customMessage = "Displaying " + rows.length + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
+        totalRows = rows.length;
+        $scope.customMessage = "Displaying " + totalRows + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
       }
     }
+    if (totalRows == 0)
+      $scope.topicIsEmpty = true;
+    else
+      $scope.topicIsEmpty = false;
+
+    $scope.gridOptions.data = rows;
+    return totalRows;
   }
 
   // text can be 'connector-' 'task-' 'commit-'
@@ -215,56 +261,58 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     return allTopicValues;
   };
 
-  // Get `connect-status`
-  $scope.getConnectStatus = function (rows, search) {
-    var connectStatuses = [];
-    angular.forEach(rows, function (row) {
-      if (row.value != undefined && row.value.indexOf("{\"") != -1) {
-        var data = JSON.parse(row.value);
-        if (search == '') {
-          row.state = data.state;
-          row.trace = data.trace;
-          row.workerId = data.worker_id;
-          row.generation = data.generation;
-          connectStatuses.push(row);
-        } else if (search == "RUNNING") {
-          if (data.state == "RUNNING") {
-            row.state = data.state;
-            row.trace = data.trace;
-            row.workerId = data.worker_id;
-            row.generation = data.generation;
-            connectStatuses.push(row);
-          }
-        } else if (search == "UNASSIGNED") {
-          if (data.state == "UNASSIGNED") {
-            row.state = data.state;
-            row.trace = data.trace;
-            row.workerId = data.worker_id;
-            row.generation = data.generation;
-            connectStatuses.push(row);
-          }
-        }
-      } else {
-        //TODO
-        //$log.debug("Don't know what to do with -> " + JSON.stringify(row));
-      }
-    });
-    return (connectStatuses);
-  };
-
-  $scope.getCompactedConnectStatus = function (rows) {
-    // var rowsInverted = rows.slice().reverse();
-    var allKeys = [];
-    var allStatuses = $scope.getConnectStatus(rows, '').reverse();
-    var compactedStatuses = [];
-    angular.forEach(allStatuses, function (row) {
-      if (allKeys.indexOf(row.key) == -1) {
-        allKeys.push(row.key);
-        compactedStatuses.push(row);
-      }
-    });
-    return compactedStatuses;
-  };
+  /* Get `connect-status`
+   $scope.getConnectStatus = function (rows, search) {
+   var connectStatuses = [];
+   angular.forEach(rows, function (row) {
+   if (row.value != undefined && row.value.indexOf("{\"") != -1) {
+   var data = JSON.parse(row.value);
+   if (search == '') {
+   row.state = data.state;
+   row.trace = data.trace;
+   row.workerId = data.worker_id;
+   row.generation = data.generation;
+   connectStatuses.push(row);
+   } else if (search == "RUNNING") {
+   if (data.state == "RUNNING") {
+   row.state = data.state;
+   row.trace = data.trace;
+   row.workerId = data.worker_id;
+   row.generation = data.generation;
+   connectStatuses.push(row);
+   }
+   } else if (search == "UNASSIGNED") {
+   if (data.state == "UNASSIGNED") {
+   row.state = data.state;
+   row.trace = data.trace;
+   row.workerId = data.worker_id;
+   row.generation = data.generation;
+   connectStatuses.push(row);
+   }
+   }
+   } else {
+   //TODO
+   //$log.debug("Don't know what to do with -> " + JSON.stringify(row));
+   }
+   });
+   return (connectStatuses);
+   };
+   */
+  /*
+   $scope.getCompactedConnectStatus = function (rows) {
+   // var rowsInverted = rows.slice().reverse();
+   var allKeys = [];
+   var allStatuses = $scope.getConnectStatus(rows, '').reverse();
+   var compactedStatuses = [];
+   angular.forEach(allStatuses, function (row) {
+   if (allKeys.indexOf(row.key) == -1) {
+   allKeys.push(row.key);
+   compactedStatuses.push(row);
+   }
+   });
+   return compactedStatuses;
+   };
+   */
 
   $scope.getConnector = function (row) {
     if (row.value.length >= 5) {

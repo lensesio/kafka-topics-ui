@@ -4,9 +4,9 @@
     <i class="fa fa-table" style="padding-right:10px;" aria-hidden="true"></i> Table
   </md-tab-label>
   <md-tab-body>
-    <md-content class="md-padding">
-      <span class="md-title" style="font-size: 14px;" ng-bind-html="customMessage | sanitize"></span>
-      <br>
+    <md-content class="padding:0">
+      <!--<span class="md-title" style="font-size: 14px;" ng-bind-html="customMessage | sanitize"></span>-->
+      <!--<br>-->
       <md-card>
         <md-card-content style="padding:0">
           <md-menu ng-show="apps">
@@ -19,6 +19,12 @@
         </md-card-content>
 
       </md-card>
+
+      <div>
+        <div id="grid1"  ui-grid="gridOptions" class="grid" ui-grid-resize-columns></div>
+      </div>
+
+<!--
       <h4>Compacted View</h4>
       <table class="table table-bordered table-striped table-hover">
         <thead>
@@ -47,7 +53,7 @@
       </table>
 
       <h4>Full View</h4>
-      <!-- Connector-Status -->
+      Connector-Status
       <table class="table table-bordered table-striped table-hover">
         <thead>
         <tr>
@@ -73,7 +79,6 @@
         </tr>
         </tbody>
       </table>
-      <!-- Tasks -->
       <table class="table table-bordered table-striped table-hover">
         <thead>
 
@@ -81,6 +86,7 @@
         <tbody>
         </tbody>
       </table>
+       Tasks -->
 
     </md-content>
   </md-tab-body>

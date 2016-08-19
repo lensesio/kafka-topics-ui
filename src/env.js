@@ -1,4 +1,3 @@
-
 // Replace with the URL where a Kafka REST service is listening
 var KAFKA_REST = "https://kafka-rest-proxy.demo.landoop.com"; // http://localhost:8082
 
@@ -16,7 +15,7 @@ var KAFKA_REST_ENV = {
   BINARY_TOPICS: ["connect-configs", "connect-offsets", "connect-status", "_confluent-controlcenter", "__confluent.support.metr"],
 
   // If a topic starts with this particular prefix - it's a control topic
-  CONTROL_TOPICS: ["_confluent-controlcenter", "__confluent", "__consumer_offsets", "_confluent-monitoring"],
+  CONTROL_TOPICS: ["_confluent-controlcenter", "connect-configs", "connect-offsets", "__confluent", "__consumer_offsets", "_confluent-monitoring"],
 
 // # Get info about one topic
 // $ curl http://kafka-rest-proxy.demo.landoop.com/topics/__consumer_offsets

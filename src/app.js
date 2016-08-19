@@ -10,7 +10,9 @@ var angularAPP = angular.module('angularAPP', [
   'md.data.table',
   'ngAria',
   'base64',
-  'ngOboe'
+  'ngOboe',
+  'ui.grid',
+  'ui.grid.resizeColumns'
 ]);
 
 angularAPP.controller('MenuCtrl', function ($scope, $log) {

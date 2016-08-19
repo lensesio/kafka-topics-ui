@@ -1,13 +1,12 @@
 <!-- Custom rendering for OTHER topics -->
 <md-tab ng-if="isNormalTopic(topicName)">
   <md-tab-label>
-    <i class="fa fa-table" style="padding-right:10px;" aria-hidden="true"></i> Table
+    <i class="fa fa-table" style="padding-right:10px;" aria-hidden="true"></i> Topic
   </md-tab-label>
   <md-tab-body>
-    <md-content class="md-padding">
-      <span class="md-title" style="font-size: 14px;" ng-bind-html="customMessage | sanitize"></span>
-      <br>
-
+    <md-content class="padding:0">
+      <!--<span class="md-title" style="font-size: 14px;" ng-bind-html="customMessage | sanitize"></span>-->
+      <!--<br>-->
       <md-card>
         <md-card-content style="padding:0">
           <md-menu ng-show="apps">
@@ -20,14 +19,26 @@
         </md-card-content>
 
       </md-card>
-      <table class="table table-bordered table-striped table-hover">
+      <div ng-show="topicIsEmpty">
+        <br>
+        <p>This topic is empty. No data have been passed through the past 7 days.<br>
+          You can delete this topic with:</p>
+        <code>kafka-topics --zookeeper cloudera01.landoop.com:22181/confluent --delete --topic {{topicName}}</code>
+      </div>
+
+      <div>
+        <div id="grid1"  ui-grid="gridOptions" class="grid" ui-grid-resize-columns></div>
+      </div>
+
+<!--
+      <table ng-hide="topicIsEmpty"
+             class="table table-bordered table-striped table-hover">
         <thead>
         <tr>
           <th class="text-center" ng-repeat="topicKey in getTopicKeys(rows)">{{topicKey}}</th>
         </tr>
         </thead>
         <tbody>
-        <!--{{getTopicValues(rows)}}-->
         <tr ng-repeat="data in allTopicValues track by $index">
           <td class="text-center">{{data.key}}</td>
           <td class="text-center">{{data.partition}}</td>
@@ -36,6 +47,7 @@
         </tr>
         </tbody>
       </table>
+      -->
     </md-content>
   </md-tab-body>
 </md-tab>

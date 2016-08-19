@@ -185,7 +185,7 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
 
 /* Essential for dirPagination material design */
 .md-button {
-    min-width:30px;
+    min-width: 30px;
 }
 
 /** Pagination **/
@@ -258,4 +258,28 @@ md-card md-card-title {
 
 .md-tooltip ._md-content {
     height: auto;
+}
+
+.grid {
+    width: 920px;
+    height: 480px;
+}
+
+.grid-center {
+    text-align: center;
+}
+
+/*.ui-grid-header-cell {*/
+/*border-color: #d4d4d4 !important;*/
+/*}*/
+
+.grid-header-landoop {
+    color: #a8a8a8;
+    background-color: #fafafa !important;
+    font: 500 15px Arial, Helvetica, sans-serif;
+}
+.grid-header-landoop-small {
+    color: #a8a8a8;
+    background-color: #fafafa !important;
+    font: 400 13px Arial, Helvetica, sans-serif;
 }
