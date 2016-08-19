@@ -267,22 +267,24 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   $scope.getConnector = function (row) {
-    var data = JSON.parse(row.value).properties;
-    var topics = "";
-    if (data.topic != null) {
-      topics = topics + data.topic;
-    } else if (data.topics != null) {
-      topics = topics + data.topics;
+    if (row.value.length >= 5) {
+      var data = JSON.parse(row.value).properties;
+      var topics = "";
+      if (data.topic != null) {
+        topics = topics + data.topic;
+      } else if (data.topics != null) {
+        topics = topics + data.topics;
+      }
+      // TODO: This run's 10ns of times ! $log.error(data);
+      var connectorData = {
+        name: data.name,
+        topic: topics,
+        tasksmax: data['tasks.max'],
+        file: data.file,
+        class: data['connector.class']
+      };
+      return connectorData;
     }
-    // TODO: This run's 10ns of times ! $log.error(data);
-    var connectorData = {
-      name: data.name,
-      topic: topics,
-      tasksmax: data['tasks.max'],
-      file: data.file,
-      class: data['connector.class']
-    };
-    return connectorData;
   };
 
   $scope.getTask = function (row) {
@@ -467,7 +469,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.selectedBroker;
   $scope.selectBroker = function (brokerObj) {
     $scope.selectedBroker = brokerObj
-  }
+  };
 
 
   /**
@@ -476,7 +478,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   // This one is called each time - the user clicks on an md-table header (applies sorting)
   $scope.logOrder = function (a) {
-    // $log.info("Ordering event " + a);
+    $log.info("Ordering event " + a);
     sortSchema(a);
   };
 
@@ -488,7 +490,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
       reverse = -1;
     }
     // $log.info(type + " " + reverse);
-    $scope.schema = UtilsFactory.sortByKey($scope.schema, type, reverse);
+    $scope.rows = UtilsFactory.sortByKey($scope.rows, type, reverse);
   }
 
 

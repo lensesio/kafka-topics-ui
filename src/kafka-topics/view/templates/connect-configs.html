@@ -4,10 +4,10 @@
     <i class="fa fa-table" style="padding-right:10px;" aria-hidden="true"></i> Table
   </md-tab-label>
   <md-tab-body>
-    <md-content ng-show="{{getConnectors(rows,'connector-').length ==0}}" class="md-padding">
+    <md-content ng-show="getConnectors(rows,'connector-').length ==0" class="md-padding">
       <h5>No kafka-connector is currently active</h5>
     </md-content>
-    <md-content ng-hide="{{getConnectors(rows,'connector-').length ==0}}" class="md-padding">
+    <md-content ng-hide="getConnectors(rows,'connector-').length ==0" class="md-padding">
       <span class="md-title" style="font-size: 14px;" ng-bind-html="customMessage | sanitize"></span>
       <br>
       <md-card>
