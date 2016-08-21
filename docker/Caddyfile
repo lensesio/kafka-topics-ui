@@ -3,7 +3,3 @@ tls off
 
 root /kafka-topics-ui
 log /access.log
-
-minify {
-    exclude index.html
-}
