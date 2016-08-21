@@ -5,6 +5,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $rootScope.topicName = $routeParams.topicName;
 
   $scope.showSpinner = true;
+  $scope.KAFKA_TOPIC_DELETE_COMMAND = KAFKA_TOPIC_DELETE_COMMAND;
 
   /************* UI-GRID **************/
   $scope.gridOptions = {
@@ -32,6 +33,11 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.aceLoaded = function (_editor) {
     $scope.editor = _editor;
     $scope.editor.$blockScrolling = Infinity;
+    _editor.setOptions({
+      minLines: 33,
+      maxLines: 33
+    });
+
   };
 
   $scope.isSchemaLong = function (schema) {
@@ -290,6 +296,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   $scope.isNormalTopic = function (topicName) {
     return ['_schemas', 'connect-status'].indexOf(topicName) == -1;
+  };
+
+  $scope.isControlTopic = function(topicName) {
+    return KafkaRestProxyFactory.isControlTopic(topicName);
   };
 
   // At start-up this controller consumes data

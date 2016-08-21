@@ -1,8 +1,8 @@
-<md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}">
+<md-card style="box-shadow: 0 0px 0px 0 rgba(0,0,0,.2);" md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}">
   <md-toolbar style="background-color: #ededed; color:#000;">
     <div class="md-toolbar-tools">
       <h3>
-        <span>Control Topics {{controlTopics.length}}</span>
+        <span>{{controlTopics.length}} System Topics</span>
       </h3>
       <span flex></span>
       <!--<a md-ink-ripple-->
@@ -15,35 +15,55 @@
 
   </md-toolbar>
   <md-content>
-    <md-input-container class="md-block" style="margin-bottom:0px;padding-bottom:0px;">
+    <md-input-container class="md-block" style="margin-bottom:-15px;padding-bottom:0;">
       <label>Search topics</label>
       <input ng-model="search">
     </md-input-container>
 
     <md-list flex>
       <md-list-item class="md-2-line"
-                    dir-paginate="topic in controlTopics| orderBy:'name' | filter : search | itemsPerPage: 6"
+                    dir-paginate="topic in controlTopics| orderBy:'name' | filter : search | itemsPerPage: 7"
                     ng-href="#/topic/{{topic}}"
-                    pagination-id="controlTopics">
-        <i class="fa fa-cogs" style="padding-right: 5px;color:#8c9eff" aria-hidden="true"></i>
-        <md-chips>
-          <md-chip ng-show="hasExtraConfig(topic) != ''"
-                   style="background-color:#f44336;color:white;border-radius: 6px;margin-right: 65px;"
-                   class="md-secondary md-caption">config
-          </md-chip>
-          <md-chip style="background-color:#d6e7f9;color:black;border-radius: 6px;"
-                   class="md-secondary md-caption">{{getDataType(topic)}}
-          </md-chip>
-          <!--{{hasExtraConfig(topic)}}-->
-        </md-chips>
-        <div class="md-list-item-text" layout="column">
-          <h3>{{topic}}</h3>
-          <p style="color:#bbbbcc">partitions: {{countPartitionsForTopic(topic)}}
-            replication: {{countReplicationForTopic(topic)}}</p>
+                    pagination-id="controlTopics"
+                    style="height: 62px;min-height: 0;border-bottom: 1px solid rgba(0, 0, 0, .1);"
+                    ng-class="{ 'selectedListItem': topic == topicName }">
+        <div class="md-raised md-warn md-ink-ripple"
+             style="box-shadow: 0 0 0 0 rgba(0,0,0,.46);min-width: initial;font-size: 85%;line-height:17px;min-height: 18px;text-transform: capitalize;margin-left:0;background-color: rgba(33,126,188,.85);color: white;text-align: left;width:45px"
+             type="button" aria-label="Primary">
+          <center>{{getDataType(topic)}}</center>
         </div>
+        <!-- cute / sexy topic bar -->
+        <div class="md-raised md-warn md-button md-ink-ripple"
+             flex
+             style="min-width: 160px;font-size: 100%;line-height: 40px;margin:0;background-color: white;color: black;text-align: left;box-shadow: 0 0 0px 0 rgba(0,0,0,.26);"
+             aria-label="Primary">
+          <div style="display: inline-block;text-transform: none;">
+            <center>
+              {{shortenControlCenterName(topic)}}
+            </center>
+          </div>
+
+          <!-- Show replication & partitions -->
+          <div class="md-raised md-warn md-button md-ink-ripple"
+               style="float:right;margin-right:0;margin-left: 3px;margin-top: 11px;box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:15px;min-height: 16px;text-transform: none;color: darkslategray;text-align: left;"
+               type="button" aria-label="Primary">
+            {{getPartitionMessage(topic)}}
+            <!--<md-tooltip md-direction="top" style="padding-left:10px;" md-visible="ctrl.isOpen">Partitions</md-tooltip>-->
+          </div>
+
+          <!-- highlight with-config-overrides -->
+          <div ng-show="hasExtraConfig(topic) != ''" class="md-raised md-warn md-button md-ink-ripple"
+               style="box-shadow: 0 0 0 0 rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:17px;min-height: 18px;text-transform: none;background-color: rgba(255, 0, 0, 0.6);color: white;text-align: left;float:right;margin-top: 10px;"
+               type="button" aria-label="Primary">
+            <span>
+            config
+          </span>
+          </div>
+
+        </div>
+
       </md-list-item>
     </md-list>
-    <!--<md-divider></md-divider>-->
     <dir-pagination-controls pagination-id="controlTopics" style="margin:0;"></dir-pagination-controls>
   </md-content>
 </md-card>

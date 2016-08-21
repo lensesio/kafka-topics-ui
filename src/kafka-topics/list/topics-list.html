@@ -1,8 +1,8 @@
-<md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}">
+<md-card style="box-shadow: 0 0px 0px 0 rgba(0,0,0,.2);" md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}">
   <md-toolbar style="background-color: #ededed; color:#000;">
     <div class="md-toolbar-tools">
       <h3>
-        <span>Topics {{topics.length}}</span>
+        <span>{{topics.length}} Topics</span>
       </h3>
       <span flex></span>
       <!--<a md-ink-ripple-->
@@ -16,7 +16,7 @@
   </md-toolbar>
   <md-content>
     <md-input-container class="md-block" style="margin-bottom:-15px;padding-bottom:0;">
-      <label>Search topics </label>
+      <label>Search topics</label>
       <input ng-model="search">
     </md-input-container>
 
@@ -25,9 +25,9 @@
                     dir-paginate="topic in topics| orderBy:'name' | filter : search | itemsPerPage: 7"
                     ng-href="#/topic/{{topic}}"
                     pagination-id="topics"
-                    style="border-bottom: 1px solid rgba(0, 0, 0, .1);"
+                    style="height: 62px;min-height: 0;border-bottom: 1px solid rgba(0, 0, 0, .1);"
                     ng-class="{ 'selectedListItem': topic == topicName }">
-        <div ng-show="getDataType(topic) != '{}'" class="md-raised md-warn md-ink-ripple"
+        <div class="md-raised md-warn md-ink-ripple"
              style="box-shadow: 0 0 0 0 rgba(0,0,0,.46);min-width: initial;font-size: 85%;line-height:17px;min-height: 18px;text-transform: capitalize;margin-left:0;background-color: rgba(33,126,188,.85);color: white;text-align: left;width:45px"
              type="button" aria-label="Primary">
           <center>{{getDataType(topic)}}</center>
@@ -45,7 +45,7 @@
 
           <!-- Show replication & partitions -->
           <div class="md-raised md-warn md-button md-ink-ripple"
-               style="float:right;margin-right:0;margin-left: 3px;margin-top: 11px;box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:15px;min-height: 16px;text-transform: none;color: darkslategray;text-align: left;"
+               style="float:right;margin-right:0;margin-left: 3px;margin-top: 11px;box-shadow: 0 0 0 0 rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:15px;min-height: 16px;text-transform: none;color: darkslategray;text-align: left;"
                type="button" aria-label="Primary">
             {{getPartitionMessage(topic)}}
             <!--<md-tooltip md-direction="top" style="padding-left:10px;" md-visible="ctrl.isOpen">Partitions</md-tooltip>-->
@@ -53,7 +53,7 @@
 
           <!-- highlight with-config-overrides -->
           <div ng-show="hasExtraConfig(topic) != ''" class="md-raised md-warn md-button md-ink-ripple"
-               style="box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:17px;min-height: 18px;text-transform: none;background-color: rgba(255, 0, 0, 0.6);color: white;text-align: left;float:right;margin-top: 10px;"
+               style="box-shadow: 0 0 0 0 rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:17px;min-height: 18px;text-transform: none;background-color: rgba(255, 0, 0, 0.6);color: white;text-align: left;float:right;margin-top: 10px;"
                type="button" aria-label="Primary">
             <span>
             config
@@ -65,12 +65,5 @@
       </md-list-item>
     </md-list>
     <dir-pagination-controls pagination-id="topics" style="margin:0;"></dir-pagination-controls>
-    <md-switch ng-model="data.cb1" aria-label="Switch 1" style="margin:0;padding-left: 10px;padding-bottom: 10px;">
-      <div ng-if="!data.cb1">System Topics</div>
-      <div ng-if="data.cb1"><b>System Topics</b></div>
-      <!--<div ng-if="data.cb1">Control Topics</div>-->
-      <!--Control topics-->
-      <!--{{ data.cb1 }}-->
-    </md-switch>
   </md-content>
 </md-card>

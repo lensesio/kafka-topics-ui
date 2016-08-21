@@ -4,6 +4,21 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
   toastFactory.hideToast();
 
   /**
+   * At start-up fetch the _schemas topic
+   */
+  var start = new Date().getTime();
+  var schemasPromise = KafkaRestProxyFactory.consumeKafkaRest("json", "_schemas");
+  schemasPromise.then(function (allSchemas) {
+    var end = new Date().getTime();
+    $rootScope.schemas = allSchemas;
+    $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
+  }, function (reason) {
+    $log.error('Failed: ' + reason);
+  }, function (update) {
+    $log.info('Got notification: ' + update);
+  });
+
+  /**
    * At start-up get all topic-information
    */
   KafkaRestProxyFactory.getTopicNames().then(
@@ -17,9 +32,15 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
       $scope.topics = normalTopics;
       $scope.controlTopics = controlTopics;
       $rootScope.topicsCache = normalTopics;
-      KafkaRestProxyFactory.getAllTopicInformation(normalTopics.concat(controlTopics)).then(
+      KafkaRestProxyFactory.getAllTopicInformation(normalTopics).then(
         function success(topicDetails) {
           $rootScope.topicDetails = topicDetails;
+          $rootScope.normalTopicDetails = topicDetails;
+          // .. only then fetch [Control] topics info
+          KafkaRestProxyFactory.getAllTopicInformation(controlTopics).then(
+            function success(controlTopicDetails) {
+              $rootScope.controlTopicDetails = controlTopicDetails;
+            });
         }, function failure(reason) {
           $log.error('Failed: ' + reason);
         });
@@ -31,25 +52,17 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
       $log.info('Got notification: ' + update);
     });
 
-  // 2. Get _schemas
-  var start = new Date().getTime();
-  var schemasPromise = KafkaRestProxyFactory.consumeKafkaRest("json", "_schemas");
-  schemasPromise.then(function (allSchemas) {
-    var end = new Date().getTime();
-    $rootScope.schemas = allSchemas;
-    $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
-  }, function (reason) {
-    $log.error('Failed: ' + reason);
-  }, function (update) {
-    $log.info('Got notification: ' + update);
-  });
+  $rootScope.displayingControlTopics = false;
 
   function countPartitionsForTopic(topicName) {
     var partitions = 0;
-    // $log.debug('Counting partitions for topic : ' + topicName);
     angular.forEach($rootScope.topicDetails, function (topicDetail) {
       if (topicDetail.name == topicName) {
-        // $log.debug(topicDetail);
+        partitions = topicDetail.partitions.length;
+      }
+    });
+    angular.forEach($rootScope.controlTopicDetails, function (topicDetail) {
+      if (topicDetail.name == topicName) {
         partitions = topicDetail.partitions.length;
       }
     });
@@ -61,9 +74,9 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
     if (partitions == 0)
       return '';
     else if (partitions == 1)
-      return countReplicationForTopic(topicName) + ' x 1 partition';
+      return countReplicationForTopic(topicName) + ' × 1 partition';
     else
-      return countReplicationForTopic(topicName) + ' x ' + partitions + 'partitions';
+      return countReplicationForTopic(topicName) + ' × ' + partitions + ' partitions';
   };
 
   $scope.isNormalTopic = function (topicName) {
@@ -75,12 +88,16 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
     //$log.debug('Checking replication factor for topic : ' + topicName);
     angular.forEach($rootScope.topicDetails, function (topicDetail) {
       if (topicDetail.name == topicName) {
-        // $log.debug("--->" + JSON.stringify(topicDetail.partitions[0].replicas));
+        replication = topicDetail.partitions[0].replicas.length;
+      }
+    });
+    angular.forEach($rootScope.controlTopicDetails, function (topicDetail) {
+      if (topicDetail.name == topicName) {
         replication = topicDetail.partitions[0].replicas.length;
       }
     });
     return replication;
-  };
+  }
 
   $scope.hasExtraConfig = function (topicName) {
     return KafkaRestProxyFactory.hasExtraConfig(topicName);
@@ -89,5 +106,9 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
   $scope.getDataType = function (topicName) {
     return KafkaRestProxyFactory.getDataType(topicName);
   };
+
+  $scope.shortenControlCenterName = function (topicName) {
+    return KafkaRestProxyFactory.shortenControlCenterName(topicName);
+  }
 
 });

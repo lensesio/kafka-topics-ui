@@ -584,7 +584,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     },
 
     getDataType: function (topicName) {
-      var dataType = {};
+      var dataType = "..";
       // Check if we know the topic data type a priory
       if (KAFKA_REST_ENV.JSON_TOPICS.indexOf(topicName) > -1) {
         dataType = "json";

@@ -1,44 +1,46 @@
-# kafka-topics-ui
+# kafka-topics
 
 [![release](http://github-release-version.herokuapp.com/github/landoop/kafka-topics-ui/release.svg?style=flat)](https://github.com/landoop/kafka-topics-ui/releases/latest)
+[![docker](https://img.shields.io/docker/pulls/landoop/kafka-topics-ui.svg?style=flat)](https://hub.docker.com/r/landoop/kafka-topics-ui/)
+[![Join the chat at https://gitter.im/Landoop/support](https://img.shields.io/gitter/room/nwjs/nw.js.svg?maxAge=2592000)](https://gitter.im/Landoop/support?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-UI for viewing **Kafka topics** using the Kafka Rest proxy built in angular - https://github.com/confluentinc/kafka-rest
+**Kafka UI** for Kafka data. Can browse any topic and help you understand what's happening on your cluster
 
-  <a href="http://kafka-topics-ui.landoop.com">
-    <img src="http://landoop.github.io/schema-registry-ui/demo-button.jpg" width="75"/>
-  </a>
+> [Demo of kafka-topics](https://kafka-topics-ui.landoop.com)
 
-### Features
+**Capabilities** find topics / view topic metadata / browse topic data (kafka messages) / view topic configuration / download data
 
-* Identifies and visualizes Kafka topics and config overrides
-* Automatically detects data types (Avro|Json|Binary)
-* Base64 decodes and parses of binary topics
-* Provides Table and JSon views
-* Allows downloading data from Kafka topics
-* Integrated with [schema-registry-ui](https://github.com/Landoop/schema-registry-ui)
-* Displays number of partitions and replication factor per topic
-* [TODO] Stream from beginning or real-time capturing
+Currently uses the [confluentinc/kafka-rest proxy](https://github.com/confluentinc/kafka-rest), but future versions will
+be capable of interacting with topics via other means as well.
 
-### Other Landoop projects
+### Other interesting projects
 
-|                    Project                                     |         Description            |
-|----------------------------------------------------------------| -------------------------------|
-| [schema-registry-ui](https://github.com/Landoop/schema-registry-ui)  | View Kafka Schemas registered on the Schema Registry |
-| [Confluent-On-Cloudera](https://github.com/Landoop/Confluent-On-Cloudera) | Install and Manage the Confluent Platform on Hadoop Cloudera CDH clusters |
+|                                                                       | Description                                                                  |
+|-----------------------------------------------------------------------| -----------------------------------------------------------------------------|
+| [schema-registry-ui](https://github.com/Landoop/schema-registry-ui)   | View, create, evolve and manage your **Avro Schemas** on your Kafka cluster  | 
+| [Landoop/fast-data-dev](https://github.com/Landoop/fast-data-dev)     | Docker for Kafka developers (schema-registry,kafka-rest,zoo,brokers,landoop) |
+| [Landoop-On-Cloudera](https://github.com/Landoop/Landoop-On-Cloudera) | Install and manage your kafka streaming-platform on you Cloudera CDH cluster |
 
 ## Preview
 
-<a href="http://kafka-topics-ui.landoop.com" target="_blank">
-    <img src="https://raw.githubusercontent.com/Landoop/kafka-topics-ui/gh-pages/v0.1/kafka-topics-ui-0.1.gif">
+<a href="http://kafka-topics-ui.landoop.com" target="_blank" width="50%">
+    <img src="https://raw.githubusercontent.com/Landoop/kafka-topics-ui/gh-pages/v0.7-topics.png">
 </a>
 
-## Configuration
+## Running it
 
-* By default `kafka-topics-ui` points to a **kafka-rest** server at `http://localhost:8082`
- To point it to a different kafka-rest server, update `src/env.js`
-* Enable CORS
+To run it standalone through Docker
 
-If using nginx
+    docker pull landoop/kafka-topics-ui
+    docker run --rm -it -p 8000:8000 \
+               -e "SCHEMAREGISTRY_UI_URL=http://confluent-schema-registry-host:port" \
+               -e "KAFKA_REST_PROXY_URL=http://kafka-rest-proxy-host:port" \
+               landoop/kafka-topics-ui
+
+**Config:** `Kafka-Rest-Proxy` CORS is a bit buggy at the latest release, so we will need to
+provide CORS through a proxy (i.e. nginx)
+
+Example for nginx
 
     location / {
       add_header 'Access-Control-Allow-Origin' "$http_origin" always;
@@ -54,12 +56,15 @@ If using nginx
       proxy_set_header  Host $http_host;
     }
 
-## Run
+> We also provide the kafka-topics-ui as part of the [fast-data-dev](https://github.com/Landoop/fast-data-dev), that
+is an excellent docker for developers
 
-#### Prerequisites
+### Building it
 
 * You need to download dependencies with `bower`. Find out more [here](http://bower.io)
 * You need a `web server` to serve the app.
+* By default `kafka-topics-ui` points to some default locations like `http://localhost:8081`
+  To point it to the correct backend servers, update `src/env.js`
 
 ### Steps
 
@@ -70,13 +75,6 @@ If using nginx
 
 Web UI will be available at `http://localhost:8080`
 
-## Deploy
-
-    npm install
-    grunt
-
-All files will be under folder `dist`
-
 ### Nginx config
 
 If you use `nginx` to serve this ui, let angular manage routing with
@@ -86,11 +84,6 @@ If you use `nginx` to serve this ui, let angular manage routing with
         root /folder-with-kafka-topics-ui/;
     }
 
-### Docker
-
-We are also releasing and maintaining docker images at the public Docker Hub
-https://hub.docker.com/r/landoop/kafka-topics-ui/
-
 ## License
 
-The project is licensed under the Apache 2 license.
+The project is licensed under the [BSL](http://landoop.com/bsl) license

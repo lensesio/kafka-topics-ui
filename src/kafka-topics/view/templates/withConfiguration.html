@@ -1,7 +1,7 @@
 <!-- Custom rendering for Config overrides -->
 <md-tab ng-if="hasExtraConfig(topicName) != ''">
   <md-tab-label>
-    <i class="fa fa-table" style="padding-right:10px;" aria-hidden="true"></i> Configuration
+    <i aria-hidden="true"></i> Configuration
   </md-tab-label>
   <md-tab-body>
     <md-content class="md-padding">
@@ -17,30 +17,32 @@
         </md-card-content>
 
       </md-card>
-      <table class="table table-bordered table-striped table-hover">
-        <thead>
-        <tr>
-          <th class="text-center">Key</th>
-          <th class="text-center">Value</th>
-          <th class="text-center">Default Value</th>
-          <th class="text-center">Description</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="(key,value) in getExtraConfig(topicName) track by $index">
-          <td class="text-center">
-            <md-chip
-              style="padding: 4px;color: white; border-radius: 6px; background-color: rgb(244, 67, 54);"
-              class="md-secondary md-caption ng-scope md-chip" aria-hidden="false">{{key}}
-              <span class="md-visually-hidden ng-binding ng-scope"></span>
-            </md-chip>
-          </td>
-          <td class="text-center">{{value}}</td>
-          <td class="text-center">{{getDefautConfigValue(key)}}</td>
-          <td>{{getConfigDescription(key)}}</td>
-        </tr>
-        </tbody>
-      </table>
+
+      <div ng-repeat="(key,value) in getExtraConfig(topicName) track by $index">
+        <span
+          style="box-shadow: rgba(0, 0, 0, 0.458824) 0px 0px 0px 0px;font-weight: 600;text-transform: none;color: white;float: left;padding: 8px; border: 2px solid;border-radius: 15px;background-color: rgba(255, 0, 0, 0.6);">
+      {{key}}
+        </span>
+        <span style="color:black;font-weight: 600;float: left;padding: 8px; border: 2px solid white;border-radius: 15px;">
+          is
+        </span>
+        <span
+          style="font-weight: 600;color: #525252;;float: left;padding: 8px; border: 0px solid;border-radius: 15px;background-color: rgba(152, 206, 166, 0.6);">
+        {{value}}
+        </span>
+        <span style="color:black;font-weight: 600;float: left;padding: 8px; border: 2px solid white;border-radius: 15px;">
+          instead of
+        </span>
+        <p
+          style="background-color: rgba(185, 185, 185, 0.6);font-weight: 600;color: #525252;float: left;padding: 8px; border: 0px solid;border-radius: 15px;">
+        {{getDefautConfigValue(key)}}
+        </p>
+        <br>
+        <br>
+        <p style="font-weight: 500; padding: 15px;">
+        {{getConfigDescription(key)}}
+          </p>
+      </div>
 
     </md-content>
   </md-tab-body>

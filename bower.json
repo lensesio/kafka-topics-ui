@@ -7,7 +7,7 @@
   ],
   "description": "A user interface for reading data from Kafka Topics",
   "main": "index.html",
-  "license": "Apache-2.0",
+  "license": "http://landoop.com/bsl",
   "homepage": "http://kafka-topics-ui.landoop.com",
   "ignore": [
     "**/.*",

@@ -8,7 +8,7 @@ RUN mkdir caddy && \
     tar xzf caddy.tgz -C /caddy && \
     rm -f /caddy.tgz
 # Add and Setup Schema-Registry-Ui
-ADD https://github.com/Landoop/kafka-topics-ui/releases/download/v0.2/kafka-topics-ui-0.2.tar.gz /kafka-topics-ui.tar.gz
+ADD https://github.com/Landoop/kafka-topics-ui/releases/download/v0.7/kafka-topics-ui-0.7.tar.gz /kafka-topics-ui.tar.gz
 RUN mkdir /kafka-topics-ui && \
     tar xzf /kafka-topics-ui.tar.gz -C /kafka-topics-ui && \
     rm -f /kafka-topics-ui.tar.gz

@@ -31,7 +31,7 @@
     "avro"
   ],
   "author": "Landoop team",
-  "license": "Apache-2.0",
+  "license": "http://landoop.com/bsl",
   "bugs": {
     "url": "https://github.com/Landoop/kafka-topics-ui/issues"
   },
