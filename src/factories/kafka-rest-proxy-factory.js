@@ -505,6 +505,9 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     isNormalTopic: function (topicName) {
       return isNormalTopic(topicName);
     },
+    shortenControlCenterName: function(topicName) {
+      return shortenControlCenterName(topicName)
+    },
     getBrokers: function () {
       return getBrokers();
     },
@@ -566,7 +569,6 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
 
           // Add enhanced metadata: (shortName)
           angular.forEach(topicMetadataArray, function (topicMetadata) {
-            topicMetadata.shortName = shortenControlCenterName(topicMetadata.name);
             topicsInformation.push(topicMetadata);
             // @see ### TOPIC-INFORMATION ### in SAMPLES.txt
           });
