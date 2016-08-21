@@ -3,7 +3,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
   $scope.showSpinner = true;
-/************* UI-GRID **************/
+  /************* UI-GRID **************/
   $scope.gridOptions = {
     enableSorting: true,
     enableColumnResizing: true,
@@ -179,12 +179,19 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
         $scope.customMessage = "Displaying " + totalRows + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
       }
     }
-    if (totalRows == 0)
-      $scope.topicIsEmpty = true;
-    else
-      $scope.topicIsEmpty = false;
+    $scope.topicIsEmpty = totalRows == 0;
 
-    $scope.gridOptions.data = rows;
+    // Fix null keys
+    var fixedRows = [];
+    angular.forEach(rows, function (row) {
+      if (row.key == null) {
+        $log.error("key is null");
+        row.key = "-";
+      }
+      fixedRows.push(row);
+    });
+
+    $scope.gridOptions.data = fixedRows;
     return totalRows;
   }
 
@@ -377,8 +384,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     dataPromise.then(function (allData) {
       var end = new Date().getTime();
       $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
-      $scope.aceString = allData;
-      $scope.rows = JSON.parse(allData);
+      $scope.aceString = angular.toJson(allData, true);
+      $log.info($scope.aceString);
+      $scope.rows = allData;
       setCustomMessage($scope.rows);
       $scope.getTopicValues($scope.rows);
       end = new Date().getTime();
@@ -406,7 +414,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                 $log.info("Binary detected");
                 var end = new Date().getTime();
                 $scope.topicType = "binary";
-                $scope.aceString = allData;
+                $scope.aceString = angular.toJson(allData, true);
                 $scope.rows = allData;
                 setCustomMessage($scope.rows);
                 $scope.getTopicValues($scope.rows);
@@ -432,7 +440,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
         // $log.info("Avro detected" + allData);
         var end = new Date().getTime();
         $scope.topicType = "avro";
-        $scope.aceString = allData;
+        $scope.aceString = angular.toJson(allData, true);
         $scope.rows = allData;
         setCustomMessage($scope.rows);
         $scope.getTopicValues($scope.rows);

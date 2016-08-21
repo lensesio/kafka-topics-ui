@@ -32,20 +32,10 @@
             <md-icon md-svg-src="src/assets/icons/landoop.svg" style="margin-top: -15px;"></md-icon>
           </md-button>
         </md-fab-trigger>
-        <md-fab-actions>
-          <md-button ng-repeat="app in apps" class="md-fab md-raised md-mini"
-                     ng-href="{{app.url}}"
-                     ng-aria-label="{{app.name}}"
-                     ng-show="true">
-            <md-tooltip md-direction="right" style="padding-left:10px;" md-visible="ctrl.isOpen">{{app.name}}
-            </md-tooltip>
-            <md-icon md-svg-src="{{app.icon}}" aria-label="{{app.name}}"></md-icon>
-          </md-button>
-        </md-fab-actions>
       </md-fab-speed-dial>
     </div>
     <div flex style="padding-top:5px">
-      <h4><a href="/#/" style="color:#fff;text-decoration:none;">KAFKA TOPICS</a></h4>
+      <h4><a href="#/" style="color:#fff;text-decoration:none;">KAFKA TOPICS</a></h4>
     </div>
   </div>
 </header>

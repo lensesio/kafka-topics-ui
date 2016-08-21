@@ -372,8 +372,9 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
         // deferred.resolve(angular.toJson(things, true));
       })
       .fail(function () {
-        $log.error("Failed consuming " + format + " data from topic " + topicName);
-        deferred.reject("Failed consuming " + format + " data from topic " + topicName);
+        var msg = "Failed consuming " + format + " data from topic " + topicName;
+        $log.error(msg);
+        deferred.reject(msg);
       });
 
     return deferred.promise;
@@ -394,7 +395,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     var deferred = $q.defer();
     $http.get(url).then(
       function success(response) {
-        $log.debug("  curl -X GET " + url + " in [ " + " ] msec responding - " + response.data.brokers);
+        $log.debug("  curl -X GET " + url + " in [ " + (new Date().getTime() - start) + " ] msec with " + response.data.brokers.length + " brokers");
         deferred.resolve(response.data);
       },
       function failure(response) {
@@ -420,6 +421,10 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
         isControlTopic = true;
     });
     return isControlTopic;
+  }
+
+  function isNormalTopic(topicName) {
+    return !isControlTopic(topicName);
   }
 
   function bytesToSize(bytes) {
@@ -448,8 +453,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
   }
 
   /**
-   * More of a method for view.controller.js
-   * Private method for step-2 of consuming data
+   * Private method - part of pipeline (step 2)
    */
   function startFetchingData(format, topicName, consumer) {
 
@@ -467,16 +471,29 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
         } else {
           // resultingTextData = angular.toJson(things, true);
         }
+
+        // Fix `null keys`
+        var fixedThings = [];
+        if (format == 'avro') {
+          angular.forEach(things, function (t) {
+            if (t.key == null)
+              t.key = ''; // TODO: So that ui-grid can tell if it's null
+            fixedThings.push(t);
+          });
+        } else {
+          fixedThings = things;
+        }
+
         // $log.info("COMPLETED entire object " + JSON.stringify(things));
-        deferred.resolve(angular.toJson(things, true));
+        deferred.resolve(fixedThings);
       },
       function failure(message) {
-        $log.error("Failed consuming " + format + " data from topic " + topicName);
-        deferred.reject("Failed consuming " + format + " data from topic " + topicName);
+        deferred.reject(message); // message is logged up-stream
       }
     );
 
     return deferred.promise;
+
   }
 
   $rootScope.allCurlCommands = "";
@@ -485,6 +502,9 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
   return {
 
     // Proxy methods
+    isNormalTopic: function (topicName) {
+      return isNormalTopic(topicName);
+    },
     getBrokers: function () {
       return getBrokers();
     },
@@ -500,7 +520,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     getNormalTopics: function (topicNames) {
       var normalTopics = [];
       angular.forEach(topicNames, function (topicName) {
-        if (!isControlTopic(topicName)) {
+        if (isNormalTopic(topicName)) {
           normalTopics.push(topicName)
         }
         if (normalTopics.toString().indexOf("Error in getting topics from kafka-rest") > -1) {
@@ -597,11 +617,12 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     consumeKafkaRest: function (format, topicName) {
       $rootScope.allCurlCommands = "";
 
-      var consumer = "Consumer-" + (new Date()).getTime();
+      var start = (new Date()).getTime();
+      var consumer = "Consumer-" + start;
       var consumerName = consumer + "-" + format;
 
       var deferred = $q.defer();
-      createNewConsumer(consumer, consumerName, format, "smallest",true).then( // TODO (true)
+      createNewConsumer(consumer, consumerName, format, "smallest", true).then( // TODO (true)
         function success(data) {
           //data.instance_id + " base_uri = " + response.data.base_uri
           startFetchingData(format, topicName, consumerName).then(
@@ -610,7 +631,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
               // At the end .. let's see if we need to clean-up
               deleteConsumerInstance(consumerName).then(
                 function success() {
-                  $log.debug("  ..pipeline create-consume-delete took: ");
+                  $log.debug("  ..pipeline create-consume-delete in [ " + ((new Date()).getTime() - start) + " ] msec");
                   deferred.resolve(data);
                 } // Failures are managed in the factory
               );

@@ -196,7 +196,7 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
 .md-whiteframe-1dp, .md-whiteframe-z1 {
     box-shadow: none;
 }
-
+/*
 .md-whiteframe-2dp {
     box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
 }
@@ -204,6 +204,7 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
 .md-whiteframe-2dp:focus {
     box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.4), 0 2px 2px 0 rgba(0, 0, 0, 0.28), 0 3px 1px -2px rgba(0, 0, 0, 0.24);
 }
+*/
 
 .md-button.light-blue {
     background-color: rgba(74, 163, 223, 1);
@@ -217,14 +218,6 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
     width: 42px;
     height: 42px;
     background-color: white;
-}
-
-.fabSpeedDial .md-fab:hover, .fabSpeedDial .md-fab.md-focused {
-    background-color: #000 !important;
-}
-
-.fabSpeedDial p.note {
-    font-size: 1.2rem;
 }
 
 .fabSpeedDial .lock-size {
@@ -282,4 +275,9 @@ md-card md-card-title {
     color: #a8a8a8;
     background-color: #fafafa !important;
     font: 400 13px Arial, Helvetica, sans-serif;
+}
+
+/*Funny color*/
+.md-fab:hover, .md-fab.md-focused {
+    background-color: rgba(230, 100, 0, .9) !important;
 }

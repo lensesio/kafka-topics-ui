@@ -57,12 +57,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
   };
 
   $scope.isNormalTopic = function (topicName) {
-    return (topicName != '_schemas') &&
-      (topicName != 'connect-configs') &&
-      (topicName != 'connect-status') &&
-      (topicName != '__consumer_offsets') &&
-      (topicName.indexOf("_confluent") != 0) &&
-      (topicName.indexOf("__confluent") != 0);
+    return KafkaRestProxyFactory.isNormalTopic(topicName);
   };
 
   $scope.countReplicationForTopic = function (topicName) {
