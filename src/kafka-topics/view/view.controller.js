@@ -385,7 +385,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
       var end = new Date().getTime();
       $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
       $scope.aceString = angular.toJson(allData, true);
-      $log.info($scope.aceString);
       $scope.rows = allData;
       setCustomMessage($scope.rows);
       $scope.getTopicValues($scope.rows);

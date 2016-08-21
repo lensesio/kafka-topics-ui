@@ -42,6 +42,15 @@
               {{topic}}
             </center>
           </div>
+
+          <!-- Show replication & partitions -->
+          <div class="md-raised md-warn md-button md-ink-ripple"
+               style="float:right;margin-right:0;margin-left: 3px;margin-top: 11px;box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:15px;min-height: 16px;text-transform: none;color: darkslategray;text-align: left;"
+               type="button" aria-label="Primary">
+            {{getPartitionMessage(topic)}}
+            <!--<md-tooltip md-direction="top" style="padding-left:10px;" md-visible="ctrl.isOpen">Partitions</md-tooltip>-->
+          </div>
+
           <!-- highlight with-config-overrides -->
           <div ng-show="hasExtraConfig(topic) != ''" class="md-raised md-warn md-button md-ink-ripple"
                style="box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:17px;min-height: 18px;text-transform: none;background-color: rgba(255, 0, 0, 0.6);color: white;text-align: left;float:right;margin-top: 10px;"
@@ -50,22 +59,7 @@
             config
           </span>
           </div>
-        </div>
 
-        <!-- display partitions & replication factor -->
-        <div>
-          <div class="md-raised md-warn md-button md-ink-ripple"
-               style="float:left;margin: 0;box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:15px;min-height: 16px;text-transform: none;color: darkslategray;text-align: left;margin:0;"
-               type="button" aria-label="Primary">
-            partition = {{countPartitionsForTopic(topic)}}
-            <md-tooltip md-direction="top" style="padding-left:10px;" md-visible="ctrl.isOpen">Partitions</md-tooltip>
-          </div>
-          <div class="md-raised md-warn md-button md-ink-ripple"
-               style="float:left;clear: left;box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:15px;min-height: 16px;text-transform: none;color: darkslategray;text-align: left;margin:0;"
-               type="button" aria-label="Primary">
-            replication = {{countReplicationForTopic(topic)}}
-            <md-tooltip md-direction="bottom" style="padding-left:10px;" md-visible="">Replication factor</md-tooltip>
-          </div>
         </div>
 
       </md-list-item>

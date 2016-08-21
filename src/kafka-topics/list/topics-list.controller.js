@@ -44,7 +44,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
     $log.info('Got notification: ' + update);
   });
 
-  $scope.countPartitionsForTopic = function (topicName) {
+  function countPartitionsForTopic(topicName) {
     var partitions = 0;
     // $log.debug('Counting partitions for topic : ' + topicName);
     angular.forEach($rootScope.topicDetails, function (topicDetail) {
@@ -54,13 +54,23 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
       }
     });
     return partitions;
+  }
+
+  $scope.getPartitionMessage = function (topicName) {
+    var partitions = countPartitionsForTopic(topicName);
+    if (partitions == 0)
+      return '';
+    else if (partitions == 1)
+      return countReplicationForTopic(topicName) + ' x 1 partition';
+    else
+      return countReplicationForTopic(topicName) + ' x ' + partitions + 'partitions';
   };
 
   $scope.isNormalTopic = function (topicName) {
     return KafkaRestProxyFactory.isNormalTopic(topicName);
   };
 
-  $scope.countReplicationForTopic = function (topicName) {
+  function countReplicationForTopic(topicName) {
     var replication = 0;
     //$log.debug('Checking replication factor for topic : ' + topicName);
     angular.forEach($rootScope.topicDetails, function (topicDetail) {
@@ -80,6 +90,4 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
     return KafkaRestProxyFactory.getDataType(topicName);
   };
 
-  // $scope.topics = KAFKA_REST_ENV.topics;
-  //schemaRegistryFactory.visibleCreateSubjectButton(true);
 });
