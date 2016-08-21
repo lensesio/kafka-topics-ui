@@ -19,9 +19,9 @@ else
         -i /kafka-topics-ui/combined.js
 fi
 
-echo "Final configuration is:"
-echo
-cat /kafka-topics-ui/combined.js
-echo
+# echo "Final configuration is:"
+# echo
+# cat /kafka-topics-ui/combined.js
+#echo
 
 exec /caddy/caddy -conf /caddy/Caddyfile
