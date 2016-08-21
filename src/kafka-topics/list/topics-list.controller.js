@@ -74,9 +74,9 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
     if (partitions == 0)
       return '';
     else if (partitions == 1)
-      return countReplicationForTopic(topicName) + ' × 1 partition';
+      return countReplicationForTopic(topicName) + '  x 1 partition';
     else
-      return countReplicationForTopic(topicName) + ' × ' + partitions + ' partitions';
+      return countReplicationForTopic(topicName) + ' x ' + partitions + ' partitions';
   };
 
   $scope.isNormalTopic = function (topicName) {
