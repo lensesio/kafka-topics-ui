@@ -2,7 +2,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
+  $rootScope.topicName = $routeParams.topicName;
+
   $scope.showSpinner = true;
+
   /************* UI-GRID **************/
   $scope.gridOptions = {
     enableSorting: true,
@@ -17,21 +20,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
         cellTooltip: function (row, col) {
           return 'a' + row.entity.value;
         }
-        // , headerTooltip:
-        // function( col ) {
-        //   return 'Header: ' + col.displayName;
-        // }
       }
-
-      //   { field: 'company',
-      //     cellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
-      //       if (grid.getCellValue(row,col) === 'Velity') {
-      //         return 'blue';
-      //       }
-      //     }
-      //   }
     ]
-    // columnDefs: [ [0].cellFilter = 'date'
   };
   // *********** UI- GRID **********
 
@@ -131,27 +121,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
   ///////////////////////
 
-  $scope.getShort = function (schema) {
-    if (schema == null) {
-      return "";
-    } else {
-      return schema.substring(0, 42);
-    }
-  };
-
   $log.debug("topicType=" + JSON.stringify($scope.topicType));
   // If value exists in an array
   function isInArray(value, array) {
     return array.indexOf(value) > -1;
-  }
-
-  function isJson(str) {
-    try {
-      JSON.parse(str);
-    } catch (e) {
-      return false;
-    }
-    return true;
   }
 
   function setCustomMessage(rows) {
@@ -171,7 +144,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
       // $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
       $scope.customMessage = "";
     } else {
-      if (isJson(rows)) {
+      if (UtilsFactory.IsJsonString(rows)) {
         totalRows = JSON.parse(rows).length;
         $scope.customMessage = "Displaying " + totalRows + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
       } else {
@@ -268,59 +241,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     return allTopicValues;
   };
 
-  /* Get `connect-status`
-   $scope.getConnectStatus = function (rows, search) {
-   var connectStatuses = [];
-   angular.forEach(rows, function (row) {
-   if (row.value != undefined && row.value.indexOf("{\"") != -1) {
-   var data = JSON.parse(row.value);
-   if (search == '') {
-   row.state = data.state;
-   row.trace = data.trace;
-   row.workerId = data.worker_id;
-   row.generation = data.generation;
-   connectStatuses.push(row);
-   } else if (search == "RUNNING") {
-   if (data.state == "RUNNING") {
-   row.state = data.state;
-   row.trace = data.trace;
-   row.workerId = data.worker_id;
-   row.generation = data.generation;
-   connectStatuses.push(row);
-   }
-   } else if (search == "UNASSIGNED") {
-   if (data.state == "UNASSIGNED") {
-   row.state = data.state;
-   row.trace = data.trace;
-   row.workerId = data.worker_id;
-   row.generation = data.generation;
-   connectStatuses.push(row);
-   }
-   }
-   } else {
-   //TODO
-   //$log.debug("Don't know what to do with -> " + JSON.stringify(row));
-   }
-   });
-   return (connectStatuses);
-   };
-   */
-  /*
-   $scope.getCompactedConnectStatus = function (rows) {
-   // var rowsInverted = rows.slice().reverse();
-   var allKeys = [];
-   var allStatuses = $scope.getConnectStatus(rows, '').reverse();
-   var compactedStatuses = [];
-   angular.forEach(allStatuses, function (row) {
-   if (allKeys.indexOf(row.key) == -1) {
-   allKeys.push(row.key);
-   compactedStatuses.push(row);
-   }
-   });
-   return compactedStatuses;
-   };
-   */
-
   $scope.getConnector = function (row) {
     if (row.value.length >= 5) {
       var data = JSON.parse(row.value).properties;
@@ -369,12 +289,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   $scope.isNormalTopic = function (topicName) {
-    return (topicName != '_schemas') &&
-      (topicName != 'connect-configs') &&
-      (topicName != 'connect-status') &&
-      (topicName != '__consumer_offsets') &&
-      (topicName.indexOf("_confluent") != 0) &&
-      (topicName.indexOf("__confluent") != 0);
+    return ['_schemas', 'connect-status'].indexOf(topicName) == -1;
   };
 
   // At start-up this controller consumes data
@@ -487,9 +402,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   // TOPICS
-  $scope.selectedTopic;
+  $rootScope.selectedTopic;
   $scope.selectTopic = function (topicObj) {
-    $scope.selectedTopic = topicObj
+    $rootScope.selectedTopic = topicObj
   };
 
   $scope.getLeader = function (partitions) {

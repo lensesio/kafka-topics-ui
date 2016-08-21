@@ -277,7 +277,15 @@ md-card md-card-title {
     font: 400 13px Arial, Helvetica, sans-serif;
 }
 
-/*Funny color*/
+/*Funny Orange Fab color*/
 .md-fab:hover, .md-fab.md-focused {
     background-color: rgba(230, 100, 0, .9) !important;
 }
+
+/* When a user has selected a topic in the topic list */
+.selectedListItem a {
+    background-color: rgba(158, 158, 158, 0.2);
+}
+
+
+

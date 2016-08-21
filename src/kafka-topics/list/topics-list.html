@@ -16,7 +16,7 @@
   </md-toolbar>
   <md-content>
     <md-input-container class="md-block" style="margin-bottom:-15px;padding-bottom:0;">
-      <label>Search topics</label>
+      <label>Search topics </label>
       <input ng-model="search">
     </md-input-container>
 
@@ -25,13 +25,13 @@
                     dir-paginate="topic in topics| orderBy:'name' | filter : search | itemsPerPage: 7"
                     ng-href="#/topic/{{topic}}"
                     pagination-id="topics"
-                    style="border-bottom: 1px solid rgba(0, 0, 0, .1);">
+                    style="border-bottom: 1px solid rgba(0, 0, 0, .1);"
+                    ng-class="{ 'selectedListItem': topic == topicName }">
         <div ng-show="getDataType(topic) != '{}'" class="md-raised md-warn md-ink-ripple"
              style="box-shadow: 0 0 0 0 rgba(0,0,0,.46);min-width: initial;font-size: 85%;line-height:17px;min-height: 18px;text-transform: capitalize;margin-left:0;background-color: rgba(33,126,188,.85);color: white;text-align: left;width:45px"
              type="button" aria-label="Primary">
           <center>{{getDataType(topic)}}</center>
         </div>
-
         <!-- cute / sexy topic bar -->
         <div class="md-raised md-warn md-button md-ink-ripple"
              flex
