@@ -1,5 +1,7 @@
 ## Kafka Topics UI ##
 
+[![](https://images.microbadger.com/badges/image/landoop/kafka-topics-ui.svg)](http://microbadger.com/images/landoop/kafka-topics-ui)
+
 This is a small docker image for Landoop's kafka-topics-ui.
 It serves the kafka-topics-ui from port 8000.
 A live version can be found at <https://kafka-topics-ui.landoop.com>
