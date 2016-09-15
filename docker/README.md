@@ -24,3 +24,14 @@ variable:
                -e "SCHEMAREGISTRY_UI_URL=http://schema-registry-ui.url" \
                -e "KAFKA_REST_PROXY_URL=http://kafka.rest.proxy.url" \
                landoop/kafka-topics-ui
+
+### Proxying Kafka REST Proxy
+
+If you have CORS issues or want to pass through firewalls and maybe share your
+server, we added the `PROXY` option. Run the container with `-e PROXY=true` and
+Caddy server will proxy the traffic to the REST Proxy:
+
+    docker run --rm -it -p 8000:8000 \
+               -e "KAFKA_REST_PROXY_URL=http://kafka.rest.proxy.url" \
+               -e "PROXY=true" \
+               landoop/kafka-topics-ui

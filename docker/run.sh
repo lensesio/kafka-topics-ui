@@ -1,5 +1,16 @@
 #!/bin/sh
 
+if echo $PROXY | egrep -sq "true|TRUE|y|Y|yes|YES|1" \
+        && [[ ! -z "$KAFKA_REST_PROXY_URL" ]]; then
+    echo "Enabling proxy."
+    cat <<EOF >>/caddy/Caddyfile
+proxy /api/kafka-rest-proxy $KAFKA_REST_PROXY_URL {
+    without /api/kafka-rest-proxy
+}
+EOF
+KAFKA_REST_PROXY_URL=/api/kafka-rest-proxy
+fi
+
 if [[ -z "$SCHEMAREGISTRY_UI_URL" ]]; then
     echo "Schema Registry URL was not set via SCHEMAREGISTRY_UI_URL environment variable."
     sed -e 's|^\s*urlSchema:.*|      urlSchema: ""|' -i /kafka-topics-ui/combined.js
