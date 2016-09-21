@@ -1,5 +1,5 @@
-angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $routeParams, $mdToast, $log, KafkaRestProxyFactory, toastFactory) {
-
+angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $routeParams, $mdToast, $log, KafkaRestProxyFactory, toastFactory, $interval) {
+  function start() {
   $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
 
@@ -51,7 +51,9 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $rout
     }, function (update) {
       $log.info('Got notification: ' + update);
     });
-
+  };
+  $interval(start, 5000);
+  start();
   $rootScope.displayingControlTopics = false;
 
   function countPartitionsForTopic(topicName) {

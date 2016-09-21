@@ -1,10 +1,10 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory) {
-
+angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, $interval) {
+$scope.showSpinner = true;
+function start() {
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
   $rootScope.topicName = $routeParams.topicName;
 
-  $scope.showSpinner = true;
   $scope.KAFKA_TOPIC_DELETE_COMMAND = KAFKA_TOPIC_DELETE_COMMAND;
 
   /************* UI-GRID **************/
@@ -299,7 +299,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   $scope.isControlTopic = function(topicName) {
-    return KafkaRestProxyFactory.isControlTopic(topicName);
+    return !KafkaRestProxyFactory.isNormalTopic(topicName);
   };
 
   // At start-up this controller consumes data
@@ -309,8 +309,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     dataPromise.then(function (allData) {
       var end = new Date().getTime();
       $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
-      $scope.aceString = angular.toJson(allData, true);
+
       $scope.rows = allData;
+      $scope.aceString = angular.toJson($scope.rows, true);
       setCustomMessage($scope.rows);
       $scope.getTopicValues($scope.rows);
       end = new Date().getTime();
@@ -472,6 +473,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     // $log.info(type + " " + reverse);
     $scope.rows = UtilsFactory.sortByKey($scope.rows, type, reverse);
   }
+}
+start();
 
-
+$interval(start, 5000);
 });
