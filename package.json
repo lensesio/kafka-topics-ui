@@ -17,7 +17,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "bower install"
+    "postinstall": "node_modules/grunt-bower-task/node_modules/.bin/bower install"
   },
   "repository": {
     "type": "git",
@@ -34,6 +34,9 @@
   "license": "http://landoop.com/bsl",
   "bugs": {
     "url": "https://github.com/Landoop/kafka-topics-ui/issues"
+  },
+  "engines": {
+    "node": "5.7.1"
   },
   "homepage": "https://github.com/Landoop/kafka-topics-ui#readme"
 }
