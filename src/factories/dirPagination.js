@@ -203,7 +203,7 @@
                 // Replace any non-alphanumeric characters which might confuse
                 // the $parse service and give unexpected results.
                 // See https://github.com/michaelbromley/angularUtils/issues/233
-                var defaultCurrentPage = (paginationId + '__currentPage').replace(/\W/g, '_');
+                var defaultCurrentPage = '_'+(paginationId + '__currentPage').replace(/\W/g, '_');
                 scope[defaultCurrentPage] = 1;
                 currentPageGetter = $parse(defaultCurrentPage);
             }
