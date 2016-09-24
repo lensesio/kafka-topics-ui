@@ -1,0 +1,32 @@
+<md-card>
+
+  <md-toolbar ng-show="!displayingControlTopics" class="md-hue-2">
+    <div class="md-toolbar-tools">
+      <h2>
+        <span><b>{{topics.length}}</b> Topics</span>
+      </h2>
+      <span flex></span>
+      <md-switch style="font-size:14px"  class="md-icon-button" ng-model='displayingControlTopics' aria-label="Show system topics" >
+        <div ng-if="displayingControlTopics"><b>System Topics</b></div>
+        <div ng-if="!displayingControlTopics">System Topics</div>
+      </md-switch>
+    </div>
+  </md-toolbar>
+
+  <md-toolbar ng-show="displayingControlTopics" class="md-hue-2">
+    <div class="md-toolbar-tools">
+      <h2>
+        <span><b>{{controlTopics.length}}</b> Topics</span>
+      </h2>
+      <span flex></span>
+      <md-switch style="font-size:14px"  class="md-icon-button" ng-model='displayingControlTopics' aria-label="Show system topics" >
+        <div ng-if="displayingControlTopics"><b>System Topics</b></div>
+        <div ng-if="!displayingControlTopics">System Topics</div>
+      </md-switch>
+    </div>
+  </md-toolbar>
+
+  <div ng-show="!displayingControlTopics" ng-include="'src/kafka-topics/list/topics-list.html'"></div>
+  <div ng-show="displayingControlTopics" ng-include="'src/kafka-topics/list/control-topics-list.html'"></div>
+
+</md-card>

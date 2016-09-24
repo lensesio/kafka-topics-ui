@@ -1,69 +1,55 @@
-<md-card style="box-shadow: 0 0px 0px 0 rgba(0,0,0,.2);" md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}">
-  <md-toolbar style="background-color: #ededed; color:#000;">
-    <div class="md-toolbar-tools">
-      <h3>
-        <span>{{controlTopics.length}} System Topics</span>
-      </h3>
-      <span flex></span>
-      <!--<a md-ink-ripple-->
-      <!--ng-show="true"-->
-      <!--ng-href="#/create-topic"-->
-      <!--class="md-raised md-primary md-button md-ink-ripple"-->
-      <!--style="background-color: rgb(65, 191, 236);color: white;" type="button"-->
-      <!--aria-label="new topic">New</a>-->
+<md-content>
+
+  <div layout="column">
+    <!--Search-->
+    <div flex>
+      <md-input-container class="md-block" style="margin-bottom:-25px;">
+        <label>Search topics</label>
+        <input ng-model="search">
+      </md-input-container>
     </div>
 
-  </md-toolbar>
-  <md-content>
-    <md-input-container class="md-block" style="margin-bottom:-15px;padding-bottom:0;">
-      <label>Search topics</label>
-      <input ng-model="search">
-    </md-input-container>
+    <!--Topics List-->
+    <div flex>
+      <md-list class="md-dense" flex>
+        <md-list-item
+                dir-paginate="topic in controlTopics| orderBy:'topic' | filter : search | itemsPerPage: 7"
+                pagination-id="controlTopics"
+                ng-click="listClick(topic)"
+                class="md-2-line"
+                ng-class="{ 'selectedListItem': topic == topicName }">
 
-    <md-list flex>
-      <md-list-item class="md-2-line"
-                    dir-paginate="topic in controlTopics| orderBy:'name' | filter : search | itemsPerPage: 7"
-                    ng-href="#/topic/{{topic}}"
-                    pagination-id="controlTopics"
-                    style="height: 62px;min-height: 0;border-bottom: 1px solid rgba(0, 0, 0, .1);"
-                    ng-class="{ 'selectedListItem': topic == topicName }">
-        <div class="md-raised md-warn md-ink-ripple"
-             style="box-shadow: 0 0 0 0 rgba(0,0,0,.46);min-width: initial;font-size: 85%;line-height:17px;min-height: 18px;text-transform: capitalize;margin-left:0;background-color: rgba(33,126,188,.85);color: white;text-align: left;width:45px"
-             type="button" aria-label="Primary">
-          <center>{{getDataType(topic)}}</center>
-        </div>
-        <!-- cute / sexy topic bar -->
-        <div class="md-raised md-warn md-button md-ink-ripple"
-             flex
-             style="min-width: 160px;font-size: 100%;line-height: 40px;margin:0;background-color: white;color: black;text-align: left;box-shadow: 0 0 0px 0 rgba(0,0,0,.26);"
-             aria-label="Primary">
-          <div style="display: inline-block;text-transform: none;">
-            <center>
-              {{shortenControlCenterName(topic)}}
-            </center>
+          <div ng-show="hasExtraConfig(topic) != ''">
+            <i class="fa fa-asterisk" aria-hidden="true" style="color:red; padding-right:15px; font-size:10px;"></i>
+          </div>
+          <div ng-show="hasExtraConfig(topic) == ''">
+            <i class="fa fa-asterisk" aria-hidden="true" style="color:white; padding-right:15px; font-size:10px;"></i>
           </div>
 
-          <!-- Show replication & partitions -->
-          <div class="md-raised md-warn md-button md-ink-ripple"
-               style="float:right;margin-right:0;margin-left: 3px;margin-top: 11px;box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:15px;min-height: 16px;text-transform: none;color: darkslategray;text-align: left;"
-               type="button" aria-label="Primary">
-            {{getPartitionMessage(topic)}}
-            <!--<md-tooltip md-direction="top" style="padding-left:10px;" md-visible="ctrl.isOpen">Partitions</md-tooltip>-->
+          <div class="md-list-item-text" layout="column">
+            <h4>{{shortenControlCenterName(topic)}}</h4>
+            <p style="font-size:12px;">
+              {{getPartitionMessage(topic)}}
+            </p>
           </div>
-
-          <!-- highlight with-config-overrides -->
-          <div ng-show="hasExtraConfig(topic) != ''" class="md-raised md-warn md-button md-ink-ripple"
-               style="box-shadow: 0 0 0 0 rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:17px;min-height: 18px;text-transform: none;background-color: rgba(255, 0, 0, 0.6);color: white;text-align: left;float:right;margin-top: 10px;"
-               type="button" aria-label="Primary">
-            <span>
-            config
-          </span>
+          <div style="display:block;background-color:rgba(44, 152, 240, 0.3);border-radius: 5px; width:60px; color:#333; text-align:center; font-size:12px">
+            {{getDataType(topic)}}
           </div>
+        </md-list-item>
+      </md-list>
+    </div>
 
-        </div>
+    <!--Pagination-->
+    <div flex>
+      <dir-pagination-controls pagination-id="controlTopics" style="margin:0;"></dir-pagination-controls>
+    </div>
 
-      </md-list-item>
-    </md-list>
-    <dir-pagination-controls pagination-id="controlTopics" style="margin:0;"></dir-pagination-controls>
-  </md-content>
-</md-card>
+    <!--Notes-->
+    <div flex>
+      <div style="font-size:10px; padding:10px; text-align: right;">
+        <em><i class="fa fa-asterisk" aria-hidden="true" style="color:red;"></i>
+          Default configuration has been amended</em>
+      </div>
+    </div>
+  </div>
+</md-content>

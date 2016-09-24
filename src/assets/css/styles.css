@@ -14,8 +14,8 @@ html, body {
 }
 
 header.header {
-    background-color: #217ebc;
-    min-height: 50px;
+    background-color: #141414;
+    min-height: 20px;
     color: #ebebeb;
     margin-bottom: 0;
 }
@@ -283,9 +283,42 @@ md-card md-card-title {
 }
 
 /* When a user has selected a topic in the topic list */
-.selectedListItem a {
+.selectedListItem {
     background-color: rgba(158, 158, 158, 0.2);
 }
 
 
+table {border-spacing: 0; width:100%}
+table tbody tr:nth-child(odd) { background-color:#eee; }
+table tbody tr:nth-child(even) { background-color:#fff; }
+table tr th {padding:10px;}
+table tr td {padding:5px;}
+table thead tr { color: rgba(0,0,0,.54); font-size: 12px; font-weight: 700;white-space: nowrap; text-align:left; }
+table tbody { color: rgba(0,0,0,.87);font-size: 13px;vertical-align: middle; }
+table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
+.td-center {text-align:center}
 
+.flat-table tr td {border:1px #ccc solid;}
+.flat-table tr th {border:1px #ccc solid;}
+.blue {background-color:#dcedf7};
+
+.json-tree .branch-preview {
+    overflow: hidden;
+    font-style: italic;
+    max-width: 70%;
+    height: 1.5em;
+    opacity: .7;
+
+
+.md-tabs
+{
+    transition: none;
+    transition-duration: 0ms;
+    transition-delay: 0ms;
+}
+.md-tab
+{
+    transition: none;
+    transition-duration: 0ms;
+    transition-delay: 0ms;
+}

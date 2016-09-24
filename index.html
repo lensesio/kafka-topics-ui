@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="bower_components/angular-material-data-table/dist/md-data-table.min.css">
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.min.css">
+  <link rel="stylesheet" href="bower_components/angular-json-tree/dist/angular-json-tree.css">
   <link rel="stylesheet" href="src/assets/css/styles.css">
   <meta charset=utf-8/>
   <meta name="viewport" content="width=device-width">
@@ -20,34 +21,22 @@
 <body ng-app="angularAPP">
 
 <!--Header Starts here-->
-<header class="header">
-  <div layout="row" layout-xs="column" layout-align="" style="height:50px">
-    <div flex="nogrow" ng-controller="MenuCtrl as ctrl">
-      <md-fab-speed-dial
-        md-direction="down"
-        class="md-scale"
-        style="margin-top: -2px;">
-        <md-fab-trigger>
-          <md-button ng-href="/" aria-label="menu" class="md-fab md-warn">
-            <md-icon md-svg-src="src/assets/icons/landoop.svg" style="margin-top: -15px;"></md-icon>
-          </md-button>
-        </md-fab-trigger>
-      </md-fab-speed-dial>
-    </div>
-    <div flex style="padding-top:5px">
-      <h4><a href="#/" style="color:#fff;text-decoration:none;">KAFKA TOPICS</a></h4>
+<header class="header" ng-controller="HeaderCtrl">
+  <div layout="row" layout-xs="column">
+    <div flex>
+      <h5><a ng-click="showLeftList()" href="/#/" style="text-decoration:none; padding-left:15px;">KAFKA TOPICS</a></h5>
     </div>
   </div>
 </header>
 
 <!--Main Content Starts here-->
 <div layout="row" layout-margin layout-sm="column" layout-xs="column" ng-controller="KafkaTopicsConfigCtrl">
-  <div flex-gt-sm="33">
-    <div ng-controller="KafkaTopicsListCtrl" ng-include="'src/left-list.html'"></div>
+  <div flex-gt-sm="33" ng-show="showList">
+    <div ng-controller="KafkaTopicsListCtrl" ng-include="'src/kafka-topics/list/left-list.html'"></div>
     <br>
     <div ng-include="'src/kafka-topics/config/config.html'"></div>
   </div>
-  <div flex-gt-sm="66" flex>
+  <div flex >
     <ng-view></ng-view>
     <br>
     <div ng-include="'src/kafka-topics/config/config.html'" show-sm hide-gt-sm></div>
@@ -76,10 +65,10 @@
 <script src="bower_components/angular-aria/angular-aria.min.js"></script>
 <script src="bower_components/angular-material-data-table/dist/md-data-table.min.js"></script>
 <script src="bower_components/angular-ui-grid/ui-grid.min.js"></script>
-
 <script src="bower_components/angular-base64/angular-base64.min.js"></script>
 <script src="bower_components/oboe/dist/oboe-browser.min.js"></script>
 <script src="bower_components/angular-oboe/dist/angular-oboe.min.js"></script>
+<script src="bower_components/angular-json-tree/dist/angular-json-tree.min.js"></script>
 
 <!-- build:js combined.js -->
 <script src="src/env.js"></script>

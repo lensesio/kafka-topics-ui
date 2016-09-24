@@ -1,128 +1,56 @@
-<md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
+<md-card>
 
-  <md-toolbar style="background-color: #ededed; color:#000;">
-    <h3 class="md-toolbar-tools">
-      Topic
-      <div class="md-raised md-warn md-button md-ink-ripple"
-           style="cursor: default;font-size: 80%;margin:0;padding-left:10px;padding-right:10px;margin-left: 7px;background-color: #fafafa;color: black;text-align: left;box-shadow: 0 0 0px 0 rgba(0,0,0,.26);"
-           type="button" aria-label="Primary">
-        <div style="display: inline-block;text-transform: none;" class="text-center">
-          {{topicName}}
-        </div>
-      </div>
-      <div style="padding:10px">with</div>
-
-      <div ng-show="getDataType(topic) != '{}'" class="md-raised md-warn md-button md-ink-ripple"
-           style="cursor: default;text-transform: capitalize;margin-left: 0;background-color: rgba(33,126,188,.85);box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: 55px;font-size: 75%;line-height:17px;min-height: 18px;color: white;text-align: left;width:45px"
-           aria-label="Primary" aria-hidden="false">
-        <center class="ng-binding">{{topicType}}</center>
-      </div>
-
-      <!-- highlight with-config-overrides -->
-      <div ng-show="hasExtraConfig(topic) != ''" class="md-raised md-warn md-button md-ink-ripple ng-hide"
-           style="box-shadow: 0px 0px 0px 0px rgba(0,0,0,.46);min-width: initial;font-size: 75%;line-height:17px;min-height: 18px;text-transform: none;background-color: rgba(255, 0, 0, 0.6);color: white;text-align: left;float:right;margin-top: 10px;"
-           type="button" aria-label="Primary" aria-hidden="true">
-            <span>
-            config
-          </span>
-      </div>
-
-      <div flex></div>
-
-
-      <md-button
-        download="true"
-        ng-click="getData(topicName)"
-        md-ink-ripple=""
-        ng-show="true"
-        class="icon md-ink-ripple"
-        style="padding-right: 10px;padding-top: 10px;padding-left: 10px;margin-right: 5px;background: white;"
-        type="button"
-        aria-label="Download data"
-        aria-hidden="false">
-        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-          <path fill="#000000" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
-        </svg>
-        <!--Download-->
-
-        <div class="md-ripple-container"></div>
+  <md-toolbar ng-show="!displayingControlTopics" class="md-hue-2">
+    <div class="md-toolbar-tools">
+      <md-button ng-click="toggleList()">
+        <i ng-show="showList" class="fa fa-expand" aria-hidden="true"></i>
+        <i ng-hide="showList" class="fa fa-compress" aria-hidden="true"></i>
       </md-button>
-
-      <!--<b>Type: </b> {{topicType}}-->
-    </h3>
+      <h4>
+        <span>{{topicName}}</span>
+      </h4>
+      <span flex></span>
+      <md-button  download="true"
+              ng-click="getData(topicName)"
+              aria-label="Download data"
+              aria-hidden="false">
+        <i class="fa fa-download" aria-hidden="true"></i>
+      </md-button>
+    </div>
   </md-toolbar>
 
   <div flex style="padding: 2px;padding-bottom:2px;">
+
     <!-- Spinner -->
     <div us-spinner="{radius:10, width:3, length: 5}" ng-show="showSpinner" style="height:100%"></div>
-    <!-- Custom Info Panel + Download + Stream buttons -->
-    <!--<div flex="100" ng-hide="showSpinner">-->
-    <!-- Stream from beginning
-    <md-menu style="padding:0">
-      <md-button
-        md-ink-ripple=""
-        ng-show="true"
-        class="md-raised md-primary md-button md-ink-ripple"
-        style="background-color: rgb(65, 191, 236);color: white;float: right;margin-top: -10px;"
-        type="button"
-        aria-label="Stream data from topic"
-        ng-click="openMenu($mdOpenMenu, $event)"
-        aria-hidden="false">Stream data
-        <div class="md-ripple-container"></div>
-      </md-button>
-      <md-menu-content width="4">
-        <md-menu-item>
-          <md-button ng-click="streamFromBeginning($event)">
-            <md-icon md-menu-align-target=""></md-icon>
-            Stream from beginning
-          </md-button>
-        </md-menu-item>
-        <md-menu-item>
-          <md-button ng-click="streamInRealTime()" disabled="true">
-            <md-icon></md-icon>
-            Stream in real-time
-          </md-button>
-        </md-menu-item>
-      </md-menu-content>
-    </md-menu>
-    -->
-    <!--</div>-->
-    <!--<br>-->
+    <div ng-show="topicIsEmpty">
+      <br>
+      <p>This topic is empty. No data have been passed through the past 7 days.<br>
+      </p>
+      <p ng-hide="isControlTopic(topicName)">
+        You could delete this topic with:<br>
+      <pre>{{KAFKA_TOPIC_DELETE_COMMAND}} {{topicName}}</pre>
+      </p>
+    </div>
+
+    <div ng-hide="topicIsEmpty">
+    <md-input-container ng-if="topicType != 'binary'" class="md-block" ng-hide="topicIsEmpty" style="margin-bottom:-25px;">
+      <label>Filter</label>
+      <input ng-model="searchMessages">
+      <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
+
+    </md-input-container>
 
     <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom
              md-selected="tabIndex">
-      <div ng-include="'src/kafka-topics/view/templates/_schemas.html'"></div>
-      <div ng-include="'src/kafka-topics/view/templates/connect-status.html'"></div>
+
       <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
+      <div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>
       <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
       <div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>
 
-      <!-- Custom rendering to display CURL commands
-      <md-tab label="Curl">
-        <div id="left2"
-             ng-model="allCurlCommands" ng-readonly="true" ui-ace="{
-                          useWrapMode: true,
-                          showGutter: true,
-                          theme:'chrome',
-                          mode: 'batchfile',
-                          firstLineNumber: 1,
-                          onLoad: aceLoaded,
-                          onChange: aceChanged
-                          }"></div>
-      </md-tab>
-      -->
-
-
     </md-tabs>
-    <div>
-    </div>
+  </div>
   </div>
 
-  <!--
-  <div layout="row" width="50%">
-    <md-button class="md-raised" ng-click='consumeKafkaRest("avro", topicName);'>get avro</md-button>
-    <md-button class="md-raised" ng-click='consumeKafkaRest("json", topicName);'>get json</md-button>
-    <md-button class="md-raised" ng-click='consumeKafkaRest("binary", topicName);'>get binary</md-button>
-  </div>
-  -->
 </md-card>
