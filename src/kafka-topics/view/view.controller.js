@@ -299,7 +299,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   $scope.isControlTopic = function(topicName) {
-    return KafkaRestProxyFactory.isControlTopic(topicName);
+    return !KafkaRestProxyFactory.isNormalTopic(topicName);
   };
 
   // At start-up this controller consumes data
