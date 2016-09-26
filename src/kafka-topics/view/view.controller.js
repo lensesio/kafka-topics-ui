@@ -326,13 +326,13 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     // If we don't know we need to guess by trying Avro -> JSon -> Binary
     var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("avro", $scope.topicName);
     dataPromiseAvro.then(function (allData) {
-      if (JSON.stringify(allData).indexOf("error_code") > 0 || JSON.stringify(allData).indexOf("error_code") == -1) { // Error (50002,Kafka error: Error deserializing Avro message for id -1) returns -1
+      if (JSON.stringify(allData).indexOf("error") > 0) { // JSON.stringify(allData).indexOf("error_code") returns -1
         $log.warn('Failed with Avro - going to try with Json this time (' + allData + ')');
         var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("json", $scope.topicName);
         dataPromiseAvro.then(
           function (allData) {
             if (JSON.stringify(allData).indexOf("error_code") > 0) {
-              $log.warn('Failed with JSon as well - going to try with Binary this time (' + allData + ')');
+              $log.error('Failed with JSon as well - going to try with Binary this time (' + allData + ')');
               var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("binary", $scope.topicName);
               dataPromiseAvro.then(function (allData) {
                 $log.info("Binary detected");
