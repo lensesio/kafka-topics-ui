@@ -326,7 +326,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     // If we don't know we need to guess by trying Avro -> JSon -> Binary
     var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("avro", $scope.topicName);
     dataPromiseAvro.then(function (allData) {
-      if (JSON.stringify(allData).indexOf("error_code") > 0) {
+      if (JSON.stringify(allData).indexOf("error") > 0) { // JSON.stringify(allData).indexOf("error_code") returns -1
         $log.warn('Failed with Avro - going to try with Json this time (' + allData + ')');
         var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("json", $scope.topicName);
         dataPromiseAvro.then(
