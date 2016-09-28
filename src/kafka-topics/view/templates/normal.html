@@ -1,38 +1,38 @@
 <!-- Custom rendering for OTHER topics -->
-<md-tab ng-if="isNormalTopic(topicName)">
-  <md-tab-label>
-    <!--class="fa fa-table"-->
-    <i style="padding-right:10px;" aria-hidden="true"></i> Topic
-  </md-tab-label>
+<md-tab  ng-if="topicType != 'binary'">
+  <md-tab-label>Topic</md-tab-label>
   <md-tab-body>
     <md-content class="padding:0">
-      <!--<span class="md-title" style="font-size: 14px;" ng-bind-html="customMessage | sanitize"></span>-->
-      <!--<br>-->
-      <md-card>
-        <md-card-content style="padding:0">
-          <md-menu ng-show="apps">
-            <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
-              <i class="fa fa-bars" style="padding-right:10px;" aria-hidden="true"></i>
-            </md-button>
-            <md-menu-content width="5">
-            </md-menu-content>
-          </md-menu>
-        </md-card-content>
+        <table>
+          <thead>
+          <tr>
+            <th class="td-center">Offset</th>
+            <th class="td-center">Partition</th>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+          </thead>
+          <tbody>
+          <!--TODO remove gridOptions-->
+          <tr dir-paginate="t in gridOptions.data | filter : searchMessages | itemsPerPage: paginationItems"  pagination-id="treeView">
+            <td valign="top" class="td-center">{{t.offset}}</td>
+            <td valign="top" class="td-center">{{t.partition}}</td>
 
-      </md-card>
-      <div ng-show="topicIsEmpty">
-        <br>
-        <p>This topic is empty. No data have been passed through the past 7 days.<br>
-        </p>
-        <p ng-hide="isControlTopic(topicName)">
-          You could delete this topic with:<br>
-          <pre>{{KAFKA_TOPIC_DELETE_COMMAND}} {{topicName}}</pre>
-        </p>
-      </div>
+            <!--Key-->
+            <td ng-if="t.key != ''"  valign="top" style="min-width:250px;"><json-tree object="t.key" root-name="'Key'"></json-tree></td>
+            <td ng-if="t.key == ''" valign="top"></td>
 
-      <div ng-hide="topicIsEmpty">
-        <div id="grid1" ui-grid="gridOptions" class="grid" ui-grid-resize-columns></div>
-      </div>
+            <!--Value-->
+            <td ng-if="t.value != ''"  valign="top" style="min-width:250px;"><json-tree object="t.value" root-name="'Value'"></json-tree></td>
+            <td ng-if="t.value == ''" valign="top"></td>
+
+          </tr>
+          </tbody>
+        </table>
+
+        <div flex>
+          <dir-pagination-controls pagination-id="treeView" style="margin:0px"></dir-pagination-controls>
+        </div>
 
     </md-content>
   </md-tab-body>

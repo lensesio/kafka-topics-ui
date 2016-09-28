@@ -168,6 +168,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
         row.key = "-";
       }
       fixedRows.push(row);
+      $log.info ("Type of keys " + typeof row.key);
     });
 
     $scope.gridOptions.data = fixedRows;
@@ -299,7 +300,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   $scope.isControlTopic = function(topicName) {
-    return !KafkaRestProxyFactory.isNormalTopic(topicName);
+     return !KafkaRestProxyFactory.isNormalTopic(topicName);
   };
 
   // At start-up this controller consumes data
@@ -309,10 +310,13 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     dataPromise.then(function (allData) {
       var end = new Date().getTime();
       $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
+
       $scope.aceString = angular.toJson(allData, true);
       $scope.rows = allData;
       setCustomMessage($scope.rows);
+      flattenTable(allData);
       $scope.getTopicValues($scope.rows);
+
       end = new Date().getTime();
       $log.info("[" + (end - start) + "] msec - to get & render"); //  + JSON.stringify(allSchemas)
       $scope.showSpinner = false;
@@ -326,13 +330,13 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     // If we don't know we need to guess by trying Avro -> JSon -> Binary
     var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("avro", $scope.topicName);
     dataPromiseAvro.then(function (allData) {
-      if (JSON.stringify(allData).indexOf("error_code") > 0) {
+      if (JSON.stringify(allData).indexOf("error") > 0) {
         $log.warn('Failed with Avro - going to try with Json this time (' + allData + ')');
         var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("json", $scope.topicName);
         dataPromiseAvro.then(
           function (allData) {
             if (JSON.stringify(allData).indexOf("error_code") > 0) {
-              $log.error('Failed with JSon as well - going to try with Binary this time (' + allData + ')');
+              $log.warn('Failed with JSon as well - going to try with Binary this time (' + allData + ')');
               var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("binary", $scope.topicName);
               dataPromiseAvro.then(function (allData) {
                 $log.info("Binary detected");
@@ -341,6 +345,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                 $scope.aceString = angular.toJson(allData, true);
                 $scope.rows = allData;
                 setCustomMessage($scope.rows);
+                flattenTable(allData);
+                angular.fromJson($scope.rows);
                 $scope.getTopicValues($scope.rows);
                 $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
                 $scope.showSpinner = false;
@@ -354,6 +360,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
               $scope.aceString = allData;
               $scope.rows = allData;
               setCustomMessage($scope.rows);
+              flattenTable(allData);
               $scope.getTopicValues($scope.rows);
               $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
               $scope.showSpinner = false;
@@ -367,6 +374,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
         $scope.aceString = angular.toJson(allData, true);
         $scope.rows = allData;
         setCustomMessage($scope.rows);
+        flattenTable(allData);
         $scope.getTopicValues($scope.rows);
         $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
         $scope.showSpinner = false;
@@ -402,6 +410,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
         $scope.rows = data;
         $scope.showSpinner = false;
         setCustomMessage($scope.rows);
+        flattenTable(data);
         $scope.getTopicValues($scope.rows);
       }, function (reason) {
         $log.error('Failed: ' + reason);
@@ -472,6 +481,91 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     // $log.info(type + " " + reverse);
     $scope.rows = UtilsFactory.sortByKey($scope.rows, type, reverse);
   }
+
+   //TODO move to service
+    var flattenObject = function(ob) {
+    	var toReturn = {};
+
+    	for (var i in ob) {
+    		if (!ob.hasOwnProperty(i)) continue;
+
+    		if ((typeof ob[i]) == 'object') {
+    			var flatObject = flattenObject(ob[i]);
+
+    			for (var x in flatObject) {
+    				if (!flatObject.hasOwnProperty(x)) continue;
+    				toReturn[i + '.' + x] = flatObject[x];
+    			}
+
+    		} else {
+    			toReturn[i] = ob[i];
+    		}
+    	}
+    	return toReturn;
+    };
+
+//TODO REFACTOR!!!
+    function flattenTable(rows) {
+
+        var extraColumnsNumberValue = 1;
+        var extraColumnsNumberKey = 1;
+        var rowWithMoreColumns;
+        $scope.flatRows = [];
+        if (rows.length > 0) { // check if topics exist
+            angular.forEach(rows, function (row) {
+                  //1. calculate number of extra columns required
+                  var flatValue = flattenObject(row.value);
+                  var flatKey = flattenObject(row.key);
+
+                  var rowExtraColumnsValues = Object.keys(flatValue).length;
+                  var rowExtraColumnsKeys = Object.keys(flatKey).length;
+
+                  if(extraColumnsNumberValue < rowExtraColumnsValues) {
+                    extraColumnsNumberValue = rowExtraColumnsValues;
+                    rowWithMoreColumns = row; //save the row with more columns to get the column names
+                  }
+
+                  if(extraColumnsNumberKey < rowExtraColumnsKeys) {
+                    extraColumnsNumberKey = rowExtraColumnsKeys;
+                    rowWithMoreColumns = row; //save the row with more columns to get the column names
+                  }
+
+                  //2. create array with flat rows for the flat table
+                  $scope.flatRows.push(flattenObject(row));
+
+                });
+
+
+                //3. reorder the columns for the iteration
+                var newRow = {
+                    "offset" : rowWithMoreColumns.offset,
+                    "partition" : rowWithMoreColumns.partition,
+                    "key" : rowWithMoreColumns.key,
+                    "value" : rowWithMoreColumns.value
+                    }
+                $scope.cols =  Object.keys(flattenObject(newRow));
+                $scope.cols2 = Object.keys(flattenObject(newRow.value)); //only the value cols, TODO same for keys?
+                $scope.cols3 = Object.keys(flattenObject(newRow.key)); //only the value cols, TODO same for keys?
+                $scope.extraColsNumValues = extraColumnsNumberValue;
+                $scope.extraColsNumKeys = extraColumnsNumberKey;
+                $log.info ($scope.cols3.length)
+
+        //PAGINATION STUFF
+         $scope.paginationItems = 10;
+         $scope.showHideAllButtonLabel = 'show ' + rows.length;
+         $scope.showAll = function () {
+            if($scope.paginationItems == 12) {
+               $scope.showHideAllButtonLabel = 'show less';
+               $scope.paginationItems = $scope.flatRows.length;
+            } else {
+               $scope.showHideAllButtonLabel = 'show ' + rows.length;
+               $scope.paginationItems = 12;
+            }
+
+         };
+     }
+}
+
 
 
 });

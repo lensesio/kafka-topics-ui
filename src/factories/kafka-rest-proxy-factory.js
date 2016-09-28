@@ -7,6 +7,7 @@
 angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $base64, $q, Oboe, toastFactory) {
 
   // Topics
+  var schemas;
 
   /**
    * Get all topic names
@@ -540,6 +541,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
       });
       return controlTopics;
     },
+
     hasExtraConfig: function (topicName) {
       var extraTopicConfig = {};
       angular.forEach($rootScope.topicDetails, function (detail) {
@@ -594,7 +596,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
         // If topicDetails are not available wait
         angular.forEach($rootScope.topicDetails, function (detail) {
           if (detail.name === topicName) {
-            angular.forEach(angular.fromJson($rootScope.schemas), function (schema) {
+            angular.forEach(angular.fromJson(schemas), function (schema) {
               if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) {
                 //$log.info("FOUND YOU !! " + topicName);
                 dataType = "avro";
@@ -624,7 +626,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
       var consumerName = consumer + "-" + format;
 
       var deferred = $q.defer();
-      createNewConsumer(consumer, consumerName, format, "smallest", true).then( // TODO (true)
+      createNewConsumer(consumer, consumerName, format, "smallest", true).then( // TODO (true), latest
         function success(data) {
           //data.instance_id + " base_uri = " + response.data.base_uri
           startFetchingData(format, topicName, consumerName).then(
@@ -647,7 +649,25 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
 
       return deferred.promise;
 
+    },
+
+    //News
+    loadSchemas: function () {
+          var start = new Date().getTime();
+          var schemasPromise = this.consumeKafkaRest("json", "_schemas");
+          schemasPromise.then(function (allSchemas) {
+             var end = new Date().getTime();
+//            $rootScope.schemas = allSchemas;
+             $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
+             schemas = allSchemas
+             return schemas;
+          }, function (reason) {
+            $log.error('Failed: ' + reason);
+          }, function (update) {
+            $log.info('Got notification: ' + update);
+          });
     }
+
   }
 
 });

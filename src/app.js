@@ -12,10 +12,21 @@ var angularAPP = angular.module('angularAPP', [
   'base64',
   'ngOboe',
   'ui.grid',
-  'ui.grid.resizeColumns'
+  'ui.grid.resizeColumns',
+  'angular-json-tree'
 ]);
 
-angularAPP.controller('MenuCtrl', function ($scope, $log) {
+angularAPP.controller('HeaderCtrl', function ($rootScope, $scope, $log) {
+   $rootScope.showList = true;
+   $rootScope.toggleList = function () {
+      $rootScope.showList = !$rootScope.showList;
+   };
+
+   $rootScope.showLeftList = function () {
+      $rootScope.showList = true;
+   };
+
+
 });
 
 angularAPP.config(function ($routeProvider) {
