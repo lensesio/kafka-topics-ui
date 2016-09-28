@@ -57,7 +57,9 @@ module.exports = function (grunt) {
           'bower_components/angular-ui-grid/ui-grid.woff',
           'bower_components/angular-base64/angular-base64.min.js',
           'bower_components/oboe/dist/oboe-browser.min.js',
-          'bower_components/angular-oboe/dist/angular-oboe.min.js'
+          'bower_components/angular-oboe/dist/angular-oboe.min.js',
+          'bower_components/angular-json-tree/dist/angular-json-tree.min.js',
+          'bower_components/angular-json-tree/dist/angular-json-tree.css'
 
         ],
         dest: 'dist',
