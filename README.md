@@ -24,7 +24,11 @@ be capable of interacting with topics via other means as well.
 ## Preview
 
 <a href="http://kafka-topics-ui.landoop.com" target="_blank" width="50%">
-    <img src="https://raw.githubusercontent.com/Landoop/kafka-topics-ui/gh-pages/v0.7-topics.png">
+    <img src="https://raw.githubusercontent.com/Landoop/kafka-topics-ui/gh-pages/v0.7.1-topics-1.png">
+</a>
+
+<a href="http://kafka-topics-ui.landoop.com" target="_blank" width="50%">
+    <img src="https://raw.githubusercontent.com/Landoop/kafka-topics-ui/gh-pages/v0.7.1-topics-2.png">
 </a>
 
 ## Running it
