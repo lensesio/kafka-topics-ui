@@ -502,6 +502,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
         $scope.flatRows = [];
         if (rows.length > 0) { // check if topics exist
             angular.forEach(rows, function (row) {
+                  if (row.key == undefined) row.key = ''; //for rendering purposes
+                  if (row.value == undefined) row.value = ''; //for rendering purposes
+
                   //1. calculate number of extra columns required
                   var flatValue = flattenObject(row.value);
                   var flatKey = flattenObject(row.key);
@@ -511,12 +514,12 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
                   if(extraColumnsNumberValue < rowExtraColumnsValues) {
                     extraColumnsNumberValue = rowExtraColumnsValues;
-                    rowWithMoreColumns = row; //save the row with more columns to get the column names
+                    rowWithMoreColumns = row;
                   }
 
                   if(extraColumnsNumberKey < rowExtraColumnsKeys) {
                     extraColumnsNumberKey = rowExtraColumnsKeys;
-                    rowWithMoreColumns = row; //save the row with more columns to get the column names
+                    rowWithMoreColumns = row;
                   }
 
                   //2. create array with flat rows for the flat table

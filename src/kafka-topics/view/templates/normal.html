@@ -19,12 +19,12 @@
             <td valign="top" class="td-center">{{t.partition}}</td>
 
             <!--Key-->
-            <td ng-if="t.key != null"  valign="top" style="min-width:250px;"><json-tree object="t.key" root-name="'Key'"></json-tree></td>
-            <td ng-if="t.key == null" valign="top"></td>
+            <td ng-if="t.key != ''"  valign="top" style="min-width:250px;"><json-tree object="t.key" root-name="'Key'"></json-tree></td>
+            <td ng-if="t.key == ''" valign="top"></td>
 
             <!--Value-->
-            <td ng-if="t.value != null"  valign="top" style="min-width:250px;"><json-tree object="t.value" root-name="'Value'"></json-tree></td>
-            <td ng-if="t.value == null" valign="top"></td>
+            <td ng-if="t.value != ''"  valign="top" style="min-width:250px;"><json-tree object="t.value" root-name="'Value'"></json-tree></td>
+            <td ng-if="t.value == ''" valign="top"></td>
 
           </tr>
           </tbody>
