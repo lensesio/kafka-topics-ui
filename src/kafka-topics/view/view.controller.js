@@ -160,18 +160,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     }
     $scope.topicIsEmpty = totalRows == 0;
 
-    // Fix null keys
-    var fixedRows = [];
-    angular.forEach(rows, function (row) {
-      if (row.key == null) {
-        $log.error("key is null");
-        row.key = "-";
-      }
-      fixedRows.push(row);
-      $log.info ("Type of keys " + typeof row.key);
-    });
-
-    $scope.gridOptions.data = fixedRows;
+    $scope.gridOptions.data = rows; //TODO removeme
     return totalRows;
   }
 

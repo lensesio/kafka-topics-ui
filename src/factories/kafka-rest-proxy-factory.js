@@ -473,20 +473,8 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
           // resultingTextData = angular.toJson(things, true);
         }
 
-        // Fix `null keys`
-        var fixedThings = [];
-        if (format == 'avro') {
-          angular.forEach(things, function (t) {
-            if (t.key == null)
-              t.key = ''; // TODO: So that ui-grid can tell if it's null
-            fixedThings.push(t);
-          });
-        } else {
-          fixedThings = things;
-        }
-
         // $log.info("COMPLETED entire object " + JSON.stringify(things));
-        deferred.resolve(fixedThings);
+        deferred.resolve(things);
       },
       function failure(message) {
         deferred.reject(message); // message is logged up-stream
