@@ -3,15 +3,12 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
   $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
 
-
-
 $rootScope.$watch('topicCategoryUrl' ,function(){
   $scope.displayingControlTopics = false;
   if ($rootScope.topicCategoryUrl =='c') {
   $scope.displayingControlTopics = true;
   }
 },true);
-
 
   KafkaRestProxyFactory.loadSchemas();
 
@@ -60,8 +57,6 @@ $rootScope.$watch('topicCategoryUrl' ,function(){
    * View functions
    */
 
-
-
   $scope.getPartitionMessage = function (topicName) {
     return doCountsForTopic(topicName);
   };
@@ -85,23 +80,14 @@ $rootScope.$watch('topicCategoryUrl' ,function(){
     return KafkaRestProxyFactory.shortenControlCenterName(topicName);
   };
 
-
-
-
-
-
   $scope.listClick = function (topicName) {
   if (KafkaRestProxyFactory.isNormalTopic(topicName) == false) {
    $scope.CategoryTopicUrls = 'c';
   } else {
   $scope.CategoryTopicUrls = 'n';
   }
-    $location.url("topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
+    $location.path("topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
   }
-
-
-
-
 
   function doCountsForTopic(topicName) {
     var counts = {
@@ -123,8 +109,6 @@ $rootScope.$watch('topicCategoryUrl' ,function(){
       }
     });
 
-
-
     return doLalbels(counts.replications, 'Replication') + ' x ' + doLalbels(counts.partitions, 'Partition');
   }
 
@@ -133,8 +117,5 @@ $rootScope.$watch('topicCategoryUrl' ,function(){
     else if (count == 1) return '1 ' + name;
     else return count + ' ' + name +'s';
   }
-
-
-
 
 });

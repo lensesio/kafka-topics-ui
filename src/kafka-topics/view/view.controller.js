@@ -11,16 +11,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
 
 $scope.onTabChanges = function(currentTabIndex){
-localStorage.setItem('active',currentTabIndex);
-$location.path ("topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + $scope.selectedTabIndex, false);
-$log.info ($scope.selectedTabIndex);
+$location.path ("topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
+$log.info ('selected Tab Index ' + $scope.selectedTabIndex);
 };
-
-
-
-
-
-
 
   $scope.showSpinner = true;
   $scope.KAFKA_TOPIC_DELETE_COMMAND = KAFKA_TOPIC_DELETE_COMMAND;
@@ -105,9 +98,6 @@ $log.info ($scope.selectedTabIndex);
     originatorEv = null;
   };
 
-
-
-
   $scope.hasExtraConfig = function (topicName) {
     var extra = KafkaRestProxyFactory.hasExtraConfig(topicName);
     if (extra != '') {
@@ -145,7 +135,6 @@ $log.info ($scope.selectedTabIndex);
    $rootScope.ToggleMoreDesc = function () {
       $rootScope.showMoreDesc = !$rootScope.showMoreDesc;
    };
-
 
   $scope.streamInRealTime = function () {
     $log.info("Streaming in real time");
@@ -553,7 +542,6 @@ $log.info ($scope.selectedTabIndex);
 
                 });
 
-
                 //3. reorder the columns for the iteration
                 var newRow = {
                     "offset" : rowWithMoreColumns.offset,
@@ -566,7 +554,6 @@ $log.info ($scope.selectedTabIndex);
                 $scope.cols3 = Object.keys(flattenObject(newRow.key)); //only the value cols, TODO same for keys?
                 $scope.extraColsNumValues = extraColumnsNumberValue;
                 $scope.extraColsNumKeys = extraColumnsNumberKey;
-                $log.info ($scope.cols3.length)
 
         //PAGINATION STUFF
          $scope.paginationItems = 10;
@@ -583,11 +570,5 @@ $log.info ($scope.selectedTabIndex);
          };
      }
 }
-
-
-
-
-
-
 
 });
