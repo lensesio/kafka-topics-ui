@@ -64,7 +64,9 @@ a:link, header.a:visited, header.a:hover, header.a:active {
     z-index: 2;
 }
 .normalcontent.ng-scope {overflow:initial}
-
+.leftlistPagination .pagination {
+margin:0;
+}
 .example1:after {
     content: "Register a Complex Schema";
 }

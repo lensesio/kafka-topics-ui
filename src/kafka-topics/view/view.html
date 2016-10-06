@@ -41,13 +41,23 @@
 
     </md-input-container>
 
-    <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom
-             md-selected="tabIndex">
+    <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
 
-      <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
-      <div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>
-      <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
-      <div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>
+        <md-tab   label="Topic" md-on-select="onTabChanges(0)"   ng-if="topicType != 'binary'">
+            <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
+        </md-tab>
+
+        <md-tab   label="Table" md-on-select="onTabChanges(1)" ng-if="topicType != 'binary'">
+            <div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>
+        </md-tab>
+
+        <md-tab label="Raw Data" md-on-select="onTabChanges(2)">
+            <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
+        </md-tab>
+
+        <md-tab label="Configuration" md-on-select="onTabChanges(3)"  ng-if="hasExtraConfig(topicName) != ''">
+            <div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>
+        </md-tab>
 
     </md-tabs>
   </div>

@@ -38,12 +38,16 @@ $rootScope.$watch('topicCategoryUrl' ,function(){
           $log.error('Failed: ' + reason);
         });
 
-        //Shouldn't be here
         $scope.topicsPerPage = 7;
-        $scope.topicIndex = $scope.controlTopics.indexOf($rootScope.topicName );
-        $log.info ('giannis' + $scope.topicIndex)
-        $scope.topicPage = Math.ceil($scope.topicIndex / $scope.topicsPerPage);
-        $log.info ('giannis page' + $scope.topicPage)
+
+        $scope.controlTopicIndex = $scope.controlTopics.indexOf($rootScope.topicName );
+        $scope.controlTopicPage = Math.ceil($scope.controlTopicIndex / $scope.topicsPerPage);
+        if ($scope.controlTopicPage < 1) {$scope.controlTopicPage = 1}
+
+        $scope.normalTopicIndex = $scope.topics.indexOf($rootScope.topicName );
+        $scope.normalTopicPage = Math.ceil($scope.normalTopicIndex / $scope.topicsPerPage);
+        if ($scope.normalTopicPage < 1) {$scope.normalTopicPage = 1}
+
 
     }, function (reason) {
       $log.error('Failed: ' + reason);

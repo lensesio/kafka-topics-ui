@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
@@ -6,6 +6,18 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   $scope.topicCategoryUrl = $routeParams.topicCategoryUrl;
   $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
+
+  $scope.selectedTabIndex = $routeParams.selectedTabIndex;
+
+
+$scope.onTabChanges = function(currentTabIndex){
+localStorage.setItem('active',currentTabIndex);
+$location.path ("topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + $scope.selectedTabIndex, false);
+$log.info ($scope.selectedTabIndex);
+};
+
+
+
 
 
 
@@ -92,6 +104,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
     originatorEv = null;
   };
+
+
+
 
   $scope.hasExtraConfig = function (topicName) {
     var extra = KafkaRestProxyFactory.hasExtraConfig(topicName);
@@ -568,6 +583,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
          };
      }
 }
+
+
+
+
 
 
 

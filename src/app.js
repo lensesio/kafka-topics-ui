@@ -40,6 +40,10 @@ angularAPP.config(function ($routeProvider) {
       controller: 'HeaderCtrl'
     })
     .when('/topic/:topicCategoryUrl/:topicName', {
+        templateUrl: 'src/kafka-topics/view/view.html',
+        controller: 'ViewTopicCtrl'
+      })
+    .when('/topic/:topicCategoryUrl/:topicName/:selectedTabIndex', {
       templateUrl: 'src/kafka-topics/view/view.html',
       controller: 'ViewTopicCtrl'
     }).otherwise({
@@ -47,6 +51,20 @@ angularAPP.config(function ($routeProvider) {
   });
   // $locationProvider.html5Mode(true);
 });
+
+angularAPP.run(['$route', '$rootScope', '$location', function ($route, $rootScope, $location) {
+    var original = $location.path;
+    $location.path = function (path, reload) {
+        if (reload === false) {
+            var lastRoute = $route.current;
+            var un = $rootScope.$on('$locationChangeSuccess', function () {
+                $route.current = lastRoute;
+                un();
+            });
+        }
+        return original.apply($location, [path]);
+    };
+}])
 
 // ng-show="x | isEmpty"
 angularAPP.filter('isEmpty', function () {
