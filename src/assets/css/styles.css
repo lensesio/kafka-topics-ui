@@ -63,6 +63,7 @@ a:link, header.a:visited, header.a:hover, header.a:active {
     border: 1px solid #ddd;
     z-index: 2;
 }
+.normalcontent.ng-scope {overflow:initial}
 
 .example1:after {
     content: "Register a Complex Schema";
@@ -322,3 +323,4 @@ table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
     transition-duration: 0ms;
     transition-delay: 0ms;
 }
+

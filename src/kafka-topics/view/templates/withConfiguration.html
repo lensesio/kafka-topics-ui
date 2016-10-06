@@ -18,31 +18,40 @@
 
       </md-card>
 
-      <div ng-repeat="(key,value) in getExtraConfig(topicName) track by $index">
-        <span
-          style="box-shadow: rgba(0, 0, 0, 0.458824) 0px 0px 0px 0px;font-weight: 600;text-transform: none;color: white;float: left;padding: 8px; border: 2px solid;border-radius: 15px;background-color: rgba(255, 0, 0, 0.6);">
-      {{key}}
-        </span>
-        <span style="color:black;font-weight: 600;float: left;padding: 8px; border: 2px solid white;border-radius: 15px;">
-          is
-        </span>
-        <span
-          style="font-weight: 600;color: #525252;;float: left;padding: 8px; border: 0px solid;border-radius: 15px;background-color: rgba(152, 206, 166, 0.6);">
-        {{value}}
-        </span>
-        <span style="color:black;font-weight: 600;float: left;padding: 8px; border: 2px solid white;border-radius: 15px;">
-          instead of
-        </span>
-        <p
-          style="background-color: rgba(185, 185, 185, 0.6);font-weight: 600;color: #525252;float: left;padding: 8px; border: 0px solid;border-radius: 15px;">
-        {{getDefautConfigValue(key)}}
-        </p>
-        <br>
-        <br>
-        <p style="font-weight: 500; padding: 15px;">
-        {{getConfigDescription(key)}}
-          </p>
-      </div>
+      <md-content>
+        <table class="flat-table">
+          <thead>
+          <tr>
+            <th class="td-center">Key</th>
+            <th  class="td-center">Value</th>
+            <th  class="td-center">Default Value</th>
+            <th  class="td-center">Description</th>
+          </tr>
+          </thead>
+          <tbody>
+
+          <tr ng-mouseover="hoverIn()" ng-mouseleave="hoverOut()" ng-repeat="(key,value) in getExtraConfig(topicName) track by $index">
+            <td  class="td-center">
+              <span>{{key}}</span>
+            </td>
+            <td  class="td-center">
+              <span>{{value}}</span>
+            </td>
+            <td  class="td-center">
+              <span>{{getDefautConfigValue(key)}}</span>
+            </td>
+            <td ng-title="{{getConfigDescription(key)}}" class=" td-left">
+              <span ng-hide="showMoreDesc">{{ getConfigDescription(key) | limitTo:60 }}...</span>
+              <span ng-show="showMoreDesc">{{ getConfigDescription(key)}}</span>
+
+              <span ng-click="ToggleMoreDesc()">
+                <span ng-show="showMoreDesc" style="float:right;"  aria-hidden="true">Show Less</span>
+                <span ng-hide="showMoreDesc" style="float:right;padding-right:20px;"  aria-hidden="true">Read More</span>
+                </span>
+            </td>
+          </tr>
+          </tbody>
+          </table>
 
     </md-content>
   </md-tab-body>

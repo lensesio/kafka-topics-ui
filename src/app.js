@@ -39,7 +39,7 @@ angularAPP.config(function ($routeProvider) {
       templateUrl: 'src/kafka-topics/new/new-topic.html',
       controller: 'HeaderCtrl'
     })
-    .when('/topic/:topicName', {
+    .when('/topic/:topicCategoryUrl/:topicName', {
       templateUrl: 'src/kafka-topics/view/view.html',
       controller: 'ViewTopicCtrl'
     }).otherwise({

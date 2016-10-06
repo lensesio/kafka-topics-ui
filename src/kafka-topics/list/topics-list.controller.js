@@ -2,7 +2,17 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
 
   $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
+
+
+
+$rootScope.$watch('topicCategoryUrl' ,function(){
   $scope.displayingControlTopics = false;
+  if ($rootScope.topicCategoryUrl =='c') {
+  $scope.displayingControlTopics = true;
+  }
+},true);
+
+
   KafkaRestProxyFactory.loadSchemas();
 
   /**
@@ -28,6 +38,13 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
           $log.error('Failed: ' + reason);
         });
 
+        //Shouldn't be here
+        $scope.topicsPerPage = 7;
+        $scope.topicIndex = $scope.controlTopics.indexOf($rootScope.topicName );
+        $log.info ('giannis' + $scope.topicIndex)
+        $scope.topicPage = Math.ceil($scope.topicIndex / $scope.topicsPerPage);
+        $log.info ('giannis page' + $scope.topicPage)
+
     }, function (reason) {
       $log.error('Failed: ' + reason);
       toastFactory.showSimpleToast("No connectivity. Could not get topic names");
@@ -39,6 +56,8 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
    * View functions
    */
 
+
+
   $scope.getPartitionMessage = function (topicName) {
     return doCountsForTopic(topicName);
   };
@@ -46,6 +65,9 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
   $scope.isNormalTopic = function (topicName) {
     return KafkaRestProxyFactory.isNormalTopic(topicName);
   };
+
+  $scope.displayingControlTopics = $scope.isNormalTopic;
+
 
   $scope.hasExtraConfig = function (topicName) {
     return KafkaRestProxyFactory.hasExtraConfig(topicName);
@@ -57,11 +79,25 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
 
   $scope.shortenControlCenterName = function (topicName) {
     return KafkaRestProxyFactory.shortenControlCenterName(topicName);
-  }
+  };
+
+
+
+
+
 
   $scope.listClick = function (topicName) {
-    $location.url("topic/" + topicName);
+  if (KafkaRestProxyFactory.isNormalTopic(topicName) == false) {
+   $scope.CategoryTopicUrls = 'c';
+  } else {
+  $scope.CategoryTopicUrls = 'n';
   }
+    $location.url("topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
+  }
+
+
+
+
 
   function doCountsForTopic(topicName) {
     var counts = {
@@ -83,6 +119,8 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
       }
     });
 
+
+
     return doLalbels(counts.replications, 'Replication') + ' x ' + doLalbels(counts.partitions, 'Partition');
   }
 
@@ -91,4 +129,8 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
     else if (count == 1) return '1 ' + name;
     else return count + ' ' + name +'s';
   }
+
+
+
+
 });

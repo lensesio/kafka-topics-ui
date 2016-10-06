@@ -4,6 +4,12 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.topicName = $routeParams.topicName;
   $rootScope.topicName = $routeParams.topicName;
 
+  $scope.topicCategoryUrl = $routeParams.topicCategoryUrl;
+  $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
+
+
+
+
   $scope.showSpinner = true;
   $scope.KAFKA_TOPIC_DELETE_COMMAND = KAFKA_TOPIC_DELETE_COMMAND;
 
@@ -119,6 +125,11 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     });
     return configDescription;
   };
+
+   $rootScope.showMoreDesc = false;
+   $rootScope.ToggleMoreDesc = function () {
+      $rootScope.showMoreDesc = !$rootScope.showMoreDesc;
+   };
 
 
   $scope.streamInRealTime = function () {
