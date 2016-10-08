@@ -34,7 +34,7 @@
     </div>
 
     <div ng-hide="topicIsEmpty">
-    <md-input-container  class="md-block" ng-hide="topicIsEmpty || topicType == 'binary'" style="margin-bottom:-25px;">
+    <md-input-container  class="md-block" ng-hide="topicIsEmpty || topicType == 'binary' || selectedTabIndex > 1 " style="margin-bottom:-25px;">
       <label>Filter</label>
       <input ng-model="searchMessages">
       <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
@@ -55,7 +55,7 @@
             <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
         </md-tab>
 
-        <md-tab label="Configuration" ng-click="onTabChanges(3)"  ng-if="hasExtraConfig(topicName) != ''">
+        <md-tab label="Configuration" ng-click="onTabChanges(3)"  ng-if=" selectedTabIndex == 3 || hasExtraConfig(topicName) != ''">
             <div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>
         </md-tab>
 

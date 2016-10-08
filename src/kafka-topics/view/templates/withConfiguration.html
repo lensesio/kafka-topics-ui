@@ -1,22 +1,7 @@
 <!-- Custom rendering for Config overrides -->
-
   <md-tab-body>
     <md-content class="md-padding">
-      <md-card>
-        <md-card-content style="padding:0">
-          <md-menu ng-show="apps">
-            <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
-              <i class="fa fa-bars" style="padding-right:10px;" aria-hidden="true"></i>
-            </md-button>
-            <md-menu-content width="5">
-            </md-menu-content>
-          </md-menu>
-        </md-card-content>
-
-      </md-card>
-
-      <md-content>
-        <table class="flat-table">
+        <table class="flat-table"  ng-if ="hasExtraConfig(topicName) != ''">
           <thead>
           <tr>
             <th class="td-center">Key</th>
@@ -27,7 +12,7 @@
           </thead>
           <tbody>
 
-          <tr ng-mouseover="hoverIn()" ng-mouseleave="hoverOut()" ng-repeat="(key,value) in getExtraConfig(topicName) track by $index">
+          <tr ng-repeat="(key,value) in getExtraConfig(topicName) track by $index">
             <td  class="td-center">
               <span>{{key}}</span>
             </td>
@@ -49,7 +34,12 @@
           </tr>
           </tbody>
           </table>
-
-    </md-content>
+        <div class="container-fluid-centered ng-scope" ng-if ="hasExtraConfig(topicName) == ''" style="height: 352px;">
+            <div class="row-fluid">
+                <div class="centering text-center">
+                  This topic retains the default configuration
+                </div>
+            </div>
+        </div>
     </md-content>
   </md-tab-body>

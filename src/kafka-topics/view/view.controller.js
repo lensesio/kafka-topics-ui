@@ -7,13 +7,11 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.topicCategoryUrl = $routeParams.topicCategoryUrl;
   $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
 
-  $scope.selectedTabIndex = $routeParams.selectedTabIndex;
-
-
-$scope.onTabChanges = function(currentTabIndex){
-$location.path ("topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
-$log.info ('selected Tab Index ' + $scope.selectedTabIndex);
-};
+    $scope.selectedTabIndex = $routeParams.selectedTabIndex;
+    $scope.onTabChanges = function(currentTabIndex){
+    $location.path ("topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
+    $log.info ('selected Tab Index ' + $scope.selectedTabIndex);
+    };
 
   $scope.showSpinner = true;
   $scope.KAFKA_TOPIC_DELETE_COMMAND = KAFKA_TOPIC_DELETE_COMMAND;
