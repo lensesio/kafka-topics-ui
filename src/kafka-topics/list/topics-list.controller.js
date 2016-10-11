@@ -2,7 +2,14 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
 
   $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
-  $scope.displayingControlTopics = false;
+
+  $rootScope.$watch('topicCategoryUrl' ,function(){
+    $scope.displayingControlTopics = false;
+    if ($rootScope.topicCategoryUrl =='c') {
+      $scope.displayingControlTopics = true;
+      }
+    },true);
+
   KafkaRestProxyFactory.loadSchemas();
 
   /**
@@ -28,6 +35,20 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
           $log.error('Failed: ' + reason);
         });
 
+      $scope.topicsPerPage = 7;
+
+      $scope.controlTopicIndex = $scope.controlTopics.indexOf($rootScope.topicName );
+      $scope.controlTopicPage = Math.ceil($scope.controlTopicIndex / $scope.topicsPerPage);
+      if ($scope.controlTopicPage < 1) {
+        $scope.controlTopicPage = 1
+      }
+
+      $scope.normalTopicIndex = $scope.topics.indexOf($rootScope.topicName );
+      $scope.normalTopicPage = Math.ceil($scope.normalTopicIndex / $scope.topicsPerPage);
+      if ($scope.normalTopicPage < 1) {
+        $scope.normalTopicPage = 1
+      }
+
     }, function (reason) {
       $log.error('Failed: ' + reason);
       toastFactory.showSimpleToast("No connectivity. Could not get topic names");
@@ -47,6 +68,8 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
     return KafkaRestProxyFactory.isNormalTopic(topicName);
   };
 
+  $scope.displayingControlTopics = $scope.isNormalTopic;
+
   $scope.hasExtraConfig = function (topicName) {
     return KafkaRestProxyFactory.hasExtraConfig(topicName);
   };
@@ -60,7 +83,12 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
   }
 
   $scope.listClick = function (topicName) {
-    $location.url("topic/" + topicName);
+    if (KafkaRestProxyFactory.isNormalTopic(topicName) == false) {
+      $scope.CategoryTopicUrls = 'c';
+    } else {
+      $scope.CategoryTopicUrls = 'n';
+    }
+    $location.path("topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
   }
 
   function doCountsForTopic(topicName) {

@@ -1,49 +1,45 @@
 <!-- Custom rendering for Config overrides -->
-<md-tab ng-if="hasExtraConfig(topicName) != ''">
-  <md-tab-label>
-    <i aria-hidden="true"></i> Configuration
-  </md-tab-label>
   <md-tab-body>
     <md-content class="md-padding">
-      <md-card>
-        <md-card-content style="padding:0">
-          <md-menu ng-show="apps">
-            <md-button aria-label="menu" class="md-fab md-mini light-blue" ng-click="$mdOpenMenu($event)">
-              <i class="fa fa-bars" style="padding-right:10px;" aria-hidden="true"></i>
-            </md-button>
-            <md-menu-content width="5">
-            </md-menu-content>
-          </md-menu>
-        </md-card-content>
+        <table class="flat-table"  ng-if ="hasExtraConfig(topicName) != ''">
+          <thead>
+          <tr>
+            <th class="td-center">Comfiguration</th>
+            <th  class="td-center">Value</th>
+            <th  class="td-center">Default Value</th>
+            <th  class="td-center">Description</th>
+          </tr>
+          </thead>
+          <tbody>
 
-      </md-card>
+          <tr ng-repeat="(key,value) in getExtraConfig(topicName) track by $index">
+            <td  class="td-center">
+              <span>{{key}}</span>
+            </td>
+            <td  class="td-center">
+              <span>{{value}}</span>
+            </td>
+            <td  class="td-center">
+              <span>{{getDefautConfigValue(key)}}</span>
+            </td>
+            <td style="max-width:500px;" ng-title="{{getConfigDescription(key)}}" class=" td-left">
+              <span ng-hide="showMoreDesc">{{ getConfigDescription(key) | limitTo:100 }}...</span>
+              <span ng-show="showMoreDesc">{{ getConfigDescription(key)}}</span>
 
-      <div ng-repeat="(key,value) in getExtraConfig(topicName) track by $index">
-        <span
-          style="box-shadow: rgba(0, 0, 0, 0.458824) 0px 0px 0px 0px;font-weight: 600;text-transform: none;color: white;float: left;padding: 8px; border: 2px solid;border-radius: 15px;background-color: rgba(255, 0, 0, 0.6);">
-      {{key}}
-        </span>
-        <span style="color:black;font-weight: 600;float: left;padding: 8px; border: 2px solid white;border-radius: 15px;">
-          is
-        </span>
-        <span
-          style="font-weight: 600;color: #525252;;float: left;padding: 8px; border: 0px solid;border-radius: 15px;background-color: rgba(152, 206, 166, 0.6);">
-        {{value}}
-        </span>
-        <span style="color:black;font-weight: 600;float: left;padding: 8px; border: 2px solid white;border-radius: 15px;">
-          instead of
-        </span>
-        <p
-          style="background-color: rgba(185, 185, 185, 0.6);font-weight: 600;color: #525252;float: left;padding: 8px; border: 0px solid;border-radius: 15px;">
-        {{getDefautConfigValue(key)}}
-        </p>
-        <br>
-        <br>
-        <p style="font-weight: 500; padding: 15px;">
-        {{getConfigDescription(key)}}
-          </p>
-      </div>
-
+              <span class="toggleconfig" ng-click="ToggleMoreDesc()">
+                <span ng-show="showMoreDesc" aria-hidden="true">Show Less</span>
+                <span ng-hide="showMoreDesc" aria-hidden="true">Show More</span>
+                </span>
+            </td>
+          </tr>
+          </tbody>
+          </table>
+        <div class="container-fluid-centered ng-scope" ng-if ="hasExtraConfig(topicName) == ''" style="height: 352px;">
+            <div class="row-fluid">
+                <div class="centering text-center">
+                  This topic retains the default configuration
+                </div>
+            </div>
+        </div>
     </md-content>
   </md-tab-body>
-</md-tab>

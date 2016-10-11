@@ -24,6 +24,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
       function success(response) {
         $log.debug("  curl -X GET " + url + " in [ " + (new Date().getTime() - start) + " ] msec");
         var topicNames = response.data;
+
         deferred.resolve(topicNames);
       },
       function failure(response) {

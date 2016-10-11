@@ -12,13 +12,14 @@
     <!--Topics List-->
     <div flex>
       <md-list class="md-dense" flex>
-        <md-list-item
-                dir-paginate="topic in controlTopics| orderBy:'topic' | filter : search | itemsPerPage: 7"
+        <md-list-item dir-paginate="topic in controlTopics| orderBy:'topic' | filter : search | itemsPerPage: topicsPerPage"
                 pagination-id="controlTopics"
                 ng-click="listClick(topic)"
                 class="md-2-line"
-                ng-class="{ 'selectedListItem': topic == topicName }">
+                current-page="controlTopicPage"
+                ng-class="{ 'selectedListItem': topic == topicName }"
 
+        >
           <div ng-show="hasExtraConfig(topic) != ''">
             <i class="fa fa-asterisk" aria-hidden="true" style="color:red; padding-right:15px; font-size:10px;"></i>
           </div>
@@ -40,8 +41,8 @@
     </div>
 
     <!--Pagination-->
-    <div flex>
-      <dir-pagination-controls pagination-id="controlTopics" style="margin:0;"></dir-pagination-controls>
+    <div flex class="leftlistPagination">
+      <dir-pagination-controls on-page-change="getTopicPage(newPageNumber, oldPageNumber)" pagination-id="controlTopics" style="margin:0;"></dir-pagination-controls>
     </div>
 
     <!--Notes-->

@@ -1,8 +1,32 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
   $rootScope.topicName = $routeParams.topicName;
+
+  $scope.topicCategoryUrl = $routeParams.topicCategoryUrl;
+  $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
+
+    if ($routeParams.selectedTabIndex == "topic") {
+      $scope.selectedTabNnumber=0;
+    }
+    else if ($routeParams.selectedTabIndex == "table") {
+      $scope.selectedTabNnumber=1;
+    }
+    else if ($routeParams.selectedTabIndex == "rawdata") {
+      $scope.selectedTabNnumber=2;
+    }
+    else if ($routeParams.selectedTabIndex == "config") {
+      $scope.selectedTabNnumber=3;
+    }
+    else {
+      $scope.selectedTabNnumber=0;
+    }
+
+    $scope.onTabChanges = function(currentTabIndex){
+        $location.path ("topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
+        $log.info ('selected Tab Index ' + $scope.selectedTabIndex);
+    };
 
   $scope.showSpinner = true;
   $scope.KAFKA_TOPIC_DELETE_COMMAND = KAFKA_TOPIC_DELETE_COMMAND;
@@ -120,6 +144,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     return configDescription;
   };
 
+   $rootScope.showMoreDesc = false;
+   $rootScope.ToggleMoreDesc = function () {
+      $rootScope.showMoreDesc = !$rootScope.showMoreDesc;
+   };
 
   $scope.streamInRealTime = function () {
     $log.info("Streaming in real time");
@@ -527,7 +555,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
                 });
 
-
                 //3. reorder the columns for the iteration
                 var newRow = {
                     "offset" : rowWithMoreColumns.offset,
@@ -540,7 +567,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                 $scope.cols3 = Object.keys(flattenObject(newRow.key)); //only the value cols, TODO same for keys?
                 $scope.extraColsNumValues = extraColumnsNumberValue;
                 $scope.extraColsNumKeys = extraColumnsNumberKey;
-                $log.info ($scope.cols3.length)
 
         //PAGINATION STUFF
          $scope.paginationItems = 10;
@@ -557,7 +583,5 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
          };
      }
 }
-
-
 
 });

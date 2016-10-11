@@ -34,20 +34,29 @@
     </div>
 
     <div ng-hide="topicIsEmpty">
-    <md-input-container ng-if="topicType != 'binary'" class="md-block" ng-hide="topicIsEmpty" style="margin-bottom:-25px;">
+    <md-input-container  class="md-block" ng-hide="topicIsEmpty || topicType == 'binary' || selectedTabNnumber > 1 " style="margin-bottom:-25px;">
       <label>Filter</label>
       <input ng-model="searchMessages">
       <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
 
     </md-input-container>
+    <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
 
-    <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom
-             md-selected="tabIndex">
+        <md-tab   label="Topic" ng-click="onTabChanges('topic')"   ng-if="topicType != 'binary'">
+            <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
+        </md-tab>
 
-      <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
-      <div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>
-      <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
-      <div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>
+        <md-tab   label="Table" ng-click="onTabChanges('table')" ng-if="topicType != 'binary'">
+            <div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>
+        </md-tab>
+
+        <md-tab label="Raw Data" ng-click="onTabChanges('rawdata')">
+            <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
+        </md-tab>
+
+        <md-tab label="Configuration" ng-click="onTabChanges('config')"  ng-if=" selectedTabNnumber == '3' || hasExtraConfig(topicName) != ''">
+            <div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>
+        </md-tab>
 
     </md-tabs>
   </div>
