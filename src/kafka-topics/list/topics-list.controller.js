@@ -3,12 +3,12 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
   $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
 
-$rootScope.$watch('topicCategoryUrl' ,function(){
-  $scope.displayingControlTopics = false;
-  if ($rootScope.topicCategoryUrl =='c') {
-  $scope.displayingControlTopics = true;
-  }
-},true);
+  $rootScope.$watch('topicCategoryUrl' ,function(){
+    $scope.displayingControlTopics = false;
+    if ($rootScope.topicCategoryUrl =='c') {
+      $scope.displayingControlTopics = true;
+      }
+    },true);
 
   KafkaRestProxyFactory.loadSchemas();
 
@@ -35,16 +35,19 @@ $rootScope.$watch('topicCategoryUrl' ,function(){
           $log.error('Failed: ' + reason);
         });
 
-        $scope.topicsPerPage = 7;
+      $scope.topicsPerPage = 7;
 
-        $scope.controlTopicIndex = $scope.controlTopics.indexOf($rootScope.topicName );
-        $scope.controlTopicPage = Math.ceil($scope.controlTopicIndex / $scope.topicsPerPage);
-        if ($scope.controlTopicPage < 1) {$scope.controlTopicPage = 1}
+      $scope.controlTopicIndex = $scope.controlTopics.indexOf($rootScope.topicName );
+      $scope.controlTopicPage = Math.ceil($scope.controlTopicIndex / $scope.topicsPerPage);
+      if ($scope.controlTopicPage < 1) {
+        $scope.controlTopicPage = 1
+      }
 
-        $scope.normalTopicIndex = $scope.topics.indexOf($rootScope.topicName );
-        $scope.normalTopicPage = Math.ceil($scope.normalTopicIndex / $scope.topicsPerPage);
-        if ($scope.normalTopicPage < 1) {$scope.normalTopicPage = 1}
-
+      $scope.normalTopicIndex = $scope.topics.indexOf($rootScope.topicName );
+      $scope.normalTopicPage = Math.ceil($scope.normalTopicIndex / $scope.topicsPerPage);
+      if ($scope.normalTopicPage < 1) {
+        $scope.normalTopicPage = 1
+      }
 
     }, function (reason) {
       $log.error('Failed: ' + reason);
@@ -67,7 +70,6 @@ $rootScope.$watch('topicCategoryUrl' ,function(){
 
   $scope.displayingControlTopics = $scope.isNormalTopic;
 
-
   $scope.hasExtraConfig = function (topicName) {
     return KafkaRestProxyFactory.hasExtraConfig(topicName);
   };
@@ -78,14 +80,14 @@ $rootScope.$watch('topicCategoryUrl' ,function(){
 
   $scope.shortenControlCenterName = function (topicName) {
     return KafkaRestProxyFactory.shortenControlCenterName(topicName);
-  };
+  }
 
   $scope.listClick = function (topicName) {
-  if (KafkaRestProxyFactory.isNormalTopic(topicName) == false) {
-   $scope.CategoryTopicUrls = 'c';
-  } else {
-  $scope.CategoryTopicUrls = 'n';
-  }
+    if (KafkaRestProxyFactory.isNormalTopic(topicName) == false) {
+      $scope.CategoryTopicUrls = 'c';
+    } else {
+      $scope.CategoryTopicUrls = 'n';
+    }
     $location.path("topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
   }
 
@@ -117,5 +119,4 @@ $rootScope.$watch('topicCategoryUrl' ,function(){
     else if (count == 1) return '1 ' + name;
     else return count + ' ' + name +'s';
   }
-
 });

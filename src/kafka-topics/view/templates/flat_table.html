@@ -1,5 +1,4 @@
 <!-- Custom rendering for OTHER topics -->
-
     <md-tab-body>
         <md-content class="padding:0">
                 <table class="flat-table">
@@ -9,11 +8,11 @@
                         <th rowspan="2" class="td-center">partition</th>
                         <th ng-if="cols3.length==0" rowspan="2" class="td-center" colspan="{{extraColsNumKeys}}" >key</th>
                         <th ng-if="cols3.length > 0" class="td-center" colspan="{{extraColsNumKeys}}" >key</th>
-                        <th colspan="{{extraColsNumValues}}" style="background-color: #85bddd">value</th>
+                        <th colspan="{{extraColsNumValues}}" >value</th>
                     </tr>
                     <tr>
                         <th ng-repeat="c3 in cols3" class="td-left">{{c3}}</th>
-                        <th ng-repeat="c in cols2" class="td-left" style="background-color: #85bddd">{{c}}</th>
+                        <th ng-repeat="c in cols2" class="td-left" >{{c}}</th>
                     </tr>
                     <tr style="display:none;">
                         <th ng-repeat="column in cols">{{column}}</th>
@@ -21,7 +20,7 @@
                     </thead>
                     <tbody>
                     <tr dir-paginate="row in flatRows | filter : searchMessages| itemsPerPage: paginationItems"  pagination-id="flatView">
-                        <td nowrap ng-repeat="column in cols" class="{{ column.indexOf('value') == 0 ? 'blue' : 'td-center' }}">
+                        <td nowrap ng-repeat="column in cols" class="{{ column.indexOf('value') == 0 ? '' : 'td-center' }}">
                             <span>{{row[column]}}</span>
                         </td>
                     </tr>

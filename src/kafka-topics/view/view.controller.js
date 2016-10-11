@@ -7,10 +7,25 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.topicCategoryUrl = $routeParams.topicCategoryUrl;
   $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
 
-    $scope.selectedTabIndex = $routeParams.selectedTabIndex;
+    if ($routeParams.selectedTabIndex == "topic") {
+      $scope.selectedTabNnumber=0;
+    }
+    else if ($routeParams.selectedTabIndex == "table") {
+      $scope.selectedTabNnumber=1;
+    }
+    else if ($routeParams.selectedTabIndex == "rawdata") {
+      $scope.selectedTabNnumber=2;
+    }
+    else if ($routeParams.selectedTabIndex == "config") {
+      $scope.selectedTabNnumber=3;
+    }
+    else {
+      $scope.selectedTabNnumber=0;
+    }
+
     $scope.onTabChanges = function(currentTabIndex){
-    $location.path ("topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
-    $log.info ('selected Tab Index ' + $scope.selectedTabIndex);
+        $location.path ("topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
+        $log.info ('selected Tab Index ' + $scope.selectedTabIndex);
     };
 
   $scope.showSpinner = true;

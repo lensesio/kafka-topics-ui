@@ -4,7 +4,7 @@
         <table class="flat-table"  ng-if ="hasExtraConfig(topicName) != ''">
           <thead>
           <tr>
-            <th class="td-center">Key</th>
+            <th class="td-center">Comfiguration</th>
             <th  class="td-center">Value</th>
             <th  class="td-center">Default Value</th>
             <th  class="td-center">Description</th>
@@ -22,13 +22,13 @@
             <td  class="td-center">
               <span>{{getDefautConfigValue(key)}}</span>
             </td>
-            <td ng-title="{{getConfigDescription(key)}}" class=" td-left">
-              <span ng-hide="showMoreDesc">{{ getConfigDescription(key) | limitTo:60 }}...</span>
+            <td style="max-width:500px;" ng-title="{{getConfigDescription(key)}}" class=" td-left">
+              <span ng-hide="showMoreDesc">{{ getConfigDescription(key) | limitTo:100 }}...</span>
               <span ng-show="showMoreDesc">{{ getConfigDescription(key)}}</span>
 
-              <span ng-click="ToggleMoreDesc()">
-                <span ng-show="showMoreDesc" style="float:right;"  aria-hidden="true">Show Less</span>
-                <span ng-hide="showMoreDesc" style="float:right;padding-right:20px;"  aria-hidden="true">Read More</span>
+              <span class="toggleconfig" ng-click="ToggleMoreDesc()">
+                <span ng-show="showMoreDesc" aria-hidden="true">Show Less</span>
+                <span ng-hide="showMoreDesc" aria-hidden="true">Show More</span>
                 </span>
             </td>
           </tr>
