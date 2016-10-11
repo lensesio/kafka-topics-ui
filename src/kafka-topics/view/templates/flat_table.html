@@ -8,7 +8,8 @@
                         <th rowspan="2" class="td-center">partition</th>
                         <th ng-if="cols3.length==0" rowspan="2" class="td-center" colspan="{{extraColsNumKeys}}" >key</th>
                         <th ng-if="cols3.length > 0" class="td-center" colspan="{{extraColsNumKeys}}" >key</th>
-                        <th colspan="{{extraColsNumValues}}" >value</th>
+                        <th ng-if="cols2.length==0" rowspan="2" class="td-center" colspan="{{extraColsNumValues}}" >Value</th>
+                        <th ng-if="cols2.length > 0" class="td-center" colspan="{{extraColsNumValues}}" >Value</th>
                     </tr>
                     <tr>
                         <th ng-repeat="c3 in cols3" class="td-left">{{c3}}</th>
