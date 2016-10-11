@@ -4,6 +4,7 @@ module.exports = function (grunt) {
 
   require('jit-grunt')(grunt, {});
 
+  grunt.loadNpmTasks('grunt-cache-breaker');
   // Define the configuration
   grunt.initConfig({
 
@@ -74,6 +75,21 @@ module.exports = function (grunt) {
       }
     },
 
+  cachebreaker: {
+      js: {
+          options: {
+              match: ['combined.js'],
+              replacement: 'md5',
+              src: {
+                  path: 'dist/combined.js'
+              }
+          },
+          files: {
+              src: ['dist/index.html']
+          }
+      }
+  },
+
     usemin: {
       html: ['dist/index.html']
     }
@@ -84,6 +100,6 @@ module.exports = function (grunt) {
     'clean',
     'copy',
     'concat',
-    'usemin'
+    'usemin', 'cachebreaker'
   ]);
 };
