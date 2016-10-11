@@ -4,9 +4,6 @@
   "description": "A user interface for reading data from Kafka Topics",
   "readme": "README.md",
   "main": "Gruntfile.js",
-  "dependencies": {
-    "grunt-cache-breaker": "^2.0.1"
-  },
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-bower-task": "^0.4.0",
@@ -15,7 +12,8 @@
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-usemin": "^3.1.1",
-    "jit-grunt": "^0.10.0"
+    "jit-grunt": "^0.10.0",
+    "grunt-cache-breaker": "^2.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
