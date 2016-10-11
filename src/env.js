@@ -1,5 +1,5 @@
 // Replace with the URL where a Kafka REST service is listening
-var KAFKA_REST = "https://kafka-rest-proxy.demo.landoop.com";
+var KAFKA_REST = "http://localhost:8082";// "https://kafka-rest-proxy.demo.landoop.com"
 
 // UI to your `schema-registry-ui` app
 var UI_SCHEMA_REGISTRY = "http://localhost:8081"; // Leave empty to disable integration - // http://schema-registry-ui.landoop.com
