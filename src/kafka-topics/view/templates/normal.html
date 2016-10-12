@@ -18,11 +18,17 @@
             <td valign="top" class="td-center">{{t.partition}}</td>
 
             <!--Key-->
-            <td ng-if="t.key != ''"  valign="top" style="min-width:250px;"><json-tree object="t.key" root-name="'Key'"></json-tree></td>
+            <td ng-if="t.key != ''"  valign="top" style="min-width:250px;">
+              <json-tree ng-show="showTree(t.key)" object="t.key" root-name="'Key'"></json-tree>
+              <div ng-hide="showTree(t.key)">{{t.key}}</div>
+            </td>
             <td ng-if="t.key == ''" valign="top"></td>
 
             <!--Value-->
-            <td ng-if="t.value != ''"  valign="top" style="min-width:250px;"><json-tree object="t.value" root-name="'Value'"></json-tree></td>
+            <td ng-if="t.value != ''"  valign="top" style="min-width:250px;">
+              <json-tree ng-show="showTree(t.value)" object="t.value" root-name="'Value'"></json-tree>
+              <div ng-hide="showTree(t.value)">{{t.value}}</div>
+            </td>
             <td ng-if="t.value == ''" valign="top"></td>
 
           </tr>

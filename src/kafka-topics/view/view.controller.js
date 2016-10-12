@@ -25,7 +25,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
     $scope.onTabChanges = function(currentTabIndex){
         $location.path ("topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
-        $log.info ('selected Tab Index ' + $scope.selectedTabIndex);
     };
 
   $scope.showSpinner = true;
@@ -521,67 +520,65 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     	return toReturn;
     };
 
-//TODO REFACTOR!!!
-    function flattenTable(rows) {
+ function flattenTable(rows) {
 
-        var extraColumnsNumberValue = 1;
-        var extraColumnsNumberKey = 1;
+        var extraColumnsNumberValue = 0;
+        var extraColumnsNumberKey = 0;
         var rowWithMoreColumns;
         $scope.flatRows = [];
-        if (rows.length > 0) { // check if topics exist
+        if (rows.length > 0) {
             angular.forEach(rows, function (row) {
-                  if (row.key == undefined) row.key = ''; //for rendering purposes
-                  if (row.value == undefined) row.value = ''; //for rendering purposes
+                  if (row.key == undefined || row.key == null) row.key = '';
+                  if (row.value == undefined || row.value == null) row.value = '';
 
-                  //1. calculate number of extra columns required
-                  var flatValue = flattenObject(row.value);
-                  var flatKey = flattenObject(row.key);
+                  if(angular.isNumber(row.value) || angular.isString(row.value)) {
+                        extraColumnsNumberValue = 0
+                        extraColumnsNumberKey = 0
+                        $scope.cols = Object.keys(flattenObject(row));
+                        $scope.cols2 = [];
+                        $scope.cols3 = [];
+                  } else {
+                        var flatValue = flattenObject(row.value);
+                        var flatKey = flattenObject(row.key);
+                        var rowExtraColumnsValues = Object.keys(flatValue).length;
+                        var rowExtraColumnsKeys = Object.keys(flatKey).length;
 
-                  var rowExtraColumnsValues = Object.keys(flatValue).length;
-                  var rowExtraColumnsKeys = Object.keys(flatKey).length;
+                        if(extraColumnsNumberValue < rowExtraColumnsValues) {
+                            extraColumnsNumberValue = rowExtraColumnsValues;
+                            rowWithMoreColumns = row;
+                        }
 
-                  if(extraColumnsNumberValue < rowExtraColumnsValues) {
-                    extraColumnsNumberValue = rowExtraColumnsValues;
-                    rowWithMoreColumns = row;
+                        if(extraColumnsNumberKey < rowExtraColumnsKeys) {
+                            extraColumnsNumberKey = rowExtraColumnsKeys;
+                            rowWithMoreColumns = row;
+                        }
+
+                        var newRow = {
+                            "offset" : rowWithMoreColumns.offset,
+                            "partition" : rowWithMoreColumns.partition,
+                            "key" : rowWithMoreColumns.key,
+                            "value" : rowWithMoreColumns.value
+                        }
+
+                        $scope.cols =  Object.keys(flattenObject(newRow));
+                        $scope.cols2 = Object.keys(flattenObject(newRow.value));
+                        $scope.cols3 = Object.keys(flattenObject(newRow.key));
                   }
 
-                  if(extraColumnsNumberKey < rowExtraColumnsKeys) {
-                    extraColumnsNumberKey = rowExtraColumnsKeys;
-                    rowWithMoreColumns = row;
-                  }
-
-                  //2. create array with flat rows for the flat table
                   $scope.flatRows.push(flattenObject(row));
 
                 });
 
-                //3. reorder the columns for the iteration
-                var newRow = {
-                    "offset" : rowWithMoreColumns.offset,
-                    "partition" : rowWithMoreColumns.partition,
-                    "key" : rowWithMoreColumns.key,
-                    "value" : rowWithMoreColumns.value
-                    }
-                $scope.cols =  Object.keys(flattenObject(newRow));
-                $scope.cols2 = Object.keys(flattenObject(newRow.value)); //only the value cols, TODO same for keys?
-                $scope.cols3 = Object.keys(flattenObject(newRow.key)); //only the value cols, TODO same for keys?
                 $scope.extraColsNumValues = extraColumnsNumberValue;
                 $scope.extraColsNumKeys = extraColumnsNumberKey;
 
-        //PAGINATION STUFF
          $scope.paginationItems = 10;
          $scope.showHideAllButtonLabel = 'show ' + rows.length;
-         $scope.showAll = function () {
-            if($scope.paginationItems == 12) {
-               $scope.showHideAllButtonLabel = 'show less';
-               $scope.paginationItems = $scope.flatRows.length;
-            } else {
-               $scope.showHideAllButtonLabel = 'show ' + rows.length;
-               $scope.paginationItems = 12;
-            }
-
-         };
      }
 }
+
+ $scope.showTree = function (keyOrValue) {
+    return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
+ }
 
 });
