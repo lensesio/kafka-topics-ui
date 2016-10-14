@@ -41,6 +41,8 @@ To run it standalone through Docker
                -e "KAFKA_REST_PROXY_URL=http://kafka-rest-proxy-host:port" \
                landoop/kafka-topics-ui
 
+Note that the schema registry is optional. If not provided, topics will attempt to be parsed using Avro, then fall back to JSON, and finally fall back to Binary if both of those fail.
+
 **Config:** `Kafka-Rest-Proxy` CORS is a bit buggy at the latest release, so we will need to
 provide CORS through a proxy (i.e. nginx)
 
