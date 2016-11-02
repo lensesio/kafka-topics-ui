@@ -2,7 +2,6 @@ angularAPP.controller('KafkaTopicsConfigCtrl', function ($scope, $http, $log, Ka
 
   $log.info("Starting kafka-topics controller : config");
 
-  $scope.schemaRegistryURL = UI_SCHEMA_REGISTRY;
   $scope.kafkaRest = KAFKA_REST;
   $scope.brokers = {};
   $scope.connectionFailure = false;

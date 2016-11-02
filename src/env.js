@@ -1,9 +1,6 @@
 // Replace with the URL where a Kafka REST service is listening
 var KAFKA_REST = "http://localhost:8082";// "https://kafka-rest-proxy.demo.landoop.com"
 
-// UI to your `schema-registry-ui` app
-var UI_SCHEMA_REGISTRY = "http://localhost:8081"; // Leave empty to disable integration - // http://schema-registry-ui.landoop.com
-
 var KAFKA_TOPIC_DELETE_COMMAND = "kafka-topics --zookeeper zookeeper-host:2181/confluent --delete --topic";
 
 var KAFKA_REST_ENV = {
