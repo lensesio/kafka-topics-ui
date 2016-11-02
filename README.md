@@ -45,8 +45,8 @@ To run it standalone through Docker:
 CORS support can be a bit buggy, so if you have trouble setting it up, you may need
 to provide CORS headers through a proxy (i.e. nginx).
 
-Note that the schema registry is optional. Topics will attempt to be parsed using Avro,
-then fall back to JSON, and finally fall back to Binary if all above fail.
+**Note:** The schema-registry is optional and topics are attempted to be read using Avro,
+then fall back to JSON, and finally fall back to Binary.
 
 Example for nginx
 
