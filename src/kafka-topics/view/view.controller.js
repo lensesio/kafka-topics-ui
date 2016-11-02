@@ -67,10 +67,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     return ((schema != null) && (schema.length >= 42))
   };
 
-  $scope.getSchemaRegistryUrl = function (subject, version) {
-    return UI_SCHEMA_REGISTRY + "/#/schema/" + subject + "/version/" + version;
-  };
-
   $scope.getData = function (topicName) {
     $log.info("Download requested for " + $scope.aceString.length + " bytes ");
     var json = $scope.aceString;
@@ -164,7 +160,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     var totalRows = 0;
     if ($scope.topicName == "_schemas") {
       totalRows = rows.length;
-      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + totalRows + "</b> registered schemas for the <a href='" + UI_SCHEMA_REGISTRY + "' target='_blank'>schema-registry</a>"
+      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + totalRows + "</b> registered schemas for the schema-registry"
     } else if ($scope.topicName == "connect-configs") {
       totalRows = rows.length;
       $scope.customMessage = "Topic <b>connect-configs</b> holds <b>" + $scope.getConnectors(rows, 'connector-').length + "</b> connector configurations" +
