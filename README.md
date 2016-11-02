@@ -33,16 +33,17 @@ be capable of interacting with topics via other means as well.
 
 ## Running it
 
-To run it standalone through Docker
+To run it standalone through Docker:
 
     docker pull landoop/kafka-topics-ui
     docker run --rm -it -p 8000:8000 \
-               -e "SCHEMAREGISTRY_UI_URL=http://confluent-schema-registry-host:port" \
                -e "KAFKA_REST_PROXY_URL=http://kafka-rest-proxy-host:port" \
+               -e "PROXY=true" \
                landoop/kafka-topics-ui
 
-**Config:** `Kafka-Rest-Proxy` CORS is a bit buggy at the latest release, so we will need to
-provide CORS through a proxy (i.e. nginx)
+**Config:** If you don't use our docker image, keep in mind that `Kafka-REST-Proxy`
+CORS support can be a bit buggy, so if you have trouble setting it up, you may need
+to provide CORS headers through a proxy (i.e. nginx).
 
 Example for nginx
 

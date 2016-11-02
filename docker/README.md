@@ -15,16 +15,6 @@ URL:
 
 Visit http://localhost:8000 to see the UI.
 
-If you also use our
-[Schema Registry UI](https://github.com/Landoop/schema-registry-ui), you may
-link directly to it from Kafka Topics UI, using the `SCHEMAREGISTRY_UI_URL`
-variable:
-
-    docker run --rm -it -p 8000:8000 \
-               -e "SCHEMAREGISTRY_UI_URL=http://schema-registry-ui.url" \
-               -e "KAFKA_REST_PROXY_URL=http://kafka.rest.proxy.url" \
-               landoop/kafka-topics-ui
-
 ### Proxying Kafka REST Proxy
 
 If you have CORS issues or want to pass through firewalls and maybe share your
