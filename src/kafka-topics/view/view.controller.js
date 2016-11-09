@@ -530,7 +530,13 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                   if(angular.isNumber(row.value) || angular.isString(row.value)) {
                         extraColumnsNumberValue = 0
                         extraColumnsNumberKey = 0
-                        $scope.cols = Object.keys(flattenObject(row));
+                        var newRow = {
+                            "offset" : row.offset,
+                            "partition" : row.partition,
+                            "key" : row.key,
+                            "value" : row.value
+                        }
+                        $scope.cols = Object.keys(flattenObject(newRow));
                         $scope.cols2 = [];
                         $scope.cols3 = [];
                   } else {
