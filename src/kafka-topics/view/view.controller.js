@@ -107,7 +107,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   $scope.hasExtraConfig = function (topicName) {
-    var extra = KafkaRestProxyFactory.hasExtraConfig(topicName);
+    var topicDetails = KafkaRestProxyFactory.isNormalTopic(topicName) ? $rootScope.topicDetails : $rootScope.controlTopicDetails;
+    var extra = KafkaRestProxyFactory.hasExtraConfig(topicName, topicDetails);
     if (extra != '') {
       // $log.debug("Topic details " + topicName + " HAS EXTRA CONFIG " + extra);
     }
@@ -115,7 +116,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   $scope.getExtraConfig = function (topicName) {
-    var extra = KafkaRestProxyFactory.hasExtraConfig(topicName);
+    var topicDetails = KafkaRestProxyFactory.isNormalTopic(topicName) ? $rootScope.topicDetails : $rootScope.controlTopicDetails;
+    var extra = KafkaRestProxyFactory.hasExtraConfig(topicName, topicDetails);
     return JSON.parse(extra);
   };
 
