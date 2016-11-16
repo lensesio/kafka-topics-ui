@@ -533,19 +533,12 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
 
     hasExtraConfig: function (topicName) {
       var extraTopicConfig = {};
-      if(isNormalTopic(topicName)) {
-      angular.forEach($rootScope.topicDetails, function (detail) {
+      var topicDetails = isNormalTopic(topicName) ? $rootScope.topicDetails : $rootScope.controlTopicDetails;
+      angular.forEach(topicDetails, function (detail) {
         if (detail.name === topicName) {
           extraTopicConfig = detail.configs;
         }
       });
-      } else {
-      angular.forEach($rootScope.controlTopicDetails, function (detail) {
-        if (detail.name === topicName) {
-          extraTopicConfig = detail.configs;
-        }
-      });
-      }
 
       return (JSON.stringify(extraTopicConfig).replace("{}", ""));
     },
