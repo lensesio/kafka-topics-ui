@@ -139,9 +139,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     return configDescription;
   };
 
-   $rootScope.showMoreDesc = false;
-   $rootScope.ToggleMoreDesc = function () {
-      $rootScope.showMoreDesc = !$rootScope.showMoreDesc;
+   $scope.showMoreDesc = [];
+   $scope.ToggleMoreDesc = function (index) {
+      $scope.showMoreDesc[index] = !$scope.showMoreDesc[index];
    };
 
   $scope.streamInRealTime = function () {

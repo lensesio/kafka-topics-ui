@@ -23,12 +23,12 @@
               <span>{{getDefautConfigValue(key)}}</span>
             </td>
             <td style="max-width:500px;" ng-title="{{getConfigDescription(key)}}" class=" td-left">
-              <span ng-hide="showMoreDesc">{{ getConfigDescription(key) | limitTo:100 }}...</span>
-              <span ng-show="showMoreDesc">{{ getConfigDescription(key)}}</span>
+              <span ng-hide="showMoreDesc[$index] || {{getConfigDescription(key).length}} < 100">{{ getConfigDescription(key) | limitTo:100 }}...</span>
+              <span ng-show="showMoreDesc[$index]">{{ getConfigDescription(key)}}</span>
 
-              <span class="toggleconfig" ng-click="ToggleMoreDesc()">
-                <span ng-show="showMoreDesc" aria-hidden="true">Show Less</span>
-                <span ng-hide="showMoreDesc" aria-hidden="true">Show More</span>
+              <span class="toggleconfig" ng-click="ToggleMoreDesc($index)">
+                <span ng-show="showMoreDesc[$index]" aria-hidden="true">Show Less</span>
+                <span ng-hide="showMoreDesc[$index] || {{getConfigDescription(key).length}} < 100" aria-hidden="true">Show More</span>
                 </span>
             </td>
           </tr>
