@@ -71,7 +71,8 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
   $scope.displayingControlTopics = $scope.isNormalTopic;
 
   $scope.hasExtraConfig = function (topicName) {
-    return KafkaRestProxyFactory.hasExtraConfig(topicName);
+    var topicDetails = KafkaRestProxyFactory.isNormalTopic(topicName) ? $rootScope.topicDetails : $rootScope.controlTopicDetails;
+    return KafkaRestProxyFactory.hasExtraConfig(topicName, topicDetails);
   };
 
   $scope.getDataType = function (topicName) {

@@ -23,17 +23,16 @@
 
     <!-- Spinner -->
     <div us-spinner="{radius:10, width:3, length: 5}" ng-show="showSpinner" style="height:100%"></div>
-    <div ng-show="topicIsEmpty">
+    <div style="margin:0 20px" ng-show="topicIsEmpty">
       <br>
-      <p>This topic is empty. No data have been passed through the past 7 days.<br>
+      <p>This topic is empty. <br>
       </p>
       <p ng-hide="isControlTopic(topicName)">
-        You could delete this topic with:<br>
+          In order to delete the topic execute the following:<br>
       <pre>{{KAFKA_TOPIC_DELETE_COMMAND}} {{topicName}}</pre>
       </p>
     </div>
-
-    <div ng-hide="topicIsEmpty">
+    <div ng-hide=" hasExtraConfig(topicName) == '' && topicIsEmpty">
     <md-input-container  class="md-block" ng-hide="topicIsEmpty || topicType == 'binary' || selectedTabNnumber > 1 " style="margin-bottom:-25px;">
       <label>Filter</label>
       <input ng-model="searchMessages">
@@ -42,15 +41,15 @@
     </md-input-container>
     <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
 
-        <md-tab   label="Topic" ng-click="onTabChanges('topic')"   ng-if="topicType != 'binary'">
+        <md-tab   label="Topic" ng-click="onTabChanges('topic')"   ng-if="topicType != 'binary' && !topicIsEmpty ">
             <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
         </md-tab>
 
-        <md-tab   label="Table" ng-click="onTabChanges('table')" ng-if="topicType != 'binary'">
+        <md-tab   label="Table" ng-click="onTabChanges('table')" ng-if="topicType != 'binary' && !topicIsEmpty">
             <div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>
         </md-tab>
 
-        <md-tab label="Raw Data" ng-click="onTabChanges('rawdata')">
+        <md-tab label="Raw Data" ng-click="onTabChanges('rawdata')" ng-if=" !topicIsEmpty">
             <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
         </md-tab>
 

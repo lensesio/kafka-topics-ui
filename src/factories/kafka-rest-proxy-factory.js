@@ -531,13 +531,14 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
       return controlTopics;
     },
 
-    hasExtraConfig: function (topicName) {
+    hasExtraConfig: function (topicName, topicDetails) {
       var extraTopicConfig = {};
-      angular.forEach($rootScope.topicDetails, function (detail) {
+      angular.forEach(topicDetails, function (detail) {
         if (detail.name === topicName) {
           extraTopicConfig = detail.configs;
         }
       });
+
       return (JSON.stringify(extraTopicConfig).replace("{}", ""));
     },
 
