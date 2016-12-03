@@ -4,32 +4,10 @@
 [![docker](https://img.shields.io/docker/pulls/landoop/kafka-topics-ui.svg?style=flat)](https://hub.docker.com/r/landoop/kafka-topics-ui/)
 [![Join the chat at https://gitter.im/Landoop/support](https://img.shields.io/gitter/room/nwjs/nw.js.svg?maxAge=2592000)](https://gitter.im/Landoop/support?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**Kafka UI** for Kafka data. Can browse any topic and help you understand what's happening on your cluster
+Browse Kafka topics and understand what's happening on your cluster. Find topics / view topic metadata / browse topic data (kafka messages) / view topic configuration / download data. This is a web tool for the [confluentinc/kafka-rest proxy](https://github.com/confluentinc/kafka-rest).
 
-> [Demo of kafka-topics](https://kafka-topics-ui.landoop.com)
-
-**Capabilities** find topics / view topic metadata / browse topic data (kafka messages) / view topic configuration / download data
-
-Currently uses the [confluentinc/kafka-rest proxy](https://github.com/confluentinc/kafka-rest), but future versions will
-be capable of interacting with topics via other means as well.
-
-### Other interesting projects
-
-|                                                                       | Description                                                                  |
-|-----------------------------------------------------------------------| -----------------------------------------------------------------------------|
-| [schema-registry-ui](https://github.com/Landoop/schema-registry-ui)   | View, create, evolve and manage your **Avro Schemas** on your Kafka cluster  | 
-| [Landoop/fast-data-dev](https://github.com/Landoop/fast-data-dev)     | Docker for Kafka developers (schema-registry,kafka-rest,zoo,brokers,landoop) |
-| [Landoop-On-Cloudera](https://github.com/Landoop/Landoop-On-Cloudera) | Install and manage your kafka streaming-platform on you Cloudera CDH cluster |
-
-## Preview
-
-<a href="http://kafka-topics-ui.landoop.com" target="_blank" width="50%">
-    <img src="https://raw.githubusercontent.com/Landoop/kafka-topics-ui/gh-pages/v0.7.1-topics-1.png">
-</a>
-
-<a href="http://kafka-topics-ui.landoop.com" target="_blank" width="50%">
-    <img src="https://raw.githubusercontent.com/Landoop/kafka-topics-ui/gh-pages/v0.7.1-topics-2.png">
-</a>
+## Live Demo
+[kafka-topics-ui.landoop.com](https://kafka-topics-ui.landoop.com)
 
 ## Running it
 
@@ -92,6 +70,20 @@ If you use `nginx` to serve this ui, let angular manage routing with
         root /folder-with-kafka-topics-ui/;
     }
 
+## Changelog
+[Here](https://github.com/Landoop/schema-registry-ui/wiki/Changelog)
+
 ## License
 
-The project is licensed under the [BSL](http://landoop.com/bsl) license
+The project is licensed under the [BSL](http://www.landoop.com/bsl) license.
+
+## Relevant Projects
+
+* [kafka-connect-ui](https://github.com/Landoop/kafka-connect-ui), Set up and manage connectors for multiple connect clusters 
+* [kafka-topics-ui](https://github.com/Landoop/kafka-topics-ui), UI to browse Kafka data and work with Kafka Topics                   
+* [fast-data-dev](https://github.com/Landoop/fast-data-dev), Docker for Kafka developers (schema-registry,kafka-rest,zoo,brokers,landoop) 
+* [Landoop-On-Cloudera](https://github.com/Landoop/Landoop-On-Cloudera), Install and manage your kafka streaming-platform on you Cloudera CDH cluster
+
+
+
+<img src="http://www.landoop.com/images/landoop-dark.svg" width="13"> www.landoop.com
