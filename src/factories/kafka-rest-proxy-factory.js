@@ -538,8 +538,10 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
           extraTopicConfig = detail.configs;
         }
       });
-
+      if(Object.keys(extraTopicConfig).length > 1)
       return (JSON.stringify(extraTopicConfig).replace("{}", ""));
+      else
+      return "";
     },
 
     /**
