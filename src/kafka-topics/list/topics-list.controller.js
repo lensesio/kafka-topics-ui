@@ -112,7 +112,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
       }
     });
 
-    return doLalbels(counts.replications, 'Replication') + ' x ' + doLalbels(counts.partitions, 'Partition');
+    return doLalbels(counts.replications, 'Replication') + ' \u2A2F ' + doLalbels(counts.partitions, 'Partition');
   }
 
   function doLalbels(count, name) {
