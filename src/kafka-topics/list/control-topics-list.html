@@ -20,17 +20,14 @@
                 ng-class="{ 'selectedListItem': topic == topicName }"
 
         >
-          <div ng-show="hasExtraConfig(topic) != ''">
-            <i class="fa fa-asterisk" aria-hidden="true" style="color:red; padding-right:15px; font-size:10px;"></i>
-          </div>
-          <div ng-show="hasExtraConfig(topic) == ''">
-            <i class="fa fa-asterisk" aria-hidden="true" style="color:white; padding-right:15px; font-size:10px;"></i>
-          </div>
 
           <div class="md-list-item-text" layout="column">
             <h4>{{shortenControlCenterName(topic)}}</h4>
             <p style="font-size:12px;">
-              {{getPartitionMessage(topic)}}
+              {{getPartitionMessage(topic)}},
+              <span ng-show="hasExtraConfig(topic) > 0">
+              {{hasExtraConfig(topic)}} config changed
+              </span>
             </p>
           </div>
           <div style="display:block;background-color:rgba(44, 152, 240, 0.3);border-radius: 5px; width:60px; color:#333; text-align:center; font-size:12px">

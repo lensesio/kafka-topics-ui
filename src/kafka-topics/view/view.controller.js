@@ -6,6 +6,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   $scope.topicCategoryUrl = $routeParams.topicCategoryUrl;
   $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
+  $scope.$on('$routeChangeSuccess', function() {
+    $scope.cluster = env.getSelectedCluster().NAME;//$routeParams.cluster;
+  })
 
     if ($routeParams.selectedTabIndex == "topic") {
       $scope.selectedTabNnumber=0;
@@ -24,7 +27,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     }
 
     $scope.onTabChanges = function(currentTabIndex){
-        $location.path ("topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
+        $location.path ("cluster/"+ $scope.cluster + "/topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
     };
 
   $scope.showSpinner = true;

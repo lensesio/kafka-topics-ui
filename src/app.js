@@ -23,7 +23,6 @@ angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $lo
      $rootScope.clusters = env.getClusters();
      $scope.cluster = env.getSelectedCluster();
      $scope.color = $scope.cluster.COLOR;
-     $route.reload;
   });
 
   $scope.updateEndPoint = function(cluster) {

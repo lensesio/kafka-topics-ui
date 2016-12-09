@@ -39,7 +39,7 @@
 </header>
 
 <!--if env.js is not properly defined-->
-<div layout="row" flex="100" ng-show="missingEnvJS">
+<div layout="row" flex="100" ng-show="missingEnvJS" ng-cloak>
   <md-card>
     <md-card-content>
       <h3 style="font-weight:300; color:red"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Missing Cluster Configuration</h3>
