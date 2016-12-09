@@ -4,6 +4,19 @@ html, body {
     padding: 0;
     background-color: #F5F5F5;
 }
+.selectCluster {margin: 7px 10px;text-indent:15px;padding: 0;line-height: 1.2;}
+.selectCluster md-select {background:white;}
+.selectCluster md-select md-option,
+.selectCluster md-select md-select-value{color:#333}
+.selectClusterLabel{color: rgb(204, 204, 204);font-size: 12px;line-height: 44px;padding-top: 0px;margin: 0;}
+
+
+md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
+    margin-right: 25px;
+    background-color: white;
+    color: black;
+    text-align: center;
+}
 
 .ace_editor {
     height: 460px;
@@ -178,13 +191,7 @@ md-card {
     margin: 0;
 }
 
-md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
-    margin-top: 70px;
-    margin-right: 25px;
-    background-color: white;
-    color: black;
-    text-align: center;
-}
+
 
 md-chips.md-default-theme .md-chips, md-chips .md-chips {
     box-shadow: none;
@@ -319,7 +326,7 @@ table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
     max-width: 70%;
     height: 1.5em;
     opacity: .7;
-
+}
 
 .md-tabs
 {

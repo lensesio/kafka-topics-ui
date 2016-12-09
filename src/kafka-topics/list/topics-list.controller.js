@@ -1,4 +1,4 @@
-angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $location, $routeParams, $mdToast, $log, KafkaRestProxyFactory, toastFactory) {
+angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $location, $routeParams, $mdToast, $log, KafkaRestProxyFactory, toastFactory, env) {
 
   $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
@@ -10,8 +10,11 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
       }
     },true);
 
+$scope.$on('$routeChangeSuccess', function() {
+  $scope.cluster = env.getSelectedCluster().NAME;//$routeParams.cluster;
   KafkaRestProxyFactory.loadSchemas();
-
+  $scope.topics = [];
+  $scope.controlTopics= [];
   /**
    * At start-up get all topic-information
    */
@@ -55,7 +58,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
     }, function (update) {
       $log.info('Got notification: ' + update);
     });
-
+  })
   /**
    * View functions
    */
@@ -89,7 +92,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
     } else {
       $scope.CategoryTopicUrls = 'n';
     }
-    $location.path("topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
+    $location.path("cluster/"+ $scope.cluster +"/topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
   }
 
   function doCountsForTopic(topicName) {

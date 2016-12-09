@@ -18,19 +18,75 @@
   <link rel="shortcut icon" href="src/assets/icons/favicon.png">
 </head>
 
-<body ng-app="angularAPP">
+<body ng-app="angularAPP" ng-cloak>
 
 <!--Header Starts here-->
-<header class="header" ng-controller="HeaderCtrl">
+<header class="header" ng-controller="HeaderCtrl" style="background:{{color}}">
   <div layout="row" layout-xs="column">
     <div flex>
-      <h5><a ng-click="showLeftList()" href="/#/" style="text-decoration:none; padding-left:15px;">KAFKA TOPICS</a></h5>
+      <h5><a ng-click="showLeftList()" href="{{cluster ? '#/cluster/'+cluster.NAME : '#/'}}" style="text-decoration:none; padding-left:15px;">KAFKA TOPICS</a></h5>
     </div>
+    <label ng-show="!missingEnvJS && clusters.length > 1" class="selectClusterLabel"><b>SELECT CLUSTER :</b></label>
+    <md-input-container ng-show="!missingEnvJS && clusters.length > 1" class="selectCluster">
+      <md-select ng-model="connectEndPoint">
+        <md-option ng-repeat="connectEndPoint in clusters track by $index"
+                   ng-click="updateEndPoint(connectEndPoint.NAME)"
+                   value="{{connectEndPoint.NAME}}" ng-selected="{{cluster.NAME == connectEndPoint.NAME}}"
+        >{{connectEndPoint.NAME}}</md-option>
+      </md-select>
+    </md-input-container>
   </div>
 </header>
 
+<!--if env.js is not properly defined-->
+<div layout="row" flex="100" ng-show="missingEnvJS">
+  <md-card>
+    <md-card-content>
+      <h3 style="font-weight:300; color:red"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Missing Cluster Configuration</h3>
+      <br>
+      In order to configure <code>kafka-topics-ui</code> you need to add <code>env.js</code> file in the root directory of the app.
+      <br>
+      Example <b>env.js</b> structure:
+      <pre>
+        <code>
+var clusters =
+[
+  {
+  NAME:"prod",
+  KAFKA_REST : "prod.url.com",// "The Kafka Rest url"
+  KAFKA_REST_ENV : {
+    // Sets the defaul maximum amount of bytes to fetch from each topic
+    MAX_BYTES: "?max_bytes=50000",
+    // Pre-configure the Data Type on particular well-known topics
+    JSON_TOPICS: ["_schemas"],
+    BINARY_TOPICS: ["connect-configs", "connect-offsets", "__consumer_offsets", "_confluent-monitoring", "_confluent-controlcenter", "__confluent.support.metr"],
+    // If a topic starts with this particular prefix - it's a control topic
+    CONTROL_TOPICS: ["_confluent-controlcenter", "connect-configs", "connect-offsets", "__confluent", "__consumer_offsets", "_confluent-monitoring", "connect-status", "_schemas"],
+    COLOR: "#141414" // Optional
+    }
+  },
+  {
+  NAME:"dev",
+  KAFKA_REST : "dev.url.com", "The Kafka Rest url"
+  KAFKA_REST_ENV : {
+    // Sets the defaul maximum amount of bytes to fetch from each topic
+    MAX_BYTES: "?max_bytes=50000",
+    // Pre-configure the Data Type on particular well-known topics
+    JSON_TOPICS: ["_schemas"],
+    BINARY_TOPICS: ["connect-configs", "connect-offsets", "__consumer_offsets", "_confluent-monitoring", "_confluent-controlcenter", "__confluent.support.metr"],
+    // If a topic starts with this particular prefix - it's a control topic
+    CONTROL_TOPICS: ["_confluent-controlcenter", "connect-configs", "connect-offsets", "__confluent", "__consumer_offsets", "_confluent-monitoring", "connect-status", "_schemas"],
+    COLOR: "red" // Optional
+    }
+  }
+]
+        </code>
+      </pre>
+    </md-card-content>
+  </md-card>
+</div>
 <!--Main Content Starts here-->
-<div layout="row" layout-margin layout-sm="column" layout-xs="column" ng-controller="KafkaTopicsConfigCtrl">
+<div layout="row" layout-margin layout-sm="column" layout-xs="column" ng-controller="KafkaTopicsConfigCtrl" ng-hide="missingEnvJS">
   <div flex-gt-sm="33" ng-show="showList">
     <div ng-controller="KafkaTopicsListCtrl" ng-include="'src/kafka-topics/list/left-list.html'"></div>
     <br>
@@ -80,6 +136,7 @@
 <script src="src/kafka-topics/config/config.controller.js"></script>
 <script src="src/kafka-topics/list/topics-list.controller.js"></script>
 <script src="src/factories/kafka-rest-proxy-factory.js"></script>
+<script src="src/factories/env.factory.js"></script>
 <script src="src/factories/utils-factory.js"></script>
 <script src="src/factories/toast-factory.js"></script>
 <!-- endbuild -->

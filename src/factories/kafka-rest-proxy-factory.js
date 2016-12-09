@@ -4,7 +4,7 @@
  *
  * @author antonios@landoop.com
  */
-angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $base64, $q, Oboe, toastFactory) {
+angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $base64, $q, Oboe, toastFactory, env) {
 
   // Topics
   var schemas;
@@ -15,7 +15,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    */
   function getTopicNames() {
 
-    var url = KAFKA_REST + '/topics';
+    var url = env.KAFKA_REST() + '/topics';
     $log.debug('  curl -X GET ' + url);
     var start = new Date().getTime();
 
@@ -42,7 +42,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    */
   function getTopicMetadata(topicName) {
 
-    var url = KAFKA_REST + '/topics/' + topicName;
+    var url = env.KAFKA_REST() + '/topics/' + topicName;
     $log.debug('  curl -X GET ' + url);
     var start = new Date().getTime();
 
@@ -98,7 +98,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    */
   function getPartitions(topicName) {
 
-    var url = KAFKA_REST + '/topics/' + topicName + '/partitions';
+    var url = env.KAFKA_REST() + '/topics/' + topicName + '/partitions';
     $log.debug('  curl -X GET ' + url);
     var start = new Date().getTime();
 
@@ -127,7 +127,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    */
   function getPartitionMetadata(topicName, partitionID) {
 
-    var url = KAFKA_REST + '/topics/' + topicName + '/partitions/' + partitionID;
+    var url = env.KAFKA_REST() + '/topics/' + topicName + '/partitions/' + partitionID;
     $log.debug('  curl -X GET ' + url);
     var start = new Date().getTime();
 
@@ -156,7 +156,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    */
   function consumeMessagesFromPartition(topicName, partitionID, offset, count) {
 
-    var url = KAFKA_REST + '/topics/' + topicName + '/partitions/' + partitionID +
+    var url = env.KAFKA_REST() + '/topics/' + topicName + '/partitions/' + partitionID +
       '/messages?offset=' + offset + '&count=' + count; // offset and count (int)
 
     // PENDING IMPLEMENTATION ..
@@ -169,7 +169,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    */
   function produceMessagesToPartition(topicName, partitionID, offset, count) {
 
-    var url = KAFKA_REST + '/topics/' + topicName + '/partitions/' + partitionID;
+    var url = env.KAFKA_REST() + '/topics/' + topicName + '/partitions/' + partitionID;
 
     // POST
     // PENDING IMPLEMENTATION ..
@@ -185,7 +185,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    */
   function createNewConsumer(consumerGroup, consumerName, format, autoOffsetReset, enableAutoCommit) {
 
-    var url = KAFKA_REST + '/consumers/' + consumerName;
+    var url = env.KAFKA_REST() + '/consumers/' + consumerName;
     $log.info("Creating Kafka Rest consumer for " + format + " data");
 
     $rootScope.allCurlCommands = "";
@@ -239,7 +239,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    */
   function commitOffsetForConsumer(consumerName, instance) {
 
-    var url = KAFKA_REST + '/consumers/' + consumerName + '/instances/' + instance + '/offsets';
+    var url = env.KAFKA_REST() + '/consumers/' + consumerName + '/instances/' + instance + '/offsets';
     var postCommitOffsets = {
       method: 'POST',
       url: url,
@@ -274,7 +274,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    */
   function deleteConsumerInstance(consumerName) {
 
-    var url = KAFKA_REST + '/consumers/' + consumerName + '/instances/instance';
+    var url = env.KAFKA_REST() + '/consumers/' + consumerName + '/instances/instance';
     var curlDeleteConsumer = '  curl -X DELETE ' + url;
     $log.debug(curlDeleteConsumer);
     var start = new Date().getTime();
@@ -305,7 +305,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
   function consumeMessagesFromTopic(consumerName, instanceName, topicName, format) {
 
     // instanceName is usually hard-code to 'instance'
-    var url = KAFKA_REST + '/consumers/' + consumerName + '/instances/' + instanceName + '/topics/' + topicName + KAFKA_REST_ENV.MAX_BYTES;
+    var url = env.KAFKA_REST() + '/consumers/' + consumerName + '/instances/' + instanceName + '/topics/' + topicName + env.KAFKA_REST_ENV().MAX_BYTES;
     if (['avro', 'json', 'binary'].indexOf(format) < 0) {
       $log.error("Unsupported format [" + format + "]");
     }
@@ -390,7 +390,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
    */
   function getBrokers() {
 
-    var url = KAFKA_REST + '/brokers';
+    var url = env.KAFKA_REST() + '/brokers';
     $log.debug("  curl -X GET " + url);
     var start = new Date().getTime();
 
@@ -418,7 +418,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
 
   function isControlTopic(topicName) {
     var isControlTopic = false;
-    angular.forEach(KAFKA_REST_ENV.CONTROL_TOPICS, function (controlTopicPrefix) {
+    angular.forEach(env.KAFKA_REST_ENV().CONTROL_TOPICS, function (controlTopicPrefix) {
       if (topicName.startsWith(controlTopicPrefix, 0))
         isControlTopic = true;
     });
@@ -580,9 +580,9 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     getDataType: function (topicName) {
       var dataType = "..";
       // Check if we know the topic data type a priory
-      if (KAFKA_REST_ENV.JSON_TOPICS.indexOf(topicName) > -1) {
+      if (env.KAFKA_REST_ENV().JSON_TOPICS.indexOf(topicName) > -1) {
         dataType = "json";
-      } else if (KAFKA_REST_ENV.BINARY_TOPICS.indexOf(topicName.substring(0, 24)) > -1) {
+      } else if (env.KAFKA_REST_ENV().BINARY_TOPICS.indexOf(topicName.substring(0, 24)) > -1) {
         dataType = "binary";
       } else {
         // If topicDetails are not available wait

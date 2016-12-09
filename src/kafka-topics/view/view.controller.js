@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, env) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
@@ -28,7 +28,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     };
 
   $scope.showSpinner = true;
-  $scope.KAFKA_TOPIC_DELETE_COMMAND = KAFKA_TOPIC_DELETE_COMMAND;
+  $scope.KAFKA_TOPIC_DELETE_COMMAND = env.KAFKA_TOPIC_DELETE_COMMAND;
 
   /************* UI-GRID **************/
   $scope.gridOptions = {
@@ -123,7 +123,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   $scope.getDefautConfigValue = function (configKey) {
     var defaultConfigValue = "";
-    angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
+    angular.forEach(env.KAFKA_DEFAULTS, function (kafkaDefault) {
       if (kafkaDefault.property == configKey) {
         defaultConfigValue = kafkaDefault.default;
       }
@@ -133,7 +133,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   $scope.getConfigDescription = function (configKey) {
     var configDescription = "";
-    angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
+    angular.forEach(env.KAFKA_DEFAULTS, function (kafkaDefault) {
       if (kafkaDefault.property == configKey) {
         configDescription = kafkaDefault.description;
       }
@@ -402,10 +402,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   ///////////////////////////////////////////
   $mdToast.hide();
-  $scope.kafkaDefaults = KAFKA_DEFAULTS; //TODO
+  $scope.kafkaDefaults = env.KAFKA_DEFAULTS; //TODO
   $scope.topicsOn = true;
   $scope.zookeeperInfo = "zookeeper.landoop.com.info.goes.here";
-  $scope.brokers = KAFKA_REST_ENV.BROKERS;
+  $scope.brokers = env.KAFKA_REST_ENV().BROKERS;
 
   $scope.changeView = function () {
     $scope.topicsOn = !$scope.topicsOn;
@@ -450,7 +450,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   $scope.getKafkaDefaultValue = function (key) {
     var defaultValue;
-    angular.forEach(KAFKA_DEFAULTS, function (item) {
+    angular.forEach(env.KAFKA_DEFAULTS, function (item) {
       if (item.property == key) {
         defaultValue = item.default;
       }
@@ -460,7 +460,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   $scope.getKafkaDefaultDescription = function (key) {
     var defaultValue;
-    angular.forEach(KAFKA_DEFAULTS, function (item) {
+    angular.forEach(env.KAFKA_DEFAULTS, function (item) {
       if (item.property == key) {
         defaultValue = item.description;
       }
