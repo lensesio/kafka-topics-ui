@@ -31,5 +31,5 @@ var clusters =
     },
     COLOR: "red" // Optional
   }
-]
+];
 
