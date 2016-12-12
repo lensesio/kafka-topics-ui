@@ -37,13 +37,13 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
 
       $scope.topicsPerPage = 7;
 
-      $scope.controlTopicIndex = $scope.controlTopics.indexOf($rootScope.topicName );
+      $scope.controlTopicIndex = $scope.controlTopics.indexOf($rootScope.topicName) + 1;
       $scope.controlTopicPage = Math.ceil($scope.controlTopicIndex / $scope.topicsPerPage);
       if ($scope.controlTopicPage < 1) {
         $scope.controlTopicPage = 1
       }
 
-      $scope.normalTopicIndex = $scope.topics.indexOf($rootScope.topicName );
+      $scope.normalTopicIndex = $scope.topics.indexOf($rootScope.topicName) +1;
       $scope.normalTopicPage = Math.ceil($scope.normalTopicIndex / $scope.topicsPerPage);
       if ($scope.normalTopicPage < 1) {
         $scope.normalTopicPage = 1
