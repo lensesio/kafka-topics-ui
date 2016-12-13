@@ -50,7 +50,7 @@ is an excellent docker for developers
 * You need to download dependencies with `bower`. Find out more [here](http://bower.io)
 * You need a `web server` to serve the app.
 * By default `kafka-topics-ui` points to some default locations like `http://localhost:8081`
-  To point it to the correct backend servers, update `src/env.js`
+  To point it to the correct backend servers, update `env.js`
 
 ### Steps
 
