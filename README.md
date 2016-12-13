@@ -71,7 +71,7 @@ If you use `nginx` to serve this ui, let angular manage routing with
     }
 
 ## Changelog
-[Here](https://github.com/Landoop/schema-registry-ui/wiki/Changelog)
+[Here](https://github.com/Landoop/kafka-topics-ui/wiki/Changelog)
 
 ## License
 
