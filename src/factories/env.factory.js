@@ -11,9 +11,6 @@ angularAPP.factory('env', function ($rootScope) {
     getClusters : function() { return clusters} ,
     KAFKA_REST : function () { return selectedCluster.KAFKA_REST; },
     MAX_BYTES : function () { return selectedCluster.MAX_BYTES; },
-    JSON_TOPICS : function () { return selectedCluster.JSON_TOPICS; },
-    BINARY_TOPICS : function () { return selectedCluster.BINARY_TOPICS; },
-    CONTROL_TOPICS : function () { return selectedCluster.CONTROL_TOPICS; },
     KAFKA_TOPIC_DELETE_COMMAND : "kafka-topics --zookeeper zookeeper-host:2181/confluent --delete --topic"
 
   }

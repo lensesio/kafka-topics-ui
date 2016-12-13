@@ -418,7 +418,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
 
   function isControlTopic(topicName) {
     var isControlTopic = false;
-    angular.forEach(env.CONTROL_TOPICS(), function (controlTopicPrefix) {
+    angular.forEach(TOPIC_CONFIG.CONTROL_TOPICS, function (controlTopicPrefix) {
       if (topicName.startsWith(controlTopicPrefix, 0))
         isControlTopic = true;
     });
@@ -580,9 +580,9 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     getDataType: function (topicName) {
       var dataType = "...";
       // Check if we know the topic data type a priory
-      if (env.JSON_TOPICS() && env.JSON_TOPICS().indexOf(topicName) > -1) {
+      if (TOPIC_CONFIG.JSON_TOPICS && TOPIC_CONFIG.JSON_TOPICS.indexOf(topicName) > -1) {
         dataType = "json";
-      } else if (env.BINARY_TOPICS() && env.BINARY_TOPICS().indexOf(topicName.substring(0, 24)) > -1) {
+      } else if (TOPIC_CONFIG.BINARY_TOPICS && TOPIC_CONFIG.BINARY_TOPICS.indexOf(topicName.substring(0, 24)) > -1) {
         dataType = "binary";
       } else {
         // If topicDetails are not available wait

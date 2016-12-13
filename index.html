@@ -56,11 +56,6 @@ var clusters =
   KAFKA_REST : "prod.url.com",// "The Kafka Rest url"
   // Sets the defaul maximum amount of bytes to fetch from each topic
   MAX_BYTES: "?max_bytes=50000",
-  // Pre-configure the Data Type on particular well-known topics
-  JSON_TOPICS: ["_schemas"],
-  BINARY_TOPICS: ["connect-configs", "connect-offsets", "__consumer_offsets", "_confluent-monitoring", "_confluent-controlcenter", "__confluent.support.metr"],
-  // If a topic starts with this particular prefix - it's a control topic
-  CONTROL_TOPICS: ["_confluent-controlcenter", "connect-configs", "connect-offsets", "__confluent", "__consumer_offsets", "_confluent-monitoring", "connect-status", "_schemas"],
   COLOR: "#141414" // Optional
   },
   {
@@ -68,11 +63,7 @@ var clusters =
   KAFKA_REST : "dev.url.com", "The Kafka Rest url"
   // Sets the defaul maximum amount of bytes to fetch from each topic
   MAX_BYTES: "?max_bytes=50000",
-  // Pre-configure the Data Type on particular well-known topics
-  JSON_TOPICS: ["_schemas"],
-  BINARY_TOPICS: ["connect-configs", "connect-offsets", "__consumer_offsets", "_confluent-monitoring", "_confluent-controlcenter", "__confluent.support.metr"],
-  // If a topic starts with this particular prefix - it's a control topic
-  CONTROL_TOPICS: ["_confluent-controlcenter", "connect-configs", "connect-offsets", "__confluent", "__consumer_offsets", "_confluent-monitoring", "connect-status", "_schemas"],
+
   COLOR: "red" // Optional
   }
 ]
@@ -123,10 +114,11 @@ var clusters =
 <script src="bower_components/angular-oboe/dist/angular-oboe.min.js"></script>
 <script src="bower_components/angular-json-tree/dist/angular-json-tree.min.js"></script>
 
-<!-- build:js combined.js -->
 <script src="env.js"></script>
+<!-- build:js combined.js -->
 <script src="src/app.js"></script>
 <script src="src/kafka.defaults.js"></script>
+<script src="src/topics.config.js"></script>
 <script src="src/factories/dirPagination.js"></script>
 <script src="src/kafka-topics/home/home.controller.js"></script>
 <script src="src/kafka-topics/view/view.controller.js"></script>
