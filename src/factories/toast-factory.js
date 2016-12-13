@@ -1,8 +1,8 @@
 angularAPP.service('toastFactory', function ($rootScope, $mdToast) {
 
   var last = {
-    bottom: false,
-    top: true,
+    bottom: true,
+    top: false,
     left: false,
     right: true
   };

@@ -1,4 +1,4 @@
-angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $location, $routeParams, $mdToast, $log, KafkaRestProxyFactory, toastFactory) {
+angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $location, $routeParams, $mdToast, $log, KafkaRestProxyFactory, toastFactory, env) {
 
   $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
@@ -10,55 +10,15 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
       }
     },true);
 
-  KafkaRestProxyFactory.loadSchemas();
 
-  /**
-   * At start-up get all topic-information
-   */
-  KafkaRestProxyFactory.getTopicNames().then(
-    function success(allTopicNames) {
-      $scope.topics = KafkaRestProxyFactory.getNormalTopics(allTopicNames);;
-      $scope.controlTopics = KafkaRestProxyFactory.getControlTopics(allTopicNames);;
-      $rootScope.topicsCache = $scope.topics; //TODO do we need that??
+  $scope.$watch(function () {
+    return env.getSelectedCluster().NAME;
+  }, function (a) {
+    $scope.topics = [];
+    $scope.controlTopics= [];
+    getLeftListTopics();
+  }, true);
 
-      KafkaRestProxyFactory.getAllTopicInformation($scope.topics).then(
-        function success(topicDetails) {
-          $rootScope.topicDetails = topicDetails;
-
-          // .. only then fetch [Control] topics info
-          KafkaRestProxyFactory.getAllTopicInformation($scope.controlTopics).then(
-            function success(controlTopicDetails) {
-              $rootScope.controlTopicDetails = controlTopicDetails;
-            });
-
-        }, function failure(reason) {
-          $log.error('Failed: ' + reason);
-        });
-
-      $scope.topicsPerPage = 7;
-
-      $scope.controlTopicIndex = $scope.controlTopics.indexOf($rootScope.topicName) + 1;
-      $scope.controlTopicPage = Math.ceil($scope.controlTopicIndex / $scope.topicsPerPage);
-      if ($scope.controlTopicPage < 1) {
-        $scope.controlTopicPage = 1
-      }
-
-      $scope.normalTopicIndex = $scope.topics.indexOf($rootScope.topicName) +1;
-      $scope.normalTopicPage = Math.ceil($scope.normalTopicIndex / $scope.topicsPerPage);
-      if ($scope.normalTopicPage < 1) {
-        $scope.normalTopicPage = 1
-      }
-
-    }, function (reason) {
-      $log.error('Failed: ' + reason);
-      toastFactory.showSimpleToast("No connectivity. Could not get topic names");
-    }, function (update) {
-      $log.info('Got notification: ' + update);
-    });
-
-  /**
-   * View functions
-   */
 
   $scope.getPartitionMessage = function (topicName) {
     return doCountsForTopic(topicName);
@@ -72,8 +32,13 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
 
   $scope.hasExtraConfig = function (topicName) {
     var topicDetails = KafkaRestProxyFactory.isNormalTopic(topicName) ? $rootScope.topicDetails : $rootScope.controlTopicDetails;
-    return KafkaRestProxyFactory.hasExtraConfig(topicName, topicDetails);
+    var extra =KafkaRestProxyFactory.hasExtraConfig(topicName, topicDetails);
+    if (extra != '') {
+     return Object.keys(JSON.parse(extra)).length
+     } else
+    return 0;
   };
+
 
   $scope.getDataType = function (topicName) {
     return KafkaRestProxyFactory.getDataType(topicName);
@@ -89,7 +54,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
     } else {
       $scope.CategoryTopicUrls = 'n';
     }
-    $location.path("topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
+    $location.path("cluster/"+ $scope.cluster +"/topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
   }
 
   function doCountsForTopic(topicName) {
@@ -112,8 +77,53 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
       }
     });
 
-    return doLalbels(counts.replications, 'Replication') + ' x ' + doLalbels(counts.partitions, 'Partition');
+    return doLalbels(counts.replications, 'Replication') + ' \u2A2F ' + doLalbels(counts.partitions, 'Partition');
   }
+
+
+function getLeftListTopics() {
+  KafkaRestProxyFactory.loadSchemas();
+  KafkaRestProxyFactory.getTopicNames().then(
+    function success(allTopicNames) {
+      $scope.topics = KafkaRestProxyFactory.getNormalTopics(allTopicNames);;
+      $scope.controlTopics = KafkaRestProxyFactory.getControlTopics(allTopicNames);;
+      $rootScope.topicsCache = $scope.topics; //TODO do we need that??
+
+      KafkaRestProxyFactory.getAllTopicInformation($scope.topics).then(
+        function success(topicDetails) {
+          $rootScope.topicDetails = topicDetails;
+
+          // .. only then fetch [Control] topics info
+          KafkaRestProxyFactory.getAllTopicInformation($scope.controlTopics).then(
+            function success(controlTopicDetails) {
+              $rootScope.controlTopicDetails = controlTopicDetails;
+            });
+
+        }, function failure(reason) {
+          $log.error('Failed: ' + reason);
+        });
+
+      $scope.topicsPerPage = 7;
+
+      $scope.controlTopicIndex = $scope.controlTopics.indexOf($rootScope.topicName );
+      $scope.controlTopicPage = Math.ceil($scope.controlTopicIndex / $scope.topicsPerPage);
+      if ($scope.controlTopicPage < 1) {
+        $scope.controlTopicPage = 1
+      }
+
+      $scope.normalTopicIndex = $scope.topics.indexOf($rootScope.topicName );
+      $scope.normalTopicPage = Math.ceil($scope.normalTopicIndex / $scope.topicsPerPage);
+      if ($scope.normalTopicPage < 1) {
+        $scope.normalTopicPage = 1
+      }
+
+    }, function (reason) {
+      $log.error('Failed: ' + reason);
+      toastFactory.showSimpleToast("No connectivity. Could not get topic names");
+    }, function (update) {
+      $log.info('Got notification: ' + update);
+    });
+    }
 
   function doLalbels(count, name) {
     if (count == 0) return 'None ' + name;
