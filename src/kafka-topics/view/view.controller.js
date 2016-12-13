@@ -31,7 +31,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     };
 
   $scope.showSpinner = true;
-  $scope.KAFKA_TOPIC_DELETE_COMMAND = env.KAFKA_TOPIC_DELETE_COMMAND;
+  $scope.KAFKA_TOPIC_DELETE_COMMAND = TOPIC_CONFIG.KAFKA_TOPIC_DELETE_COMMAND;
 
   /************* UI-GRID **************/
   $scope.gridOptions = {

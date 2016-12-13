@@ -1,4 +1,5 @@
 var TOPIC_CONFIG = {
+  KAFKA_TOPIC_DELETE_COMMAND : "kafka-topics --zookeeper zookeeper-host:2181/confluent --delete --topic"
   // Pre-configure the Data Type on particular well-known topics
   JSON_TOPICS: ["_schemas"],
   BINARY_TOPICS: ["connect-configs", "connect-offsets", "__consumer_offsets", "_confluent-monitoring", "_confluent-controlcenter", "__confluent.support.metr"],
