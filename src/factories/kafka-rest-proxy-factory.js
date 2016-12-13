@@ -305,7 +305,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
   function consumeMessagesFromTopic(consumerName, instanceName, topicName, format) {
 
     // instanceName is usually hard-code to 'instance'
-    var url = env.KAFKA_REST() + '/consumers/' + consumerName + '/instances/' + instanceName + '/topics/' + topicName + env.KAFKA_REST_ENV().MAX_BYTES;
+    var url = env.KAFKA_REST() + '/consumers/' + consumerName + '/instances/' + instanceName + '/topics/' + topicName + env.MAX_BYTES();
     if (['avro', 'json', 'binary'].indexOf(format) < 0) {
       $log.error("Unsupported format [" + format + "]");
     }
@@ -418,7 +418,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
 
   function isControlTopic(topicName) {
     var isControlTopic = false;
-    angular.forEach(env.KAFKA_REST_ENV().CONTROL_TOPICS, function (controlTopicPrefix) {
+    angular.forEach(env.CONTROL_TOPICS(), function (controlTopicPrefix) {
       if (topicName.startsWith(controlTopicPrefix, 0))
         isControlTopic = true;
     });
@@ -578,11 +578,11 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     },
 
     getDataType: function (topicName) {
-      var dataType = "..";
+      var dataType = "...";
       // Check if we know the topic data type a priory
-      if (env.KAFKA_REST_ENV().JSON_TOPICS.indexOf(topicName) > -1) {
+      if (env.JSON_TOPICS() && env.JSON_TOPICS().indexOf(topicName) > -1) {
         dataType = "json";
-      } else if (env.KAFKA_REST_ENV().BINARY_TOPICS.indexOf(topicName.substring(0, 24)) > -1) {
+      } else if (env.BINARY_TOPICS() && env.BINARY_TOPICS().indexOf(topicName.substring(0, 24)) > -1) {
         dataType = "binary";
       } else {
         // If topicDetails are not available wait

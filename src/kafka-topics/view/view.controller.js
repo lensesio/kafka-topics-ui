@@ -408,7 +408,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.kafkaDefaults = env.KAFKA_DEFAULTS; //TODO
   $scope.topicsOn = true;
   $scope.zookeeperInfo = "zookeeper.landoop.com.info.goes.here";
-  $scope.brokers = env.KAFKA_REST_ENV().BROKERS;
+  //$scope.brokers = env.BROKERS();
 
   $scope.changeView = function () {
     $scope.topicsOn = !$scope.topicsOn;
