@@ -602,7 +602,6 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
       }
       return dataType;
     },
-    consumersByTopic:  {},
 
     /**
      * Composite method.
@@ -611,44 +610,38 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
      *   Consume some data
      *   Delete consumer
      */
-     consumeKafkaRest: function (format, topicName) {
-      var that = this;
+    consumeKafkaRest: function (format, topicName) {
       $rootScope.allCurlCommands = "";
+
+      var start = (new Date()).getTime();
+      var consumer = "Consumer-" + start;
+      var consumerName = consumer + "-" + format;
+
       var deferred = $q.defer();
-      var consumersByTopic = this.consumersByTopic;
-      function success(consumer) {
-          startFetchingData(format, topicName, consumer.consumerName).then(
-          function success(data) {
-            consumersByTopic[topicName].data = consumersByTopic[topicName].data.concat(data);
-            deferred.resolve(consumersByTopic[topicName].data);
-          },
-          function error(message) {
-           if(message == "Consumer instance not found.") {
-              delete consumersByTopic[topicName];
-              that.consumeKafkaRest(format, topicName);
-           } else if(message == "Topic not found.") {
-              toastFactory.showSimpleToast("Topic '" + topicName + "' not found.");
-           } else {
-              toastFactory.showSimpleToast(message);
-           }
-         });
-       };
-        if(consumersByTopic[topicName]) {
-           success(consumersByTopic[topicName]);
-        } else {
-        var start = (new Date()).getTime();
-        var consumer = "Consumer-" + start;
-        var consumerName = consumer + "-" + format + "-" + topicName;
-        consumersByTopic[topicName] = {"consumerName": consumerName, data: []};
-        createNewConsumer(consumer, consumerName, format, "smallest", true).then(
-        function() {success(consumersByTopic[topicName]);},
+      createNewConsumer(consumer, consumerName, format, "smallest", true).then( // TODO (true), latest
+        function success(data) {
+          //data.instance_id + " base_uri = " + response.data.base_uri
+          startFetchingData(format, topicName, consumerName).then(
+            function success(data) {
+              //$log.info("Consumed data -> " + data);
+              // At the end .. let's see if we need to clean-up
+              deleteConsumerInstance(consumerName).then(
+                function success() {
+                  $log.debug("  ..pipeline create-consume-delete in [ " + ((new Date()).getTime() - start) + " ] msec");
+                  deferred.resolve(data);
+                } // Failures are managed in the factory
+              );
+            } // Failures are managed in the factory
+          )
+        },
         function failure(response) {
-            toastFactory.showSimpleToast(response);
-          }
-        );
+          toastFactory.showSimpleToast(response);
         }
-          return deferred.promise;
-      },
+      );
+
+      return deferred.promise;
+
+    },
 
     //News
     loadSchemas: function () {
