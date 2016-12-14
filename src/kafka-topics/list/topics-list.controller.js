@@ -54,7 +54,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
     } else {
       $scope.CategoryTopicUrls = 'n';
     }
-    $location.path("cluster/"+ $scope.cluster +"/topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
+    $location.path("cluster/"+ env.getSelectedCluster().NAME +"/topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
   }
 
   function doCountsForTopic(topicName) {
