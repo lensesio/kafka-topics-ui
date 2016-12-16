@@ -10,16 +10,19 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
       }
     },true);
 
-
-  $scope.$watch(function () {
-    return env.getSelectedCluster().NAME;
-  }, function (a) {
-    $scope.topics = [];
-    $scope.controlTopics= [];
+  if(typeof $routeParams.cluster == 'undefined') {
     getLeftListTopics();
-  }, true);
+  }
 
-
+  $scope.$on('$routeChangeSuccess', function() {
+    $scope.$watch(function () {
+      return $routeParams.cluster;
+    }, function (a) {
+      if(typeof $routeParams.cluster !== 'undefined') {
+      getLeftListTopics();
+      }
+    }, true);
+  });
   $scope.getPartitionMessage = function (topicName) {
     return doCountsForTopic(topicName);
   };
@@ -54,7 +57,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
     } else {
       $scope.CategoryTopicUrls = 'n';
     }
-    $location.path("cluster/"+ env.getSelectedCluster().NAME +"/topic/" +  $scope.CategoryTopicUrls + "/" + topicName);
+    $location.path("cluster/"+ env.getSelectedCluster().NAME +"/topic/" +  $scope.CategoryTopicUrls + "/" + topicName, false);
   }
 
   function doCountsForTopic(topicName) {
@@ -120,6 +123,8 @@ function getLeftListTopics() {
     }, function (reason) {
       $log.error('Failed: ' + reason);
       toastFactory.showSimpleToast("No connectivity. Could not get topic names");
+        $scope.topics = []
+        $scope.controlTopics = []
     }, function (update) {
       $log.info('Got notification: ' + update);
     });
