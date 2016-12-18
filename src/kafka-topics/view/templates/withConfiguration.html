@@ -1,7 +1,7 @@
 <!-- Custom rendering for Config overrides -->
   <md-tab-body>
     <md-content class="md-padding">
-        <table class="flat-table" >
+        <table class="flat-table"  ng-if ="getExtraConfig(topicName) !== ''" >
           <thead>
           <tr>
             <th class="td-center">Comfiguration</th>
@@ -34,7 +34,7 @@
           </tr>
           </tbody>
           </table>
-        <div class="container-fluid-centered ng-scope" ng-if ="hasExtraConfig(topicName) == ''" style="height: 352px;">
+        <div class="container-fluid-centered ng-scope" ng-if ="getExtraConfig(topicName) == ''" style="height: 352px;">
             <div class="row-fluid">
                 <div class="centering text-center">
                   This topic retains the default configuration

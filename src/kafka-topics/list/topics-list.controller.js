@@ -1,5 +1,4 @@
 angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $location, $routeParams, $mdToast, $log, KafkaRestProxyFactory, toastFactory, env) {
- $rootScope.timesCalled = 1;
   $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
 
@@ -75,7 +74,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
       }
     });
 
-    return doLalbels(counts.replications, 'Replication') + ' \u2A2F ' + doLalbels(counts.partitions, 'Partition');
+    return doLabels(counts.replications, 'Replication') + ' \u2A2F ' + doLabels(counts.partitions, 'Partition');
   }
 
 
@@ -124,7 +123,7 @@ function getLeftListTopics() {
     });
     }
 
-  function doLalbels(count, name) {
+  function doLabels(count, name) {
     if (count == 0) return 'None ' + name;
     else if (count == 1) return '1 ' + name;
     else return count + ' ' + name +'s';
