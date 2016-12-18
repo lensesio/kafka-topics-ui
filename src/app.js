@@ -21,13 +21,14 @@ angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $lo
 
   $scope.$on('$routeChangeSuccess', function() {
      $rootScope.clusters = env.getClusters();
-     $scope.cluster = env.getSelectedCluster();
+     $rootScope.cluster = env.getSelectedCluster();
      $scope.color = $scope.cluster.COLOR;
   });
 
   $scope.updateEndPoint = function(cluster) {
     $rootScope.connectionFailure = false;
     $location.path("/cluster/"+cluster)
+    $rootScope.cluster = cluster;
   }
 
    $rootScope.showList = true;

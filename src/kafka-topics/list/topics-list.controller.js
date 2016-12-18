@@ -1,5 +1,5 @@
 angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $location, $routeParams, $mdToast, $log, KafkaRestProxyFactory, toastFactory, env) {
-
+ $rootScope.timesCalled = 1;
   $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
 
@@ -10,19 +10,14 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
       }
     },true);
 
-  if(typeof $routeParams.cluster == 'undefined') {
-    getLeftListTopics();
-  }
-
-  $scope.$on('$routeChangeSuccess', function() {
-    $scope.$watch(function () {
-      return $routeParams.cluster;
+   $rootScope.$watch(function () {
+      return $rootScope.cluster;
     }, function (a) {
-      if(typeof $routeParams.cluster !== 'undefined') {
-      getLeftListTopics();
-      }
-    }, true);
-  });
+   if(typeof $rootScope.cluster == 'object'){
+     getLeftListTopics();
+    }
+   }, true);
+
   $scope.getPartitionMessage = function (topicName) {
     return doCountsForTopic(topicName);
   };
@@ -88,10 +83,9 @@ function getLeftListTopics() {
   KafkaRestProxyFactory.loadSchemas();
   KafkaRestProxyFactory.getTopicNames().then(
     function success(allTopicNames) {
-      $scope.topics = KafkaRestProxyFactory.getNormalTopics(allTopicNames);;
-      $scope.controlTopics = KafkaRestProxyFactory.getControlTopics(allTopicNames);;
+      $scope.topics = KafkaRestProxyFactory.getNormalTopics(allTopicNames);
+      $scope.controlTopics = KafkaRestProxyFactory.getControlTopics(allTopicNames);
       $rootScope.topicsCache = $scope.topics; //TODO do we need that??
-
       KafkaRestProxyFactory.getAllTopicInformation($scope.topics).then(
         function success(topicDetails) {
           $rootScope.topicDetails = topicDetails;
