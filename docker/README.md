@@ -25,3 +25,13 @@ Caddy server will proxy the traffic to the REST Proxy:
                -e "KAFKA_REST_PROXY_URL=http://kafka.rest.proxy.url" \
                -e "PROXY=true" \
                landoop/kafka-topics-ui
+
+> **Important**: When proxying, for the `KAFKA_REST_PROXY_URL` you have to use
+> an IP address or a domain that can be resolved to it. **You can't use**
+> `localhost` even if you serve Kafka REST port from your localhost. The reason
+> for this is that a docker container has its own network, so your _localhost_
+> is different from the container's _localhost_. As an example, if you are in
+> your home network and have an IP address of `192.168.5.65` and run Kafka REST
+> from your computer, instead of `http://127.0.1:8082` you must use
+> `http://192.168.5.65:8082`.
+
