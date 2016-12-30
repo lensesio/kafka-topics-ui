@@ -24,13 +24,7 @@
     <!-- Spinner -->
     <div us-spinner="{radius:10, width:3, length: 5}" ng-show="showSpinner" style="height:100%"></div>
     <div style="margin:0 20px" ng-show="topicIsEmpty">
-      <br>
-      <p>This topic is empty. <br>
-      </p>
-      <p ng-hide="isControlTopic(topicName)">
-          In order to delete the topic execute the following:<br>
-      <pre>{{KAFKA_TOPIC_DELETE_COMMAND}} {{topicName}}</pre>
-      </p>
+      <p><br>This topic is empty. <br></p>
     </div>
     <div ng-hide=" getExtraConfig(topicName) == '' && topicIsEmpty">
     <md-input-container  class="md-block" ng-hide="topicIsEmpty || topicType == 'binary' || selectedTabNnumber > 1 " style="margin-bottom:-25px;">
