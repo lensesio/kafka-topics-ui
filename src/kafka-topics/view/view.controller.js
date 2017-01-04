@@ -581,4 +581,96 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
  }
 
+ $http.get("http://localhost:8080/api/topics/chart?topicName="+$scope.topicName).then(function response(response){
+    console.log("AAAA ",response.data);
+
+            Highcharts.stockChart('container', {
+                chart: {
+                    events: {
+                        load: function () {
+//                            this.setTitle(null, {
+//                                text: 'Built chart in ' + (new Date() - start) + 'ms'
+//                            });
+                             var series = this.series[0];
+                             setInterval(function () {
+                             $http.get("http://localhost:8080/api/topics/latest?topicName="+$scope.topicName).then(function response(response){
+//                                var x = (new Date()).getTime()// current time
+//                                    var a = response.data;
+//                                    console.log("AAABB " + response.data)
+                                    var x = (new Date()).getTime(), // current time
+                                        y = parseInt(response.data);
+                                         console.log("AAABB " + y)
+                                    series.addPoint([x, y], true, true);
+                             })
+                             }, 2000);
+                        }
+                    },
+                    zoomType: 'x'
+                },
+
+                rangeSelector: {
+
+                    buttons: [{
+                        type: 'day',
+                        count: 1,
+                        text: '24'
+                    }, {
+                        type: 'day',
+                        count: 3,
+                        text: '3d'
+                    }, {
+                        type: 'week',
+                        count: 1,
+                        text: '1w'
+                    }, {
+                      type: 'month',
+                      count: 1,
+                      text: '1m'
+                  }, {
+                        type: 'month',
+                        count: 6,
+                        text: '6m'
+                    }, {
+                        type: 'year',
+                        count: 1,
+                        text: '1y'
+                    }, {
+                        type: 'all',
+                        text: 'All'
+                    }],
+                    selected: 3
+                },
+
+                yAxis: {
+                    title: {
+                        text: 'Number of Messages'
+                    }
+                },
+
+                title: {
+                    text: 'Messages per minute'
+                },
+
+                subtitle: {
+                    text: '' // dummy text to reserve space for dynamic subtitle
+                },
+
+                series: [{
+                    name: 'Messages',
+                    data: response.data.data,
+                    pointStart: response.data.pointStart,
+                    pointInterval: response.data.pointInterval,
+                    tooltip: {
+                        valueDecimals: 0,
+                        valueSuffix: ' messages'
+                    }
+                }]
+
+            });
+
+
+
+ })
+
+
 });

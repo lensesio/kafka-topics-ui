@@ -9,7 +9,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
       }
     },true);
 
-   $rootScope.$watch(function () {
+  $rootScope.$watch(function () {
       return $rootScope.cluster;
     }, function (a) {
    if(typeof $rootScope.cluster == 'object'){
@@ -17,13 +17,9 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
     }
    }, true);
 
-  $scope.getPartitionMessage = function (topicName) {
-    return doCountsForTopic(topicName);
-  };
+  $scope.getPartitionMessage = function (topicName) { return doCountsForTopic(topicName); };
 
-  $scope.isNormalTopic = function (topicName) {
-    return KafkaRestProxyFactory.isNormalTopic(topicName);
-  };
+  $scope.isNormalTopic = function (topicName) { return KafkaRestProxyFactory.isNormalTopic(topicName); };
 
   $scope.displayingControlTopics = $scope.isNormalTopic;
 
@@ -36,14 +32,9 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
     return 0;
   };
 
+  $scope.getDataType = function (topicName) { return KafkaRestProxyFactory.getDataType(topicName); };
 
-  $scope.getDataType = function (topicName) {
-    return KafkaRestProxyFactory.getDataType(topicName);
-  };
-
-  $scope.shortenControlCenterName = function (topicName) {
-    return KafkaRestProxyFactory.shortenControlCenterName(topicName);
-  }
+  $scope.shortenControlCenterName = function (topicName) {  return KafkaRestProxyFactory.shortenControlCenterName(topicName); }
 
   $scope.listClick = function (topicName) {
     if (KafkaRestProxyFactory.isNormalTopic(topicName) == false) {
@@ -77,8 +68,7 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
     return doLabels(counts.replications, 'Replication') + ' \u2A2F ' + doLabels(counts.partitions, 'Partition');
   }
 
-
-function getLeftListTopics() {
+  function getLeftListTopics() {
   KafkaRestProxyFactory.loadSchemas();
   KafkaRestProxyFactory.getTopicNames().then(
     function success(allTopicNames) {

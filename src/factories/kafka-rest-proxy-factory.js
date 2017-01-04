@@ -1,9 +1,3 @@
-/**
- * Kafka-Rest-Proxy angularJS Factory
- * version 0.7-SNAPSHOT (18.Aug.2016)
- *
- * @author antonios@landoop.com
- */
 angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $base64, $q, Oboe, toastFactory, env) {
 
   // Topics
