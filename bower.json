@@ -3,7 +3,8 @@
   "authors": [
     "Christina Daskalaki <christina@landoop.com>",
     "Antonios Chalkiopoulos <antonios@landoop.com>",
-    "Marios Andreopoulos <marios@landoop.com>"
+    "Marios Andreopoulos <marios@landoop.com>",
+    "John Glampedakis <john@landoop.com>"
   ],
   "description": "A user interface for reading data from Kafka Topics",
   "main": "index.html",
