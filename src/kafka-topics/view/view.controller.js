@@ -588,18 +588,11 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                 chart: {
                     events: {
                         load: function () {
-//                            this.setTitle(null, {
-//                                text: 'Built chart in ' + (new Date() - start) + 'ms'
-//                            });
                              var series = this.series[0];
                              setInterval(function () {
                              $http.get("http://localhost:8080/api/topics/latest?topicName="+$scope.topicName).then(function response(response){
-//                                var x = (new Date()).getTime()// current time
-//                                    var a = response.data;
-//                                    console.log("AAABB " + response.data)
                                     var x = (new Date()).getTime(), // current time
                                         y = parseInt(response.data);
-                                         console.log("AAABB " + y)
                                     series.addPoint([x, y], true, true);
                              })
                              }, 2000);
@@ -613,7 +606,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                     buttons: [{
                         type: 'day',
                         count: 1,
-                        text: '24'
+                        text: '24h'
                     }, {
                         type: 'day',
                         count: 3,
@@ -648,7 +641,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                 },
 
                 title: {
-                    text: 'Messages per minute'
+                    text: 'Messages in ' + $scope.topicName
                 },
 
                 subtitle: {
