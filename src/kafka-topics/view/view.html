@@ -19,13 +19,13 @@
     </div>
   </md-toolbar>
 
-  <div flex style="padding: 2px;padding-bottom:2px;"  ng-style="topicIsEmpty && {'background-color':'#fcf8e3'} || {'background-color': ''}">
+  <div flex style="padding: 2px;padding-bottom:2px;">
 
     <!-- Spinner -->
     <div us-spinner="{radius:10, width:3, length: 5}" ng-show="showSpinner" style="height:100%"></div>
-    <div  style="margin:0 20px;" ng-show="topicIsEmpty">
-      <p style="color:#333;"><br><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-          This topic is empty. <br></p>
+    <div layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;" ng-show="topicIsEmpty">
+      <div style="color:#333;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+          This topic is empty.</div>
     </div>
     <div ng-hide=" getExtraConfig(topicName) == '' && topicIsEmpty">
     <md-input-container  class="md-block" ng-hide="topicIsEmpty || topicType == 'binary' || selectedTabNnumber > 1 " style="margin-bottom:-25px;">
