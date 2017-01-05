@@ -20,7 +20,7 @@
               <span>{{value}}</span>
             </td>
             <td  class="td-center">
-              <span>{{getDefautConfigValue(key)}}</span>
+              <span>{{getDefaultConfigValue(key)}}</span>
             </td>
             <td style="max-width:500px;" ng-title="{{getConfigDescription(key)}}" class=" td-left">
               <span ng-hide="showMoreDesc[$index] || {{getConfigDescription(key).length}} < 100">{{ getConfigDescription(key) | limitTo:100 }}...</span>

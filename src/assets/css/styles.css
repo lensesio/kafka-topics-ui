@@ -10,6 +10,9 @@ html, body {
 .selectCluster md-select md-select-value{color:#333}
 .selectClusterLabel{color: rgb(204, 204, 204);font-size: 12px;line-height: 44px;padding-top: 0px;margin: 0;}
 
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
 
 md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
     margin-right: 25px;

@@ -117,9 +117,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     else return ''
   };
 
-  $scope.getDefautConfigValue = function (configKey) {
+  $scope.getDefaultConfigValue = function (configKey) {
     var defaultConfigValue = "";
-    angular.forEach(env.KAFKA_DEFAULTS, function (kafkaDefault) {
+    angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
       if (kafkaDefault.property == configKey) {
         defaultConfigValue = kafkaDefault.default;
       }
@@ -129,7 +129,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   $scope.getConfigDescription = function (configKey) {
     var configDescription = "";
-    angular.forEach(env.KAFKA_DEFAULTS, function (kafkaDefault) {
+    angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
       if (kafkaDefault.property == configKey) {
         configDescription = kafkaDefault.description;
       }
@@ -398,7 +398,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   ///////////////////////////////////////////
   $mdToast.hide();
-  $scope.kafkaDefaults = env.KAFKA_DEFAULTS; //TODO
+  $scope.kafkaDefaults = KAFKA_DEFAULTS; //TODO
   $scope.topicsOn = true;
   $scope.zookeeperInfo = "zookeeper.landoop.com.info.goes.here";
   //$scope.brokers = env.BROKERS();
@@ -446,7 +446,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   $scope.getKafkaDefaultValue = function (key) {
     var defaultValue;
-    angular.forEach(env.KAFKA_DEFAULTS, function (item) {
+    angular.forEach(KAFKA_DEFAULTS, function (item) {
       if (item.property == key) {
         defaultValue = item.default;
       }
@@ -456,7 +456,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
   $scope.getKafkaDefaultDescription = function (key) {
     var defaultValue;
-    angular.forEach(env.KAFKA_DEFAULTS, function (item) {
+    angular.forEach(KAFKA_DEFAULTS, function (item) {
       if (item.property == key) {
         defaultValue = item.description;
       }
