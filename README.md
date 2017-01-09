@@ -11,13 +11,13 @@ Browse Kafka topics and understand what's happening on your cluster. Find topics
 
 ## Running it
 
-To run it standalone through Docker:
-
+```
     docker pull landoop/kafka-topics-ui
     docker run --rm -it -p 8000:8000 \
                -e "KAFKA_REST_PROXY_URL=http://kafka-rest-proxy-host:port" \
                -e "PROXY=true" \
                landoop/kafka-topics-ui
+```
 
 **Config:** If you don't use our docker image, keep in mind that `Kafka-REST-Proxy`
 CORS support can be a bit buggy, so if you have trouble setting it up, you may need
@@ -26,8 +26,20 @@ to provide CORS headers through a proxy (i.e. nginx).
 **Note:** The schema-registry is optional and topics are attempted to be read using Avro,
 then fall back to JSON, and finally fall back to Binary.
 
-Example for nginx
+## Build from source
 
+```
+    git clone https://github.com/Landoop/kafka-topics-ui.git
+    cd kafka-topics-ui
+    npm install
+    http-server .
+```
+Web UI will be available at `http://localhost:8080`
+
+### Nginx config
+
+If you use `nginx` to serve this ui, let angular manage routing with
+```
     location / {
       add_header 'Access-Control-Allow-Origin' "$http_origin" always;
       add_header 'Access-Control-Allow-Credentials' 'true' always;
@@ -41,34 +53,31 @@ Example for nginx
       proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header  Host $http_host;
     }
+```
 
-> We also provide the kafka-topics-ui as part of the [fast-data-dev](https://github.com/Landoop/fast-data-dev), that
-is an excellent docker for developers
+### Setup Kafka Rest clusters
 
-### Building it
+Use multiple Kafka Rest clusters in `env.js` :
+```
+var clusters = [
+  {
+    NAME:"prod",
+    KAFKA_REST : "prod.url.com",// "The Kafka Rest url"
+    MAX_BYTES: "?max_bytes=50000",
+    COLOR: "#141414" // Optional
+  },
+  {
+  NAME:"dev",
+  KAFKA_REST : "dev.url.com", "The Kafka Rest url"
+  MAX_BYTES: "?max_bytes=50000",
 
-* You need to download dependencies with `bower`. Find out more [here](http://bower.io)
-* You need a `web server` to serve the app.
-* By default `kafka-topics-ui` points to some default locations like `http://localhost:8081`
-  To point it to the correct backend servers, update `env.js`
+  COLOR: "red" // Optional
+  }
+]
 
-### Steps
-
-    git clone https://github.com/Landoop/kafka-topics-ui.git
-    cd kafka-topics-ui
-    npm install
-    http-server .
-
-Web UI will be available at `http://localhost:8080`
-
-### Nginx config
-
-If you use `nginx` to serve this ui, let angular manage routing with
-
-    location / {
-        try_files $uri $uri/ /index.html =404;
-        root /folder-with-kafka-topics-ui/;
-    }
+```
+* Use `MAX_BYTES` to set the default maximum amount of bytes to fetch from each topic.
+* Use `COLOR` to set different header colors for each set up cluster.
 
 ## Changelog
 [Here](https://github.com/Landoop/kafka-topics-ui/wiki/Changelog)
@@ -79,11 +88,11 @@ The project is licensed under the [BSL](http://www.landoop.com/bsl) license.
 
 ## Relevant Projects
 
-* [kafka-connect-ui](https://github.com/Landoop/kafka-connect-ui), Set up and manage connectors for multiple connect clusters 
-* [kafka-topics-ui](https://github.com/Landoop/kafka-topics-ui), UI to browse Kafka data and work with Kafka Topics                   
+* [schema-registry-ui](https://github.com/Landoop/schema-registry-ui), View, create, evolve and manage your Avro Schemas for multiple Kafka clusters
+* [kafka-connect-ui](https://github.com/Landoop/kafka-connect-ui), Set up and manage connectors for multiple connect clusters
 * [fast-data-dev](https://github.com/Landoop/fast-data-dev), Docker for Kafka developers (schema-registry,kafka-rest,zoo,brokers,landoop) 
 * [Landoop-On-Cloudera](https://github.com/Landoop/Landoop-On-Cloudera), Install and manage your kafka streaming-platform on you Cloudera CDH cluster
 
 
 
-<img src="http://www.landoop.com/images/landoop-dark.svg" width="13"> www.landoop.com
+<img src="http://www.landoop.com/images/landoop-dark.svg" width="13" /> www.landoop.com
