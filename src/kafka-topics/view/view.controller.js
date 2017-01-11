@@ -1,5 +1,7 @@
 angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, env) {
 
+
+
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
   $rootScope.topicName = $routeParams.topicName;
@@ -312,6 +314,60 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.isControlTopic = function(topicName) {
      return !KafkaRestProxyFactory.isNormalTopic(topicName);
   };
+
+
+
+function getFormattedDate(date) {
+    if(date){var date = new Date(date);} else {var date = new Date();}
+    var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    return str;
+}
+
+function getFormattedNow() {
+    var date = new Date();
+    var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    return str;
+}
+
+function rand() {
+  return Math.random();
+}
+
+
+$http.get("http://cloudera03.landoop.com:16885/api/topics/chart?topicName=device-measurements-topic").then(function response(response){
+var i=0;
+var xx = [getFormattedDate(response.data.pointStart)]
+console.log('giannisarray', getFormattedDate(response.data.pointStart))
+for(i= 1; i < response.data.dataLength; i++) {
+xx.push(response.data.pointStart + (i * response.data.pointInterval ))
+}
+
+Plotly.plot('tester', {
+  data: [{
+    y: [],//response.data.data,
+    x: []//xx
+  }],
+  layout: {
+  "autosize": true,
+  "type": "linear",
+  "breakpoints": [],
+  "xaxis": {"type": "date"}
+  }
+
+});
+
+});
+var interval = setInterval(function() {
+$http.get("http://cloudera03.landoop.com:16885/api/topics/latest?topicName=device-measurements-topic").then(function response(response){
+  Plotly.extendTraces('tester', {
+    y: [[parseInt(response.data)]],
+    x: [[getFormattedNow()]]
+  }, [0])
+
+  });
+}, 2000);
+
+
 
   // At start-up this controller consumes data
   var start = new Date().getTime();
