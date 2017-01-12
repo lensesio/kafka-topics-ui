@@ -344,8 +344,8 @@ xx.push(response.data.pointStart + (i * response.data.pointInterval ))
 
 Plotly.plot('tester', {
   data: [{
-    y: [],//response.data.data,
-    x: []//xx
+    y: response.data.data,//response.data.data, or [] gia na ksekinaei xwris data
+    x: xx//xx or [] gia na ksekinaei xwris data
   }],
   layout: {
   "autosize": true,
