@@ -9,6 +9,7 @@ angularAPP.factory('env', function ($rootScope) {
     getSelectedCluster : function() { return selectedCluster; },
     getClusters : function() { return clusters },
     KAFKA_REST : function () { return selectedCluster.KAFKA_REST.trim(); },
+    KAFKA_BACKEND : function () { return selectedCluster.KAFKA_BACKEND.trim(); },
     MAX_BYTES : function () { return selectedCluster.MAX_BYTES.trim(); }
   };
 
