@@ -13,7 +13,7 @@
           </thead>
           <tbody>
           <!--TODO remove gridOptions-->
-          <tr dir-paginate="t in gridOptions.data | filter : searchMessages | itemsPerPage: paginationItems"  pagination-id="treeView">
+          <tr dir-paginate="t in gridOptions.data |  filter:search:strict | itemsPerPage: paginationItems"  pagination-id="treeView">
             <td valign="top" class="td-center">{{t.offset}}</td>
             <td valign="top" class="td-center">{{t.partition}}</td>
 
