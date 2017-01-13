@@ -1,11 +1,11 @@
 <!-- Custom rendering for OTHER topics -->
     <md-tab-body>
         <md-content class="padding:0">
-                <table class="flat-table">
-                    <thead>
+                <table md-table md-row-select="optionsTable.rowSelection"  class="flat-table">
+                    <thead  md-head md-order="query.order" md-on-reorder="logOrder">
                     <tr>
                         <th rowspan="2" class="td-center">offset</th>
-                        <th rowspan="2" class="td-center">partition</th>
+                        <th rowspan="2" class="td-center" md-column md-order-by="partition" >partition</th>
                         <th ng-if="cols3.length==0" rowspan="2" class="td-center" colspan="{{extraColsNumKeys}}" >key</th>
                         <th ng-if="cols3.length > 0" class="td-center" colspan="{{extraColsNumKeys}}" >key</th>
                         <th ng-if="cols2.length==0" rowspan="2" class="td-center" colspan="{{extraColsNumValues}}" >Value</th>
@@ -20,7 +20,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr dir-paginate="row in flatRows | filter : searchMessages| itemsPerPage: paginationItems"  pagination-id="flatView">
+                    <tr dir-paginate="row in flatRows | filter:search:strict| itemsPerPage: paginationItems"  pagination-id="flatView">
                         <td nowrap ng-repeat="column in cols" class="{{ column.indexOf('value') == 0 ? '' : 'td-center' }}">
                             <span>{{row[column]}}</span>
                         </td>

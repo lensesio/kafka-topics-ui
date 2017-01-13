@@ -28,9 +28,15 @@
           This topic is empty.</div>
     </div>
     <div ng-hide=" getExtraConfig(topicName) == '' && topicIsEmpty">
-    <md-input-container  class="md-block" ng-hide="topicIsEmpty || topicType == 'binary' || selectedTabNnumber > 1 " style="margin-bottom:-25px;">
+    <md-input-container  class="md-block" ng-hide="topicIsEmpty || selectedTabNnumber > 1 " style="margin-bottom:-25px;">
       <label>Filter</label>
-      <input ng-model="searchMessages">
+      <input ng-model="search.$" >
+      <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
+
+    </md-input-container>
+       <md-input-container  class="md-block" ng-hide="topicIsEmpty || selectedTabNnumber > 1 " style="margin-bottom:-25px;">
+      <label>Filter by partition</label>
+           <input ng-model="search.partition">
       <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
 
     </md-input-container>
@@ -40,7 +46,7 @@
             <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
         </md-tab>
 
-        <md-tab   label="Table" ng-click="onTabChanges('table')" ng-if="topicType != 'binary' && !topicIsEmpty">
+        <md-tab   label="Table" ng-click="onTabChanges('table')" ng-if="!topicIsEmpty">
             <div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>
         </md-tab>
 

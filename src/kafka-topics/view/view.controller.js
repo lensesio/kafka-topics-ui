@@ -581,4 +581,39 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
  }
 
+ /************************* md-table ***********************/
+  $scope.tableOptions = {
+    rowSelection: false,
+    multiSelect: false,
+    autoSelect: false,
+    decapitate: false,
+    largeEditDialog: false,
+    boundaryLinks: false,
+    limitSelect: true,
+    pageSelect: true
+  };
+
+  $scope.query = {
+    order: 'partition',
+    limit: 100,
+    page: 1
+  };
+
+  // This one is called each time - the user clicks on an md-table header (applies sorting)
+  $scope.logOrder = function (a) {
+    // $log.info("Ordering event " + a);
+    sortTopic(a);
+  };
+
+  function sortTopic(type) {
+    var reverse = 1;
+    if (type.indexOf('-') == 0) {
+      // remove the - symbol
+      type = type.substring(1, type.length);
+      reverse = -1;
+    }
+     $log.info(type + " " + reverse);
+    $scope.flatRows = UtilsFactory.sortByKey($scope.flatRows, type, reverse);
+  }
+
 });
