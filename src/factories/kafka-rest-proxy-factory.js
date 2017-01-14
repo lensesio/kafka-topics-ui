@@ -495,6 +495,9 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     isNormalTopic: function (topicName) {
       return isNormalTopic(topicName);
     },
+    getTopicMetadata: function (topicName) {
+      return getTopicMetadata(topicName);
+    },
     shortenControlCenterName: function(topicName) {
       return shortenControlCenterName(topicName)
     },

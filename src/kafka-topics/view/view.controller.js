@@ -581,6 +581,27 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
  }
 
+$scope.showChart = true;
+$scope.toggleChart = function () {
+$scope.showChart = !$scope.showChart;
+}
+
+KafkaRestProxyFactory.getTopicMetadata($scope.topicName).then(function (metaData) {
+  $scope.partitions = metaData.partitions.length;
+  $scope.getPartitions = function(num) {
+    return Array.apply(null, {length: num}).map(Number.call, Number)
+  }
+});
+
+
+  $scope.kcqlRequest = function() {
+  var kcqlQuery = $scope.search.split(' ').join('+');
+  $http.get("http://fast-data-backend.demo.landoop.com/api/rest/topics/kcql?query="+kcqlQuery).then(function response(response){
+  $log.info('KCQL Responce: ',response)
+
+  });
+  }
+
  /************************* md-table ***********************/
   $scope.tableOptions = {
     rowSelection: false,
@@ -615,5 +636,59 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
      $log.info(type + " " + reverse);
     $scope.flatRows = UtilsFactory.sortByKey($scope.flatRows, type, reverse);
   }
+
+
+
+function getFormattedDate(date) {
+    if(date){var date = new Date(date);} else {var date = new Date();}
+    var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    return str;
+}
+
+function getFormattedNow() {
+    var date = new Date();
+    var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    return str;
+}
+
+function rand() {
+  return Math.random();
+}
+
+
+$http.get("http://cloudera03.landoop.com:16885/api/topics/chart?topicName=device-measurements-topic").then(function response(response){
+var i=0;
+var xx = [getFormattedDate(response.data.pointStart)]
+for(i= 1; i < response.data.dataLength; i++) {
+xx.push(response.data.pointStart + (i * response.data.pointInterval ))
+}
+
+Plotly.plot('tester', {
+  data: [{
+    y: response.data.data,//response.data.data, or [] gia na ksekinaei xwris data
+    x: xx//xx or [] gia na ksekinaei xwris data
+  }],
+  layout: {
+  "autosize": true,
+  "type": "linear",
+  "breakpoints": [],
+  "xaxis": {"type": "date"}
+  }
+
+});
+
+$scope.showButton=true;
+});
+//
+//var interval = setInterval(function() {
+//$http.get("http://cloudera03.landoop.com:16885/api/topics/latest?topicName=device-measurements-topic").then(function response(response){
+//  Plotly.extendTraces('tester', {
+//    y: [[parseInt(response.data)]],
+//    x: [[getFormattedNow()]]
+//  }, [0])
+//
+//  });
+//}, 2000);
+
 
 });

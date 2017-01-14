@@ -13,6 +13,23 @@ html, body {
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+md-input-container label {
+color:rgba(0,0,0,0.66);
+}
+.button.form-control {
+border-width:0px 0px 1px 0px;
+}
+.flex-1 {
+  -webkit-flex: 1;
+          flex: 1;
+}.flex-2 {
+  -webkit-flex: 2;
+          flex: 2;
+}
+.flex-3 {
+  -webkit-flex: 3;
+          flex: 3;
+}
 
 md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
     margin-right: 25px;

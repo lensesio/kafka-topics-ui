@@ -37,7 +37,6 @@ function isNormalTopic(value) {
 }
 $scope.controlTopics = $scope.topics.filter(isControlTopic);
 $scope.normalTopics = $scope.topics.filter(isNormalTopic);
-$log.info('giannis', $scope.controlTopics.length)
   $scope.listClick = function (topicName, isControlTopic) {
     if (isControlTopic == true) {
       $scope.CategoryTopicUrls = 'c';

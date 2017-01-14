@@ -20,7 +20,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr dir-paginate="row in flatRows | filter:search:strict| itemsPerPage: paginationItems"  pagination-id="flatView">
+                    <tr dir-paginate="row in flatRows | filter:search| itemsPerPage: paginationItems"  pagination-id="flatView">
                         <td nowrap ng-repeat="column in cols" class="{{ column.indexOf('value') == 0 ? '' : 'td-center' }}">
                             <span>{{row[column]}}</span>
                         </td>
