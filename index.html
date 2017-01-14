@@ -23,18 +23,70 @@
 <!--Header Starts here-->
 <header class="header" ng-controller="HeaderCtrl" style="background:{{color}}">
   <div layout="row" layout-xs="column">
-    <div flex>
-      <h5><a ng-click="showLeftList()" href="{{cluster ? '#/cluster/'+cluster.NAME : '#/'}}" style="text-decoration:none; padding-left:15px;">KAFKA TOPICS</a></h5>
+    <div class="top-left-part">
+      <h5 style="padding-top:10px;">
+        <a ng-click="showLeftList()" href="{{cluster ? '#/cluster/'+cluster.NAME : '#/'}}" style="color:#fff; text-decoration:none;">KAFKA TOPICS</a>
+      </h5>
     </div>
-    <label ng-show="!missingEnvJS && clusters.length > 1" class="selectClusterLabel"><b>SELECT CLUSTER :</b></label>
-    <md-input-container ng-show="!missingEnvJS && clusters.length > 1" class="selectCluster">
-      <md-select ng-model="connectEndPoint">
-        <md-option ng-repeat="connectEndPoint in clusters track by $index"
-                   ng-click="updateEndPoint(connectEndPoint.NAME)"
-                   value="{{connectEndPoint.NAME}}" ng-selected="{{cluster.NAME == connectEndPoint.NAME}}"
-        >{{connectEndPoint.NAME}}</md-option>
-      </md-select>
-    </md-input-container>
+    <span flex></span>
+    <div class="top-right-part" style="padding-top:4px;" >
+
+      <md-menu-bar>
+        <md-menu>
+          <md-button ng-click="$mdOpenMenu()">
+            SELECTED CLUSTER: <span style="color: #FF5722">{{cluster.NAME}} </span> <i class="fa fa-angle-double-down" aria-hidden="true"></i>
+          </md-button>
+          <md-menu-content>
+            <md-menu-item ng-repeat="connectEndPoint in clusters track by $index"
+                          ng-click="updateEndPoint(connectEndPoint.NAME)">
+              <md-button>
+                {{connectEndPoint.NAME}}
+              </md-button>
+            </md-menu-item>
+            <md-menu-item>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+
+        <md-menu>
+          <md-button>
+            <i class="fa fa-cog" aria-hidden="true"></i>
+          </md-button>
+        </md-menu>
+        </md-menu-bar>
+
+
+
+
+      <!--<md-menu md-position-mode="target-right target" md-offset="0 55" class="clusterMenu">-->
+        <!--<a  ng-click="$mdOpenMenu($event)" >-->
+          <!--Selected Cluster:-->
+        <!--</a>-->
+        <!--<md-menu-content width="4" style="top:55px;">-->
+          <!--<md-menu-item ng-repeat="item in [1, 2, 3]">-->
+            <!--<md-button ng-click="ctrl.announceClick($index)">-->
+              <!--<div layout="row" flex>-->
+                <!--<p flex>Option {{item}}</p>-->
+                <!--<md-icon md-menu-align-target md-svg-icon="call:portable-wifi-off" style="margin: auto 3px auto 0;"></md-icon>-->
+              <!--</div>-->
+            <!--</md-button>-->
+          <!--</md-menu-item>-->
+        <!--</md-menu-content>-->
+      <!--</md-menu>-->
+
+
+
+      <!--/////////-->
+    <!--<label ng-show="!missingEnvJS && clusters.length > 1" class="selectClusterLabel"><b>SELECT CLUSTER :</b></label>-->
+    <!--<md-input-container ng-show="!missingEnvJS && clusters.length > 1" class="selectCluster">-->
+      <!--<md-select ng-model="connectEndPoint">-->
+        <!--<md-option ng-repeat="connectEndPoint in clusters track by $index"-->
+                   <!--ng-click="updateEndPoint(connectEndPoint.NAME)"-->
+                   <!--value="{{connectEndPoint.NAME}}" ng-selected="{{cluster.NAME == connectEndPoint.NAME}}"-->
+        <!--&gt;{{connectEndPoint.NAME}}</md-option>-->
+      <!--</md-select>-->
+    <!--</md-input-container>-->
+    </div>
   </div>
 </header>
 
@@ -71,9 +123,11 @@ var clusters =
     </md-card-content>
   </md-card>
 </div>
+
 <!--Main Content Starts here-->
-<div layout="row" layout-margin layout-sm="column" layout-xs="column" ng-controller="KafkaTopicsConfigCtrl" ng-hide="missingEnvJS">
-  <div flex-gt-sm="33" ng-show="showList">
+<div layout="row"  layout-sm="column" layout-xs="column" ng-controller="KafkaTopicsConfigCtrl" ng-hide="missingEnvJS">
+  <!--<div flex-gt-sm="33" ng-show="showList">-->
+  <div style="width:220px;" ng-show="showList">
     <div ng-controller="KafkaTopicsListCtrl" ng-include="'src/kafka-topics/list/left-list.html'"></div>
     <br>
     <div ng-include="'src/kafka-topics/config/config.html'"></div>

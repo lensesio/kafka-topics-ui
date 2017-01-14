@@ -4,6 +4,26 @@ html, body {
     padding: 0;
     background-color: #F5F5F5;
 }
+
+
+.labelType {
+font-size: 10px;
+    border-radius: 60px;
+    padding: 6px 20px;
+    min-width: 30px;
+    background-color: #fb9678;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    height: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 .selectCluster {margin: 7px 10px;text-indent:15px;padding: 0;line-height: 1.2;}
 .selectCluster md-select {background:white;}
 .selectCluster md-select md-option,
@@ -47,19 +67,35 @@ md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
 }
 
 header.header {
-    background-color: #141414;
-    min-height: 20px;
+    background-color: #4F5467;
+    min-height: 55px;
     color: #ebebeb;
     margin-bottom: 0;
 }
 
 .header-section {
-    background-color: #4F6375;
+    background-color: #4F5467;
     color: #ebebeb;
     border-bottom: 0 solid #2b3e50;
     padding: 4px 0;
     margin-bottom: 0;
+    min-height: 55px;
 }
+
+.top-left-part {
+    background: rgba(0, 0, 0, 0.2);
+    min-height: 55px;
+     width: 220px;
+     float: left;
+     text-decoration:none;
+     text-align: center;
+     color: #ffffff;"
+}
+
+.clusterMenu {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 
 .container-fluid-centered {
     height: 100%;
@@ -359,4 +395,88 @@ table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
     transition: none;
     transition-duration: 0ms;
     transition-delay: 0ms;
+}
+
+[role="tabpanel"],
+md-tabs {
+  transition: none;
+}
+
+
+
+
+//Style Tab
+
+.sttabs {
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+  width: 100%;
+  font-weight: 300;
+}
+.sticon::before {
+  display: inline-block;
+  margin: 0 0.4em 0 0;
+  vertical-align: middle;
+  font-size: 20px;
+  speak: none;
+  -webkit-backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.sttabs nav {
+  text-align: center;
+}
+.sttabs nav ul {
+  position: relative;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+  margin: 0 auto;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  list-style: none;
+  -ms-box-orient: horizontal;
+  -ms-box-pack: center;
+  -webkit-flex-flow: row wrap;
+  -moz-flex-flow: row wrap;
+  -ms-flex-flow: row wrap;
+  flex-flow: row wrap;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+}
+.sttabs nav ul li {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin: 0;
+  text-align: center;
+  -webkit-flex: 1;
+  -moz-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+.sttabs nav a {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 2.5;
+}
+.sttabs nav a span {
+  vertical-align: middle;
+  font-wight: 500;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+}
+.sttabs nav a:focus {
+  outline: none;
+}
+.sttabs nav li.tab-current a {
+  color: #fb9678;
 }
