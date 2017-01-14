@@ -663,19 +663,19 @@ for(i= 1; i < response.data.dataLength; i++) {
 xx.push(response.data.pointStart + (i * response.data.pointInterval ))
 }
 
-Plotly.plot('tester', {
-  data: [{
-    y: response.data.data,//response.data.data, or [] gia na ksekinaei xwris data
-    x: xx//xx or [] gia na ksekinaei xwris data
-  }],
-  layout: {
-  "autosize": true,
-  "type": "linear",
-  "breakpoints": [],
-  "xaxis": {"type": "date"}
-  }
-
-});
+//Plotly.plot('tester', {
+//  data: [{
+//    y: response.data.data,//response.data.data, or [] gia na ksekinaei xwris data
+//    x: xx//xx or [] gia na ksekinaei xwris data
+//  }],
+//  layout: {
+//  "autosize": true,
+//  "type": "linear",
+//  "breakpoints": [],
+//  "xaxis": {"type": "date"}
+//  }
+//
+//});
 
 $scope.showButton=true;
 });
@@ -689,6 +689,308 @@ $scope.showButton=true;
 //
 //  });
 //}, 2000);
+
+
+
+$scope.isCollapsed = false;
+
+$scope.collapseChart = function () {
+   $scope.isCollapsed = !$scope.isCollapsed;
+}
+
+$scope.chartSelection = ""
+ $http.get("http://localhost:8080/api/rest/topics/chart/"+$scope.topicName+'?offsetStart=0').then(function response(response){
+    console.log("AAAA ",response.data);
+
+            var yAxisMessagesCounts = [];
+            var yAxisOffset = [];
+            var yAxisRate =[];
+            angular.forEach(response.data.data, function(measurement) {
+                yAxisMessagesCounts.push(measurement.messageCount);
+                yAxisOffset.push(measurement.offset);
+                yAxisRate.push(measurement.rate);
+            })
+
+
+
+            var chart = {
+                chart: {
+                    zoomType: 'x',
+                    events: {
+                        load: function () {
+                             var series = this.series[0];
+//                             setInterval(function () {
+//                             $http.get("http://localhost:8080/api/topics/latest?topicName="+$scope.topicName).then(function response(response){
+//                                    var x = (new Date()).getTime(), // current time
+//                                        y = parseInt(response.data);
+//                                    series.addPoint([x, y], true, true);
+//                             })
+//                             }, 2000);
+                        },
+                        selection: function(event) {
+//                             console.log("AAAA ", "christina")
+
+                        // log the min and max of the primary, datetime x-axis
+    //                   	console.log(
+    //                   		Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', event.xAxis[0].min),
+    //                   		Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', event.xAxis[0].max)
+    //                   	);
+                        // log the min and max of the y axis
+    //                   	console.log("AAAA ", event.yAxis[0].min, event.yAxis[0].max);
+
+//                            var e=this.xAxis[0].getExtremes();
+//                            console.log('AAAACCC x: \n      Min: ' + Highcharts.dateFormat(null, e.min) + ', Max: ' + Highcharts.dateFormat(null, e.max)
+//                                  + '\n, dataMin: ' + Highcharts.dateFormat(null, e.dataMin) + ', dataMax: ' + Highcharts.dateFormat(null, e.dataMax)
+//                                  + '\n, userMin: ' + Highcharts.dateFormat(null, e.userMin) + ', userMax: ' + Highcharts.dateFormat(null, e.userMax));
+
+//                          var extremesy=this.yAxis[0].getExtremes();
+//                          console.log('AAAA y: Min: '
+////                                + extremesy.min + ', Max: ' + extremesy.max
+//                                + ', dataMin: ' + Highcharts.dateFormat(null, e.dataMin) + ', dataMax: ' + extremesy.dataMax);
+////                                + ', userMin: ' + extremesy.userMin + ', userMax: ' + extremesy.userMax);
+//
+//                            console.log("AA"  +'\n yAxis (Topics Counter)'
+//                                       +'\n (' + this.yAxis[0].getExtremes().dataMin + ',' + this.yAxis[0].getExtremes().dataMax + ')');
+
+                       }
+                    },
+                },
+
+                rangeSelector: {
+
+                    buttons: [{
+                        type: 'day',
+                        count: 1,
+                        text: '24h'
+                    }, {
+                        type: 'day',
+                        count: 3,
+                        text: '3d'
+                    }, {
+                        type: 'week',
+                        count: 1,
+                        text: '1w'
+                    }, {
+                      type: 'month',
+                      count: 1,
+                      text: '1m'
+                  }, {
+                        type: 'month',
+                        count: 6,
+                        text: '6m'
+                    }, {
+                        type: 'year',
+                        count: 1,
+                        text: '1y'
+                    }, {
+                        type: 'all',
+                        text: 'All'
+                    }],
+                    selected: 1
+                },
+
+                 credits: {
+                      enabled: false
+                  },
+
+               legend: {
+                        enabled: true
+                        //,
+//                        align: 'right',
+//                        backgroundColor: '#FCFFC5',
+//                        borderColor: 'black',
+//                        borderWidth: 2,
+//                        layout: 'vertical',
+//                        verticalAlign: 'top',
+//                        y: 100,
+//                        shadow: true
+                    },
+
+                yAxis: {
+                    title: {
+                        text: 'Number of Messages'
+                    }
+
+                },
+
+                 xAxis: {
+                    events: {
+                        setExtremes: function (e) {
+                            var chartSelection = "Selected Min: " + Highcharts.dateFormat(null, e.min) + ' / Selected Max: '+ Highcharts.dateFormat(null, e.max);
+                            $scope.chartSelection = chartSelection;
+                            console.log(chartSelection);
+                        }
+                    }
+                 },
+
+                title: {
+                    text: 'Messages in ' + $scope.topicName
+                },
+
+                subtitle: {
+                    text: '' // dummy text to reserve space for dynamic subtitle
+                },
+
+//                    navigator: {
+//                            height: 80
+//                        },
+
+                series: [
+
+                 {
+                    name: 'Rate',
+                    type: 'column',
+                    color: "#cccccc",
+                    data: yAxisRate,
+                    pointStart: response.data.pointStart,
+                    pointInterval: response.data.pointInterval,
+                    tooltip: {
+                        valueDecimals: 0,
+                        valueSuffix: ' messages/sec'
+                    }
+                    } , {
+                    name: 'Messages',
+//                    type: 'column',
+                    color: "#000000",
+                    data: yAxisMessagesCounts,
+                    pointStart: response.data.pointStart,
+                    pointInterval: response.data.pointInterval,
+                    tooltip: {
+                        valueDecimals: 0,
+                        valueSuffix: ' messages'
+                    }
+                    },
+
+//                     {
+//                    name: 'Partition 1',
+////                    type: 'column',
+////                    color: "#000000",
+//                    data: yAxisMessagesCounts,
+//                    pointStart: response.data.pointStart,
+//                    pointInterval: response.data.pointInterval,
+//                    tooltip: {
+//                        valueDecimals: 0,
+//                        valueSuffix: ' messages'
+//                    },
+//                    showCheckbox: true,
+//                    showInNavigator: false
+//                    }
+//
+//                    ,
+//
+//                     {
+//                    name: 'Partition 2',
+////                    type: 'column',
+////                    color: "#000000",
+//                    data: yAxisMessagesCounts,
+//                    pointStart: response.data.pointStart,
+//                    pointInterval: response.data.pointInterval,
+//                    tooltip: {
+//                        valueDecimals: 0,
+//                        valueSuffix: ' messages'
+//                    }
+//                    }
+
+//                }
+//                ,
+//                {
+//                    name: 'Offset',
+//                    data: yAxisOffset,
+//                    yAxis: 1,
+//                    pointStart: response.data.pointStart,
+//                    pointInterval: response.data.pointInterval,
+//                    tooltip: {
+//                        valueDecimals: 0,
+//                        valueSuffix: ''
+//                    }
+//                }
+                ]
+
+            };
+
+
+
+            Highcharts.StockChart({
+                                                  chart : {
+                                                      renderTo : 'container2',
+                                                      padding : 0
+                                                  },
+                                                   credits: {
+                                                        enabled: false
+                                                    },
+                                                  exporting: { enabled: false },
+                                                  rangeSelector : {
+                                                      enabled: false
+                                                  },
+                                                  tooltip : {
+                                                      enabled: false
+                                                  },
+                                                  title : {
+                                                      text : ''
+                                                  },
+//                                                  navigator: {
+//                                                      height: 80
+//                                                  },
+
+                                                navigator: {
+                                                          outlineColor: '#E4E4E4',
+                                                          height: 80
+                                                        },
+
+                                                         scrollbar: {
+                                                                  enabled: false
+                                                                },
+//                                                   scrollbar: {
+//                                                      barBackgroundColor: 'gray',
+//                                                      barBorderRadius: 7,
+//                                                      barBorderWidth: 0,
+//                                                      buttonBackgroundColor: 'gray',
+//                                                      buttonBorderWidth: 0,
+//                                                      buttonBorderRadius: 7,
+//                                                      trackBackgroundColor: 'none',
+//                                                      trackBorderWidth: 1,
+//                                                      trackBorderRadius: 8,
+//                                                      trackBorderColor: '#CCC'
+//                                                  },
+                                                  yAxis: {
+                                                      height: 0,
+                                                      gridLineWidth: 0,
+                                                      labels: {
+                                                          enabled: false
+                                                      }
+                                                  },
+                                                  xAxis: {
+                                                      lineWidth: 0,
+                                                      tickLength : 0,
+                                                      labels: {
+                                                          enabled: false
+                                                      }
+                                                  },
+                                                  series : [{
+                                                      name : '',
+                                                      lineWidth: 0,
+                                                      marker: {
+                                                          enabled: false,
+                                                          states: {
+                                                              hover: {
+                                                                  enabled: false
+                                                              }
+                                                          }
+                                                      },
+                                                      data : yAxisMessagesCounts,
+                                                      tooltip: {
+                                                          valueDecimals: 2
+                                                      }
+                                                  }]
+                                              });
+
+
+            Highcharts.stockChart('container', chart)
+            //);
+
+
+
+ })
 
 
 });

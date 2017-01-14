@@ -51,7 +51,40 @@
 
       <!-- Show when topic has data -->
 
-      <md-card layout="column" ng-hide="getExtraConfig(topicName) == '' && topicIsEmpty">
+      <!--<md-card layout="column" ng-hide="getExtraConfig(topicName) == '' && topicIsEmpty">-->
+      <md-card>
+
+
+              <!--<md-card>-->
+              <div style="background:#fff" layout="column">
+                  <div>
+                      <!--TODO-->
+                      <small style="font-size:10px;">
+                          <!--{{chartSelection}}Selected Min: 2017-01-14 20:31:26 / Selected Max: 2017-01-14 21:10:22-->
+                          <span flex></span>
+                          <md-button style="font-size:10px;float:right;line-height: 0px; min-height: 0px;" ng-show="!showChart" ng-click="toggleChart()"> <i class="fa fa-eye-slash" aria-hidden="true"></i> Hide chart </md-button>
+                          <md-button style="font-size:10px;float:right;line-height: 0px; min-height: 0px;" ng-show="showChart" ng-click="toggleChart()"> <i class="fa fa-eye" aria-hidden="true"></i> Show chart </md-button>
+                      </small>
+                  </div>
+
+                  <div>
+                      <div ng-hide="showChart" id="container" style="float:left; min-width: 300px; height: 450px; margin: 0 auto; width:80% !important;"></div>
+                      <div ng-show="showChart" id="container2" style="float:left; min-width: 300px; height: 100px; margin: 0 auto; width:80% !important;"></div>
+                  </div>
+
+                  <!--<div>-->
+                      <!--<div style="width:100%;text-align:right;" ng-show="showButton">-->
+                          <!--<md-button layout-align="end"  ng-show="!showChart" ng-click="toggleChart()"> <i class="fa fa-eye-slash" aria-hidden="true"></i> Hide chart </md-button>-->
+                          <!--<md-button layout-align="end" ng-show="showChart" ng-click="toggleChart()"> <i class="fa fa-eye" aria-hidden="true"></i> Show chart </md-button>-->
+                      <!--</div>-->
+                  <!--</div>-->
+
+
+                  <!--<div id="tester" height="250" width="100%" ng-show="showChart"></div>-->
+              </div>
+              <!--</md-card>-->
+
+
           <div flex>
               <!--Server side filtering toolbar-->
               <!--Basic-->
@@ -74,7 +107,7 @@
               <!--</md-card>-->
 
               <!--Advanced-->
-              <div style="background-color:#fff;">
+              <div style="background-color:#fff; border:1px solid #f4f5f7">
                     <div layout="row" layout-sm="column" layout-align="space-between center" layout-padding ng-hide="topicIsEmpty">
                         <label>KCQL</label>
                         <input ng-model="search" type="text" placeholder="SELECT * FROM {{topicName}}" style="width:100%">
@@ -86,18 +119,7 @@
               </div>
 
           </div>
-          <div flex >
-              <!--<md-card>-->
-                  <md-card-content style="background:#fff">
-                      <div style="width:100%;text-align:right;" ng-show="showButton">
-                          <md-button layout-align="end"  ng-show="showChart" ng-click="toggleChart()"> <i class="fa fa-eye-slash" aria-hidden="true"></i> Hide chart </md-button>
-                          <md-button layout-align="end" ng-show="!showChart" ng-click="toggleChart()"> <i class="fa fa-eye" aria-hidden="true"></i> Show chart </md-button>
-                      </div>
-                      timeline
-                      <!--<div id="tester" height="250" width="100%" ng-show="showChart"></div>-->
-                  </md-card-content>
-              <!--</md-card>-->
-          </div>
+
       </md-card>
 
       <md-card>
@@ -129,14 +151,14 @@
   </div>
 
 
-    <div flex style="background-color:#EDF1F5;" ng-cloak>
+    <!--<div flex style="background-color:#EDF1F5;" ng-cloak>-->
 
         <!-- Show when topic is empty -->
-        <div layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;" ng-show="topicIsEmpty">
-          <div style="color:#333;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-              This topic is empty.
-          </div>
-        </div>
+        <!--<div layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;" ng-show="topicIsEmpty">-->
+          <!--<div style="color:#333;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>-->
+              <!--This topic is empty.-->
+          <!--</div>-->
+        <!--</div>-->
 
 
 
@@ -191,6 +213,6 @@
 
         <!--</md-tabs>-->
         <!--</div>-->
-    </div>
+    <!--</div>-->
 
 </div>

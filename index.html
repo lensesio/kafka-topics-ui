@@ -31,29 +31,29 @@
     <span flex></span>
     <div class="top-right-part" style="padding-top:4px;" >
 
-      <md-menu-bar>
-        <md-menu>
+      <!--<md-menu-bar>-->
+        <!--<md-menu>-->
           <md-button ng-click="$mdOpenMenu()">
             SELECTED CLUSTER: <span style="color: #FF5722">{{cluster.NAME}} </span> <i class="fa fa-angle-double-down" aria-hidden="true"></i>
           </md-button>
-          <md-menu-content>
-            <md-menu-item ng-repeat="connectEndPoint in clusters track by $index"
-                          ng-click="updateEndPoint(connectEndPoint.NAME)">
-              <md-button>
-                {{connectEndPoint.NAME}}
-              </md-button>
-            </md-menu-item>
-            <md-menu-item>
-              </md-menu-item>
-            </md-menu-content>
-          </md-menu>
+          <!--<md-menu-content>-->
+            <!--<md-menu-item ng-repeat="connectEndPoint in clusters track by $index"-->
+                          <!--ng-click="updateEndPoint(connectEndPoint.NAME)">-->
+              <!--<md-button>-->
+                <!--{{connectEndPoint.NAME}}-->
+              <!--</md-button>-->
+            <!--</md-menu-item>-->
+            <!--<md-menu-item>-->
+            <!--</md-menu-item>-->
+          <!--</md-menu-content>-->
+        <!--</md-menu>-->
 
-        <md-menu>
+        <!--<md-menu>-->
           <md-button>
             <i class="fa fa-cog" aria-hidden="true"></i>
           </md-button>
-        </md-menu>
-        </md-menu-bar>
+        <!--</md-menu>-->
+      <!--</md-menu-bar>-->
 
 
 
@@ -150,6 +150,8 @@ var clusters =
 
 <!--CUSTOM-FOOTER-->
 <!-- analytics -->
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
 <script src="bower_components/angular/angular.min.js"></script>
