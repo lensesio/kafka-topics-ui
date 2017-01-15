@@ -380,7 +380,7 @@ md-card md-card-title {
 }
 
 
-table {border-spacing: 0; width:100%}
+table { border-spacing: 0; width:100%}
 table tbody tr:nth-child(odd) { background-color:#eee; }
 table tbody tr:nth-child(even) { background-color:#fff; }
 table tr th {padding:10px;}
@@ -392,7 +392,32 @@ table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
 
 .flat-table tr td {border:1px #ccc solid;}
 .flat-table tr th {border:1px #ccc solid;}
+
+
+.topics-table {
+    background-color:transparent;
+    width:100%;
+    color: #797979;
+    margin-top: 20px;
+}
+
+.topics-table tbody { color: #797979; }
+.topics-table tbody tr:nth-child(odd) { background-color:transparent; }
+.topics-table tbody tr:nth-child(even) { background-color:transparent; }
+.topics-table tr td { padding: 10px 8px; border-top: 1px solid #e4e7ea; line-height: 1.42857143; vertical-align: top; font-size: 14px;}
+.topics-table tr th { padding: 15px 8px; line-height: 1.42857143; vertical-align: top; font-size: 14px;}
+
+.txt-oflo {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 .blue {background-color:#dcedf7};
+
+.no-shadow {
+    box-shadow:none;
+}
 
 
 /* CUSTOM TABS STUFF*/

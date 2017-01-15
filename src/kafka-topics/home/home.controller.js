@@ -4,7 +4,16 @@ angularAPP.controller('HomeCtrl', function ($scope, $rootScope, $location, $rout
 
   $rootScope.showList = false;
 
-
+  /**
+  * At start up get the Brokers that the kafka-rest server is using
+  */
+  KafkaRestProxyFactory.getBrokers().then(
+    function success(brokers) {
+      $scope.brokers = brokers.brokers;
+    },
+    function failure() {
+      $scope.connectionFailure = true;
+  });
 
      $rootScope.$watch(function () {
         return $rootScope.cluster;

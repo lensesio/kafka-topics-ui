@@ -3,34 +3,69 @@
 
   <div layout="column">
     <!--Search-->
-    <div flex>
-      <md-input-container class="md-block" style="margin-bottom:-25px;">
-        <label>Search topics</label>
+    <div flex style="margin:10px; ">
+      <md-input-container class="md-block" style="margin-bottom:-25px; max-width:350px">
+        <label>Search topics:</label>
         <input ng-model="search">
       </md-input-container>
     </div>
 
     <!--Topics List-->
     <div flex>
-      <md-list class="md-dense" flex>
-        <md-list-item dir-paginate="topic in normalTopics| orderBy:'topicName' | filter: search | itemsPerPage:topicsPerPage"
-                      pagination-id="topics"
-                      ng-click="listClick(topic.topicName, topic.isControlTopic)"
-                      class="md-2-line"
-                      ng-class="{ 'selectedListItem': topic.topicName == topicName }"
-        >
-          <div class="md-list-item-text" layout="column">
-            <h4>{{shortenControlCenterName(topic.topicName)}}</h4>
-            <p style="font-size:12px;">
-              {{topic.replication}} Replication &#10799; {{topic.partition}} Partition<span ng-if="topic.customConfig.length > 0">,
-              {{topic.customConfig.length}} config changed</span>
-            </p>
-          </div>
-          <div style="display:block;background-color:rgba(44, 152, 240, 0.3);border-radius: 5px; padding-left:10px;padding-right:10px;  min-width:60px; color:#333; text-align:center; font-size:12px">
-            {{topicDataType(topic)}}
-          </div>
-        </md-list-item>
-      </md-list>
+
+      <table class="topics-table">
+        <thead>
+          <tr>
+            <th>TOPIC NAME</th>
+            <th class="td-center">REPLICATION</th>
+            <th class="td-center">PARTITIONS</th>
+            <th class="td-center">KEY TYPE</th>
+            <th class="td-center">VALUE TYPE</th>
+            <th>CONFIGS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr dir-paginate="topic in normalTopics| orderBy:'topicName' | filter: search | itemsPerPage:30"
+              pagination-id="topics"
+              ng-click="listClick(topic.topicName, topic.isControlTopic)"
+              ng-class="{ 'selectedListItem': topic.topicName == topicName }">
+            <td>{{shortenControlCenterName(topic.topicName)}}</td>
+            <td class="td-center">{{topic.replication}}</td>
+            <td class="td-center">{{topic.partitions}}</td>
+            <td class="td-center"><span class="labelType" ng-if="topic.keyType != ''">{{topic.keyType}}</span></td>
+            <td class="td-center"><span class="labelType" ng-if="topic.valueType != ''">{{topic.valueType}}</span></td>
+            <td><span ng-if="topic.customConfig.length > 0">{{topic.customConfig.length}} config changed</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+
+
+
+      <!--<md-list class="md-dense" flex>-->
+        <!--<md-list-item dir-paginate="topic in normalTopics| orderBy:'topicName' | filter: search | itemsPerPage:topicsPerPage"-->
+                      <!--pagination-id="topics"-->
+                      <!--ng-click="listClick(topic.topicName, topic.isControlTopic)"-->
+                      <!--class="md-2-line"-->
+                      <!--ng-class="{ 'selectedListItem': topic.topicName == topicName }">-->
+
+          <!--<div class="md-list-item-text" layout="column">-->
+            <!--<h4>{{shortenControlCenterName(topic.topicName)}}</h4>-->
+            <!--&lt;!&ndash;<h4>{{topic.topicName}}</h4>&ndash;&gt;-->
+            <!--<p style="font-size:12px;">-->
+              <!--{{topic.replication}} Replication &#10799; {{topic.partition}} Partition-->
+              <!--<span ng-if="topic.customConfig.length > 0">,-->
+              <!--{{topic.customConfig.length}} config changed</span>-->
+            <!--</p>-->
+          <!--</div>-->
+
+          <!--<div>-->
+            <!--<span class="labelType" ng-if="topic.keyType != ''">{{topic.keyType}}</span> /-->
+            <!--<span class="labelType" ng-if="topic.valueType != ''">{{topic.valueType}}</span>-->
+          <!--</div>-->
+
+        <!--</md-list-item>-->
+      <!--</md-list>-->
     </div>
 
     <!--Pagination-->

@@ -11,9 +11,9 @@
     </div>
 
     <!--Topics List-->
-    <div flex>
+    <div flex style="height:500px">
       <md-list class="md-dense" flex>
-        <md-list-item dir-paginate="topic in normalTopics| orderBy:'topicName' | filter: search | itemsPerPage:23"
+        <md-list-item dir-paginate="topic in normalTopics| orderBy:'topicName' | filter: search | itemsPerPage:100"
                       pagination-id="topics"
                       ng-click="listClick(topic.topicName, topic.isControlTopic)"
                       class="md-2-line"

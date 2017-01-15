@@ -71,6 +71,10 @@ angularAPP.config(function ($routeProvider) {
       templateUrl: 'src/kafka-topics/home/home.html',
       controller: 'HomeCtrl'
     })
+    .when('/healthcheck', {
+      templateUrl: 'src/kafka-topics/healthcheck/healthcheck.html',
+      controller: 'HealthcheckCtrl'
+    })
     .when('/cluster/:cluster', {
       templateUrl: 'src/kafka-topics/home/home.html',
        controller: 'HomeCtrl'

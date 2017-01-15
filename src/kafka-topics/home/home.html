@@ -1,12 +1,13 @@
-<div layout-padding>
+<div layout-margin layout="row" layout-sm="column">
 
-  <div>
+  <!--TOPICS LIST-->
+  <md-card flex="70" flex-sm="100" style="box-shadow:none;" >
     <md-toolbar class="md-hue-2" style="color:#333;z-index:0; background-color:#FAFAFA; box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);">
       <div class="md-toolbar-tools">
-        <h4>
+        <h3>
           <span ng-show="!displayingControlTopics"><b>{{normalTopics.length}}</b> Topics</span>
           <span ng-show="displayingControlTopics"><b>{{controlTopics.length}}</b> Topics</span>
-        </h4>
+        </h3>
 
 
         <span flex></span>
@@ -22,14 +23,41 @@
     <div ng-show="!displayingControlTopics" ng-include="'src/kafka-topics/list/topics-list.html'"></div>
     <div ng-show="displayingControlTopics" ng-include="'src/kafka-topics/list/control-topics-list.html'"></div>
 
+  </md-card>
+
+  <div flex>
+    <!--DASHBOARD STUFF-->
+    <div layout="column">
+
+      <md-card style="margin-bottom:15px;box-shadow:none;">
+        <md-card-content>
+          <div layout="column">
+            <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">TOTAL TOPICS</div>
+            <div layout="row">
+              <div flex="25"><i style="font-size:50px; font-weight:100; color: #03a9f3; padding-top:10px" class="fa fa-folder-o" aria-hidden="true"></i></div>
+              <div flex style="font-size: 50px; font-weight: 100;">{{normalTopics.length + controlTopics.length}}</div>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+
+      <md-card style="margin-bottom:15px;box-shadow:none;">
+        <md-card-content>
+          <div layout="column">
+              <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">BROKERS</div>
+              <div layout="row">
+                  <div flex="25"><i style="font-size:50px; font-weight:100; color: #9675ce; padding-top:10px" class="fa fa-hdd-o" aria-hidden="true"></i></div>
+                  <div flex style="font-size: 50px; font-weight: 100;">{{brokers.length}}</div>
+              </div>
+          </div>
+        </md-card-content>
+      </md-card>
+
+
+    </div>
+
+    <!--CONFIG-->
+    <div ng-include="'src/kafka-topics/config/config.html'"></div>
   </div>
 
-
-
-  <!--<div class="row-fluid">-->
-    <!--<div class="centering text-center">-->
-      <!--<p> Welcome to <b>kafka-topics</b><br/>-->
-      <!--<p> select a <b>topic</b> on the left </p><br/>-->
-    <!--</div>-->
-  <!--</div>-->
 </div>

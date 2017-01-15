@@ -2,8 +2,8 @@
   <md-toolbar ng-show="!displayingControlTopics" class="md-hue-2" style="background-color:#fff;color:#333">
     <div class="md-toolbar-tools">
       <md-button ng-click="toggleList()">
-        <i ng-show="showList" class="fa fa-expand" aria-hidden="true" style="color:#333"></i>
-        <i ng-hide="showList" class="fa fa-compress" aria-hidden="true" style="color:#333"></i>
+        <i ng-show="showList" class="fa fa-arrow-circle-o-left" aria-hidden="true" style="color:#333"></i>
+        <i ng-hide="showList" class="fa fa-bars" aria-hidden="true" style="color:#333"></i>
       </md-button>
       <h4 style="font-size:16px;">
         <span>{{topicName}}</span>
@@ -22,9 +22,8 @@
   </md-toolbar>
   <md-progress-linear md-mode="indeterminate" ng-show="showSpinner"></md-progress-linear>
 
-
-
-    <section ng-hide="showSpinner" style="background-color:#FAFAFA; border:1px solid #f4f5f7">
+  <!--TODO-->
+  <section ng-hide="showSpinner" style="background-color:#FAFAFA; border:1px solid #f4f5f7">
         <div class="sttabs tabs-style-bar">
             <nav>
                 <ul>
@@ -35,10 +34,6 @@
             </nav>
         </div><!-- /tabs -->
     </section>
-
-
-
-
 
   <div style="background-color:#F5F5F5;" ng-cloak layout-margin ng-hide="showSpinner">
 
@@ -52,7 +47,7 @@
       <!-- Show when topic has data -->
 
       <!--<md-card layout="column" ng-hide="getExtraConfig(topicName) == '' && topicIsEmpty">-->
-      <md-card>
+      <div>
 
 
               <!--<md-card>-->
@@ -120,9 +115,9 @@
 
           </div>
 
-      </md-card>
+      </div>
 
-      <md-card>
+      <div style="background-color:#fff;">
           <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
 
               <div>
@@ -156,7 +151,7 @@
 
           </md-tabs>
 
-      </md-card>
+      </div>
   </div>
 
 

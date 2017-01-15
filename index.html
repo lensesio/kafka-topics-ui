@@ -32,29 +32,29 @@
     <span flex></span>
     <div class="top-right-part" style="padding-top:4px;" >
 
-      <!--<md-menu-bar>-->
-        <!--<md-menu>-->
+      <md-menu-bar>
+        <md-menu>
           <md-button ng-click="$mdOpenMenu()">
             SELECTED CLUSTER: <span style="color: #FF5722">{{cluster.NAME}} </span> <i class="fa fa-angle-double-down" aria-hidden="true"></i>
           </md-button>
-          <!--<md-menu-content>-->
-            <!--<md-menu-item ng-repeat="connectEndPoint in clusters track by $index"-->
-                          <!--ng-click="updateEndPoint(connectEndPoint.NAME)">-->
-              <!--<md-button>-->
-                <!--{{connectEndPoint.NAME}}-->
-              <!--</md-button>-->
-            <!--</md-menu-item>-->
-            <!--<md-menu-item>-->
-            <!--</md-menu-item>-->
-          <!--</md-menu-content>-->
-        <!--</md-menu>-->
+          <md-menu-content>
+            <md-menu-item ng-repeat="connectEndPoint in clusters track by $index"
+                          ng-click="updateEndPoint(connectEndPoint.NAME)">
+              <md-button>
+                {{connectEndPoint.NAME}}
+              </md-button>
+            </md-menu-item>
+            <md-menu-item>
+            </md-menu-item>
+          </md-menu-content>
+        </md-menu>
 
-        <!--<md-menu>-->
+        <md-menu>
           <md-button>
             <i class="fa fa-cog" aria-hidden="true"></i>
           </md-button>
-        <!--</md-menu>-->
-      <!--</md-menu-bar>-->
+        </md-menu>
+      </md-menu-bar>
 
 
 
@@ -177,6 +177,7 @@ var clusters =
 <script src="src/topics.config.js"></script>
 <script src="src/factories/dirPagination.js"></script>
 <script src="src/kafka-topics/home/home.controller.js"></script>
+<script src="src/kafka-topics/healthcheck/healthcheck.controller.js"></script>
 <script src="src/kafka-topics/view/view.controller.js"></script>
 <script src="src/kafka-topics/config/config.controller.js"></script>
 <script src="src/kafka-topics/list/topics-list.controller.js"></script>
