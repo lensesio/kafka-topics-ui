@@ -7,8 +7,9 @@
   <link rel="stylesheet" href="bower_components/angular-material-data-table/dist/md-data-table.min.css">
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.min.css">
-  <link rel="stylesheet" href="bower_components/angular-json-tree/dist/angular-json-tree.css">
   <link rel="stylesheet" href="src/assets/css/styles.css">
+  <!--<link rel="stylesheet" href="bower_components/angular-json-tree/dist/angular-json-tree.css">-->
+
   <meta charset=utf-8/>
   <meta name="viewport" content="width=device-width">
   <meta name="description" content="Kafka Topics UI">
@@ -127,26 +128,26 @@ var clusters =
 <!--Main Content Starts here-->
 <div layout="row"  layout-sm="column" layout-xs="column" ng-controller="KafkaTopicsConfigCtrl" ng-hide="missingEnvJS">
   <!--<div flex-gt-sm="33" ng-show="showList">-->
-  <div style="width:220px;" ng-show="showList">
+  <div style="width:220px; z-index:0; background:#fff;box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);" ng-show="showList">
     <div ng-controller="KafkaTopicsListCtrl" ng-include="'src/kafka-topics/list/left-list.html'"></div>
     <br>
-    <div ng-include="'src/kafka-topics/config/config.html'"></div>
+    <!--<div ng-include="'src/kafka-topics/config/config.html'"></div> TODO-->
   </div>
-  <div flex >
+  <div flex>
     <ng-view></ng-view>
     <br>
     <div ng-include="'src/kafka-topics/config/config.html'" show-sm hide-gt-sm></div>
   </div>
 </div>
 
-<!-- Landoop team promo -->
-<div layout-margin flex>
-  <div flex="nogrow">
-    <img ng-src="src/assets/icons/landoop-dark.svg" style="width:20px;float: left;padding-right:5px;"></div>
-  <div flex>
-    <p class="md-caption">Powered by <a href="http://www.landoop.com/" target="_blank">Landoop</a></p>
-  </div>
-</div>
+<!-- Landoop team promo TODO -->
+<!--<div layout-margin flex>-->
+  <!--<div flex="nogrow">-->
+    <!--<img ng-src="src/assets/icons/landoop-dark.svg" style="width:20px;float: left;padding-right:5px;"></div>-->
+  <!--<div flex>-->
+    <!--<p class="md-caption">Powered by <a href="http://www.landoop.com/" target="_blank">Landoop</a></p>-->
+  <!--</div>-->
+<!--</div>-->
 
 <!--CUSTOM-FOOTER-->
 <!-- analytics -->

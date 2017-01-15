@@ -4,6 +4,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.topicName = $routeParams.topicName;
   $rootScope.topicName = $routeParams.topicName;
 
+  $rootScope.showList = true;
+
+
   $scope.topicCategoryUrl = $routeParams.topicCategoryUrl;
   $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
   $scope.$on('$routeChangeSuccess', function() {
@@ -718,7 +721,7 @@ $scope.chartSelection = ""
                     zoomType: 'x',
                     events: {
                         load: function () {
-                             var series = this.series[0];
+//                             var series = this.series[0];
 //                             setInterval(function () {
 //                             $http.get("http://localhost:8080/api/topics/latest?topicName="+$scope.topicName).then(function response(response){
 //                                    var x = (new Date()).getTime(), // current time
@@ -823,6 +826,15 @@ $scope.chartSelection = ""
                     }
                  },
 
+
+            navigator: {
+                outlineColor: '#E4E4E4',
+                  height: 80
+                },
+
+                 scrollbar: {
+                          enabled: false
+                        },
                 title: {
                     text: 'Messages in ' + $scope.topicName
                 },
@@ -839,7 +851,7 @@ $scope.chartSelection = ""
 
                  {
                     name: 'Rate',
-                    type: 'column',
+//                    type: 'column',
                     color: "#cccccc",
                     data: yAxisRate,
                     pointStart: response.data.pointStart,

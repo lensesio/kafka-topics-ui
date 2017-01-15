@@ -1,21 +1,24 @@
-<md-card>
-  <md-toolbar  class="md-hue-2">
+<div>
+  <md-toolbar class="md-hue-2" style="color:#333;z-index:0; background-color:#FAFAFA; box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);">
     <div class="md-toolbar-tools">
-      <h2>
+      <h4>
         <span ng-show="!displayingControlTopics"><b>{{normalTopics.length}}</b> Topics</span>
         <span ng-show="displayingControlTopics"><b>{{controlTopics.length}}</b> Topics</span>
-      </h2>
+      </h4>
 
-      <span flex></span>
-      <md-switch style="font-size:14px"  class="md-icon-button" ng-model='displayingControlTopics' aria-label="Show system topics" >
-        <div ng-if="displayingControlTopics"><b>System Topics</b></div>
-        <div ng-if="!displayingControlTopics"><b>System Topics</b></div>
-      </md-switch>
+
+      <!--<span flex></span>-->
+      <!--<md-switch style="font-size:14px"  class="md-icon-button" ng-model='displayingControlTopics' aria-label="Show system topics" >-->
+        <!--<div ng-if="displayingControlTopics"><b>System Topics</b></div>-->
+        <!--<div ng-if="!displayingControlTopics"><b>System Topics</b></div>-->
+      <!--</md-switch>-->
     </div>
 
   </md-toolbar>
 
-  <div ng-show="!displayingControlTopics" ng-include="'src/kafka-topics/list/topics-list.html'"></div>
-  <div ng-show="displayingControlTopics" ng-include="'src/kafka-topics/list/control-topics-list.html'"></div>
+  <!--TODO-->
+  <div ng-show="!displayingControlTopics" ng-include="'src/kafka-topics/list/compact.html'"></div>
+  <!--<div ng-show="!displayingControlTopics" ng-include="'src/kafka-topics/list/topics-list.html'"></div>-->
+  <!--<div ng-show="displayingControlTopics" ng-include="'src/kafka-topics/list/control-topics-list.html'"></div>-->
 
-</md-card>
+</div>

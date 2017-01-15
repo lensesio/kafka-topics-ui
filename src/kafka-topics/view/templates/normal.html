@@ -2,38 +2,110 @@
 
   <md-tab-body>
     <md-content class="normalcontent">
-        <table>
-          <thead>
-          <tr>
-            <th class="td-center">Offset</th>
-            <th class="td-center">Partition</th>
-            <th>Key</th>
-            <th>Value</th>
-          </tr>
-          </thead>
-          <tbody>
-          <!--TODO remove gridOptions-->
-          <tr dir-paginate="t in gridOptions.data |  filter:search:strict | itemsPerPage: paginationItems"  pagination-id="treeView">
-            <td valign="top" class="td-center">{{t.offset}}</td>
-            <td valign="top" class="td-center">{{t.partition}}</td>
 
-            <!--Key-->
-            <td ng-if="t.key != ''"  valign="top" style="min-width:250px;">
-              <json-tree ng-show="showTree(t.key)" object="t.key" root-name="'Key'"></json-tree>
-              <div ng-hide="showTree(t.key)">{{t.key}}</div>
-            </td>
-            <td ng-if="t.key == ''" valign="top"></td>
+      <!--<div style="background-color:#FAFAFA; border:1px solid #f4f5f7; text-align:right">-->
+        <!--<md-button>-->
+          <!--<i class="fa fa-play" aria-hidden="true"></i> Start-->
+        <!--</md-button>-->
 
-            <!--Value-->
-            <td ng-if="t.value != ''"  valign="top" style="min-width:250px;">
-              <json-tree ng-show="showTree(t.value)" object="t.value" root-name="'Value'"></json-tree>
-              <div ng-hide="showTree(t.value)">{{t.value}}</div>
-            </td>
-            <td ng-if="t.value == ''" valign="top"></td>
+        <!--<md-button>-->
+          <!--<i class="fa fa-pause" aria-hidden="true"></i> Stop-->
+        <!--</md-button>-->
+      <!--</div>-->
 
-          </tr>
-          </tbody>
-        </table>
+      <md-list class="md-dense" flex style="padding:0px 25px">
+        <md-list-item class="md-2-line"
+                      dir-paginate="t in gridOptions.data |  filter:search:strict | itemsPerPage: paginationItems"
+                      pagination-id="treeView"
+                      style="border-bottom:1px solid #f4f5f7; padding-top: 5px">
+          <!--<span class="md-avatar" style="background:red;">-->
+            <!--<span style="text-align:center; vertical-align:middle">{{t.partition}}000</span>-->
+          <!--</span>-->
+
+          <div class="md-list-item-text" layout="column">
+
+            <div layout="row">
+                  <div layout="column" flex="90">
+                    <div ng-if="t.key != ''">
+                      <json-tree ng-show="showTree(t.key)" object="t.key" root-name="'Key'" style="max-width: 100%;"></json-tree>
+                      <div ng-hide="showTree(t.key)">{{t.key}}</div>
+                    </div>
+                    <div ng-if="t.value != ''" >
+                      <json-tree ng-show="showTree(t.value)" object="t.value" root-name="'Value'" style=" max-width: 100%;"></json-tree>
+                      <div ng-hide="showTree(t.value)">{{t.value}}</div>
+                    </div>
+                  </div>
+
+                  <span flex></span>
+
+                  <div layout="column" flex="10">
+                    <small style="float:right;text-align:right;color:#ccc"><i>Partition: {{t.partition}}</i></small>
+                    <small style="float:right;text-align:right;color:#ccc"><i>Offset: {{t.offset}}</i></small>
+                  </div>
+            </div>
+
+            <!--<div>-->
+              <!--<small style="float:right;text-align:right;color:#ccc"><i>1 min 2 sec ago</i></small>-->
+            <!--</div>-->
+          </div>
+
+          <!--<span class="labelOffset"> {{t.offset}} </span>-->
+
+
+        </md-list-item>
+        <md-divider></md-divider>
+      </md-list>
+
+
+
+
+
+        <!--<table>-->
+          <!--&lt;!&ndash;<thead>&ndash;&gt;-->
+          <!--&lt;!&ndash;<tr>&ndash;&gt;-->
+            <!--&lt;!&ndash;<th class="td-center">Offset</th>&ndash;&gt;-->
+            <!--&lt;!&ndash;<th class="td-center">Partition</th>&ndash;&gt;-->
+            <!--&lt;!&ndash;<th>Key</th>&ndash;&gt;-->
+            <!--&lt;!&ndash;<th>Value</th>&ndash;&gt;-->
+          <!--&lt;!&ndash;</tr>&ndash;&gt;-->
+          <!--&lt;!&ndash;</thead>&ndash;&gt;-->
+          <!--<tbody style="color: #797979;">-->
+          <!--&lt;!&ndash;TODO remove gridOptions&ndash;&gt;-->
+          <!--<tr dir-paginate="t in gridOptions.data |  filter:search:strict | itemsPerPage: paginationItems"  pagination-id="treeView">-->
+
+            <!--<td>-->
+              <!--<span class="labelOffset"> {{t.offset}} </span>-->
+              <!--<span class="labelType"> {{t.partition}} </span>-->
+              <!--<div ng-if="t.key != ''">-->
+                <!--<json-tree ng-show="showTree(t.key)" object="t.key" root-name="'Key'"></json-tree>-->
+                <!--<div ng-hide="showTree(t.key)">{{t.key}}</div>-->
+              <!--</div>-->
+              <!--<div ng-if="t.value != ''" >-->
+                <!--<json-tree ng-show="showTree(t.value)" object="t.value" root-name="'Value'"></json-tree>-->
+                <!--<div ng-hide="showTree(t.value)">{{t.value}}</div>-->
+              <!--</div>-->
+            <!--</td>-->
+
+            <!--&lt;!&ndash;<td valign="top" class="td-center">{{t.offset}}</td>&ndash;&gt;-->
+            <!--&lt;!&ndash;<td valign="top" class="td-center">{{t.partition}}</td>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;&lt;!&ndash;Key&ndash;&gt;&ndash;&gt;-->
+            <!--&lt;!&ndash;<td ng-if="t.key != ''"  valign="top" style="min-width:250px;">&ndash;&gt;-->
+              <!--&lt;!&ndash;<json-tree ng-show="showTree(t.key)" object="t.key" root-name="'Key'"></json-tree>&ndash;&gt;-->
+              <!--&lt;!&ndash;<div ng-hide="showTree(t.key)">{{t.key}}</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</td>&ndash;&gt;-->
+            <!--&lt;!&ndash;<td ng-if="t.key == ''" valign="top"></td>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;&lt;!&ndash;Value&ndash;&gt;&ndash;&gt;-->
+            <!--&lt;!&ndash;<td ng-if="t.value != ''"  valign="top" style="min-width:250px;">&ndash;&gt;-->
+              <!--&lt;!&ndash;<json-tree ng-show="showTree(t.value)" object="t.value" root-name="'Value'"></json-tree>&ndash;&gt;-->
+              <!--&lt;!&ndash;<div ng-hide="showTree(t.value)">{{t.value}}</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;</td>&ndash;&gt;-->
+            <!--&lt;!&ndash;<td ng-if="t.value == ''" valign="top"></td>&ndash;&gt;-->
+
+          <!--</tr>-->
+          <!--</tbody>-->
+        <!--</table>-->
 
         <div flex>
           <dir-pagination-controls pagination-id="treeView"></dir-pagination-controls>

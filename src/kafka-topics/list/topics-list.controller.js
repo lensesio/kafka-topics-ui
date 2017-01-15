@@ -2,7 +2,6 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
   $log.info("Starting kafka-topics controller : list (getting topic info)");
   toastFactory.hideToast();
 
-
    $rootScope.$watch(function () {
       return $rootScope.cluster;
     }, function (a) {
@@ -11,19 +10,13 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
     }
    }, true);
 
-
-
   $scope.displayingControlTopics = $scope.isNormalTopic;
-
-
 
   $scope.shortenControlCenterName = function (topicName) {
     return KafkaRestProxyFactory.shortenControlCenterName(topicName);
   }
 
-
-
-      $scope.topicsPerPage = 7;
+  $scope.topicsPerPage = 7;
 
 function getLeftListTopics() {
 
@@ -55,21 +48,11 @@ $scope.normalTopics = $scope.topics.filter(isNormalTopic);
 
   return dataType;
   }
-
-
-//    }, function (reason) {
-//      $log.error('Failed: ' + reason);
-//      toastFactory.showSimpleToast("No connectivity. Could not get topic names");
-//        $scope.topics = []
-//        $scope.controlTopics = []
-//    }, function (update) {
-//      $log.info('Got notification: ' + update);
-//    });
-//    }
 }
-  function doLabels(count, name) {
+
+function doLabels(count, name) {
     if (count == 0) return 'None ' + name;
     else if (count == 1) return '1 ' + name;
     else return count + ' ' + name +'s';
-  }
+}
 });

@@ -125,11 +125,20 @@
       <md-card>
           <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
 
+              <div>
+                  <input ng-model="search" flex placeholder="Filter" style="width: 300px;margin: 7px; line-height: 30px;"/>
+
+                  <select class="form-control button" ng-model="search.partition" style="float:right; width: 120px;margin: 7px; line-height: 30px;">
+                      <option value="" selected>All partitions</option>
+                      <option ng-repeat="i in getPartitions(partitions)" track by $index value="{{$index}}">Partition {{$index}}</option>
+                  </select>
+              </div>
+
               <md-tab   label="Topic" ng-click="onTabChanges('topic')"   ng-if="topicType != 'binary' && !topicIsEmpty ">
                   <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
               </md-tab>
 
-              <md-tab   label="Table" ng-click="onTabChanges('table')" ng-if="!topicIsEmpty">
+              <md-tab label="Table" ng-click="onTabChanges('table')" ng-if="!topicIsEmpty">
                   <md-input-container  class="md-block" ng-hide="topicIsEmpty || selectedTabNnumber > 1 "  flex="2">
                   <label>Search</label>
                   <input ng-model="search" flex placeholder="  "/>
