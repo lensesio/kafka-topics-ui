@@ -1,4 +1,5 @@
 <div style="background-color:#F5F5F5;">
+  <!--1. TOOLBAR-->
   <md-toolbar ng-show="!displayingControlTopics" class="md-hue-2" style="background-color:#fff;color:#333">
     <div class="md-toolbar-tools">
       <md-button ng-click="toggleList()">
@@ -9,9 +10,7 @@
         <span>{{topicName}}</span>
       </h4>
       <span flex></span>
-
         <small style="color:#333;font-size:10px;"> <span class="labelType"> STRING </span> / <span class="labelType"> AVRO </span> </small>
-
       <md-button  download="true"
               ng-click="getData(topicName)"
               aria-label="Download data"
@@ -20,9 +19,11 @@
       </md-button>
     </div>
   </md-toolbar>
+
+  <!--2. LOADER-->
   <md-progress-linear md-mode="indeterminate" ng-show="showSpinner"></md-progress-linear>
 
-  <!--TODO-->
+  <!--3. TOPIC NAV  --><!--TODO-->
   <section ng-hide="showSpinner" style="background-color:#FAFAFA; border:1px solid #f4f5f7">
         <div class="sttabs tabs-style-bar">
             <nav>
@@ -35,22 +36,18 @@
         </div><!-- /tabs -->
     </section>
 
+  <!--4. TOPIC FILTERS, CHART & DATA  -->
   <div style="background-color:#F5F5F5;" ng-cloak layout-margin ng-hide="showSpinner">
 
-      <!-- Show when topic is empty -->
+      <!-- 4.1 EMPTY TOPIC MESSAGE -->
       <div layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;" ng-show="topicIsEmpty">
           <div style="color:#333;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
               This topic is empty.
           </div>
       </div>
 
-      <!-- Show when topic has data -->
-
-      <!--<md-card layout="column" ng-hide="getExtraConfig(topicName) == '' && topicIsEmpty">-->
+      <!--4.2 TOPIC FILTERS & CHARTS-->
       <div>
-
-
-              <!--<md-card>-->
               <div style="background:#fff" layout="column">
                   <div>
                       <!--TODO-->
@@ -66,23 +63,11 @@
                       <div ng-hide="showChart" id="container" style="float:left; min-width: 300px; height: 450px; margin: 0 auto; width:80% !important;"></div>
                       <div ng-show="showChart" id="container2" style="float:left; min-width: 300px; height: 100px; margin: 0 auto; width:80% !important;"></div>
                   </div>
-
-                  <!--<div>-->
-                      <!--<div style="width:100%;text-align:right;" ng-show="showButton">-->
-                          <!--<md-button layout-align="end"  ng-show="!showChart" ng-click="toggleChart()"> <i class="fa fa-eye-slash" aria-hidden="true"></i> Hide chart </md-button>-->
-                          <!--<md-button layout-align="end" ng-show="showChart" ng-click="toggleChart()"> <i class="fa fa-eye" aria-hidden="true"></i> Show chart </md-button>-->
-                      <!--</div>-->
-                  <!--</div>-->
-
-
-                  <!--<div id="tester" height="250" width="100%" ng-show="showChart"></div>-->
               </div>
-              <!--</md-card>-->
-
 
           <div flex>
               <!--Server side filtering toolbar-->
-              <!--Basic-->
+              <!--TODO Basic-->
               <!--<md-card style="background-color:#EDF1F5;">-->
                   <!--<div layout="row" layout-sm="column" layout-align="start center" layout-padding ng-hide="topicIsEmpty">-->
                       <!--<label style="width:100%">Partition</label>-->
@@ -101,7 +86,7 @@
                   <!--</div>-->
               <!--</md-card>-->
 
-              <!--Advanced-->
+              <!--Advanced / TODO only if Topic has avro value-->
               <div style="background-color:#fff; border:1px solid #f4f5f7">
                     <div layout="row" layout-sm="column" layout-align="space-between center" layout-padding ng-hide="topicIsEmpty">
                         <label>KCQL</label>
@@ -112,11 +97,10 @@
                         <a>Basic</a>
                     </div>
               </div>
-
           </div>
-
       </div>
 
+      <!--4.3 TOPIC DATASET-->
       <div style="background-color:#fff;">
           <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
 
@@ -153,70 +137,4 @@
 
       </div>
   </div>
-
-
-    <!--<div flex style="background-color:#EDF1F5;" ng-cloak>-->
-
-        <!-- Show when topic is empty -->
-        <!--<div layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;" ng-show="topicIsEmpty">-->
-          <!--<div style="color:#333;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>-->
-              <!--This topic is empty.-->
-          <!--</div>-->
-        <!--</div>-->
-
-
-
-
-
-        <!--<div ng-hide="getExtraConfig(topicName) == '' && topicIsEmpty">-->
-            <!--<div style="display:flex;width:100%;height:55px" >-->
-                <!--<div style="width:150px;margin:16px 15px 0 0">-->
-                    <!--<select class="form-control button" ng-model="search.partition" >-->
-                        <!--<option value="" selected>Select partitions</option>-->
-                        <!--<option ng-repeat="i in getPartitions(partitions)" track by $index value="{{$index}}">Partition {{$index}}</option>-->
-                    <!--</select>-->
-                <!--</div>-->
-
-
-                <!--<div flex="3">-->
-                <!--<md-input-container  class="md-block" ng-hide="topicIsEmpty || selectedTabNnumber > 1 "  flex="2">-->
-                  <!--<label>Filter / KCQL</label>-->
-                  <!--<input ng-model="search" flex/>-->
-                  <!--&lt;!&ndash;<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>&ndash;&gt;-->
-                <!--</md-input-container>-->
-                <!--</div>-->
-                <!--<div>-->
-                    <!--<md-button flex ng-click="kcqlRequest()">GO</md-button>-->
-                <!--</div>-->
-
-            <!--</div>-->
-            <!--&lt;!&ndash;<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>&ndash;&gt;-->
-            <!--<div style="width:100%;text-align:right;" ng-show="showButton">-->
-                    <!--<md-button layout-align="end"  ng-show="showChart" ng-click="toggleChart()"> <i class="fa fa-eye-slash" aria-hidden="true"></i> Hide chart </md-button>-->
-                    <!--<md-button layout-align="end" ng-show="!showChart" ng-click="toggleChart()"> <i class="fa fa-eye" aria-hidden="true"></i> Show chart </md-button>-->
-                <!--</div>-->
-            <!--&lt;!&ndash;<div id="tester" height="250" width="90%" ng-show="showChart"></div>&ndash;&gt;-->
-
-            <!--<md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">-->
-
-            <!--<md-tab   label="Topic" ng-click="onTabChanges('topic')"   ng-if="topicType != 'binary' && !topicIsEmpty ">-->
-                <!--<div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>-->
-            <!--</md-tab>-->
-
-            <!--<md-tab   label="Table" ng-click="onTabChanges('table')" ng-if="!topicIsEmpty">-->
-                <!--<div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>-->
-            <!--</md-tab>-->
-
-            <!--<md-tab label="Raw Data" ng-click="onTabChanges('rawdata')" ng-if=" !topicIsEmpty">-->
-                <!--<div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>-->
-            <!--</md-tab>-->
-
-            <!--<md-tab label="Configuration" ng-click="onTabChanges('config')"  ng-if=" selectedTabNnumber == '3' || getExtraConfig(topicName) != ''">-->
-                <!--<div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>-->
-            <!--</md-tab>-->
-
-        <!--</md-tabs>-->
-        <!--</div>-->
-    <!--</div>-->
-
 </div>

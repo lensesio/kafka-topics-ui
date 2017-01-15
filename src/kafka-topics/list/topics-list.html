@@ -1,16 +1,15 @@
-
 <md-content>
-
   <div layout="column">
-    <!--Search-->
+
+    <!-- 1. SEARCH TOPICS -->
     <div flex style="margin:10px; ">
-      <md-input-container class="md-block" style="margin-bottom:-25px; max-width:350px">
+      <md-input-container class="md-block" style="margin-bottom:-25px; width:50%">
         <label>Search topics:</label>
         <input ng-model="search">
       </md-input-container>
     </div>
 
-    <!--Topics List-->
+    <!-- 2. TOPICS LIST TABLE-->
     <div flex>
 
       <table class="topics-table">
@@ -32,43 +31,13 @@
             <td>{{shortenControlCenterName(topic.topicName)}}</td>
             <td class="td-center">{{topic.replication}}</td>
             <td class="td-center">{{topic.partitions}}</td>
-            <td class="td-center"><span class="labelType" ng-if="topic.keyType != ''">{{topic.keyType}}</span></td>
-            <td class="td-center"><span class="labelType" ng-if="topic.valueType != ''">{{topic.valueType}}</span></td>
+            <td class="td-center"><span class="label-type label-type-{{topic.keyType}}" ng-if="topic.keyType != ''">{{topic.keyType}}</span></td>
+            <td class="td-center"><span class="label-type label-type-{{topic.valueType}}" ng-if="topic.valueType != ''">{{topic.valueType}}</span></td>
             <td><span ng-if="topic.customConfig.length > 0">{{topic.customConfig.length}} config changed</span></td>
           </tr>
         </tbody>
       </table>
-
-
-
-
-      <!--<md-list class="md-dense" flex>-->
-        <!--<md-list-item dir-paginate="topic in normalTopics| orderBy:'topicName' | filter: search | itemsPerPage:topicsPerPage"-->
-                      <!--pagination-id="topics"-->
-                      <!--ng-click="listClick(topic.topicName, topic.isControlTopic)"-->
-                      <!--class="md-2-line"-->
-                      <!--ng-class="{ 'selectedListItem': topic.topicName == topicName }">-->
-
-          <!--<div class="md-list-item-text" layout="column">-->
-            <!--<h4>{{shortenControlCenterName(topic.topicName)}}</h4>-->
-            <!--&lt;!&ndash;<h4>{{topic.topicName}}</h4>&ndash;&gt;-->
-            <!--<p style="font-size:12px;">-->
-              <!--{{topic.replication}} Replication &#10799; {{topic.partition}} Partition-->
-              <!--<span ng-if="topic.customConfig.length > 0">,-->
-              <!--{{topic.customConfig.length}} config changed</span>-->
-            <!--</p>-->
-          <!--</div>-->
-
-          <!--<div>-->
-            <!--<span class="labelType" ng-if="topic.keyType != ''">{{topic.keyType}}</span> /-->
-            <!--<span class="labelType" ng-if="topic.valueType != ''">{{topic.valueType}}</span>-->
-          <!--</div>-->
-
-        <!--</md-list-item>-->
-      <!--</md-list>-->
     </div>
-
-    <!--Pagination-->
     <div flex class="leftlistPagination">
       <dir-pagination-controls pagination-id="topics" style="margin:0;"></dir-pagination-controls>
     </div>

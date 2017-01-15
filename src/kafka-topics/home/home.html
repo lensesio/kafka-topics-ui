@@ -1,32 +1,28 @@
 <div layout-margin layout="row" layout-sm="column">
 
-  <!--TOPICS LIST-->
+  <!--1. TOPICS LIST-->
   <md-card flex="70" flex-sm="100" style="box-shadow:none;" >
     <md-toolbar class="md-hue-2" style="color:#333;z-index:0; background-color:#FAFAFA; box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);">
       <div class="md-toolbar-tools">
         <h3>
-          <span ng-show="!displayingControlTopics"><b>{{normalTopics.length}}</b> Topics</span>
-          <span ng-show="displayingControlTopics"><b>{{controlTopics.length}}</b> Topics</span>
+          <span ng-show="!displayingControlTopics"><b>{{normalTopics.length}}</b> TOPICS</span>
+          <span ng-show="displayingControlTopics"><b>{{controlTopics.length}}</b> TOPICS</span>
         </h3>
-
-
         <span flex></span>
         <md-switch style="font-size:14px"  class="md-icon-button" ng-model='displayingControlTopics' aria-label="Show system topics" >
         <div ng-if="displayingControlTopics"><b>System Topics</b></div>
         <div ng-if="!displayingControlTopics"><b>System Topics</b></div>
         </md-switch>
       </div>
-
     </md-toolbar>
-
     <!--TODO-->
     <div ng-show="!displayingControlTopics" ng-include="'src/kafka-topics/list/topics-list.html'"></div>
     <div ng-show="displayingControlTopics" ng-include="'src/kafka-topics/list/control-topics-list.html'"></div>
-
   </md-card>
 
+  <!--2. DASHBOARD STUFF-->
   <div flex>
-    <!--DASHBOARD STUFF-->
+
     <div layout="column">
 
       <md-card style="margin-bottom:15px;box-shadow:none;">
@@ -52,11 +48,8 @@
           </div>
         </md-card-content>
       </md-card>
-
-
     </div>
 
-    <!--CONFIG-->
     <div ng-include="'src/kafka-topics/config/config.html'"></div>
   </div>
 

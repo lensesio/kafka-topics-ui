@@ -5,7 +5,44 @@ html, body {
     background-color: #F5F5F5;
 }
 
+.label-type {
+    font-size: 10px;
+        border-radius: 60px;
+        padding: 6px 20px;
+        min-width: 30px;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        height: 20px;
+        margin-left: 10px;
+        margin-right: 10px;
+}
 
+.label-type-avro {
+   background-color: #fb9678;
+}
+
+.label-type-string {
+   background-color: #9675ce;
+}
+
+.label-type-int .label-type-double .label-type-float .label-type-long {
+   background-color: #03a9f3;
+}
+
+.label-type-null {
+   background-color: #fec107;
+}
+
+.label-type-empty {
+   background-color: #ccc;
+}
+
+/** TODO update these labels to match the above*/
 .labelType {
 font-size: 10px;
     border-radius: 60px;
