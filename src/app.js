@@ -4,6 +4,7 @@ var angularAPP = angular.module('angularAPP', [
   'ui.ace',
   'angularSpinner',
   'angularUtils.directives.dirPagination',
+  'angularjs-dropdown-multiselect',
   'ngRoute',
   'ngMaterial',
   'ngAnimate',

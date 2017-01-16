@@ -90,10 +90,11 @@
               <div  ng-show="showChart" style="background-color:#fff; border:1px solid #f4f5f7">
                     <div layout="row" layout-sm="column" layout-align="space-between center" layout-padding ng-hide="topicIsEmpty">
                         <label>KCQL</label>
-                        <input ng-model="search" type="text" placeholder="SELECT * FROM {{topicName}}" style="width:100%">
-                        <!--<md-button class="md-raised" ng-click="kcqlRequest()" style="height:23px; width:23px">-->
-                            <!--<i class="fa fa-search" aria-hidden="true" style="color:#333; margin-top:-10"></i>-->
-                        <!--</md-button>-->
+
+                        <input ng-model="kcql" type="text" placeholder="SELECT * FROM {{topicName}}" style="width:100%">
+                        <md-button class="md-raised" ng-click="kcqlRequest()" style="height:23px; width:23px">
+                            <i class="fa fa-search" aria-hidden="true" style="color:#333; margin-top:-10"></i>
+                        </md-button>
                         <a>Basic</a>
                     </div>
               </div>
@@ -105,7 +106,7 @@
           <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
 
               <div>
-                  <input ng-model="search" flex placeholder="Filter" style="width: 300px;margin: 7px; line-height: 30px;"/>
+                  <input ng-model="search.$" flex placeholder="Filter" style="width: 300px;margin: 7px; line-height: 30px;"/>
 
                   <select class="form-control button" ng-model="search.partition" style="float:right; width: 120px;margin: 7px; line-height: 30px;">
                       <option value="" selected>All partitions</option>
@@ -118,10 +119,6 @@
               </md-tab>
 
               <md-tab label="Table" ng-click="onTabChanges('table')" ng-if="!topicIsEmpty">
-                  <md-input-container  class="md-block" ng-hide="topicIsEmpty || selectedTabNnumber > 1 "  flex="2">
-                  <label>Search</label>
-                  <input ng-model="search" flex placeholder="  "/>
-                  </md-input-container>
                   <div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>
               </md-tab>
 

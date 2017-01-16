@@ -515,7 +515,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                             "offset" : row.offset,
                             "partition" : row.partition,
                             "key" : row.key,
-                            "value" : row.value
+                            "value" : 'value' +  row.value
                         }
                         $scope.cols = Object.keys(flattenObject(newRow));
                         $scope.cols2 = [];
@@ -546,6 +546,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                         $scope.cols =  Object.keys(flattenObject(newRow));
                         $scope.cols2 = Object.keys(flattenObject(newRow.value));
                         $scope.cols3 = Object.keys(flattenObject(newRow.key));
+
+
+
                   }
 
                   $scope.flatRows.push(flattenObject(row));
@@ -559,6 +562,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
          $scope.showHideAllButtonLabel = 'show ' + rows.length;
      }
 }
+
 
  $scope.showTree = function (keyOrValue) {
     return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
@@ -578,7 +582,8 @@ KafkaRestProxyFactory.getTopicMetadata($scope.topicName).then(function (metaData
 
 
   $scope.kcqlRequest = function() {
-  var kcqlQuery = $scope.search.split(' ').join('+');
+  if (!$scope.kcql) {$scope.kcql='SELECT * FROM ' +$scope.topicName}
+  var kcqlQuery = $scope.kcql.split(' ').join('+');
   $http.get("http://fast-data-backend.demo.landoop.com/api/rest/topics/kcql?query="+kcqlQuery).then(function response(response){
   $log.info('KCQL Responce: ',response)
 
@@ -656,5 +661,37 @@ function setSelectedDataTab(selectedTabIndex) {
         default: return 0;
     }
 }
+
+        $scope.allCols = [
+         {id: "offset", label: "offset"},
+         {id: "partition", label: "partition"},
+         {id: "key", label: "key"},
+         {id: "value", label: "value"}];
+        $scope.selectedCols = [
+          {id: "offset", label: "offset"},
+          {id: "partition", label: "partition"},
+          {id: "key", label: "key"},
+          {id: "value", label: "value"}];
+        $scope.example13settings = {
+            smartButtonMaxItems: 0
+        }
+$scope.checkAndHide = function checkAndHide(name) {
+  var showCol = $scope.selectedCols.some(function (selectedCols) {
+    return selectedCols.id === name;
+  });
+return showCol
+}
+
+  $scope.addColumnClass = function (columnIndex) {
+  columnIndex = columnIndex + 1;
+  var columnClass = '';
+  if (columnIndex == 1 ) {columnClass='offset'}
+  else if(columnIndex == 2) {columnClass='partition'}
+  else if(columnIndex < 4 + $scope.cols3.length ) {columnClass='key'}
+  else if(columnIndex < 5 + $scope.cols3.length  + $scope.cols2.length ) {columnClass='value'}
+
+  return columnClass;
+
+  }
 
 });
