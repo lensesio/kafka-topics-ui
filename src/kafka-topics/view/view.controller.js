@@ -1,6 +1,6 @@
 //TODO CLEAN ME UP!!!!!!!!!
 
-angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, charts, env) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, KafkaBackendFactory, UtilsFactory, charts, env) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
@@ -662,26 +662,33 @@ function setSelectedDataTab(selectedTabIndex) {
     }
 }
 
-        $scope.allCols = [
-         {id: "offset", label: "offset"},
-         {id: "partition", label: "partition"},
-         {id: "key", label: "key"},
-         {id: "value", label: "value"}];
-        $scope.selectedCols = [
-          {id: "offset", label: "offset"},
-          {id: "partition", label: "partition"},
-          {id: "key", label: "key"},
-          {id: "value", label: "value"}];
-        $scope.example13settings = {
-            smartButtonMaxItems: 0
-        }
-$scope.checkAndHide = function checkAndHide(name) {
-  var showCol = $scope.selectedCols.some(function (selectedCols) {
-    return selectedCols.id === name;
-  });
-return showCol
-}
+KafkaBackendFactory.getTopicSummary($scope.topicName).then(function (topicMetadata){
+$scope.keyType=topicMetadata.keyType;
+$scope.valueType=topicMetadata.valueType;
 
+});
+
+
+
+$scope.allCols = [
+ {id: "offset", label: "offset"},
+ {id: "partition", label: "partition"},
+ {id: "key", label: "key"},
+ {id: "value", label: "value"}];
+
+  $scope.selectedCols = {};
+
+  $scope.checkAndHide = function checkAndHide(name) {
+
+    if ($scope.selectedCols.searchText){
+    var showCol = $scope.selectedCols.searchText.some(function (selectedCols) {
+      return selectedCols === name;
+    });
+    return showCol
+    }
+  }
+
+$log.info('giannis', $scope.selectedCols)
   $scope.addColumnClass = function (columnIndex) {
   columnIndex = columnIndex + 1;
   var columnClass = '';

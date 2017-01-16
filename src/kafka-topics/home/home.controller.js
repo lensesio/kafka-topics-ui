@@ -33,7 +33,8 @@ angularAPP.controller('HomeCtrl', function ($scope, $rootScope, $location, $rout
 
   function getLeftListTopics() {
 
-  $scope.topics= KafkaBackendFactory.getListInfo() ;
+KafkaBackendFactory.getListInfo().then(function (allData){
+$scope.topics = allData;
 
   function isControlTopic(value) {
     return value.isControlTopic;
@@ -43,6 +44,8 @@ angularAPP.controller('HomeCtrl', function ($scope, $rootScope, $location, $rout
   }
   $scope.controlTopics = $scope.topics.filter(isControlTopic);
   $scope.normalTopics = $scope.topics.filter(isNormalTopic);
+
+  });
     $scope.listClick = function (topicName, isControlTopic) {
       if (isControlTopic == true) {
         $scope.CategoryTopicUrls = 'c';

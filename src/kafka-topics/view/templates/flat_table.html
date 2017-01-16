@@ -1,9 +1,15 @@
 <!-- Custom rendering for OTHER topics -->
     <md-tab-body>
         <md-content class="padding:0">
-           <div style="margin:5px 20px 5px 0;" layout="row" layout-align="end center">Show/Hide columns:  <div ng-dropdown-multiselect="test"  checkboxes="true" options="allCols" selected-model="selectedCols" extra-settings="example13settings"></div></div>
+           <div style="margin:5px 20px 5px 0;" layout="row" layout-align="end center">Show/Hide columns:
+               <md-input-container>
+                   <md-select ng-model="selectedCols.searchText" multiple>
+                       <md-option ng-value="col.id" ng-repeat="col in allCols"  selected>{{col.label}}</md-option>
+                   </md-select>
+               </md-input-container>
+           </div>
 
-                <table md-table md-row-select="optionsTable.rowSelection"  class="flat-table">
+                <table md-table md-row-select="optionsTable.rowSelection"  class="flat-table" ng-cloak>
                     <thead  md-head md-order="query.order" md-on-reorder="logOrder">
                     <tr>
                         <th rowspan="2" class="td-center" md-column md-order-by="offset" ng-show="checkAndHide('offset')">offset</th>

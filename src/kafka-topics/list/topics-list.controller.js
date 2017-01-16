@@ -20,7 +20,8 @@ angularAPP.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $loca
 
 function getLeftListTopics() {
 
-$scope.topics= KafkaBackendFactory.getListInfo() ;
+KafkaBackendFactory.getListInfo().then(function (allData){
+$scope.topics = allData;
 
 function isControlTopic(value) {
   return value.isControlTopic;
@@ -30,6 +31,8 @@ function isNormalTopic(value) {
 }
 $scope.controlTopics = $scope.topics.filter(isControlTopic);
 $scope.normalTopics = $scope.topics.filter(isNormalTopic);
+}) ;
+
   $scope.listClick = function (topicName, isControlTopic) {
     if (isControlTopic == true) {
       $scope.CategoryTopicUrls = 'c';
