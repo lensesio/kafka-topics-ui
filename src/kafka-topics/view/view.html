@@ -1,4 +1,4 @@
-<div style="background-color:#F5F5F5;">
+<div style="background-color:#F5F5F5;" ng-cloak>
   <!--1. TOOLBAR-->
   <md-toolbar ng-show="!displayingControlTopics" class="md-hue-2" style="background-color:#fff;color:#333">
     <div class="md-toolbar-tools">
@@ -47,21 +47,21 @@
       </div>
 
       <!--4.2 TOPIC FILTERS & CHARTS-->
-      <div>
+      <div ng-hide="topicIsEmpty">
               <div style="background:#fff" layout="column">
                   <div>
                       <!--TODO-->
                       <small style="font-size:10px;">
                           <!--{{chartSelection}}Selected Min: 2017-01-14 20:31:26 / Selected Max: 2017-01-14 21:10:22-->
                           <span flex></span>
-                          <md-button style="font-size:10px;float:right;line-height: 0px; min-height: 0px;" ng-show="!showChart" ng-click="toggleChart()"> <i class="fa fa-eye-slash" aria-hidden="true"></i> Hide chart </md-button>
-                          <md-button style="font-size:10px;float:right;line-height: 0px; min-height: 0px;" ng-show="showChart" ng-click="toggleChart()"> <i class="fa fa-eye" aria-hidden="true"></i> Show chart </md-button>
+                          <md-button style="font-size:10px;float:right;line-height: 0px; min-height: 0px;" ng-show="!showChart" ng-click="toggleChart()"> <i class="fa fa-eye-slash" aria-hidden="true"></i> Show filters </md-button>
+                          <md-button style="font-size:10px;float:right;line-height: 0px; min-height: 0px;" ng-show="showChart" ng-click="toggleChart()"> <i class="fa fa-eye" aria-hidden="true"></i> Hide filters </md-button>
                       </small>
                   </div>
 
                   <div>
-                      <div ng-hide="showChart" id="container" style="float:left; min-width: 300px; height: 450px; margin: 0 auto; width:80% !important;"></div>
-                      <div ng-show="showChart" id="container2" style="float:left; min-width: 300px; height: 100px; margin: 0 auto; width:80% !important;"></div>
+                      <div ng-show="showChart"  id="container" style="float:left; min-width: 300px; height: 450px; margin: 0 auto; width:80% !important;"></div>
+                      <!--<div ng-show="showChart" id="container2" style="float:left; min-width: 300px; height: 100px; margin: 0 auto; width:80% !important;"></div>-->
                   </div>
               </div>
 
@@ -87,13 +87,13 @@
               <!--</md-card>-->
 
               <!--Advanced / TODO only if Topic has avro value-->
-              <div style="background-color:#fff; border:1px solid #f4f5f7">
+              <div  ng-show="showChart" style="background-color:#fff; border:1px solid #f4f5f7">
                     <div layout="row" layout-sm="column" layout-align="space-between center" layout-padding ng-hide="topicIsEmpty">
                         <label>KCQL</label>
                         <input ng-model="search" type="text" placeholder="SELECT * FROM {{topicName}}" style="width:100%">
-                        <md-button class="md-raised" ng-click="kcqlRequest()" style="height:23px; width:23px">
-                            <i class="fa fa-search" aria-hidden="true" style="color:#333; margin-top:-10"></i>
-                        </md-button>
+                        <!--<md-button class="md-raised" ng-click="kcqlRequest()" style="height:23px; width:23px">-->
+                            <!--<i class="fa fa-search" aria-hidden="true" style="color:#333; margin-top:-10"></i>-->
+                        <!--</md-button>-->
                         <a>Basic</a>
                     </div>
               </div>
@@ -101,7 +101,7 @@
       </div>
 
       <!--4.3 TOPIC DATASET-->
-      <div style="background-color:#fff;">
+      <div style="background-color:#fff;" ng-hide="topicIsEmpty">
           <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
 
               <div>

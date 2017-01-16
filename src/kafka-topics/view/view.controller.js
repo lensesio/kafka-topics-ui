@@ -638,14 +638,14 @@ function rand() {
   return Math.random();
 }
 
-$http
-    .get("https://kafka-backend.demo.landoop.com/api/rest/topics/chart/"+ $scope.topicName)
-    .then(function response(response) {
-       var fullChart = charts.getFullChart($scope.topicName, response.data);
-       var timeChart = charts.getTimeChart($scope.topicName, response.data);
-       Highcharts.stockChart('container', fullChart);
-       Highcharts.stockChart('container2', timeChart);
-    });
+
+
+
+  $http.get("https://kafka-backend.demo.landoop.com/api/rest/topics/chart/"+ $scope.topicName)
+        .then(function response(response){
+              charts.getFullChart($scope.topicName, response);
+//              charts.getTimeChart($scope.topicName, response);
+        });
 
 function setSelectedDataTab(selectedTabIndex) {
     switch(selectedTabIndex) {

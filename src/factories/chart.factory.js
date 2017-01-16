@@ -1,33 +1,37 @@
-angularAPP.factory('charts', function ($rootScope) {
+angularAPP.factory('charts', function ($rootScope, $http) {
 
 //TODO HARDCODED!
 var chartAPI = "https://kafka-backend.demo.landoop.com/api/rest/topics/chart/"
 
 return {
     getFullChart : function(topicName, data) { getFullChart(topicName,data) },
-    getTimeChart : function(topicName) { getTimeChart(topicName, data) }
+    getTimeChart : function(topicName, data) {  getTimeChart(topicName, data) }
 }
 
-function getFullChart(topicName, data) {
+function getFullChart(topicName, response) {
 
       var fullChart = {
          chart: {
             zoomType: 'x',
             events: {
-                load: function () {
-                     var series = this.series[1];
-                     setInterval(function () {
-                     $http.get(chartAPI+topicName+"/latest").then(function response(response){ //TODO
-                            var x = (new Date()).getTime(), // current time
-                                y = parseInt(response.data);
-                            series.addPoint([x, y], true, true);
-                     })
-                     }, 2000);
-                }
+                 load: function () {
+                      var series0 = this.series[0];
+                      var series1 = this.series[1];
+                      setInterval(function () {
+                      $http.get("https://kafka-backend.demo.landoop.com/api/rest/topics/chart/"+topicName+"/latest").then(function response(response){ //TODO
+                             var x = (new Date()).getTime(), // current time
+                                 y = parseInt(response.data);
+                             series0.addPoint([x, y], true, true);
+                             series1.addPoint([x, y], true, true);
+                      })
+                      }, 2000);
+                 }
+            }
         },
         rangeSelector: {
             selected: 1,
             buttons: [
+                { type: 'minute', count: 5, text: '5m'},
                 { type: 'day', count: 1, text: '24h'},
                 { type: 'day', count: 3, text: '3d'},
                 { type: 'week', count: 1, text: '1w' },
@@ -72,9 +76,10 @@ function getFullChart(topicName, data) {
          {
             name: 'Rate',
             color: "#cccccc",
-            data: data.newMessageRate,
-            pointStart: data.pointStart,
-            pointInterval: data.pointInterval,
+            type: "column",
+            data: response.data.newMessageRate,
+            pointStart: response.data.pointStart,
+            pointInterval: response.data.pointInterval,
             tooltip: {
                 valueDecimals: 0,
                 valueSuffix: ' messages/sec'
@@ -83,25 +88,37 @@ function getFullChart(topicName, data) {
          {
             name: 'Messages',
             color: "#000000",
-            data: data.messageCount,
-            pointStart: data.pointStart,
-            pointInterval: data.pointInterval,
+            data: response.data.messageCount,
+            pointStart: response.data.pointStart,
+            pointInterval: response.data.pointInterval,
             tooltip: {
                 valueDecimals: 0,
                 valueSuffix: ' messages'
             }
          } ]
          }
-    };
+//    };
 
-    return fullChart;
+    Highcharts.stockChart('container', fullChart);
+//    return fullChart;
 }
 
-function getTimeChart(topicName, data) {
-
+function getTimeChart(topicName, response) {
    var timeChart = {
                     chart : {
-                        padding : 0
+                        padding : 0,
+                         events: {
+                             load: function () {
+                                  var series0 = this.series[0];
+                                  setInterval(function () {
+                                  $http.get("https://kafka-backend.demo.landoop.com/api/rest/topics/chart/"+topicName+"/latest").then(function response(response){ //TODO
+                                         var x = (new Date()).getTime(), // current time
+                                             y = parseInt(response.data);
+                                         series0.addPoint([x, y], true, true);
+                                  })
+                                  }, 2000);
+                             }
+                        }
                     },
                      credits: {
                           enabled: false
@@ -149,14 +166,17 @@ function getTimeChart(topicName, data) {
                                 }
                             }
                         },
-                        data : data,
+                        pointStart: response.data.pointStart,
+                        pointInterval: response.data.pointInterval,
+                        data : response.data.messageCount,
                         tooltip: {
                             valueDecimals: 2
                         }
                     }]
                 };
 
-     return timeChart;
+    Highcharts.stockChart('container2', timeChart);
+//     return timeChart;
 }
 
 });
