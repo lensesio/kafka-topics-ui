@@ -28,6 +28,7 @@ function getTopicSummary(topicName) {
    $http.get(url).then(
         function success(response) {
           var topicInfo = response.data;
+          console.log('giannis', response.data)
           deferred.resolve(topicInfo);
         },
         function failure(response) {

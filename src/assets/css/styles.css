@@ -22,26 +22,6 @@ html, body {
         margin-right: 10px;
 }
 
-.label-type-avro {
-   background-color: #fb9678;
-}
-
-.label-type-string {
-   background-color: #9675ce;
-}
-
-.label-type-int .label-type-double .label-type-float .label-type-long {
-   background-color: #03a9f3;
-}
-
-.label-type-null {
-   background-color: #fec107;
-}
-
-.label-type-empty {
-   background-color: #ccc;
-}
-
 /** TODO update these labels to match the above*/
 .labelType {
 font-size: 10px;
@@ -59,6 +39,31 @@ font-size: 10px;
     height: 20px;
     margin-left: 10px;
     margin-right: 10px;
+}
+
+
+.label-type-avro, .label-type-json {
+   background-color: #fb9678;
+}
+
+.label-type-binary {
+   background-color: #960005;
+}
+
+.label-type-string {
+   background-color: #9675ce;
+}
+
+.label-type-int .label-type-double .label-type-float .label-type-long {
+   background-color: #03a9f3;
+}
+
+.label-type-null {
+   background-color: #fec107;
+}
+
+.label-type-empty {
+   background-color: #ccc;
 }
 
 .labelOffset {
@@ -84,6 +89,12 @@ font-size: 10px;
 .selectCluster md-select md-option,
 .selectCluster md-select md-select-value{color:#333}
 .selectClusterLabel{color: rgb(204, 204, 204);font-size: 12px;line-height: 44px;padding-top: 0px;margin: 0;}
+
+md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
+min-height:1260px;
+}
+.md-tab {text-transform:none;}
+md-tabs .md-tab.md-active {color:#fb9678}
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
@@ -114,7 +125,7 @@ md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
 }
 
 .ace_editor {
-    height: 460px;
+    height: 600px;
 }
 
 .ace_gutter {

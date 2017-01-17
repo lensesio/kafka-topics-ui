@@ -25,7 +25,7 @@
         </thead>
         <tbody>
         <tr dir-paginate="topic in controlTopics| orderBy:'topicName' | filter: search | itemsPerPage:30"
-            pagination-id="topics"
+            pagination-id="controlTopics"
             ng-click="listClick(topic.topicName, topic.isControlTopic)"
             ng-class="{ 'selectedListItem': topic.topicName == topicName }">
           <td>{{shortenControlCenterName(topic.topicName)}}</td>
@@ -39,7 +39,7 @@
       </table>
     </div>
     <div flex class="leftlistPagination">
-      <dir-pagination-controls pagination-id="topics" style="margin:0;"></dir-pagination-controls>
+      <dir-pagination-controls pagination-id="controlTopics" style="margin:0;"></dir-pagination-controls>
     </div>
   </div>
 

@@ -10,8 +10,11 @@
         <span>{{topicName}}</span>
       </h4>
       <span flex></span>
-        <small style="color:#333;font-size:10px;"> <span class="labelType"> {{keyType}} </span> / <span class="labelType"> {{valueType}} </span> </small>
+        <small style="color:#333;font-size:10px;">
+            <span class="labelType label-type-{{topicMetadata.keyType}}"> {{topicMetadata.keyType}} </span> /
+            <span class="labelType label-type-{{topicMetadata.valueType}}"> {{topicMetadata.valueType}} </span> </small>
       <md-button  download="true"
+                  ng-hide="showSpinner"
               ng-click="getData(topicName)"
               aria-label="Download data"
               aria-hidden="false">
@@ -24,17 +27,8 @@
   <md-progress-linear md-mode="indeterminate" ng-show="showSpinner"></md-progress-linear>
 
   <!--3. TOPIC NAV  --><!--TODO-->
-  <section ng-hide="showSpinner" style="background-color:#FAFAFA; border:1px solid #f4f5f7">
-        <div class="sttabs tabs-style-bar">
-            <nav>
-                <ul>
-                    <li class="tab-current"><a href="#section-bar-1" class="sticon ti-home"><span>Data</span></a></li>
-                    <li><a href="#section-bar-2" class="sticon ti-trash"><span>Analytics</span></a></li>
-                    <li><a href="#section-bar-3" class="sticon ti-stats-up"><span>Configuration</span></a></li>
-                </ul>
-            </nav>
-        </div><!-- /tabs -->
-    </section>
+    <md-tabs  md-stretch-tabs="always" ng-hide="showSpinner" style="width:100%" ng-cloak>
+        <md-tab label="Data" md-dynamic-height md-border-botto md-dynamic-height="true" md-border-botto>
 
   <!--4. TOPIC FILTERS, CHART & DATA  -->
   <div style="background-color:#F5F5F5;" ng-cloak layout-margin ng-hide="showSpinner">
@@ -95,7 +89,7 @@
                         <md-button class="md-raised" ng-click="kcqlRequest()" style="height:23px; width:23px">
                             <i class="fa fa-search" aria-hidden="true" style="color:#333; margin-top:-10"></i>
                         </md-button>
-                        <a>Basic</a>
+                        <!--<a>Basic</a>-->
                     </div>
               </div>
           </div>
@@ -118,7 +112,7 @@
                   <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
               </md-tab>
 
-              <md-tab label="Table" ng-click="onTabChanges('table')" ng-if="!topicIsEmpty">
+              <md-tab label="Table" ng-click="onTabChanges('table')" ng-if="topicType != 'binary' && !topicIsEmpty">
                   <div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>
               </md-tab>
 
@@ -134,4 +128,20 @@
 
       </div>
   </div>
+
+</md-tab>
+<md-tab label="Analytics">
+    <md-tab-body>
+        <md-content class="md-padding">
+            Total number of Partitions: {{topicMetadata.partitions}}
+            <div ng-repeat="mpp in topicMetadata.messagesPerPartition">
+                Partition {{mpp.partition}} : {{mpp.messages}} Messages
+            </div>
+        </md-content>>
+    </md-tab-body>
+</md-tab>
+<md-tab label="Configuration">
+    <div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>
+</md-tab>
+</md-tabs>
 </div>

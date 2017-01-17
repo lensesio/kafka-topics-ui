@@ -29,8 +29,10 @@ function isControlTopic(value) {
 function isNormalTopic(value) {
   return !isControlTopic(value);
 }
+
 $scope.controlTopics = $scope.topics.filter(isControlTopic);
 $scope.normalTopics = $scope.topics.filter(isNormalTopic);
+
 }) ;
 
   $scope.listClick = function (topicName, isControlTopic) {
@@ -40,16 +42,6 @@ $scope.normalTopics = $scope.topics.filter(isNormalTopic);
       $scope.CategoryTopicUrls = 'n';
     }
     $location.path("cluster/"+ env.getSelectedCluster().NAME +"/topic/" +  $scope.CategoryTopicUrls + "/" + topicName, false);
-  }
-
-  $scope.topicDataType = function(topic) {
-  var dataType = '...';
-  if (topic.valueType && topic.keyType &&  topic.keyType ==  topic.valueType ){ dataType = topic.valueType}
-  else if (topic.valueType && topic.keyType){ dataType = topic.valueType + '/' + topic.keyType}
-  else if (topic.valueType || topic.keyType){ dataType = topic.valueType + topic.keyType}
-
-
-  return dataType;
   }
 }
 

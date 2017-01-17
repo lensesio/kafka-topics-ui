@@ -627,26 +627,7 @@ KafkaRestProxyFactory.getTopicMetadata($scope.topicName).then(function (metaData
 
 
 
-function getFormattedDate(date) {
-    if(date){var date = new Date(date);} else {var date = new Date();}
-    var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    return str;
-}
-
-function getFormattedNow() {
-    var date = new Date();
-    var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    return str;
-}
-
-function rand() {
-  return Math.random();
-}
-
-
-
-
-  $http.get("https://kafka-backend.demo.landoop.com/api/rest/topics/chart/"+ $scope.topicName)
+  $http.get(env.KAFKA_BACKEND()+ "/topics/chart/"+ $scope.topicName)
         .then(function response(response){
               charts.getFullChart($scope.topicName, response);
 //              charts.getTimeChart($scope.topicName, response);
@@ -663,9 +644,7 @@ function setSelectedDataTab(selectedTabIndex) {
 }
 
 KafkaBackendFactory.getTopicSummary($scope.topicName).then(function (topicMetadata){
-$scope.keyType=topicMetadata.keyType;
-$scope.valueType=topicMetadata.valueType;
-
+$scope.topicMetadata = topicMetadata;
 });
 
 
@@ -688,7 +667,6 @@ $scope.allCols = [
     }
   }
 
-$log.info('giannis', $scope.selectedCols)
   $scope.addColumnClass = function (columnIndex) {
   columnIndex = columnIndex + 1;
   var columnClass = '';

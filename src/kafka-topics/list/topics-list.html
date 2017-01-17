@@ -24,7 +24,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr dir-paginate="topic in normalTopics| orderBy:'topicName' | filter: search | itemsPerPage:30"
+          <tr dir-paginate="topic in normalTopics| orderBy:'topicName' | filter: search | itemsPerPage:25"
               pagination-id="topics"
               ng-click="listClick(topic.topicName, topic.isControlTopic)"
               ng-class="{ 'selectedListItem': topic.topicName == topicName }">

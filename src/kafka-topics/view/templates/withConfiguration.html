@@ -1,10 +1,10 @@
 <!-- Custom rendering for Config overrides -->
   <md-tab-body>
     <md-content class="md-padding">
-        <table class="flat-table"  ng-if ="getExtraConfig(topicName) !== ''" >
+        <table class="flat-table"  ng-if ="topicMetadata.customConfig" >
           <thead>
           <tr>
-            <th class="td-center">Comfiguration</th>
+            <th class="td-center">Configuration</th>
             <th  class="td-center">Value</th>
             <th  class="td-center">Default Value</th>
             <th  class="td-center">Description</th>
@@ -12,29 +12,29 @@
           </thead>
           <tbody>
 
-          <tr ng-repeat="(key,value) in getExtraConfig(topicName) track by $index">
+          <tr ng-repeat="ec in topicMetadata.customConfig track by $index">
             <td  class="td-center">
-              <span>{{key}}</span>
+              <span>{{ec.configuration}}</span>
             </td>
             <td  class="td-center">
-              <span>{{value}}</span>
+              <span>{{ec.value}}</span>
             </td>
             <td  class="td-center">
-              <span>{{getDefaultConfigValue(key)}}</span>
+              <span>{{ec.defaultValue}}</span>
             </td>
             <td style="max-width:500px;" ng-title="{{getConfigDescription(key)}}" class=" td-left">
-              <span ng-hide="showMoreDesc[$index] || {{getConfigDescription(key).length}} < 100">{{ getConfigDescription(key) | limitTo:100 }}...</span>
-              <span ng-show="showMoreDesc[$index]">{{ getConfigDescription(key)}}</span>
+              <span ng-hide="showMoreDesc[$index] || {{ec.documentation.length}} < 200">{{ ec.documentation | limitTo:100 }}...</span>
+              <span ng-show="showMoreDesc[$index]">{{ ec.documentation}}</span>
 
               <span class="toggleconfig" ng-click="ToggleMoreDesc($index)">
                 <span ng-show="showMoreDesc[$index]" aria-hidden="true">Show Less</span>
-                <span ng-hide="showMoreDesc[$index] || {{getConfigDescription(key).length}} < 100" aria-hidden="true">Show More</span>
+                <span ng-hide="showMoreDesc[$index] || {{ec.documentation.length}} < 200" aria-hidden="true">Show More</span>
                 </span>
             </td>
           </tr>
           </tbody>
           </table>
-        <div class="container-fluid-centered ng-scope" ng-if ="getExtraConfig(topicName) == ''" style="height: 352px;">
+        <div class="container-fluid-centered ng-scope" ng-if ="!topicMetadata.customConfig">
             <div class="row-fluid">
                 <div class="centering text-center">
                   This topic retains the default configuration
