@@ -20,11 +20,13 @@ function getFullChart(topicName, response) {
                       setInterval(function () {
                       $http.get(env.KAFKA_BACKEND() + "/topics/chart/"+topicName+"/latest").then(function response(response){
                        var chartData = response.data.split(",");
+                       var chartData1 = parseInt(chartData[1])
+                       var chartData0 = parseInt(chartData[0])
                        //TODO
                              var x = (new Date()).getTime(), // current time
                                  y = parseInt(response.data);
-                             series0.addPoint([x, chartData[0]], true, true);
-                             series1.addPoint([x, chartData[1]], true, true);
+                             series0.addPoint([x, chartData0], true, true);
+                             series1.addPoint([x, chartData1], true, true);
                       })
                       }, 2000);
                  }
