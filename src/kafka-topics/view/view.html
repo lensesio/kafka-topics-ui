@@ -13,13 +13,13 @@
         <small style="color:#333;font-size:10px;">
             <span class="labelType label-type-{{topicMetadata.keyType}}"> {{topicMetadata.keyType}} </span> /
             <span class="labelType label-type-{{topicMetadata.valueType}}"> {{topicMetadata.valueType}} </span> </small>
-      <md-button  download="true"
-                  ng-hide="showSpinner"
-              ng-click="getData(topicName)"
-              aria-label="Download data"
-              aria-hidden="false">
-        <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
-      </md-button>
+        <md-button  download="true"
+                    ng-hide="showSpinner"
+                    ng-click="getData(topicName)"
+                    aria-label="Download data"
+                    aria-hidden="false">
+            <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
+        </md-button>
     </div>
   </md-toolbar>
 
@@ -82,7 +82,7 @@
 
               <!--Advanced / TODO only if Topic has avro value-->
               <div  ng-show="showChart" style="background-color:#fff; border:1px solid #f4f5f7">
-                    <div layout="row" layout-sm="column" layout-align="space-between center" layout-padding ng-hide="topicIsEmpty" ng-if="valueType =='avro'">
+                    <div layout="row" layout-sm="column" layout-align="space-between center" layout-padding ng-hide="topicIsEmpty" ng-if="topicMetadata.valueType =='avro'">
                         <label>KCQL</label>
 
                         <input ng-model="kcql" type="text" placeholder="SELECT * FROM {{topicName}}" style="width:100%">

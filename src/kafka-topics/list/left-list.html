@@ -1,9 +1,11 @@
 <div>
   <md-toolbar class="md-hue-2" style="color:#333;z-index:0; background-color:#FAFAFA; box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);">
-    <div class="md-toolbar-tools">
+    <div class="md-toolbar-tools" >
       <h4>
-        <span ng-show="!displayingControlTopics"><b>{{normalTopics.length}}</b> Topics</span>
-        <span ng-show="displayingControlTopics"><b>{{controlTopics.length}}</b> Topics</span>
+        <span ng-show="!displayingControlTopics && !showList"><b>{{normalTopics.length}}</b> Topics</span>
+        <span ng-show="displayingControlTopics && !showList"><b>{{controlTopics.length}}</b> Topics</span>
+        <span ng-show="showList"><b>{{topics.length}}</b> Topics</span>
+
       </h4>
 
 
@@ -17,7 +19,7 @@
   </md-toolbar>
 
   <!--TODO-->
-  <div ng-show="!displayingControlTopics" ng-include="'src/kafka-topics/list/compact.html'"></div>
+  <div ng-include="'src/kafka-topics/list/compact.html'"></div>
   <!--<div ng-show="!displayingControlTopics" ng-include="'src/kafka-topics/list/topics-list.html'"></div>-->
   <!--<div ng-show="displayingControlTopics" ng-include="'src/kafka-topics/list/control-topics-list.html'"></div>-->
 
