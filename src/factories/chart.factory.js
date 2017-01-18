@@ -25,11 +25,10 @@ function getFullChart(topicName, response) {
                        var numberofmessages = chartData[1];
 
                        var random = Math.round(Math.random() * 50)
-                       console.log('giannis', random)
                        i = i + random;
 
-                       chartData1 = parseInt(numberofmessages) + parseInt(i);
-                       chartData0 = random;
+                       var chartData1 = parseInt(numberofmessages) + parseInt(i);
+                       var chartData0 = random;
                        //TODO
                              var x = (new Date()).getTime(), // current time
                                  y = parseInt(response.data);
