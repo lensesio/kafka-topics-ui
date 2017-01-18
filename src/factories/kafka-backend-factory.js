@@ -28,14 +28,12 @@ function getTopicSummary(topicName) {
    $http.get(url).then(
         function success(response) {
           var topicInfo = response.data;
-          console.log('giannis', response.data)
           deferred.resolve(topicInfo);
         },
         function failure(response) {
           $log.error("Error in getting topics from kafka-rest : " + JSON.stringify(response));
           deferred.reject("Error in getting topics from kafka-rest");
         });
-console.log('giannis', deferred.promise)
 return deferred.promise;
 }
 
