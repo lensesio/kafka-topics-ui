@@ -17,16 +17,24 @@ function getFullChart(topicName, response) {
                  load: function () {
                       var series0 = this.series[0];
                       var series1 = this.series[1];
+                      var i = 0;
                       setInterval(function () {
                       $http.get(env.KAFKA_BACKEND() + "/topics/chart/"+topicName+"/latest").then(function response(response){
+
                        var chartData = response.data.split(",");
-                       var chartData1 = parseInt(chartData[1])
-                       var chartData0 = parseInt(chartData[0])
+                       var numberofmessages = chartData[1];
+
+                       var random = Math.round(Math.random() * 50)
+                       console.log('giannis', random)
+                       i = i + random;
+
+                       chartData1 = parseInt(numberofmessages) + parseInt(i);
+                       chartData0 = random;
                        //TODO
                              var x = (new Date()).getTime(), // current time
                                  y = parseInt(response.data);
-                             series0.addPoint([x, chartData0], true, true);
-                             series1.addPoint([x, chartData1], true, true);
+                             series0.addPoint([x, parseInt(chartData0)], true, true);
+                             series1.addPoint([x, parseInt(chartData1)], true, true);
                       })
                       }, 2000);
                  }
@@ -80,7 +88,6 @@ function getFullChart(topicName, response) {
          {
             name: 'Rate',
             color: "#cccccc",
-            type: "column",
             data: response.data.newMessageRate,
             pointStart: response.data.pointStart,
             pointInterval: response.data.pointInterval,
