@@ -13,13 +13,46 @@
         <small style="color:#333;font-size:10px;">
             <span class="labelType label-type-{{topicMetadata.keyType}}"> {{topicMetadata.keyType}} </span> /
             <span class="labelType label-type-{{topicMetadata.valueType}}"> {{topicMetadata.valueType}} </span> </small>
-        <md-button  download="true"
-                    ng-hide="showSpinner"
-                    ng-click="getData(topicName)"
-                    aria-label="Download data"
-                    aria-hidden="false">
-            <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
+        <md-button
+                ng-hide="showSpinner"
+                ng-click="showDownloadDiv = !showDownloadDiv"
+                aria-label="Download data"
+                aria-hidden="false">
+            <i class="fa fa-download" ng-show="!showDownloadDiv" aria-hidden="true" style="color:#333"></i>
+            <i class="fa fa-close" ng-show="showDownloadDiv" aria-hidden="true" style="color:#333"></i>
         </md-button>
+
+
+    </div>
+      <div class="downloadDiv" ng-show="showDownloadDiv">
+          <h4>Download Options</h4>
+          <ul>
+              <li>
+                  <div class="checkbox checkbox-info">
+                      <input id="checkbox1" type="checkbox" checked="checked" class="fxhdr">
+                      <label for="checkbox1">Download Avro encoded file</label>
+                  </div>
+              </li>
+              <!--<li>-->
+                  <!--<div class="checkbox checkbox-warning">-->
+                      <!--<input id="checkbox2" type="checkbox" checked="checked" class="fxsdr">-->
+                      <!--<label for="checkbox2">Download Json decoded file</label>-->
+                  <!--</div>-->
+              <!--</li>-->
+              <li>
+                  <div class="checkbox checkbox-success">
+                      <input id="checkbox4" type="checkbox" class="open-close">
+                      <label for="checkbox4"> Download only filtered data</label>
+                  </div>
+              </li>
+          </ul>
+          <md-button style="float:right"  download="true"
+                      ng-click="getData(topicName)"
+                      aria-label="Download data"
+                      aria-hidden="false">
+              <i class="fa fa-download" aria-hidden="true" style="color:#333"></i> </md-button>
+
+      </div>
     </div>
   </md-toolbar>
 

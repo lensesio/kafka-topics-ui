@@ -679,4 +679,6 @@ $scope.allCols = [
 
   }
 
+  $scope.showDownloadDiv = false;
+
 });

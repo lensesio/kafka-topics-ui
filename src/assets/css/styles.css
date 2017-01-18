@@ -658,3 +658,102 @@ json-tree .branch-preview {
 .sttabs nav li.tab-current a {
   color: #fb9678;
 }
+
+.downloadDiv {
+    background: white;
+    position: absolute;
+    right: 8px;
+    top: 60px;
+    border: 1px solid #ccc;
+    border-top: 0px;
+    padding: 0;
+}
+
+.downloadDiv .checkbox label {
+    padding-left: 14px;
+    font-size: 14px;
+}
+
+.downloadDiv ul li{
+list-style:none inside;
+}
+
+.downloadDiv ul{
+  padding:0;
+  margin:10px  20px;
+}
+
+.checkbox input[type="checkbox"] {
+    cursor: pointer;
+    opacity: 0;
+    z-index: 1;
+    outline: none !important;
+}
+.checkbox label::before {
+    -o-transition: 0.3s ease-in-out;
+    -webkit-transition: 0.3s ease-in-out;
+    background-color: #ffffff;
+    border-radius: 1px;
+    border: 1px solid rgba(120, 130, 140, 0.13);
+    content: "";
+    display: inline-block;
+    height: 17px;
+    left: 10px;
+    margin-left: -20px;
+    position: absolute;
+    transition: 0.3s ease-in-out;
+    width: 17px;
+    outline: none !important;
+    top: 8px;
+}
+
+   .checkbox label::after {
+      color: #2b2b2b;
+      display: inline-block;
+      font-size: 11px;
+      height: 16px;
+      left: 10px;
+      margin-left: -20px;
+      padding-left: 3px;
+      padding-top: 1px;
+      position: absolute;
+      top: 8px;
+      width: 16px;
+  }
+.checkbox input[type="checkbox"]:checked + label::after {
+    content: "\f00c";
+    font-family: 'FontAwesome';
+        color: #ffffff;
+
+}
+.checkbox-info input[type="checkbox"]:checked + label::before {
+  background-color: #03a9f3;
+  border-color: #03a9f3;
+}
+.checkbox-info input[type="checkbox"]:checked + label::after {
+  color: #ffffff;
+}
+.checkbox-warning input[type="checkbox"]:checked + label::before {
+  background-color: #fec107;
+  border-color: #fec107;
+}
+.checkbox-warning input[type="checkbox"]:checked + label::after {
+  color: #ffffff;
+}
+.checkbox-success input[type="checkbox"]:checked + label::before {
+  background-color: #00c292;
+  border-color: #00c292;
+}
+.checkbox-success input[type="checkbox"]:checked + label::after {
+  color: #ffffff;
+}
+
+
+.downloadDiv .checkbox input[type=checkbox] {
+margin:3px 0;
+}
+.downloadDiv h4 {
+    font-size: 16px;
+    border-bottom: 1px solid #ccc;
+    padding: 0 10px 10px;
+}
