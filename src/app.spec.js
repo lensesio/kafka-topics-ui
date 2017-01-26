@@ -5,23 +5,36 @@ describe('HeaderCtrl', function() {
 
   beforeEach(module('angularAPP'));
 
+  var scope, controller;
+  beforeEach(inject(function ($controller, $rootScope) {
+      // The injector unwraps the underscores (_) from around the parameter names when matching
+      scope =  $rootScope.$new();
+      controller = $controller('HeaderCtrl', {$scope: scope});
+  }));
+
+
   it('shoud find 3 in test scope var', inject(function($controller) {
-    var scope = {};
-    var ctrl = $controller('HeaderCtrl', {$scope: scope});
     expect(scope.test).toBe(3);
   }));
 
   it('should return 4 on 3 sum()', inject(function($controller) {
-      var scope = {};
-      var ctrl = $controller('HeaderCtrl', {$scope: scope});
+//      var scope = {};
+//      var ctrl = $controller('HeaderCtrl', {$scope: scope});
       expect(scope.sum(3)).toBe(4);
   }));
 //
-//    it('xxxx', inject(function($controller, $rootScope) {
+    it('xxxx', inject(function($controller, $rootScope) {
 //        var rootScope = {};
 //        var ctrl = $controller('HeaderCtrl', {});
-//        expect(rootScope.showLeftList()).toBe(true);
-//    }));
+        expect(scope.showList).toBe(true);
+        expect(scope.showLeftList).toBeDefined;
+    }));
+
+    it('yyy', inject(function($controller, $rootScope) {
+        expect(scope.toggleList).toBeDefined;
+        scope.toggleList();
+        expect(scope.showList).toBe(false);
+    }));
 
 });
 

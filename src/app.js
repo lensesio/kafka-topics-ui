@@ -24,11 +24,11 @@ angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $lo
         return a+1;
     }
 
-//  $scope.$on('$routeChangeSuccess', function() {
-//     $rootScope.clusters = env.getClusters();
-//     $rootScope.cluster = env.getSelectedCluster();
-//     $scope.color = $scope.cluster.COLOR;
-//  });
+  $scope.$on('$routeChangeSuccess', function() {
+     $rootScope.clusters = env.getClusters();
+     $rootScope.cluster = env.getSelectedCluster();
+     $scope.color = $scope.cluster.COLOR;
+  });
 
   $scope.updateEndPoint = function(cluster) {
     $rootScope.connectionFailure = false;
