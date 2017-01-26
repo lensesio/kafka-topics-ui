@@ -1,4 +1,40 @@
 'use strict';
+
+angularAPP.controller('SomeCtrl', function (env, $rootScope, $scope, $log, $location, $route) {
+
+    $scope.test = 3;
+
+    $scope.sum = function(a) {
+        return a+1;
+    }
+
+  $scope.$on('$routeChangeSuccess', function() {
+     $rootScope.clusters = env.getClusters();
+     $rootScope.cluster = env.getSelectedCluster();
+     $scope.color = $scope.cluster.COLOR;
+  });
+
+  $scope.updateEndPoint = function(cluster) {
+    $rootScope.connectionFailure = false;
+    $location.path("/cluster/"+cluster)
+    $rootScope.cluster = cluster;
+  }
+
+   $rootScope.showList = true;
+   $rootScope.toggleList = function () {
+      $rootScope.showList = !$rootScope.showList;
+   };
+
+   $rootScope.showLeftList = function () {
+      $rootScope.showList = true;
+   };
+
+
+});
+
+
+
+
 //https://nathanleclaire.com/blog/2013/12/13/how-to-unit-test-controllers-in-angularjs-without-setting-your-hair-on-fire/
 //http://stackoverflow.com/questions/16565531/unit-testing-angularjs-factories-that-have-dependencies
 describe('HeaderCtrl', function() {
@@ -9,7 +45,7 @@ describe('HeaderCtrl', function() {
   beforeEach(inject(function ($controller, $rootScope) {
       // The injector unwraps the underscores (_) from around the parameter names when matching
       scope =  $rootScope.$new();
-      controller = $controller('HeaderCtrl', {$scope: scope});
+      controller = $controller('SomeCtrl', {$scope: scope});
   }));
 
 

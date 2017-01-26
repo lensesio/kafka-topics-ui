@@ -1,28 +1,23 @@
 'use strict';
 
+//TODO CLEAN UP
 var angularAPP = angular.module('angularAPP', [
   'ui.ace',
-//  'angularSpinner',
+  'angularSpinner',
   'angularUtils.directives.dirPagination',
   'ngRoute',
   'ngMaterial',
   'ngAnimate',
-//  'md.data.table',
+  'md.data.table',
   'ngAria',
   'base64',
   'ngOboe',
-//  'ui.grid',
-//  'ui.grid.resizeColumns',
+  'ui.grid',
+  'ui.grid.resizeColumns',
   'angular-json-tree'
 ]);
 
 angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $location, $route) {
-
-    $scope.test = 3;
-
-    $scope.sum = function(a) {
-        return a+1;
-    }
 
   $scope.$on('$routeChangeSuccess', function() {
      $rootScope.clusters = env.getClusters();
