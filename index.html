@@ -32,7 +32,6 @@
     <span flex></span>
     <div class="top-right-part" style="padding-top:4px;" >
 
-
         <md-menu>
           <!-- Trigger element is a md-button with an icon -->
           <md-button ng-click="$mdOpenMenu()">
@@ -57,36 +56,6 @@
         </md-menu-content>
       </md-menu>
 
-
-
-      <!--<md-menu md-position-mode="target-right target" md-offset="0 55" class="clusterMenu">-->
-        <!--<a  ng-click="$mdOpenMenu($event)" >-->
-          <!--Selected Cluster:-->
-        <!--</a>-->
-        <!--<md-menu-content width="4" style="top:55px;">-->
-          <!--<md-menu-item ng-repeat="item in [1, 2, 3]">-->
-            <!--<md-button ng-click="ctrl.announceClick($index)">-->
-              <!--<div layout="row" flex>-->
-                <!--<p flex>Option {{item}}</p>-->
-                <!--<md-icon md-menu-align-target md-svg-icon="call:portable-wifi-off" style="margin: auto 3px auto 0;"></md-icon>-->
-              <!--</div>-->
-            <!--</md-button>-->
-          <!--</md-menu-item>-->
-        <!--</md-menu-content>-->
-      <!--</md-menu>-->
-
-
-
-      <!--/////////-->
-    <!--<label ng-show="!missingEnvJS && clusters.length > 1" class="selectClusterLabel"><b>SELECT CLUSTER :</b></label>-->
-    <!--<md-input-container ng-show="!missingEnvJS && clusters.length > 1" class="selectCluster">-->
-      <!--<md-select ng-model="connectEndPoint">-->
-        <!--<md-option ng-repeat="connectEndPoint in clusters track by $index"-->
-                   <!--ng-click="updateEndPoint(connectEndPoint.NAME)"-->
-                   <!--value="{{connectEndPoint.NAME}}" ng-selected="{{cluster.NAME == connectEndPoint.NAME}}"-->
-        <!--&gt;{{connectEndPoint.NAME}}</md-option>-->
-      <!--</md-select>-->
-    <!--</md-input-container>-->
     </div>
   </div>
 </header>
@@ -126,19 +95,7 @@ var clusters =
 </div>
 
 <!--Main Content Starts here-->
-<div layout="row"  layout-sm="column" layout-xs="column" ng-controller="KafkaTopicsConfigCtrl" ng-hide="missingEnvJS">
-  <!--<div flex-gt-sm="33" ng-show="showList">-->
-  <div style="width:220px; z-index:0; background:#fff;box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);" ng-show="showList">
-    <div ng-controller="KafkaTopicsListCtrl" ng-include="'src/kafka-topics/list/left-list.html'"></div>
-    <br>
-    <!--<div ng-include="'src/kafka-topics/config/config.html'"></div> TODO-->
-  </div>
-  <div flex>
-    <ng-view></ng-view>
-    <br>
-    <div ng-include="'src/kafka-topics/config/config.html'" show-sm hide-gt-sm></div>
-  </div>
-</div>
+<ng-view style="width:100%" ng-hide="missingEnvJS"></ng-view>
 
 <!-- Landoop team promo TODO -->
 <!--<div layout-margin flex>-->
@@ -181,10 +138,12 @@ var clusters =
 <script src="src/kafka-topics/home/home.controller.js"></script>
 <script src="src/kafka-topics/healthcheck/healthcheck.controller.js"></script>
 <script src="src/kafka-topics/view/view.controller.js"></script>
-<script src="src/kafka-topics/config/config.controller.js"></script>
-<script src="src/kafka-topics/list/topics-list.controller.js"></script>
-<script src="src/factories/kafka-rest-proxy-factory.js"></script>
+<!--<script src="src/kafka-topics/config/config.controller.js"></script>-->
 <script src="src/factories/kafka-backend-factory.js"></script>
+<script src="src/kafka-topics/list/topics-list.module.js"></script>
+
+<script src="src/factories/kafka-rest-proxy-factory.js"></script>
+
 <script src="src/factories/env.factory.js"></script>
 <script src="src/factories/chart.factory.js"></script>
 <script src="src/factories/utils-factory.js"></script>

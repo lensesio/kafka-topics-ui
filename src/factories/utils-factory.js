@@ -3,15 +3,6 @@
  */
 angularAPP.factory('UtilsFactory', function ($log) {
 
-  // Sort arrays by key
-  function sortByKey(array, key, reverse) {
-    return array.sort(function (a, b) {
-      var x = a[key];
-      var y = b[key];
-      return ((x < y) ? -1 * reverse : ((x > y) ? 1 * reverse : 0));
-    });
-  }
-
   /* Public API */
   return {
 
@@ -34,5 +25,14 @@ angularAPP.factory('UtilsFactory', function ($log) {
     }
 
   }
+
+    // Sort arrays by key
+    function sortByKey(array, key, reverse) {
+      return array.sort(function (a, b) {
+        var x = a[key];
+        var y = b[key];
+        return ((x < y) ? -1 * reverse : ((x > y) ? 1 * reverse : 0));
+      });
+    }
 
 });

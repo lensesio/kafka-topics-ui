@@ -28,7 +28,7 @@
             pagination-id="controlTopics"
             ng-click="listClick(topic.topicName, topic.isControlTopic)"
             ng-class="{ 'selectedListItem': topic.topicName == topicName }">
-          <td>{{shortenControlCenterName(topic.topicName)}}</td>
+          <td>{{shortenControlCenterName(topic)}}</td>
           <td class="td-center">{{topic.replication}}</td>
           <td class="td-center">{{topic.partitions}}</td>
           <td class="td-center"><span class="label-type label-type-{{topic.keyType}}" ng-if="topic.keyType != ''">{{topic.keyType}}</span></td>

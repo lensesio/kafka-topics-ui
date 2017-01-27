@@ -1,75 +1,23 @@
-angularAPP.controller('HomeCtrl', function ($scope, $rootScope, $location, $routeParams, $mdToast, $log, KafkaRestProxyFactory, toastFactory, env, KafkaBackendFactory) {
-  $log.info("Starting kafka-topics controller : home");
+angularAPP.controller('HomeCtrl', function ($scope, toastFactory, $http, $log, KafkaRestProxyFactory, env) {
   toastFactory.hideToast();
 
-  $rootScope.showList = false;
+  $scope.$on('$routeChangeSuccess', function() {
+    $scope.kafkaRest = env.KAFKA_REST();
+    $log.info(env.KAFKA_REST(),"Starting kafka-topics controller : config");
+    $scope.brokers = {};
+    $scope.connectionFailure = false;
 
-  /**
-  * At start up get the Brokers that the kafka-rest server is using
-  */
-  KafkaRestProxyFactory.getBrokers().then(
-    function success(brokers) {
-      $scope.brokers = brokers.brokers;
-    },
-    function failure() {
-      $scope.connectionFailure = true;
+    /**
+    * At start up get the Brokers that the kafka-rest server is using
+    */
+    KafkaRestProxyFactory.getBrokers().then(
+      function success(brokers) {
+        $scope.brokers = brokers.brokers;
+      },
+      function failure() {
+        $scope.connectionFailure = true;
+    });
   });
 
-     $rootScope.$watch(function () {
-        return $rootScope.cluster;
-      }, function (a) {
-     if(typeof $rootScope.cluster == 'object'){
-       getLeftListTopics();
-      }
-     }, true);
-
-    $scope.displayingControlTopics = $scope.isNormalTopic;
-
-    $scope.shortenControlCenterName = function (topicName) {
-      return KafkaRestProxyFactory.shortenControlCenterName(topicName);
-    }
-
-    $scope.topicsPerPage = 7;
-
-  function getLeftListTopics() {
-
-KafkaBackendFactory.getListInfo().then(function (allData){
-$scope.topics = allData;
-
-  function isControlTopic(value) {
-    return value.isControlTopic;
-  }
-  function isNormalTopic(value) {
-    return !isControlTopic(value);
-  }
-  $scope.controlTopics = $scope.topics.filter(isControlTopic);
-  $scope.normalTopics = $scope.topics.filter(isNormalTopic);
-
-  });
-    $scope.listClick = function (topicName, isControlTopic) {
-      if (isControlTopic == true) {
-        $scope.CategoryTopicUrls = 'c';
-      } else {
-        $scope.CategoryTopicUrls = 'n';
-      }
-      $location.path("cluster/"+ env.getSelectedCluster().NAME +"/topic/" +  $scope.CategoryTopicUrls + "/" + topicName, false);
-    }
-
-    $scope.topicDataType = function(topic) {
-    var dataType = '...';
-    if (topic.valueType && topic.keyType &&  topic.keyType ==  topic.valueType ){ dataType = topic.valueType}
-    else if (topic.valueType && topic.keyType){ dataType = topic.valueType + '/' + topic.keyType}
-    else if (topic.valueType || topic.keyType){ dataType = topic.valueType + topic.keyType}
-
-
-    return dataType;
-    }
-  }
-
-  function doLabels(count, name) {
-      if (count == 0) return 'None ' + name;
-      else if (count == 1) return '1 ' + name;
-      else return count + ' ' + name +'s';
-  }
 
 });

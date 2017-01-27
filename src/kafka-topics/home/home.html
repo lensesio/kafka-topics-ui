@@ -15,9 +15,8 @@
         </md-switch>
       </div>
     </md-toolbar>
-    <!--TODO-->
-    <div ng-show="!displayingControlTopics" ng-include="'src/kafka-topics/list/topics-list.html'"></div>
-    <div ng-show="displayingControlTopics" ng-include="'src/kafka-topics/list/control-topics-list.html'"></div>
+    <topics-list mode="normal" ng-show="!displayingControlTopics"></topics-list>
+    <topics-list mode="system" ng-show="displayingControlTopics"></topics-list>
   </md-card>
 
   <!--2. DASHBOARD STUFF-->
@@ -50,7 +49,29 @@
       </md-card>
     </div>
 
-    <div ng-include="'src/kafka-topics/config/config.html'"></div>
+    <!--<div ng-include="'src/kafka-topics/config/config.html'"></div>-->
+
+    <!--1. ENDPOINT INFORMATION -->
+    <md-card style="box-shadow:none;" >
+      <md-content flex layout-padding>
+        <div>
+          <div style="margin: 0px 0px 8px;font-weight: 500; text-transform: uppercase; font-size: 14px;">KAFKA REST</div>
+          {{kafkaRest}} <br>
+          <!--<b>Kafka Brokers :</b> {{brokers.length}}<br>-->
+          <span ng-show="connectionFailure" style="color:red">CONNECTIVITY ERROR</span>
+        </div>
+      </md-content>
+    </md-card>
+
+    <!--2. VERSION -->
+    <md-card style="box-shadow:none; margin-top:15px;" >
+      <md-content flex layout-padding>
+        <div>
+          <b style="font-weight: 500; text-transform: uppercase; font-size: 14px;">kafka-topics-ui</b> 0.8.1
+        </div>
+      </md-content>
+    </md-card>
+
   </div>
 
 </div>
