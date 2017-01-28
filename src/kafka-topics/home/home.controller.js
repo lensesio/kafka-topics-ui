@@ -1,11 +1,11 @@
-angularAPP.controller('HomeCtrl', function ($scope, toastFactory, $http, $log, KafkaRestProxyFactory, env) {
+angularAPP.controller('HomeCtrl', function ($scope, toastFactory, $http, $log, env) {
   toastFactory.hideToast();
 
   $scope.$on('$routeChangeSuccess', function() {
-    $scope.kafkaRest = env.KAFKA_REST();
-    $log.info(env.KAFKA_REST(),"Starting kafka-topics controller : config");
+    $scope.kafkaRest = env.getSelectedCluster().KAFKA_REST;
+//    $log.info(env.KAFKA_REST(),"Starting kafka-topics controller : config");
 //    $scope.brokers = {};
-    $scope.connectionFailure = false;
+//    $scope.connectionFailure = false;
 
   });
 

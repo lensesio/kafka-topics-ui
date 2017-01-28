@@ -16,41 +16,32 @@ var angularAPP = angular.module('angularAPP', [
   'angular-json-tree',
   'topicsList',
   'totalBrokers',
-  'totalTopics'
+  'totalTopics',
+  'env'
 ]);
 
-angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $location, $route) {
-
-
-  $scope.$on('$routeChangeSuccess', function() {
-     $rootScope.clusters = env.getClusters();
-     $rootScope.cluster = env.getSelectedCluster();
-     $scope.color = $scope.cluster.COLOR;
-  });
-
-  $scope.updateEndPoint = function(cluster) {
-    $rootScope.connectionFailure = false;
-    $location.path("/cluster/"+cluster)
-    $rootScope.cluster = cluster;
-  }
-
-   $rootScope.showList = true;
-   $rootScope.toggleList = function () {
-      $rootScope.showList = !$rootScope.showList;
-   };
-
-   $rootScope.showLeftList = function () {
-      $rootScope.showList = true;
-   };
-
-
-});
+//angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $location, $route) { });
 
 angularAPP.run(
-    function loadRoute( env, $routeParams, $rootScope ) {
+    function loadRoute( env, $routeParams, $rootScope, $location, $http ) {
         $rootScope.$on('$routeChangeSuccess', function() {
-          env.setSelectedCluster($routeParams.cluster);
+            //When the app starts set the envs
+            if(!env.isMissingEnvJS()) {
+                 env.setSelectedCluster($routeParams.cluster);
+                 $rootScope.clusters = env.getAllClusters();
+                 $rootScope.cluster = env.getSelectedCluster();
+            } else {
+                 $rootScope.missingEnvJS = env.isMissingEnvJS();
+            }
        });
+
+       $rootScope.selectCluster = function(cluster) {
+           $rootScope.connectionFailure = false;
+           $location.path("/cluster/"+cluster)
+           $rootScope.cluster = cluster;
+       }
+
+       //TODO Where to check connectivity and make it public for all components ?
     }
 )
 

@@ -1,18 +1,22 @@
 //TODO CLEAN ME UP!!!!!!!!!
 
-angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, KafkaBackendFactory, UtilsFactory, HttpFactory, charts, env) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, HttpFactory, charts, env) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
   $rootScope.topicName = $routeParams.topicName;
 
-  $rootScope.showList = true;
   $scope.showSpinner = true;
   $scope.KAFKA_TOPIC_DELETE_COMMAND = TOPIC_CONFIG.KAFKA_TOPIC_DELETE_COMMAND;
   $scope.topicCategoryUrl = $routeParams.topicCategoryUrl;
   $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
   $scope.selectedTabNnumber = setSelectedDataTab($routeParams.selectedTabIndex);
   $scope.topicType = KafkaRestProxyFactory.getDataType($scope.topicName);
+
+   $scope.showList = true;
+   $scope.toggleList = function () {
+      $scope.showList = !$scope.showList;
+   };
 
   $scope.$on('$routeChangeSuccess', function() {
     $scope.cluster = env.getSelectedCluster();//$routeParams.cluster;

@@ -7,7 +7,7 @@ var clusters = [{
         //COLOR: "#141414" // Optional
     }, {
         NAME: "dev",
-        KAFKA_REST: "localhost:8083",
+        KAFKA_REST: "https://abc.landoop.com",
         KAFKA_BACKEND: "http://fast-data-backend.demo.landoop.com/api/rest",
         MAX_BYTES: "?max_bytes=50000",
         COLOR: "red"

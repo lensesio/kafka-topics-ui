@@ -1,5 +1,11 @@
-<!-- Custom rendering for Config overrides -->
-  <md-tab-body>
+ <!--
+  topicMetadata
+  getConfigDescription
+  showMoreDesc
+  ToggleMoreDesc
+ -->
+
+ <md-tab-body>
     <md-content class="md-padding">
         <table class="flat-table"  ng-if ="topicMetadata.customConfig" >
           <thead>
@@ -22,7 +28,7 @@
             <td  class="td-center">
               <span>{{ec.defaultValue}}</span>
             </td>
-            <td style="max-width:500px;" ng-title="{{getConfigDescription(key)}}" class=" td-left">
+            <td style="max-width:500px;" ng-title="{{getConfigDescription(key)}}" class="td-left">
               <span ng-hide="showMoreDesc[$index] || {{ec.documentation.length}} < 200">{{ ec.documentation | limitTo:100 }}...</span>
               <span ng-show="showMoreDesc[$index]">{{ ec.documentation}}</span>
 

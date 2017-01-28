@@ -1,0 +1,28 @@
+<!--
+    Currently depends on rootScope
+-->
+
+<md-menu style="padding-top:4px;" >
+    <!-- Trigger element is a md-button with an icon -->
+    <md-button ng-click="$mdOpenMenu()">
+        SELECTED CLUSTER: <span style="color: #FF5722">{{cluster.NAME}} </span> <i class="fa fa-angle-double-down" aria-hidden="true"></i>
+    </md-button>
+    <md-menu-content>
+        <md-menu-item ng-repeat="connectEndPoint in clusters track by $index"
+                      ng-click="selectCluster(connectEndPoint.NAME)">
+            <md-button>
+                {{connectEndPoint.NAME}}
+            </md-button>
+        </md-menu-item>
+    </md-menu-content>
+</md-menu>
+
+<!--TODO this is not supposed to be here-->
+<md-menu>
+    <md-button  ng-click="">
+        <i class="fa fa-cog" aria-hidden="true"></i>
+    </md-button>
+    <md-menu-content>
+        <md-menu-item></md-menu-item>
+    </md-menu-content>
+</md-menu>

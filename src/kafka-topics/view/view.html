@@ -1,184 +1,40 @@
 <div layout="row"  layout-sm="column" layout-xs="column">
 
         <div style="width:220px; z-index:0; background:#fff;box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);" ng-show="showList">
-            {{cluster}}
-
             <topics-list mode="compact" cluster="{{cluster}}"></topics-list>
         </div>
 
         <div flex="100">
              <div style="background-color:#F5F5F5;" ng-cloak>
-          <!--1. TOOLBAR-->
-          <md-toolbar ng-show="!displayingControlTopics" class="md-hue-2" style="background-color:#fff;color:#333">
-              <div class="md-toolbar-tools">
-              <md-button ng-click="toggleList()">
-                <i ng-show="showList" class="fa fa-arrow-circle-o-left" aria-hidden="true" style="color:#333"></i>
-                <i ng-hide="showList" class="fa fa-bars" aria-hidden="true" style="color:#333"></i>
-              </md-button>
-              <h4 style="font-size:16px;">
-                <span>{{topicName}}</span>
-              </h4>
-              <span flex></span>
-                <small style="color:#333;font-size:10px;">
-                    <span class="labelType label-type-{{topicMetadata.keyType}}"> {{topicMetadata.keyType}} </span> /
-                    <span class="labelType label-type-{{topicMetadata.valueType}}"> {{topicMetadata.valueType}} </span> </small>
-                <md-button
-                        ng-hide="showSpinner"
-                        ng-click="showDownloadDiv = !showDownloadDiv"
-                        aria-label="Download data"
-                        aria-hidden="false">
-                    <i class="fa fa-download" ng-show="!showDownloadDiv" aria-hidden="true" style="color:#333"></i>
-                    <i class="fa fa-close" ng-show="showDownloadDiv" aria-hidden="true" style="color:#333"></i>
-                </md-button>
+              <!--1. TOOLBAR-->
+              <div ng-include="'src/kafka-topics/view/templates/topic-toolbar.html'"></div>
+
+              <!--2. LOADER-->
+              <md-progress-linear md-mode="indeterminate" ng-show="showSpinner"></md-progress-linear>
+
+              <!--3. TOPIC NAV  -->
+              <md-tabs md-stretch-tabs="always" ng-hide="showSpinner" style="width:100%" ng-cloak>
+
+                  <!--DATA-->
+                  <md-tab label="Data" md-dynamic-height md-border-botto md-dynamic-height="true" md-border-bottom>
+                    <div ng-include="'src/kafka-topics/view/templates/topic-data.html'"></div>
+                  </md-tab>
+
+                  <!--ANALYTICS-->
+                  <md-tab label="Analytics">
+                    <md-tab-body>
+                        <md-content class="md-padding">
+                            <div ng-include="'src/kafka-topics/view/templates/topic-analytics.html'"></div>
+                        </md-content>
+                    </md-tab-body>
+                  </md-tab>
+
+                  <!--CONFIGURATION-->
+                  <md-tab label="Configuration">
+                        <div ng-include="'src/kafka-topics/view/templates/topic-configuration.html'"></div>
+                  </md-tab>
+
+              </md-tabs>
             </div>
-              <div class="downloadDiv" ng-show="showDownloadDiv">
-                  <h4>Download Options</h4>
-                  <ul>
-                      <li>
-                          <div class="checkbox checkbox-info">
-                              <input id="checkbox1" type="checkbox" checked="checked" class="fxhdr">
-                              <label for="checkbox1">Download Avro encoded file</label>
-                          </div>
-                      </li>
-                      <!--<li>-->
-                          <!--<div class="checkbox checkbox-warning">-->
-                              <!--<input id="checkbox2" type="checkbox" checked="checked" class="fxsdr">-->
-                              <!--<label for="checkbox2">Download Json decoded file</label>-->
-                          <!--</div>-->
-                      <!--</li>-->
-                      <li>
-                          <div class="checkbox checkbox-success">
-                              <input id="checkbox4" type="checkbox" class="open-close">
-                              <label for="checkbox4"> Download only filtered data</label>
-                          </div>
-                      </li>
-                  </ul>
-                  <md-button style="float:right"  download="true"
-                              ng-click="getData(topicName)"
-                              aria-label="Download data"
-                              aria-hidden="false">
-                      <i class="fa fa-download" aria-hidden="true" style="color:#333"></i> </md-button>
-
-              </div>
-          </md-toolbar>
-
-          <!--2. LOADER-->
-          <md-progress-linear md-mode="indeterminate" ng-show="showSpinner"></md-progress-linear>
-
-          <!--3. TOPIC NAV  --><!--TODO-->
-          <md-tabs md-stretch-tabs="always" ng-hide="showSpinner" style="width:100%" ng-cloak>
-            <md-tab label="Data" md-dynamic-height md-border-botto md-dynamic-height="true" md-border-bottom>
-              <!--4. TOPIC FILTERS, CHART & DATA  -->
-              <div style="background-color:#F5F5F5;" ng-cloak layout-margin ng-hide="showSpinner">
-                  <!-- 4.1 EMPTY TOPIC MESSAGE -->
-                  <div layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;" ng-show="topicIsEmpty">
-                      <div style="color:#333;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                          This topic is empty.
-                      </div>
-                  </div>
-
-                  <!--4.2 TOPIC FILTERS & CHARTS-->
-                  <div ng-hide="topicIsEmpty">
-                          <div style="background:#fff" layout="column">
-                              <div>
-                                  <!--TODO-->
-                                  <small style="font-size:10px;">
-                                      <!--{{chartSelection}}Selected Min: 2017-01-14 20:31:26 / Selected Max: 2017-01-14 21:10:22-->
-                                      <span flex></span>
-                                      <md-button style="font-size:10px;float:right;line-height: 0px; min-height: 0px;" ng-show="!showChart" ng-click="toggleChart()"> <i class="fa fa-eye-slash" aria-hidden="true"></i> Show filters </md-button>
-                                      <md-button style="font-size:10px;float:right;line-height: 0px; min-height: 0px;" ng-show="showChart" ng-click="toggleChart()"> <i class="fa fa-eye" aria-hidden="true"></i> Hide filters </md-button>
-                                  </small>
-                              </div>
-
-                              <div>
-                                  <div ng-show="showChart"  id="container" style="float:left; min-width: 300px; height: 450px; margin: 0 auto; width:80% !important;"></div>
-                                  <!--<div ng-show="showChart" id="container2" style="float:left; min-width: 300px; height: 100px; margin: 0 auto; width:80% !important;"></div>-->
-                              </div>
-                          </div>
-
-                      <div flex>
-                          <!--Server side filtering toolbar-->
-                          <!--TODO Basic-->
-                          <!--<md-card style="background-color:#EDF1F5;">-->
-                              <!--<div layout="row" layout-sm="column" layout-align="start center" layout-padding ng-hide="topicIsEmpty">-->
-                                  <!--<label style="width:100%">Partition</label>-->
-                                  <!--<select class="form-control button" ng-model="search.partition" >-->
-                                      <!--<option value="" selected>ALL</option>-->
-                                      <!--<option ng-repeat="i in getPartitions(partitions)" track by $index value="{{$index}}">Partition {{$index}}</option>-->
-                                  <!--</select>-->
-                                  <!--<label style="width:100%">Offset start:</label>-->
-                                  <!--<input ng-model="offsetStart" type="text" placeholder="123" style="width:100%">-->
-                                  <!--<label style="width:100%">Offset end:</label>-->
-                                  <!--<input ng-model="offsetend" type="text" placeholder="456" style="width:100%">-->
-                                  <!--<md-button class="md-raised" ng-click="kcqlRequest()" style="height:23px; width:23px">-->
-                                      <!--<i class="fa fa-search" aria-hidden="true" style="color:#333; margin-top:-10"></i>-->
-                                  <!--</md-button>-->
-                                  <!--<a>Advanced</a>-->
-                              <!--</div>-->
-                          <!--</md-card>-->
-
-                          <!--Advanced / TODO only if Topic has avro value-->
-                          <div  ng-show="showChart" style="background-color:#fff; border:1px solid #f4f5f7">
-                                <div layout="row" layout-sm="column" layout-align="space-between center" layout-padding ng-hide="topicIsEmpty" ng-if="topicMetadata.valueType =='avro'">
-                                    <label>KCQL</label>
-
-                                    <input ng-model="kcql" type="text" placeholder="SELECT * FROM {{topicName}}" style="width:100%">
-                                    <md-button class="md-raised" ng-click="kcqlRequest()" style="height:23px; width:23px">
-                                        <i class="fa fa-search" aria-hidden="true" style="color:#333; margin-top:-10"></i>
-                                    </md-button>
-                                    <!--<a>Basic</a>-->
-                                </div>
-                          </div>
-                      </div>
-                  </div>
-
-                  <!--4.3 TOPIC DATASET-->
-                  <div style="background-color:#fff;" ng-hide="topicIsEmpty">
-                      <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
-
-                          <div>
-                              <input ng-model="search.$" flex placeholder="Filter" style="width: 300px;margin: 7px; line-height: 30px;"/>
-
-                              <select class="form-control button" ng-model="search.partition" style="float:right; width: 120px;margin: 7px; line-height: 30px;">
-                                  <option value="" selected>All partitions</option>
-                                  <option ng-repeat="i in getPartitions(partitions)" track by $index value="{{$index}}">Partition {{$index}}</option>
-                              </select>
-                          </div>
-
-                          <md-tab   label="Topic" ng-click="onTabChanges('topic')" ng-if="topicType != 'binary' && !topicIsEmpty ">
-                              <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
-                          </md-tab>
-
-                          <md-tab label="Table" ng-click="onTabChanges('table')" ng-if="topicType != 'binary' && !topicIsEmpty">
-                              <div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>
-                          </md-tab>
-
-                          <md-tab label="Raw Data" ng-click="onTabChanges('rawdata')" ng-if=" !topicIsEmpty">
-                              <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
-                          </md-tab>
-
-                          <md-tab label="Configuration" ng-click="onTabChanges('config')"  ng-if=" selectedTabNnumber == '3' || getExtraConfig(topicName) != ''">
-                              <div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>
-                          </md-tab>
-
-                      </md-tabs>
-                  </div>
-              </div>
-            </md-tab>
-            <md-tab label="Analytics">
-                <md-tab-body>
-                    <md-content class="md-padding">
-                        Total number of Partitions: {{topicMetadata.partitions}}
-                        <div ng-repeat="mpp in topicMetadata.messagesPerPartition">
-                            Partition {{mpp.partition}} : {{mpp.messages}} Messages
-                        </div>
-                    </md-content>
-                </md-tab-body>
-            </md-tab>
-            <md-tab label="Configuration">
-                    <div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>
-                </md-tab>
-          </md-tabs>
         </div>
 </div>
-    </div>

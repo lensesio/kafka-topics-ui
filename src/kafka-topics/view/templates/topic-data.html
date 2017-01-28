@@ -1,0 +1,51 @@
+<!--
+    showSpinner
+    topicIsEmpty
+    selectedTabNnumber
+    search.$
+    onTabChanges('topic')
+    topicType
+    getPartitions
+-->
+<div style="background-color:#F5F5F5;" ng-cloak layout-margin ng-hide="showSpinner">
+
+    <!-- 4.1 EMPTY TOPIC MESSAGE -->
+    <div layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;" ng-show="topicIsEmpty">
+        <div style="color:#333;">
+            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+            This topic is empty.
+        </div>
+    </div>
+
+    <!--4.2 TOPIC FILTERS & CHARTS-->
+    <div ng-include="'src/kafka-topics/view/templates/data/data-chart.html'"></div>
+
+
+    <!--4.3 TOPIC DATASET-->
+    <div style="background-color:#fff;" ng-hide="topicIsEmpty">
+        <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
+
+            <div>
+                <input ng-model="search.$" flex placeholder="Filter" style="width: 300px;margin: 7px; line-height: 30px;"/>
+
+                <select class="form-control button" ng-model="search.partition" style="float:right; width: 120px;margin: 7px; line-height: 30px;">
+                    <option value="" selected>All partitions</option>
+                    <option ng-repeat="i in getPartitions(partitions)" track by $index value="{{$index}}">Partition {{$index}}</option>
+                </select>
+            </div>
+
+            <md-tab   label="Topic" ng-click="onTabChanges('topic')" ng-if="topicType != 'binary' && !topicIsEmpty ">
+                <div ng-include="'src/kafka-topics/view/templates/data/data-tree-view.html'"></div>
+            </md-tab>
+
+            <md-tab label="Table" ng-click="onTabChanges('table')" ng-if="topicType != 'binary' && !topicIsEmpty">
+                <div ng-include="'src/kafka-topics/view/templates/data/data-flatten-view.html'"></div>
+            </md-tab>
+
+            <md-tab label="Raw Data" ng-click="onTabChanges('rawdata')" ng-if=" !topicIsEmpty">
+                <div ng-include="'src/kafka-topics/view/templates/data/data-raw-view.html'"></div>
+            </md-tab>
+
+        </md-tabs>
+    </div>
+</div>

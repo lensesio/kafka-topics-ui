@@ -3,10 +3,12 @@ angular.
     module("HttpFactory", []).
     factory('HttpFactory', function ( $http, $log, $q, env) {
 
+    var endpoint = env.KAFKA_BACKEND();
+
     return {
         //todo move this function to view
         getTopicSummary: function (topicName) {
-           return req2('GET', env.KAFKA_BACKEND()  + '/topics/summary/' + topicName);
+           return req2('GET', endpoint  + '/topics/summary/' + topicName);
         },
         req: function(method, url, data) {
              var deferred = $q.defer();

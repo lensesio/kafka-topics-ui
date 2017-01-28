@@ -2,111 +2,55 @@
 <html>
 <head>
   <title>Kafka Topics UI - Browse Kafka Data</title>
+  <meta charset=utf-8/>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="Kafka Topics UI">
+  <meta name="keywords" content="kafka,schema registry,topics,kafka-topic,kafka-rest,kafka-rest-proxy,kafka management,avro">
+  <meta name="author" content="Landoop Team">
+  <link rel="shortcut icon" href="src/assets/icons/favicon.png">
+
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
   <link rel="stylesheet" href="bower_components/angular-material-data-table/dist/md-data-table.min.css">
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.min.css">
   <link rel="stylesheet" href="src/assets/css/styles.css">
-  <!--<link rel="stylesheet" href="bower_components/angular-json-tree/dist/angular-json-tree.css">-->
-
-  <meta charset=utf-8/>
-  <meta name="viewport" content="width=device-width">
-  <meta name="description" content="Kafka Topics UI">
-  <meta name="keywords"
-        content="kafka,schema registry,topics,kafka-topic,kafka-rest,kafka-rest-proxy,kafka management,avro">
-  <meta name="author" content="Landoop Team">
-  <link rel="shortcut icon" href="src/assets/icons/favicon.png">
 </head>
 
 <body ng-app="angularAPP" ng-cloak>
 
-<!--Header Starts here-->
-<header class="header" ng-controller="HeaderCtrl" style="background:{{color}}">
+<header class="header" style="background:{{cluster.COLOR}}">
   <div layout="row" layout-xs="column">
     <div class="top-left-part">
       <h5 style="padding-top:10px;">
-        <a ng-click="showLeftList()" href="{{cluster ? '#/cluster/'+cluster.NAME : '#/'}}" style="color:#fff; text-decoration:none;">KAFKA TOPICS</a>
+        <a href="{{cluster ? '#/cluster/'+cluster.NAME : '#/'}}" style="color:#fff; text-decoration:none;">KAFKA TOPICS</a>
       </h5>
     </div>
     <span flex></span>
     <div class="top-right-part" style="padding-top:4px;" >
-
-        <md-menu>
-          <!-- Trigger element is a md-button with an icon -->
-          <md-button ng-click="$mdOpenMenu()">
-            SELECTED CLUSTER: <span style="color: #FF5722">{{cluster.NAME}} </span> <i class="fa fa-angle-double-down" aria-hidden="true"></i>
-          </md-button>
-          <md-menu-content>
-            <md-menu-item ng-repeat="connectEndPoint in clusters track by $index"
-                          ng-click="updateEndPoint(connectEndPoint.NAME)">
-              <md-button>
-                {{connectEndPoint.NAME}}
-              </md-button>
-            </md-menu-item>
-          </md-menu-content>
-        </md-menu>
-
-      <md-menu>
-        <md-button  ng-click="">
-          <i class="fa fa-cog" aria-hidden="true"></i>
-        </md-button>
-        <md-menu-content>
-          <md-menu-item></md-menu-item>
-        </md-menu-content>
-      </md-menu>
-
+      <div ng-include="'src/kafka-topics/dashboard-components/select-cluster/select-cluster.html'"></div>
     </div>
   </div>
 </header>
 
 <!--if env.js is not properly defined-->
 <div layout="row" flex="100" ng-show="missingEnvJS" ng-cloak>
-  <md-card>
-    <md-card-content>
-      <h3 style="font-weight:300; color:red"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Missing Cluster Configuration</h3>
-      <br>
-      In order to configure <code>kafka-topics-ui</code> you need to add <code>env.js</code> file in the root directory of the app.
-      <br>
-      Example <b>env.js</b> structure:
-      <pre>
-        <code>
-var clusters =
-[
-  {
-  NAME:"prod",
-  KAFKA_REST : "prod.url.com",// "The Kafka Rest url"
-  // Sets the default maximum amount of bytes to fetch from each topic
-  MAX_BYTES: "?max_bytes=50000",
-  COLOR: "#141414" // Optional
-  },
-  {
-  NAME:"dev",
-  KAFKA_REST : "dev.url.com", "The Kafka Rest url"
-  MAX_BYTES: "?max_bytes=50000",
-
-  COLOR: "red" // Optional
-  }
-]
-        </code>
-      </pre>
-    </md-card-content>
-  </md-card>
+  <div ng-include="'src/kafka-topics/dashboard-components/missing-env/missing-env.html'"></div>
 </div>
 
-<!--Main Content Starts here-->
+<!--Main Content here-->
 <ng-view style="width:100%" ng-hide="missingEnvJS"></ng-view>
 
-<!-- Landoop team promo TODO -->
-<!--<div layout-margin flex>-->
-  <!--<div flex="nogrow">-->
-    <!--<img ng-src="src/assets/icons/landoop-dark.svg" style="width:20px;float: left;padding-right:5px;"></div>-->
-  <!--<div flex>-->
-    <!--<p class="md-caption">Powered by <a href="http://www.landoop.com/" target="_blank">Landoop</a></p>-->
-  <!--</div>-->
-<!--</div>-->
+<div layout-margin flex>
+  <div flex="nogrow">
+    <img ng-src="src/assets/icons/landoop-dark.svg" style="width:20px;float: left;padding-right:5px;"></div>
+  <div flex>
+    <p class="md-caption">Powered by <a href="http://www.landoop.com/" target="_blank">Landoop</a></p>
+  </div>
+</div>
 
 <!--CUSTOM-FOOTER-->
+
 <!-- analytics -->
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
@@ -127,9 +71,8 @@ var clusters =
 <script src="bower_components/angular-oboe/dist/angular-oboe.min.js"></script>
 <script src="bower_components/angular-json-tree/dist/angular-json-tree.min.js"></script>
 
-
-
 <script src="env.js"></script>
+
 <!-- build:js combined.js -->
 <script src="src/app.js"></script>
 <script src="src/kafka.defaults.js"></script>
@@ -138,14 +81,11 @@ var clusters =
 <script src="src/kafka-topics/home/home.controller.js"></script>
 <script src="src/kafka-topics/healthcheck/healthcheck.controller.js"></script>
 <script src="src/kafka-topics/view/view.controller.js"></script>
-<!--<script src="src/kafka-topics/config/config.controller.js"></script>-->
 <script src="src/factories/kafka-backend-factory.js"></script>
 <script src="src/kafka-topics/list/topics-list.module.js"></script>
 <script src="src/kafka-topics/dashboard-components/total-brokers/total-brokers.module.js"></script>
 <script src="src/kafka-topics/dashboard-components/total-topics/total-topics.module.js"></script>
-
 <script src="src/factories/kafka-rest-proxy-factory.js"></script>
-
 <script src="src/factories/env.factory.js"></script>
 <script src="src/factories/chart.factory.js"></script>
 <script src="src/factories/utils-factory.js"></script>
