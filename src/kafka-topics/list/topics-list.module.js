@@ -1,12 +1,15 @@
-var topicsListModule = angular.module('topicsList', ["backendUtils"]);
+/**
 
-topicsListModule.factory('templates', function() {
-  return {
-    compact: 'src/kafka-topics/list/compact-topics-list.html',
-    system:  'src/kafka-topics/list/system-topics-list.html',
-    normal:  'src/kafka-topics/list/normal-topics-list.html'
-  };
-});
+ This module gives a list of topics with some metadata.
+
+ Example of usage:
+     <topics-list mode="normal" cluster="{{cluster}}"></topics-list>
+
+     mode can be `normal`, `system` or `compact`
+     cluster is a scope var in module's controller and expects the selected cluster to pick up topics from.
+
+**/
+var topicsListModule = angular.module('topicsList', ["HttpFactory"]);
 
 topicsListModule.directive('topicsList', function(templates) {
   return {
@@ -18,13 +21,27 @@ topicsListModule.directive('topicsList', function(templates) {
   };
 });
 
-topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $rootScope, $location, toastFactory, env, KafkaBackendFactory) {
+topicsListModule.factory('templates', function() {
+  return {
+    compact: 'src/kafka-topics/list/compact-topics-list.html',
+    system:  'src/kafka-topics/list/system-topics-list.html',
+    normal:  'src/kafka-topics/list/normal-topics-list.html'
+  };
+});
 
-  toastFactory.hideToast();
+topicsListModule.factory('SummariesBackendFactory', function (HttpFactory) {
+    return {
+        getListInfo: function (endpoint) {
+           return HttpFactory.req('GET', endpoint + '/topics/summaries');
+        }
+    }
+});
 
-  $rootScope.$watch(
-    function () { return $rootScope.cluster; },
-    function () { if(typeof $rootScope.cluster == 'object'){  getLeftListTopics(); } },
+topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, SummariesBackendFactory) {
+
+  $scope.$watch(
+    function () { return $scope.cluster; },
+    function () { if(typeof $scope.cluster == 'object'){  getLeftListTopics(); } },
    true);
 
   $scope.shortenControlCenterName = function (topic) {
@@ -32,17 +49,16 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $rootScope,
   }
 
   $scope.listClick = function (topicName, isControlTopic) {
-    var urlType = (isControlTopic == true) ? 'c' : 'n'
-    $location.path("cluster/" + env.getSelectedCluster().NAME + "/topic/" + urlType + "/" + topicName, false);
+    var urlType = (isControlTopic == true) ? 'c' : 'n';
+    $location.path("cluster/" + $scope.cluster.NAME + "/topic/" + urlType + "/" + topicName, false);
   }
 
   function getLeftListTopics() {
-    KafkaBackendFactory.getListInfo().then(function (allData){
+    SummariesBackendFactory.getListInfo($scope.cluster.KAFKA_BACKEND.trim()).then(function (allData){
         $scope.topics = allData;
         $scope.controlTopics = $scope.topics.filter(isControlTopic);
         $scope.normalTopics = $scope.topics.filter(isNormalTopic);
-        console.log("AAA", $scope.normalTopics);
-    });
+    }); // TODO error message?
 
     //internal for the filters
     function isControlTopic(value) { return value.isControlTopic;  }

@@ -1,7 +1,9 @@
 <div layout="row"  layout-sm="column" layout-xs="column">
 
         <div style="width:220px; z-index:0; background:#fff;box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);" ng-show="showList">
-            <topics-list mode="compact"></topics-list>
+            {{cluster}}
+
+            <topics-list mode="compact" cluster="{{cluster}}"></topics-list>
         </div>
 
         <div flex="100">

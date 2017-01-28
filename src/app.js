@@ -14,7 +14,9 @@ var angularAPP = angular.module('angularAPP', [
   'ui.grid',
   'ui.grid.resizeColumns',
   'angular-json-tree',
-  'topicsList'
+  'topicsList',
+  'totalBrokers',
+  'totalTopics'
 ]);
 
 angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $location, $route) {

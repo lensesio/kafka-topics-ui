@@ -1,6 +1,6 @@
 //TODO CLEAN ME UP!!!!!!!!!
 
-angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, KafkaBackendFactory, UtilsFactory, charts, env) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, KafkaBackendFactory, UtilsFactory, HttpFactory, charts, env) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
@@ -15,11 +15,11 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.topicType = KafkaRestProxyFactory.getDataType($scope.topicName);
 
   $scope.$on('$routeChangeSuccess', function() {
-    $scope.cluster = env.getSelectedCluster().NAME;//$routeParams.cluster;
+    $scope.cluster = env.getSelectedCluster();//$routeParams.cluster;
   })
 
   $scope.onTabChanges = function(currentTabIndex){
-    $location.path ("cluster/"+ $scope.cluster + "/topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
+    $location.path ("cluster/"+ $scope.cluster.NAME + "/topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
   };
 
   $scope.gridOptions = { //TODO IS this needed?
@@ -643,7 +643,7 @@ function setSelectedDataTab(selectedTabIndex) {
     }
 }
 
-KafkaBackendFactory.getTopicSummary($scope.topicName).then(function (topicMetadata){
+HttpFactory.getTopicSummary($scope.topicName).then(function (topicMetadata){
 $scope.topicMetadata = topicMetadata;
 });
 
