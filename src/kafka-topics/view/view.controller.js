@@ -18,14 +18,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
     HttpFactory.getTopicSummary($scope.topicName).then(function (topicMetadata){
         $scope.topicMetadata = topicMetadata;
-    });
-
-//TODO not required ?
-    KafkaRestProxyFactory.getTopicMetadata($scope.topicName).then(function (metaData) {
-      $scope.partitions = metaData.partitions.length;
-      $scope.getPartitions = function(num) {
-        return Array.apply(null, {length: num}).map(Number.call, Number)
-      }
+        //      $scope.partitions = metaData.partitions.length;
+        //      $scope.getPartitions = function(num) {
+        //        return Array.apply(null, {length: num}).map(Number.call, Number)
+        //      }
     });
 
    $scope.toggleList = function () {
@@ -80,6 +76,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   // At start-up this controller consumes data
   //TODO
   var start = new Date().getTime();
+
   if (($scope.topicType == "json") || ($scope.topicType == "binary") || ($scope.topicType == "avro")) {
     var dataPromise = KafkaRestProxyFactory.consumeKafkaRest($scope.topicType, $scope.topicName);
     dataPromise.then(function (allData) {
@@ -88,13 +85,12 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
       $scope.aceString = angular.toJson(allData, true);
       $scope.rows = allData;
-      setCustomMessage($scope.rows);
+      $scope.topicIsEmpty = allData.length == 0;
       flattenTable(allData);
-      $scope.getTopicValues($scope.rows);
-
+      $scope.showSpinner = false;
       end = new Date().getTime();
       $log.info("[" + (end - start) + "] msec - to get & render"); //  + JSON.stringify(allSchemas)
-      $scope.showSpinner = false;
+
     }, function (reason) {
       $log.error('Failed: ' + reason);
     }, function (update) {
@@ -116,13 +112,12 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
               dataPromiseAvro.then(function (allData) {
                 $log.info("Binary detected");
                 var end = new Date().getTime();
-                $scope.topicType = "binary";
+//                $scope.topicType = "binary";
                 $scope.aceString = angular.toJson(allData, true);
                 $scope.rows = allData;
-                setCustomMessage($scope.rows);
+                $scope.topicIsEmpty = allData.length == 0;
                 flattenTable(allData);
-                angular.fromJson($scope.rows);
-                $scope.getTopicValues($scope.rows);
+//                angular.fromJson($scope.rows);
                 $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
                 $scope.showSpinner = false;
               }, function (reason) {
@@ -131,12 +126,11 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
             } else {
               $log.info("JSon detected");
               var end = new Date().getTime();
-              $scope.topicType = "json";
+//              $scope.topicType = "json";
               $scope.aceString = allData;
               $scope.rows = allData;
-              setCustomMessage($scope.rows);
+              $scope.topicIsEmpty = allData.length == 0;
               flattenTable(allData);
-              $scope.getTopicValues($scope.rows);
               $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
               $scope.showSpinner = false;
             }
@@ -145,12 +139,11 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
       } else {
         // $log.info("Avro detected" + allData);
         var end = new Date().getTime();
-        $scope.topicType = "avro";
+//        $scope.topicType = "avro";
         $scope.aceString = angular.toJson(allData, true);
         $scope.rows = allData;
-        setCustomMessage($scope.rows);
+        $scope.topicIsEmpty = allData.length == 0;
         flattenTable(allData);
-        $scope.getTopicValues($scope.rows);
         $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
         $scope.showSpinner = false;
       }
@@ -158,90 +151,14 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     });
   }
 
-  // 1. Create a consumer for Avro data, starting at the beginning of the topic's log.
-  // 2. Then consume some data from a topic, which is decoded, translated to JSON, and included in the response.
-  // The schema used for deserialization is fetched automatically from the schema registry.
-  // 3. Finally, clean up.
-  // [ avro | json | binary ]
-  $scope.consumeKafkaRest = function (messagetype, topicName) {
-    $scope.showSpinner = true;
-    var dataPromise = KafkaRestProxyFactory.consumeKafkaRest(messagetype, topicName);
-    dataPromise.then(function (data) {
-        $scope.aceString = data;
-        $scope.rows = data;
-        $scope.showSpinner = false;
-        setCustomMessage($scope.rows);
-        flattenTable(data);
-        $scope.getTopicValues($scope.rows);
-      }, function (reason) {
-        $log.error('Failed: ' + reason);
-      }, function (update) {
-        $log.info('Got notification: ' + update);
-      }
-    );
-  };
-
-  $scope.getTopicValues = function (rows) {
-    var allTopicValues = [];
-    angular.forEach(angular.fromJson(rows), function (row) {
-      // $log.debug(row + "    " + JSON.stringify(row.value));
-      var x = {};
-      x.key = row.key;
-      x.partition = row.partition;
-      x.offset = row.offset;
-      if (JSON.stringify(row.value) != null && JSON.stringify(row.value).indexOf("{\"") == 0) {
-        x.extraDataFlattened = [];
-        // $log.error("Value is JSon->" + JSON.stringify(row.value));
-        angular.forEach(row.value, function (peiler) {
-          //$log.debug("peiler = " + peiler);
-          x.extraDataFlattened.push(peiler);
-        });
-      } else {
-        x.extraDataFlattened = [];
-        // $log.info("Key= " + key + " value= " + value);
-        if (row.value != undefined) {
-          x.extraDataFlattened.push(row.value);
-        }
-      }
-      allTopicValues.push(x);
-    });
-    // $log.debug("XXX " + JSON.stringify(allTopicValues));
-    $scope.allTopicValues = allTopicValues;
-    return allTopicValues;
-  };
-
-  function setCustomMessage(rows) {
-    var totalRows = 0;
-//    if ($scope.topicName == "_schemas") {
-//      totalRows = rows.length;
-//      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + totalRows + "</b> registered schemas for the schema-registry"
-//    } else if ($scope.topicName == "connect-configs") {
-//      totalRows = rows.length;
-//      $scope.customMessage = "Topic <b>connect-configs</b> holds <b>" + $scope.getConnectors(rows, 'connector-').length + "</b> connector configurations" +
-//        " and <b>" + $scope.getConnectors(rows, 'task-').length + "</b> task configurations";
-//    } else if ($scope.topicName == "connect-offsets") {
-//      totalRows = rows.length;
-//      $scope.customMessage = "Topic <b>connect-offsets</b> holds the offsets of your connectors. Displaying <b>" + totalRows + "</b> rows";
-//    } else if ($scope.topicName == "connect-status") {
-//      totalRows = rows.length;
-//      // $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
-//      $scope.customMessage = "";
-//    } else {
-      if (UtilsFactory.IsJsonString(rows)) {
-        totalRows = JSON.parse(rows).length;
-        $scope.customMessage = "Displaying " + totalRows + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
-      } else {
-        totalRows = rows.length;
-        $scope.customMessage = "Displaying " + totalRows + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
-      }
-//    }
-    $scope.topicIsEmpty = totalRows == 0;
-
-    $scope.topicData = rows; //TODO removeme
-    return totalRows;
-  }
 /****************** SUPER CLEAN UP REQUIRED HERE / ENDS *****************/
-
+function setDataState(allData,topicType) {
+      (topicType == 'JSON') ? $scope.aceString = allData : angular.toJson(allData, true);
+      $scope.rows = allData;
+      $scope.topicIsEmpty = allData.length == 0;
+      flattenTable(allData);
+      $scope.showSpinner = false;
+}
 
 
 /*******************************
