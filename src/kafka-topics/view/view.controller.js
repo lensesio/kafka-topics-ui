@@ -3,47 +3,47 @@
 angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, HttpFactory, charts, env) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
-  $scope.topicName = $routeParams.topicName;
-  $rootScope.topicName = $routeParams.topicName;
 
+  //Init state
+  $scope.topicName = $routeParams.topicName;
   $scope.showSpinner = true;
-  $scope.KAFKA_TOPIC_DELETE_COMMAND = TOPIC_CONFIG.KAFKA_TOPIC_DELETE_COMMAND;
+  $scope.showDownloadDiv = false;
+  $scope.showList = true;
+  $scope.showMoreDesc = [];
+
+  $mdToast.hide(); // ?
   $scope.topicCategoryUrl = $routeParams.topicCategoryUrl;
-  $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
+//  $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
   $scope.selectedTabNnumber = setSelectedDataTab($routeParams.selectedTabIndex);
   $scope.topicType = KafkaRestProxyFactory.getDataType($scope.topicName);
 
-   $scope.showList = true;
+    HttpFactory.getTopicSummary($scope.topicName).then(function (topicMetadata){
+        $scope.topicMetadata = topicMetadata;
+    });
+
+    $http.get(env.KAFKA_BACKEND()+ "/topics/chart/"+ $scope.topicName) //TODO
+        .then(function response(response){
+              charts.getFullChart($scope.topicName, response);
+//              charts.getTimeChart($scope.topicName, response);
+        });
+
    $scope.toggleList = function () {
       $scope.showList = !$scope.showList;
    };
 
-  $scope.$on('$routeChangeSuccess', function() {
-    $scope.cluster = env.getSelectedCluster();//$routeParams.cluster;
-  })
+//  $scope.$on('$routeChangeSuccess', function() {
+//    $scope.cluster = env.getSelectedCluster();//$routeParams.cluster;
+//  })
 
   $scope.onTabChanges = function(currentTabIndex){
-    $location.path ("cluster/"+ $scope.cluster.NAME + "/topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
+    $location.path ("cluster/"+ $rootScope.cluster.NAME + "/topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
   };
 
-  $scope.gridOptions = { //TODO IS this needed?
-    enableSorting: true,
-    enableColumnResizing: true,
-    // rowHeight: 3,
-    columnDefs: [
-      {field: 'offset', maxWidth: 75, cellClass: 'grid-center', headerCellClass: 'grid-header-landoop'},
-      {field: 'partition', maxWidth: 75, cellClass: 'grid-center', headerCellClass: 'grid-header-landoop-small'},
-      {field: 'key', cellClass: 'red', width: 150, headerCellClass: 'grid-header-landoop'},
-      {
-        field: 'value', headerCellClass: 'grid-header-landoop',
-        cellTooltip: function (row, col) {
-          return 'a' + row.entity.value;
-        }
-      }
-    ]
-  };
 
-  $scope.editor;
+   $scope.ToggleMoreDesc = function (index) {
+      $scope.showMoreDesc[index] = !$scope.showMoreDesc[index];
+   };
+
   $scope.aceLoaded = function (_editor) {
     $scope.editor = _editor;
     $scope.editor.$blockScrolling = Infinity;
@@ -53,11 +53,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     });
   };
 
-  $scope.isSchemaLong = function (schema) {
-    return ((schema != null) && (schema.length >= 42))
-  };
-
-  $scope.getData = function (topicName) {
+  $scope.downloadData = function (topicName) {
     $log.info("Download requested for " + $scope.aceString.length + " bytes ");
     var json = $scope.aceString;
     var blob = new Blob([json], {type: "application/json;charset=utf-8;"});
@@ -67,97 +63,23 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     downloadLink[0].click();
   };
 
-  // DIALOG //////
-  var originatorEv;
-
-  $scope.openMenu = function ($mdOpenMenu, ev) {
-    originatorEv = ev;
-    $mdOpenMenu(ev);
-  };
-
-  $scope.notificationsEnabled = true;
-  $scope.toggleNotifications = function () {
-    $scope.notificationsEnabled = !$scope.notificationsEnabled;
-  };
-
-  $scope.streamFromBeginning = function () {
-    var kbytesFromBeginning = $mdDialog.alert()
-      .title('Stream from beginning of topic')
-      .textContent('Will fetch 100 KBytes of data from topic')
-      .targetEvent(originatorEv)
-      .clickOutsideToClose(true)
-      .ok('Okay!');
-
-    $mdDialog.show(kbytesFromBeginning).then(function () {
-      $log.info("Streaming from beginning");
-      $scope.consumeKafkaRest($scope.topicType, $scope.topicName);
-    });
-
-    originatorEv = null;
-  };
-
-  $scope.getExtraConfig = function (topicName) {
-    var topicDetails = KafkaRestProxyFactory.isNormalTopic(topicName) ? $rootScope.topicDetails : $rootScope.controlTopicDetails;
-    var extra = KafkaRestProxyFactory.hasExtraConfig(topicName, topicDetails);
-    if (extra)
-    return JSON.parse(extra);
-    else return ''
-  };
-
-  $scope.getDefaultConfigValue = function (configKey) {
-    var defaultConfigValue = "";
-    angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
-      if (kafkaDefault.property == configKey) {
-        defaultConfigValue = kafkaDefault.default;
-      }
-    });
-    return defaultConfigValue;
-  };
-
-  $scope.getConfigDescription = function (configKey) {
-    var configDescription = "";
-    angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
-      if (kafkaDefault.property == configKey) {
-        configDescription = kafkaDefault.description;
-      }
-    });
-    return configDescription;
-  };
-
-   $scope.showMoreDesc = [];
-   $scope.ToggleMoreDesc = function (index) {
-      $scope.showMoreDesc[index] = !$scope.showMoreDesc[index];
-   };
-
-  $scope.streamInRealTime = function () {
-    $log.info("Streaming in real time");
-    // This never happens.
-  };
-  ///////////////////////
-
-  $log.debug("topicType=" + JSON.stringify($scope.topicType));
-  // If value exists in an array
-  function isInArray(value, array) {
-    return array.indexOf(value) > -1;
-  }
-
   function setCustomMessage(rows) {
     var totalRows = 0;
-    if ($scope.topicName == "_schemas") {
-      totalRows = rows.length;
-      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + totalRows + "</b> registered schemas for the schema-registry"
-    } else if ($scope.topicName == "connect-configs") {
-      totalRows = rows.length;
-      $scope.customMessage = "Topic <b>connect-configs</b> holds <b>" + $scope.getConnectors(rows, 'connector-').length + "</b> connector configurations" +
-        " and <b>" + $scope.getConnectors(rows, 'task-').length + "</b> task configurations";
-    } else if ($scope.topicName == "connect-offsets") {
-      totalRows = rows.length;
-      $scope.customMessage = "Topic <b>connect-offsets</b> holds the offsets of your connectors. Displaying <b>" + totalRows + "</b> rows";
-    } else if ($scope.topicName == "connect-status") {
-      totalRows = rows.length;
-      // $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
-      $scope.customMessage = "";
-    } else {
+//    if ($scope.topicName == "_schemas") {
+//      totalRows = rows.length;
+//      $scope.customMessage = "Topic <b>_schemas</b> holds <b>" + totalRows + "</b> registered schemas for the schema-registry"
+//    } else if ($scope.topicName == "connect-configs") {
+//      totalRows = rows.length;
+//      $scope.customMessage = "Topic <b>connect-configs</b> holds <b>" + $scope.getConnectors(rows, 'connector-').length + "</b> connector configurations" +
+//        " and <b>" + $scope.getConnectors(rows, 'task-').length + "</b> task configurations";
+//    } else if ($scope.topicName == "connect-offsets") {
+//      totalRows = rows.length;
+//      $scope.customMessage = "Topic <b>connect-offsets</b> holds the offsets of your connectors. Displaying <b>" + totalRows + "</b> rows";
+//    } else if ($scope.topicName == "connect-status") {
+//      totalRows = rows.length;
+//      // $scope.customMessage = "Topic <b>connect-status</b> holds <b>" + $scope.getCompactedConnectStatus(rows, 'RUNNING').length + "</b> RUNNING connectors";
+//      $scope.customMessage = "";
+//    } else {
       if (UtilsFactory.IsJsonString(rows)) {
         totalRows = JSON.parse(rows).length;
         $scope.customMessage = "Displaying " + totalRows + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
@@ -165,56 +87,13 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
         totalRows = rows.length;
         $scope.customMessage = "Displaying " + totalRows + " rows ";// + KafkaRestProxyFactory.bytesToSize(rows.length);
       }
-    }
+//    }
     $scope.topicIsEmpty = totalRows == 0;
 
-    $scope.gridOptions.data = rows; //TODO removeme
+    $scope.topicData = rows; //TODO removeme
     return totalRows;
   }
 
-  // text can be 'connector-' 'task-' 'commit-'
-  $scope.getConnectors = function (rows, search) {
-    var defaultValue = [];
-    //$log.error(rows);
-    if (rows != undefined) {
-      angular.forEach(rows, function (row) {
-        if (row.key.indexOf(search) == 0) {
-          defaultValue.push(row);
-        }
-      });
-    }
-    return (defaultValue);
-  };
-
-  // Get the keys ..
-  $scope.getTopicKeys = function (rows) {
-    var allTopicKeys = ["key", "partition", "offset"];
-    if (rows != undefined) {
-      angular.forEach(angular.fromJson(rows), function (row) {
-        // $log.info("data= " + JSON.stringify(row.value));
-        if (JSON.stringify(row.value) != null && JSON.stringify(row.value).indexOf("{\\") == 0) {
-          angular.forEach(JSON.parse(row.value), function (value, key) {
-            //$log.info("Key-Value = " + key + " value=" + value);
-            if (!isInArray(key, allTopicKeys)) {
-              allTopicKeys.push(key);
-            }
-          });
-        } else {
-          // $log.info(" value=" + row.value);
-          if (!isInArray("value", allTopicKeys)) {
-            allTopicKeys.push("value");
-          }
-        }
-        // TODO
-      });
-      // $log.info("Completeeeed " + JSON.stringify(rows).length);
-      $scope.totalKeys = allTopicKeys.length;
-    }
-    // else {
-    //   $log.debug("Undefined");
-    // }
-    return allTopicKeys;
-  };
 
   $scope.getTopicValues = function (rows) {
     var allTopicValues = [];
@@ -245,53 +124,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     return allTopicValues;
   };
 
-  $scope.getConnector = function (row) {
-    if (row.value.length >= 5) {
-      var data = JSON.parse(row.value).properties;
-      var topics = "";
-      if (data.topic != null) {
-        topics = topics + data.topic;
-      } else if (data.topics != null) {
-        topics = topics + data.topics;
-      }
-      // TODO: This run's 10ns of times ! $log.error(data);
-      var connectorData = {
-        name: data.name,
-        topic: topics,
-        tasksmax: data['tasks.max'],
-        file: data.file,
-        class: data['connector.class']
-      };
-      return connectorData;
-    }
-  };
-
-  $scope.getTask = function (row) {
-    var data = JSON.parse(row.value).properties;
-    var topics = "";
-    if (data.topic != null) {
-      topics = topics + data.topic;
-    } else if (data.topics != null) {
-      topics = topics + data.topics;
-    }
-    // TODO: This run's 10ns of times ! $log.error(data);
-    var taskData = {
-      topic: topics,
-      file: data.file,
-      class: data['task.class']
-    };
-    return taskData;
-  };
-
-  $scope.getCommit = function (row) {
-    var data = JSON.parse(row.value);
-    // TODO: This run's 10ns of times ! $log.error(data);
-    var commitData = {
-      tasks: data.tasks
-    };
-    return commitData;
-  };
-
   $scope.isNormalTopic = function (topicName) {
     return ['_schemas', 'connect-status'].indexOf(topicName) == -1;
   };
@@ -301,6 +133,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   // At start-up this controller consumes data
+  //TODO
   var start = new Date().getTime();
   if (($scope.topicType == "json") || ($scope.topicType == "binary") || ($scope.topicType == "avro")) {
     var dataPromise = KafkaRestProxyFactory.consumeKafkaRest($scope.topicType, $scope.topicName);
@@ -380,20 +213,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     });
   }
 
-  //tODO
-  $scope.myTopic = $filter('filter')($rootScope.topicsCache, {name: $scope.topicName}, true);
-
-  ///////////////////////////////////////////
-  $mdToast.hide();
-  $scope.kafkaDefaults = KAFKA_DEFAULTS; //TODO
-  $scope.topicsOn = true;
-  $scope.zookeeperInfo = "zookeeper.landoop.com.info.goes.here";
-  //$scope.brokers = env.BROKERS();
-
-  $scope.changeView = function () {
-    $scope.topicsOn = !$scope.topicsOn;
-  };
-
   // 1. Create a consumer for Avro data, starting at the beginning of the topic's log.
   // 2. Then consume some data from a topic, which is decoded, translated to JSON, and included in the response.
   // The schema used for deserialization is fetched automatically from the schema registry.
@@ -422,45 +241,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.selectTopic = function (topicObj) {
     $rootScope.selectedTopic = topicObj
   };
-
-  $scope.getLeader = function (partitions) {
-    if (partitions.length > 0) return partitions[0];
-  };
-
-  $scope.getTailPartitions = function (partitions) {
-    return partitions.slice(1);
-  };
-
-  $scope.getKafkaDefaultValue = function (key) {
-    var defaultValue;
-    angular.forEach(KAFKA_DEFAULTS, function (item) {
-      if (item.property == key) {
-        defaultValue = item.default;
-      }
-    });
-    return defaultValue;
-  };
-
-  $scope.getKafkaDefaultDescription = function (key) {
-    var defaultValue;
-    angular.forEach(KAFKA_DEFAULTS, function (item) {
-      if (item.property == key) {
-        defaultValue = item.description;
-      }
-    });
-    return defaultValue;
-  };
-
-  // BROKERS
-  $scope.selectedBroker;
-  $scope.selectBroker = function (brokerObj) {
-    $scope.selectedBroker = brokerObj
-  };
-
-
-  /**
-   * TODO: Move to utils
-   */
 
   // This one is called each time - the user clicks on an md-table header (applies sorting)
   $scope.logOrder = function (a) {
@@ -551,8 +331,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                         $scope.cols2 = Object.keys(flattenObject(newRow.value));
                         $scope.cols3 = Object.keys(flattenObject(newRow.key));
 
-
-
                   }
 
                   $scope.flatRows.push(flattenObject(row));
@@ -574,7 +352,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
 $scope.showChart = true;
 $scope.toggleChart = function () {
-$scope.showChart = !$scope.showChart;
+    $scope.showChart = !$scope.showChart;
 }
 
 KafkaRestProxyFactory.getTopicMetadata($scope.topicName).then(function (metaData) {
@@ -586,12 +364,11 @@ KafkaRestProxyFactory.getTopicMetadata($scope.topicName).then(function (metaData
 
 
   $scope.kcqlRequest = function() {
-  if (!$scope.kcql) {$scope.kcql='SELECT * FROM ' +$scope.topicName}
-  var kcqlQuery = $scope.kcql.split(' ').join('+');
-  $http.get("http://fast-data-backend.demo.landoop.com/api/rest/topics/kcql?query="+kcqlQuery).then(function response(response){
-  $log.info('KCQL Responce: ',response)
-
-  });
+      if (!$scope.kcql) { $scope.kcql='SELECT * FROM ' +$scope.topicName }
+      var kcqlQuery = $scope.kcql.split(' ').join('+');
+      $http.get("http://fast-data-backend.demo.landoop.com/api/rest/topics/kcql?query="+kcqlQuery).then(function response(response){
+        $log.info('KCQL Responce: ',response)
+      });
   }
 
  /************************* md-table ***********************/
@@ -631,25 +408,18 @@ KafkaRestProxyFactory.getTopicMetadata($scope.topicName).then(function (metaData
 
 
 
-  $http.get(env.KAFKA_BACKEND()+ "/topics/chart/"+ $scope.topicName)
-        .then(function response(response){
-              charts.getFullChart($scope.topicName, response);
-//              charts.getTimeChart($scope.topicName, response);
-        });
+
 
 function setSelectedDataTab(selectedTabIndex) {
     switch(selectedTabIndex) {
         case "topic": return 0;
         case "table": return 1;
         case "rawdata": return 2;
-        case "config": return 3;
         default: return 0;
     }
 }
 
-HttpFactory.getTopicSummary($scope.topicName).then(function (topicMetadata){
-$scope.topicMetadata = topicMetadata;
-});
+
 
 
 
@@ -662,27 +432,23 @@ $scope.allCols = [
   $scope.selectedCols = {};
 
   $scope.checkAndHide = function checkAndHide(name) {
-
     if ($scope.selectedCols.searchText){
-    var showCol = $scope.selectedCols.searchText.some(function (selectedCols) {
-      return selectedCols === name;
-    });
-    return showCol
+        var showCol = $scope.selectedCols.searchText.some(function (selectedCols) {
+          return selectedCols === name;
+        });
+        return showCol
     }
   }
 
   $scope.addColumnClass = function (columnIndex) {
-  columnIndex = columnIndex + 1;
-  var columnClass = '';
-  if (columnIndex == 1 ) {columnClass='offset'}
-  else if(columnIndex == 2) {columnClass='partition'}
-  else if(columnIndex < 4 + $scope.cols3.length ) {columnClass='key'}
-  else if(columnIndex < 5 + $scope.cols3.length  + $scope.cols2.length ) {columnClass='value'}
-
-  return columnClass;
-
+      columnIndex = columnIndex + 1;
+      var columnClass = '';
+      if (columnIndex == 1 ) {columnClass='offset'}
+      else if(columnIndex == 2) {columnClass='partition'}
+      else if(columnIndex < 4 + $scope.cols3.length ) {columnClass='key'}
+      else if(columnIndex < 5 + $scope.cols3.length  + $scope.cols2.length ) {columnClass='value'}
+      return columnClass;
   }
 
-  $scope.showDownloadDiv = false;
 
 });
