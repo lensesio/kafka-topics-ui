@@ -18,7 +18,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
     HttpFactory.getTopicSummary($scope.topicName).then(function (topicMetadata){
         $scope.topicMetadata = topicMetadata;
-        //      $scope.partitions = metaData.partitions.length;
+        //      $scope.partitions = metaData.partitions.length; //TODO
         //      $scope.getPartitions = function(num) {
         //        return Array.apply(null, {length: num}).map(Number.call, Number)
         //      }
@@ -71,95 +71,33 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
      return !KafkaRestProxyFactory.isNormalTopic(topicName);
   };
 
-/****************** SUPER CLEAN UP REQUIRED HERE / STARTS *****************/
-
-  // At start-up this controller consumes data
-  //TODO
-  var start = new Date().getTime();
-
+/****************** SUPER CLEAN UP REQUIRED HERE / STARTS (this is the only dep to KAFKA_REST) *****************/
   if (($scope.topicType == "json") || ($scope.topicType == "binary") || ($scope.topicType == "avro")) {
-    var dataPromise = KafkaRestProxyFactory.consumeKafkaRest($scope.topicType, $scope.topicName);
-    dataPromise.then(function (allData) {
-      var end = new Date().getTime();
-      $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
-
-      $scope.aceString = angular.toJson(allData, true);
-      $scope.rows = allData;
-      $scope.topicIsEmpty = allData.length == 0;
-      flattenTable(allData);
-      $scope.showSpinner = false;
-      end = new Date().getTime();
-      $log.info("[" + (end - start) + "] msec - to get & render"); //  + JSON.stringify(allSchemas)
-
-    }, function (reason) {
-      $log.error('Failed: ' + reason);
-    }, function (update) {
-      $log.info('Got notification: ' + update);
-    });
+    KafkaRestProxyFactory.consumeKafkaRest($scope.topicType, $scope.topicName).then(function (allData) {
+      setDataState(allData, $scope.topicType);
+    }, function (error) { getDeserializationErrorMessage(error, $scope.topicType); });
   } else {
-    $log.warn("We don't really know the data type of topic" + $scope.topicName + " so we will attempt all options..");
     // If we don't know we need to guess by trying Avro -> JSon -> Binary
-    var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("avro", $scope.topicName);
-    dataPromiseAvro.then(function (allData) {
-      if (JSON.stringify(allData).indexOf("error") > 0) {
-        $log.warn('Failed with Avro - going to try with Json this time (' + allData + ')');
-        var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("json", $scope.topicName);
-        dataPromiseAvro.then(
-          function (allData) {
-            if (JSON.stringify(allData).indexOf("error_code") > 0) {
-              $log.warn('Failed with JSon as well - going to try with Binary this time (' + allData + ')');
-              var dataPromiseAvro = KafkaRestProxyFactory.consumeKafkaRest("binary", $scope.topicName);
-              dataPromiseAvro.then(function (allData) {
-                $log.info("Binary detected");
-                var end = new Date().getTime();
-//                $scope.topicType = "binary";
-                $scope.aceString = angular.toJson(allData, true);
-                $scope.rows = allData;
-                $scope.topicIsEmpty = allData.length == 0;
-                flattenTable(allData);
-//                angular.fromJson($scope.rows);
-                $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
-                $scope.showSpinner = false;
-              }, function (reason) {
-                $log.error('Failed with Binary as well ?! :(  (' + reason + ')');
-              });
-            } else {
-              $log.info("JSon detected");
-              var end = new Date().getTime();
-//              $scope.topicType = "json";
-              $scope.aceString = allData;
-              $scope.rows = allData;
-              $scope.topicIsEmpty = allData.length == 0;
-              flattenTable(allData);
-              $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
-              $scope.showSpinner = false;
-            }
-          }, function (reason) {
-          });
-      } else {
-        // $log.info("Avro detected" + allData);
-        var end = new Date().getTime();
-//        $scope.topicType = "avro";
-        $scope.aceString = angular.toJson(allData, true);
-        $scope.rows = allData;
-        $scope.topicIsEmpty = allData.length == 0;
-        flattenTable(allData);
-        $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allData).length + " " + $scope.topicType + " rows from topic " + $scope.topicName); //  + JSON.stringify(allSchemas)
-        $scope.showSpinner = false;
-      }
-    }, function (reason) {
-    });
+    KafkaRestProxyFactory.consumeKafkaRest("avro", $scope.topicName).then(
+       function (allData) {
+          if (JSON.stringify(allData).indexOf("error") > 0) {
+            KafkaRestProxyFactory.consumeKafkaRest("json", $scope.topicName).then(
+                function (allData) {
+                    if (JSON.stringify(allData).indexOf("error_code") > 0) {
+                      KafkaRestProxyFactory.consumeKafkaRest("binary", $scope.topicName).then(
+                        function (allData) { setDataState(allData, 'binary'); },
+                        function (error) { getDeserializationErrorMessage(error, 'binary') });
+                    } else {
+                      setDataState(allData, 'json');
+                    }
+              }, function (error) { getDeserializationErrorMessage(error, 'json') });
+          } else {
+            setDataState(allData,'avro')
+          }
+    }, function (error) { getDeserializationErrorMessage(error, 'avro') });
   }
 
 /****************** SUPER CLEAN UP REQUIRED HERE / ENDS *****************/
-function setDataState(allData,topicType) {
-      (topicType == 'JSON') ? $scope.aceString = allData : angular.toJson(allData, true);
-      $scope.rows = allData;
-      $scope.topicIsEmpty = allData.length == 0;
-      flattenTable(allData);
-      $scope.showSpinner = false;
-}
-
 
 /*******************************
  *
@@ -384,6 +322,18 @@ function setDataState(allData,topicType) {
            $scope.paginationItems = 10;
            $scope.showHideAllButtonLabel = 'show ' + rows.length;
        }
+  }
+
+  function setDataState(allData,topicType) {
+        (topicType == 'json') ? $scope.aceString = allData :$scope.aceString = angular.toJson(allData, true);
+        $scope.rows = allData;
+        $scope.topicIsEmpty = allData.length == 0;
+        flattenTable(allData);
+        $scope.showSpinner = false;
+  }
+
+  function getDeserializationErrorMessage(reason, type) {
+      return 'Failed with '+ type +' type :(  (' + reason + ')';
   }
 
 });
