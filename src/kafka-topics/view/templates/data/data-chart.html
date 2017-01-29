@@ -3,12 +3,10 @@
     toggleChart()
     kcql
     kcqlRequest()
-    topicName
-    topicIsEmpty
-    topicMetadata
+    topic
   -->
 
-<div ng-hide="topicIsEmpty">
+<div>
         <div style="background:#fff" layout="column">
             <div>
                 <!--TODO-->
@@ -30,7 +28,7 @@
             <!--Server side filtering toolbar-->
             <!--TODO Basic-->
             <!--<md-card style="background-color:#EDF1F5;">-->
-            <!--<div layout="row" layout-sm="column" layout-align="start center" layout-padding ng-hide="topicIsEmpty">-->
+            <!--<div layout="row" layout-sm="column" layout-align="start center" layout-padding>-->
             <!--<label style="width:100%">Partition</label>-->
             <!--<select class="form-control button" ng-model="search.partition" >-->
             <!--<option value="" selected>ALL</option>-->
@@ -49,10 +47,10 @@
 
             <!--Advanced / TODO only if Topic has avro value-->
             <div  ng-show="showChart" style="background-color:#fff; border:1px solid #f4f5f7">
-                <div layout="row" layout-sm="column" layout-align="space-between center" layout-padding ng-hide="topicIsEmpty" ng-if="topicMetadata.valueType =='avro'">
+                <div layout="row" layout-sm="column" layout-align="space-between center" layout-padding  ng-if="topic.valueType =='avro'">
                     <label>KCQL</label>
 
-                    <input ng-model="kcql" type="text" placeholder="SELECT * FROM {{topicName}}" style="width:100%">
+                    <input ng-model="kcql" type="text" placeholder="SELECT * FROM {{topic.topicName}}" style="width:100%">
                     <md-button class="md-raised" ng-click="kcqlRequest()" style="height:23px; width:23px">
                         <i class="fa fa-search" aria-hidden="true" style="color:#333; margin-top:-10"></i>
                     </md-button>

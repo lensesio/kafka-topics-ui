@@ -7,6 +7,7 @@
         <div flex="100">
              <div style="background-color:#F5F5F5;" ng-cloak>
               <!--1. TOOLBAR-->
+              <!--TODO toolbar has 2 dep : topicEmpty + showSpinner-->
               <div ng-include="'src/kafka-topics/view/templates/topic-toolbar.html'"></div>
 
               <!--2. LOADER-->
@@ -17,7 +18,16 @@
 
                   <!--DATA-->
                   <md-tab label="Data" md-dynamic-height md-border-botto md-dynamic-height="true" md-border-bottom>
-                    <div ng-include="'src/kafka-topics/view/templates/topic-data.html'"></div>
+                    <div ng-include="'src/kafka-topics/view/templates/topic-data.html'"
+                         ng-hide="topic.totalMessages == 0"></div>
+
+                  <!-- 4.1 EMPTY TOPIC MESSAGE -->
+                  <div layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;" ng-show="topic.totalMessages == 0">
+                      <div style="color:#333;">
+                          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                          This topic is empty.
+                      </div>
+                  </div>
                   </md-tab>
 
                   <!--ANALYTICS-->

@@ -1,8 +1,8 @@
 <!--
-    topicMetadata
+    topic
 -->
 
-Total number of Partitions: {{topicMetadata.partitions}}
-<div ng-repeat="mpp in topicMetadata.messagesPerPartition">
+Total number of Partitions: {{topic.partitions}}
+<div ng-repeat="mpp in topic.messagesPerPartition">
     Partition {{mpp.partition}} : {{mpp.messages}} Messages
 </div>

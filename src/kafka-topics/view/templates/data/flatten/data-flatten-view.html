@@ -1,4 +1,23 @@
-<!-- Custom rendering for OTHER topics -->
+
+<!--
+
+selectedCols
+allCols
+logOrder
+optionsTable
+checkAndHide
+extraColsNumKeys
+extraColsNumValues
+flatColumns
+keyFlatColumns
+valueFlatColumns
+flatRows
+
+
+md-row-select="optionsTable.rowSelection"
+md-order="query.order
+-->
+
     <md-tab-body>
         <md-content class="padding:0">
            <div style="margin:5px 20px 5px 0;" layout="row" layout-align="end center">Show/Hide columns:
@@ -14,22 +33,22 @@
                     <tr>
                         <th rowspan="2" class="td-center" md-column md-order-by="offset" ng-show="checkAndHide('offset')">offset</th>
                         <th rowspan="2" class="td-center" md-column md-order-by="partition" ng-show="checkAndHide('partition')" >partition</th>
-                        <th ng-if="cols3.length==0" rowspan="2" class="td-center" colspan="{{extraColsNumKeys}}" ng-show="checkAndHide('key')">key</th>
-                        <th ng-if="cols3.length > 0" class="td-center" colspan="{{extraColsNumKeys}}" ng-show="checkAndHide('key') ">key</th>
-                        <th ng-if="cols2.length==0" rowspan="2" class="td-center" colspan="{{extraColsNumValues}}" ng-show="checkAndHide('value')">Value</th>
-                        <th ng-if="cols2.length > 0" class="left" colspan="{{extraColsNumValues}}" ng-show="checkAndHide('value')">Value</th>
+                        <th ng-if="keyFlatColumns.length==0" rowspan="2" class="td-center" colspan="{{extraColsNumKeys}}" ng-show="checkAndHide('key')">key</th>
+                        <th ng-if="keyFlatColumns.length > 0" class="td-center" colspan="{{extraColsNumKeys}}" ng-show="checkAndHide('key') ">key</th>
+                        <th ng-if="valueFlatColumns.length==0" rowspan="2" class="td-center" colspan="{{extraColsNumValues}}" ng-show="checkAndHide('value')">Value</th>
+                        <th ng-if="valueFlatColumns.length > 0" class="left" colspan="{{extraColsNumValues}}" ng-show="checkAndHide('value')">Value</th>
                     </tr>
                     <tr>
-                        <th ng-repeat="c3 in cols3" class="td-left c3" ng-show="checkAndHide('key') ">{{c3}}</th>
-                        <th ng-repeat="c in cols2" class="td-left" ng-show="checkAndHide('value')">{{c}}</th>
+                        <th ng-repeat="c3 in keyFlatColumns" class="td-left c3" ng-show="checkAndHide('key') ">{{c3}}</th>
+                        <th ng-repeat="c in valueFlatColumns" class="td-left" ng-show="checkAndHide('value')">{{c}}</th>
                     </tr>
                     <tr style="display:none;">
-                        <th ng-repeat="column in cols">{{column}}</th>
+                        <th ng-repeat="column in flatColumns">{{column}}</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr dir-paginate="row in flatRows | filter:search| itemsPerPage: paginationItems"  pagination-id="flatView">
-                        <td ng-class="" nowrap ng-repeat="column in cols" track by $index class="{{ column.indexOf('value') == 0 ? '' : 'td-center' }}"
+                        <td ng-class="" nowrap ng-repeat="column in flatColumns" track by $index class="{{ column.indexOf('value') == 0 ? '' : 'td-center' }}"
                             ng-show="checkAndHide(addColumnClass($index))"
                         >
                             <span>{{ row[column] }}</span>

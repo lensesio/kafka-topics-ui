@@ -1,28 +1,61 @@
-//TODO CLEAN ME UP!!!!!!!!!
-
 angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, HttpFactory, charts, env) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
 
+  var topicName = $routeParams.topicName;
+  var selectedTabIndex = $routeParams.selectedTabIndex
+  var topicCategoryUrl = $routeParams.topicCategoryUrl;
+
+    //MOCKING
+
+      var mockedTopic = {
+
+            keyType : "empty",
+            valueType : "avro",
+            totalMessages : 1,
+            replication : 1,
+            topicName : "yahoo-fx",
+            isControlTopic: false,
+            customConfig : [
+              {
+                configuration: "cleanup.policy",
+                value : "compact",
+                defaultValue : "delete",
+                documentation : "A string that is either \"delete\" or \"compact\". This string designates the retention policy to use on old log segments. The default policy (\"delete\") will discard old segments when their retention time or size limit has been reached. The \"compact\" setting will enable log compaction on the topic."
+              }
+            ],
+            partitions : 1,
+            isControlTopic : true,
+            messagesPerPartition : [ ]
+          }
+      $scope.topic = mockedTopic;
+
+      //REAL
+//    HttpFactory.getTopicSummary(topicName).then(function success(topic){
+//        $scope.topic = topic;
+//        //IF topic found / then get chart + data
+//     $http.get(env.KAFKA_BACKEND()+ "/topics/chart/"+ topic.topicName) //TODO also put it in HttpFactory
+//           .then(function response(response){
+//                  charts.getFullChart(topicName, response);
+//           });
+//    }, function failure(error) { $scope.topic = {}; }); //TODO error message cannot get topic
+
+  $scope.topicName = topicName;
+  $scope.topicType = $scope.topic.valueType;//KafkaRestProxyFactory.getDataType($scope.topicName);
+
   //Init state
-  $scope.topicName = $routeParams.topicName;
   $scope.showSpinner = true;
   $scope.showDownloadDiv = false;
   $scope.showList = true;
   $scope.showMoreDesc = [];
-
   $mdToast.hide(); // ?
-  $scope.topicCategoryUrl = $routeParams.topicCategoryUrl;
-  $scope.selectedTabNnumber = setSelectedDataTab($routeParams.selectedTabIndex);
-  $scope.topicType = KafkaRestProxyFactory.getDataType($scope.topicName);
+  $scope.selectedTabNnumber = setSelectedDataTab(selectedTabIndex);
+  $scope.paginationItems = 10;
 
-    HttpFactory.getTopicSummary($scope.topicName).then(function (topicMetadata){
-        $scope.topicMetadata = topicMetadata;
-        //      $scope.partitions = metaData.partitions.length; //TODO
-        //      $scope.getPartitions = function(num) {
-        //        return Array.apply(null, {length: num}).map(Number.call, Number)
-        //      }
-    });
+
+  $scope.getPartitions = function(num) {
+    return Array.apply(null, {length: num}).map(Number.call, Number)
+  }
 
    $scope.toggleList = function () {
       $scope.showList = !$scope.showList;
@@ -37,9 +70,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     });
   };
 
-  $scope.downloadData = function (topicName) {
-    $log.info("Download requested for " + $scope.aceString.length + " bytes ");
-    var json = $scope.aceString;
+  $scope.downloadData = function (topicName, data) {
+    $log.info("Download requested for " + data.length + " bytes ");
+    var json = data;
     var blob = new Blob([json], {type: "application/json;charset=utf-8;"});
     var downloadLink = angular.element('<a></a>');
     downloadLink.attr('href', window.URL.createObjectURL(blob));
@@ -48,54 +81,51 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
   $scope.kcqlRequest = function() {
-        if (!$scope.kcql) { $scope.kcql='SELECT * FROM ' +$scope.topicName }
+        if (!$scope.kcql) { $scope.kcql='SELECT * FROM ' + topicName }
         var kcqlQuery = $scope.kcql.split(' ').join('+');
-        $http.get("http://fast-data-backend.demo.landoop.com/api/rest/topics/kcql?query="+kcqlQuery).then(function response(response){
+        $http.get("http://fast-data-backend.demo.landoop.com/api/rest/topics/kcql?query="+kcqlQuery).
+        then(function response(response){
           $log.info('KCQL Responce: ',response)
         });
     } //tODO hardcoded!
 
-//  $scope.$on('$routeChangeSuccess', function() {
-//    $scope.cluster = env.getSelectedCluster();//$routeParams.cluster;
-//  })
-
-  $scope.onTabChanges = function(currentTabIndex){
-    $location.path ("cluster/"+ $rootScope.cluster.NAME + "/topic/" +  $scope.topicCategoryUrl + "/" + $scope.topicName + "/" + currentTabIndex, false);
-  };
-
-  $scope.isNormalTopic = function (topicName) {
-    return ['_schemas', 'connect-status'].indexOf(topicName) == -1;
-  };
-
-  $scope.isControlTopic = function(topicName) {
-     return !KafkaRestProxyFactory.isNormalTopic(topicName);
+  $scope.onTabChanges = function(currentTabIndex, cluster){
+    $location.path ("cluster/"+ cluster.NAME + "/topic/" +  topicCategoryUrl + "/" + topicName + "/" + currentTabIndex, false);
   };
 
 /****************** SUPER CLEAN UP REQUIRED HERE / STARTS (this is the only dep to KAFKA_REST) *****************/
-  if (($scope.topicType == "json") || ($scope.topicType == "binary") || ($scope.topicType == "avro")) {
-    KafkaRestProxyFactory.consumeKafkaRest($scope.topicType, $scope.topicName).then(function (allData) {
-      setDataState(allData, $scope.topicType);
-    }, function (error) { getDeserializationErrorMessage(error, $scope.topicType); });
-  } else {
-    // If we don't know we need to guess by trying Avro -> JSon -> Binary
-    KafkaRestProxyFactory.consumeKafkaRest("avro", $scope.topicName).then(
-       function (allData) {
-          if (JSON.stringify(allData).indexOf("error") > 0) {
-            KafkaRestProxyFactory.consumeKafkaRest("json", $scope.topicName).then(
-                function (allData) {
-                    if (JSON.stringify(allData).indexOf("error_code") > 0) {
-                      KafkaRestProxyFactory.consumeKafkaRest("binary", $scope.topicName).then(
-                        function (allData) { setDataState(allData, 'binary'); },
-                        function (error) { getDeserializationErrorMessage(error, 'binary') });
-                    } else {
-                      setDataState(allData, 'json');
-                    }
-              }, function (error) { getDeserializationErrorMessage(error, 'json') });
-          } else {
-            setDataState(allData,'avro')
-          }
-    }, function (error) { getDeserializationErrorMessage(error, 'avro') });
-  }
+//If data is empty don't try to deserialize
+
+getTopicData(topicName, $scope.topic.valueType);
+
+function getTopicData(topicName, topicType) {
+
+      if ((topicType == "json") || (topicType == "binary") || (topicType == "avro")) {
+        KafkaRestProxyFactory.consumeKafkaRest(topicType, topicName).then(function (allData) {
+          setDataState(allData, topicType);
+        }, function (error) { getDeserializationErrorMessage(error, topicType); });
+      } else {
+        // If we don't know we need to guess by trying Avro -> JSon -> Binary
+        KafkaRestProxyFactory.consumeKafkaRest("avro", topicName).then(
+           function (allData) {
+              if (JSON.stringify(allData).indexOf("error") > 0) {
+                KafkaRestProxyFactory.consumeKafkaRest("json", topicName).then(
+                    function (allData) {
+                        if (JSON.stringify(allData).indexOf("error_code") > 0) {
+                          KafkaRestProxyFactory.consumeKafkaRest("binary", topicName).then(
+                            function (allData) { setDataState(allData, 'binary'); },
+                            function (error) { getDeserializationErrorMessage(error, 'binary') });
+                        } else {
+                          setDataState(allData, 'json');
+                        }
+                  }, function (error) { getDeserializationErrorMessage(error, 'json') });
+              } else {
+                setDataState(allData,'avro')
+              }
+        }, function (error) { getDeserializationErrorMessage(error, 'avro') });
+      }
+
+}
 
 /****************** SUPER CLEAN UP REQUIRED HERE / ENDS *****************/
 
@@ -105,7 +135,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
  *
 ********************************/
 
-   $scope.ToggleMoreDesc = function (index) {
+   $scope.toggleMoreDesc = function (index) {
       $scope.showMoreDesc[index] = !$scope.showMoreDesc[index];
    };
 
@@ -115,11 +145,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
  * data-chart.html
  *
 ********************************/
-
-     $http.get(env.KAFKA_BACKEND()+ "/topics/chart/"+ $scope.topicName) //TODO
-           .then(function response(response){
-                  charts.getFullChart($scope.topicName, response);
-           });
 
     $scope.showChart = true;
 
@@ -166,16 +191,12 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
       var columnClass = '';
       if (columnIndex == 1 ) {columnClass='offset'}
       else if(columnIndex == 2) {columnClass='partition'}
-      else if(columnIndex < 4 + $scope.cols3.length ) {columnClass='key'}
-      else if(columnIndex < 5 + $scope.cols3.length  + $scope.cols2.length ) {columnClass='value'}
+      else if(columnIndex < 4 + $scope.keyFlatColumns.length ) {columnClass='key'}
+      else if(columnIndex < 5 + $scope.keyFlatColumns.length  + $scope.valueFlatColumns.length ) {columnClass='value'}
       return columnClass;
   }
 
-  $scope.query = {
-      order: 'partition',
-      limit: 100,
-      page: 1
-  };
+  $scope.query = { order: 'partition', limit: 100, page: 1 };
 
   // This one is called each time - the user clicks on an md-table header (applies sorting)
   $scope.logOrder = function (a) {
@@ -189,17 +210,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
       sortSchema(a);
     };
 
-
-//    $scope.tableOptions = {  //TODO used?
-//      rowSelection: false,
-//      multiSelect: false,
-//      autoSelect: false,
-//      decapitate: false,
-//      largeEditDialog: false,
-//      boundaryLinks: false,
-//      limitSelect: true,
-//      pageSelect: true
-//    };
 
 /*******************************
  *
@@ -238,34 +248,14 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
       $scope.rows = UtilsFactory.sortByKey($scope.rows, type, reverse);
   }
 
-     //TODO move to service
-  var flattenObject = function(ob) {
-      	var toReturn = {};
-
-      	for (var i in ob) {
-      		if (!ob.hasOwnProperty(i)) continue;
-
-      		if ((typeof ob[i]) == 'object') {
-      			var flatObject = flattenObject(ob[i]);
-
-      			for (var x in flatObject) {
-      				if (!flatObject.hasOwnProperty(x)) continue;
-      				toReturn[i + '.' + x] = flatObject[x];
-      			}
-
-      		} else {
-      			toReturn[i] = ob[i];
-      		}
-      	}
-      	return toReturn;
-      };
-
   function flattenTable(rows) {
 
           var extraColumnsNumberValue = 0;
           var extraColumnsNumberKey = 0;
           var rowWithMoreColumns;
+
           $scope.flatRows = [];
+
           if (rows.length > 0) {
               angular.forEach(rows, function (row) {
                     if (row.key == undefined || row.key == null) row.key = '';
@@ -280,12 +270,12 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                               "key" : row.key,
                               "value" : 'value' +  row.value
                           }
-                          $scope.cols = Object.keys(flattenObject(newRow));
-                          $scope.cols2 = [];
-                          $scope.cols3 = [];
+                          $scope.flatColumns = Object.keys(UtilsFactory.flattenObject(newRow));
+                          $scope.keyFlatColumns = [];
+                          $scope.valueFlatColumns = [];
                     } else {
-                          var flatValue = flattenObject(row.value);
-                          var flatKey = flattenObject(row.key);
+                          var flatValue = UtilsFactory.flattenObject(row.value);
+                          var flatKey = UtilsFactory.flattenObject(row.key);
                           var rowExtraColumnsValues = Object.keys(flatValue).length;
                           var rowExtraColumnsKeys = Object.keys(flatKey).length;
 
@@ -306,28 +296,25 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                               "value" : rowWithMoreColumns.value
                           }
 
-                          $scope.cols =  Object.keys(flattenObject(newRow));
-                          $scope.cols2 = Object.keys(flattenObject(newRow.value));
-                          $scope.cols3 = Object.keys(flattenObject(newRow.key));
+                          $scope.flatColumns =  Object.keys(UtilsFactory.flattenObject(newRow));
+                          $scope.valueFlatColumns = Object.keys(UtilsFactory.flattenObject(newRow.value));
+                          $scope.keyFlatColumns = Object.keys(UtilsFactory.flattenObject(newRow.key));
 
                     }
 
-                    $scope.flatRows.push(flattenObject(row));
+                   $scope.flatRows.push(UtilsFactory.flattenObject(row));
 
                   });
 
                   $scope.extraColsNumValues = extraColumnsNumberValue;
                   $scope.extraColsNumKeys = extraColumnsNumberKey;
 
-           $scope.paginationItems = 10;
-           $scope.showHideAllButtonLabel = 'show ' + rows.length;
        }
   }
 
-  function setDataState(allData,topicType) {
+  function setDataState(allData, topicType) {
         (topicType == 'json') ? $scope.aceString = allData :$scope.aceString = angular.toJson(allData, true);
         $scope.rows = allData;
-        $scope.topicIsEmpty = allData.length == 0;
         flattenTable(allData);
         $scope.showSpinner = false;
   }

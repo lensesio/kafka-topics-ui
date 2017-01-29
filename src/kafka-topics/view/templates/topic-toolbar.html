@@ -1,29 +1,29 @@
 <!--
-    displayingControlTopics
-    toggleList()
-    showList
-    topicName
-    topicMetadata
-    showSpinner
-    showDownloadDiv
-    getData(topicName)
+    topic                    > Object
+
+    showList                 > State
+    showDownloadDiv          > State
+
+    toggleList()             > Function
+    downloadData(topicName)  > Function
 -->
 
-<md-toolbar ng-show="!displayingControlTopics" class="md-hue-2" style="background-color:#fff;color:#333">
+<md-toolbar class="md-hue-2" style="background-color:#fff;color:#333">
     <div class="md-toolbar-tools">
         <md-button ng-click="toggleList()">
             <i ng-show="showList" class="fa fa-arrow-circle-o-left" aria-hidden="true" style="color:#333"></i>
             <i ng-hide="showList" class="fa fa-bars" aria-hidden="true" style="color:#333"></i>
         </md-button>
         <h4 style="font-size:16px;">
-            <span>{{topicName}}</span>
+            <span>{{topic.topicName}}</span>
         </h4>
         <span flex></span>
         <small style="color:#333;font-size:10px;">
-            <span class="labelType label-type-{{topicMetadata.keyType}}"> {{topicMetadata.keyType}} </span> /
-            <span class="labelType label-type-{{topicMetadata.valueType}}"> {{topicMetadata.valueType}} </span> </small>
+            <span class="labelType label-type-{{topic.keyType}}"> {{topic.keyType}} </span> /
+            <span class="labelType label-type-{{topic.valueType}}"> {{topic.valueType}} </span> </small>
+
         <md-button
-                ng-hide="showSpinner"
+                ng-hide="topic.totalMessages == 0"
                 ng-click="showDownloadDiv = !showDownloadDiv"
                 aria-label="Download data"
                 aria-hidden="false">
@@ -31,6 +31,7 @@
             <i class="fa fa-close" ng-show="showDownloadDiv" aria-hidden="true" style="color:#333"></i>
         </md-button>
     </div>
+
     <div class="downloadDiv" ng-show="showDownloadDiv">
         <h4>Download Options</h4>
         <ul>
@@ -48,11 +49,12 @@
             </li>
         </ul>
         <md-button style="float:right"  download="true"
-                   ng-click="downloadData(topicName)"
+                   ng-click="downloadData(topic.topicName, aceString)"
                    aria-label="Download data"
                    aria-hidden="false">
             <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
         </md-button>
 
     </div>
+
 </md-toolbar>

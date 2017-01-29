@@ -22,6 +22,9 @@ angularAPP.factory('UtilsFactory', function ($log) {
         return false;
       }
       return true;
+    },
+    flattenObject: function(ob) {
+        return flattenObject(ob)
     }
 
   }
@@ -34,5 +37,26 @@ angularAPP.factory('UtilsFactory', function ($log) {
         return ((x < y) ? -1 * reverse : ((x > y) ? 1 * reverse : 0));
       });
     }
+
+      function flattenObject(ob) {
+          	var toReturn = {};
+
+          	for (var i in ob) {
+          		if (!ob.hasOwnProperty(i)) continue;
+
+          		if ((typeof ob[i]) == 'object') {
+          			var flatObject = flattenObject(ob[i]);
+
+          			for (var x in flatObject) {
+          				if (!flatObject.hasOwnProperty(x)) continue;
+          				toReturn[i + '.' + x] = flatObject[x];
+          			}
+
+          		} else {
+          			toReturn[i] = ob[i];
+          		}
+          	}
+          	return toReturn;
+          };
 
 });
