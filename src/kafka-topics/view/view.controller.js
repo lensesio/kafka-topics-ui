@@ -8,40 +8,41 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
     //MOCKING
 
-      var mockedTopic = {
-
-            keyType : "empty",
-            valueType : "avro",
-            totalMessages : 1,
-            replication : 1,
-            topicName : "yahoo-fx",
-            isControlTopic: false,
-            customConfig : [
-              {
-                configuration: "cleanup.policy",
-                value : "compact",
-                defaultValue : "delete",
-                documentation : "A string that is either \"delete\" or \"compact\". This string designates the retention policy to use on old log segments. The default policy (\"delete\") will discard old segments when their retention time or size limit has been reached. The \"compact\" setting will enable log compaction on the topic."
-              }
-            ],
-            partitions : 1,
-            isControlTopic : true,
-            messagesPerPartition : [ ]
-          }
-      $scope.topic = mockedTopic;
+//      var mockedTopic = {
+//
+//            keyType : "empty",
+//            valueType : "avro",
+//            totalMessages : 1,
+//            replication : 1,
+//            topicName : "yahoo-fx",
+//            isControlTopic: false,
+//            customConfig : [
+//              {
+//                configuration: "cleanup.policy",
+//                value : "compact",
+//                defaultValue : "delete",
+//                documentation : "A string that is either \"delete\" or \"compact\". This string designates the retention policy to use on old log segments. The default policy (\"delete\") will discard old segments when their retention time or size limit has been reached. The \"compact\" setting will enable log compaction on the topic."
+//              }
+//            ],
+//            partitions : 1,
+//            isControlTopic : true,
+//            messagesPerPartition : [ ]
+//          }
+//      $scope.topic = mockedTopic;
 
       //REAL
-//    HttpFactory.getTopicSummary(topicName).then(function success(topic){
-//        $scope.topic = topic;
+    HttpFactory.getTopicSummary(topicName).then(function success(topic){
+        $scope.topic = topic;
+        getTopicData(topicName, topic.valueType);
+
 //        //IF topic found / then get chart + data
 //     $http.get(env.KAFKA_BACKEND()+ "/topics/chart/"+ topic.topicName) //TODO also put it in HttpFactory
 //           .then(function response(response){
 //                  charts.getFullChart(topicName, response);
 //           });
-//    }, function failure(error) { $scope.topic = {}; }); //TODO error message cannot get topic
+    }, function failure(error) { $scope.topic = {}; }); //TODO error message cannot get topic
 
-  $scope.topicName = topicName;
-  $scope.topicType = $scope.topic.valueType;//KafkaRestProxyFactory.getDataType($scope.topicName);
+//  $scope.topicName = topicName;
 
   //Init state
   $scope.showSpinner = true;
@@ -53,22 +54,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.paginationItems = 10;
 
 
-  $scope.getPartitions = function(num) {
-    return Array.apply(null, {length: num}).map(Number.call, Number)
-  }
-
    $scope.toggleList = function () {
       $scope.showList = !$scope.showList;
    };
 
-  $scope.aceLoaded = function (_editor) {
-    $scope.editor = _editor;
-    $scope.editor.$blockScrolling = Infinity;
-    _editor.setOptions({
-      minLines: 33,
-      maxLines: 33
-    });
-  };
 
   $scope.downloadData = function (topicName, data) {
     $log.info("Download requested for " + data.length + " bytes ");
@@ -96,7 +85,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 /****************** SUPER CLEAN UP REQUIRED HERE / STARTS (this is the only dep to KAFKA_REST) *****************/
 //If data is empty don't try to deserialize
 
-getTopicData(topicName, $scope.topic.valueType);
 
 function getTopicData(topicName, topicType) {
 
@@ -154,17 +142,6 @@ function getTopicData(topicName, topicType) {
 
 /*******************************
  *
- * data-tree-view.html
- *
-********************************/
-
- $scope.showTree = function (keyOrValue) {
-    return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
- }
-
-
-/*******************************
- *
  * various private methods / to organise
  *
 ********************************/
@@ -179,7 +156,6 @@ function getTopicData(topicName, topicType) {
   }
 
   function setDataState(allData, topicType) {
-        (topicType == 'json') ? $scope.aceString = allData :$scope.aceString = angular.toJson(allData, true);
         $scope.rows = allData;
         $scope.showSpinner = false;
   }

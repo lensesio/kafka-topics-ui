@@ -22,17 +22,17 @@
                 </select>
             </div>
 
-            <!--Why don't we handle keyType as well? -->
+            <!--TODO Why don't we handle keyType as well? -->
             <md-tab label="Topic" ng-click="onTabChanges('topic', cluster)" ng-if="topic.valueType != 'binary' ">
-                <div ng-include="'src/kafka-topics/view/templates/data/data-tree-view.html'"></div>
+                <tree-view data="rows" partitions="" search="search"></tree-view>
             </md-tab>
 
             <md-tab label="Table" ng-click="onTabChanges('table', cluster)" ng-if="topic.valueType != 'binary' ">
-                <flat-table data="rows" partitions=""></flat-table>
+                <flat-view data="rows" partitions="" search="search"></flat-view>
             </md-tab>
 
             <md-tab label="Raw Data" ng-click="onTabChanges('rawdata', cluster)" >
-                <div ng-include="'src/kafka-topics/view/templates/data/data-raw-view.html'"></div>
+                <raw-view data="rows" topicType="topic.valueType"></raw-view>
             </md-tab>
 
         </md-tabs>

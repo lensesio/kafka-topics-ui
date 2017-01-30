@@ -18,7 +18,9 @@ var angularAPP = angular.module('angularAPP', [
   'totalBrokers',
   'totalTopics',
   'env',
-  'flatTable'
+  'flatView',
+  'treeView',
+  'rawView'
 ]);
 
 //angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $location, $route) { });

@@ -1,22 +1,21 @@
 
-var dataFlatTableModule = angular.module('flatTable', []);
+var dataFlatTableModule = angular.module('flatView', []);
 
-dataFlatTableModule.directive('flatTable', function() {
+dataFlatTableModule.directive('flatView', function() {
   return {
     restrict: 'E',
     scope: {
       data: '=',
-      partitions: '='
+      partitions: '=',
+      search: '='
     },
     templateUrl: 'src/kafka-topics/view/templates/data/flatten/data-flatten-view.html',
     controller: 'dataFlatTableCtrl',
    link: function(scope, element, attrs){
-
-
-         scope.$watch(function() {
-            console.log('test', scope.data)
-            scope.mrows = scope.data
-          });
+//         scope.$watch(function() {
+//            console.log('test', scope.data)
+//            scope.mrows = scope.data
+//          });
     }
   };
 });
