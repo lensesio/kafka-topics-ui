@@ -4,7 +4,7 @@
  *
  * @author antonios@landoop.com
  */
-angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $base64, $q, Oboe, toastFactory, env) {
+angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $base64, $q, Oboe, env) {
 
   // Topics
   var schemas;
@@ -638,7 +638,7 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
           )
         },
         function failure(response) {
-          toastFactory.showSimpleToast(response);
+//          toastFactory.showSimpleToast(response); //TODO!!!
         }
       );
 
@@ -666,3 +666,12 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
   }
 
 });
+
+var TOPIC_CONFIG = {
+//  KAFKA_TOPIC_DELETE_COMMAND : "kafka-topics --zookeeper zookeeper-host:2181/confluent --delete --topic",
+  // Pre-configure the Data Type on particular well-known topics
+  JSON_TOPICS: ["_schemas"],
+  BINARY_TOPICS: ["connect-configs", "connect-offsets", "__consumer_offsets", "_confluent-monitoring", "_confluent-controlcenter", "__confluent.support.metr"],
+  // If a topic starts with this particular prefix - it's a control topic
+  CONTROL_TOPICS: ["_confluent-controlcenter", "_confluent-command", "_confluent-metrics", "connect-configs", "connect-offsets", "__confluent", "__consumer_offsets", "_confluent-monitoring", "connect-status", "_schemas"]
+  };

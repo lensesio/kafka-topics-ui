@@ -1,16 +1,15 @@
 'use strict';
 
 var angularAPP = angular.module('angularAPP', [
-  'ui.ace',
-  'angularSpinner',
-  'angularUtils.directives.dirPagination',
   'ngRoute',
   'ngMaterial',
   'ngAnimate',
   'md.data.table',
   'ngAria',
-  'base64',
   'ngOboe',
+  'base64',
+  'ui.ace',
+  'angularUtils.directives.dirPagination',
   'ui.grid',
   'ui.grid.resizeColumns',
   'angular-json-tree',

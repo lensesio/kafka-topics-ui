@@ -87,9 +87,9 @@ function getFullChart(topicName, response) {
          {
             name: 'Rate',
             color: "#cccccc",
-            data: response.data.newMessageRate,
-            pointStart: response.data.pointStart,
-            pointInterval: response.data.pointInterval,
+            data: response.newMessageRate,
+            pointStart: response.pointStart,
+            pointInterval: response.pointInterval,
             tooltip: {
                 valueDecimals: 0,
                 valueSuffix: ' messages/sec'
@@ -98,9 +98,9 @@ function getFullChart(topicName, response) {
          {
             name: 'Messages',
             color: "#000000",
-            data: response.data.messageCount,
-            pointStart: response.data.pointStart,
-            pointInterval: response.data.pointInterval,
+            data: response.messageCount,
+            pointStart: response.pointStart,
+            pointInterval: response.pointInterval,
             tooltip: {
                 valueDecimals: 0,
                 valueSuffix: ' messages'
@@ -121,6 +121,7 @@ function getTimeChart(topicName, response) {
                              load: function () {
                                   var series0 = this.series[0];
                                   setInterval(function () {
+                                  //TODO
                                   $http.get(env.KAFKA_BACKEND() + "/topics/chart/"+topicName+"/latest").then(function response(response){ //TODO
                                          var x = (new Date()).getTime(), // current time
                                              y = parseInt(response.data);

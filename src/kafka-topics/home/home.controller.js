@@ -1,5 +1,5 @@
-angularAPP.controller('HomeCtrl', function ($scope, toastFactory, $http, $log, env) {
-  toastFactory.hideToast();
+angularAPP.controller('HomeCtrl', function ($scope,  $http, $log, env) {
+//  toastFactory.hideToast();
 
   $scope.$on('$routeChangeSuccess', function() {
     $scope.kafkaRest = env.getSelectedCluster().KAFKA_REST;

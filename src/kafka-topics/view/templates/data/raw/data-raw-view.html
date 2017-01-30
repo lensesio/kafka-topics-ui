@@ -1,17 +1,11 @@
-<!--
-  aceString
-  aceLoaded
-  aceChanged
--->
-
-  <div id="left"
-       ng-model="aceString" ng-readonly="true" ui-ace="{
-                          useWrapMode: true,
-                          showGutter: true,
-                          theme:'chrome',
-                          mode: 'json',
-                          firstLineNumber: 1,
-                          onLoad: aceLoaded,
-                          onChange: aceChanged,
-                          showPrintMargin:false
-                          }"></div>
+<div id="left"
+     ng-model="aceString"
+     ng-readonly="true"
+     ui-ace="{  useWrapMode: true,
+                showGutter: true,
+                theme:'chrome',
+                mode: 'json',
+                firstLineNumber: 1,
+                onLoad: aceLoaded,
+                onChange: aceChanged,
+                showPrintMargin:false  }"></div>

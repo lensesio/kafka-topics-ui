@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, HttpFactory, charts, env) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $location, $http, KafkaRestProxyFactory, TopicFactory, charts) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
 
@@ -7,22 +7,22 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   var topicCategoryUrl = $routeParams.topicCategoryUrl;
 
   $scope.showSpinner = true;
-  $mdToast.hide(); // ?
 
-  HttpFactory.getTopicSummary(topicName).then(function success(topic){
+  //TODO add error messages for failed requrests + false spinner
+  TopicFactory.getTopicSummary(topicName, $scope.cluster.KAFKA_BACKEND)
+  .then(function success(topic){
         $scope.topic = topic;
         getTopicData(topicName, topic.valueType);
-//     $http.get(env.KAFKA_BACKEND()+ "/topics/chart/"+ topic.topicName) //TODO also put it in HttpFactory, //iF topic found / then get chart + data
-//           .then(function response(response){
-//                  charts.getFullChart(topicName, response);
-//           });
-  }, function failure(error) { $scope.topic = {}; }); //TODO error message cannot get topic
+  })
+  .then(function () {
+     TopicFactory.getChartData(topicName, $scope.cluster.KAFKA_BACKEND).then(function response(response){
+           charts.getFullChart(topicName, response);
+     });
+  });
 
 
 /*******************************
- *
  * topic-toolbar.html
- *
 ********************************/
  
   $scope.showDownloadDiv = false;
@@ -43,9 +43,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   };
 
 /*******************************
- *
  * topic-configuration.html
- *
 ********************************/
  
   $scope.showMoreDesc = [];
@@ -54,11 +52,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
       $scope.showMoreDesc[index] = !$scope.showMoreDesc[index];
   };
 
-
 /*******************************
- *
  * data-chart.html
- *
 ********************************/
 
   $scope.showChart = true;
@@ -77,9 +72,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   } //tODO hardcoded!
 
 /*******************************
- *
  * topic data / Tabs handling
- *
 ********************************/
 
   $scope.selectedTabNnumber = setSelectedDataTab(selectedTabIndex);
@@ -97,11 +90,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     }
   }
 
-
 /*******************************
- *
  * still Depends on Kafka Rest
- *
 ********************************/
 
   /****************** SUPER CLEAN UP REQUIRED HERE / STARTS (this is the only dep to KAFKA_REST) *****************/
@@ -140,7 +130,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   }
 
   function getDeserializationErrorMessage(reason, type) {
-      return 'Failed with '+ type +' type :(  (' + reason + ')';
+      return $log.debug('Failed with '+ type +' type :(  (' + reason + ')');
   }
 
   /****************** SUPER CLEAN UP REQUIRED HERE / ENDS *****************/
@@ -170,4 +160,15 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   //          }
   //      $scope.topic = mockedTopic;
 
+});
+
+angularAPP.factory('TopicFactory', function (HttpFactory) {
+    return {
+          getTopicSummary: function (topicName, endpoint) {
+             return HttpFactory.req('GET', endpoint  + '/topics/summary/' + topicName);
+          },
+          getChartData: function(topicName, endpoint) {
+            return HttpFactory.req('GET', endpoint + "/topics/chart/"+ topicName)
+          }
+    }
 });

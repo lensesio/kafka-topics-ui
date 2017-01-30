@@ -65,7 +65,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
     function isNormalTopic(value) { return !isControlTopic(value); }
   }
 
-  //TODO move to utils
+  //TODO
   function shortenControlCenterName(topic) {
       if (topic.isControlTopic) {
         return topic.topicName

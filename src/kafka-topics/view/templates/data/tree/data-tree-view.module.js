@@ -10,20 +10,12 @@ dataTreeViewModule.directive('treeView', function() {
       search: '='
     },
     templateUrl: 'src/kafka-topics/view/templates/data/tree/data-tree-view.html',
-    controller: 'dataTreeViewCtrl',
-   link: function(scope, element, attrs){
-
-
-//         scope.$watch(function() {
-//            console.log('test', scope.data)
-//            scope.mrows = scope.data
-//          });
-    }
+    controller: 'dataTreeViewCtrl'
   };
 });
 
 
-dataTreeViewModule.controller('dataTreeViewCtrl', function ($scope, $log, FlatTableFactory) {
+dataTreeViewModule.controller('dataTreeViewCtrl', function ($scope, $log) {
 
    $scope.$watch("data", function() {
         if($scope.data) {
@@ -31,11 +23,11 @@ dataTreeViewModule.controller('dataTreeViewCtrl', function ($scope, $log, FlatTa
         }
    })
 
-  $scope.paginationItems = 10;
+   $scope.paginationItems = 10;
 
- $scope.showTree = function (keyOrValue) {
-    return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
- }
+   $scope.showTree = function (keyOrValue) {
+      return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
+   }
 
 
 });

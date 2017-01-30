@@ -21,34 +21,46 @@ dataFlatTableModule.directive('flatView', function() {
 });
 
 topicsListModule.factory('FlatTableFactory', function (HttpFactory) {
+
     return {
         flattenObject: function (ob) {
            return flattenObject(ob);
-        }
+        },
+         sortByKey: function (array, key, reverse) {
+              return sortByKey(array, key, reverse);
+            }
     }
 
-      function flattenObject(ob) {
-                	var toReturn = {};
+    function flattenObject(ob) {
+        var toReturn = {};
 
-                	for (var i in ob) {
-                		if (!ob.hasOwnProperty(i)) continue;
+        for (var i in ob) {
+            if (!ob.hasOwnProperty(i)) continue;
 
-                		if ((typeof ob[i]) == 'object') {
-                			var flatObject = flattenObject(ob[i]);
+            if ((typeof ob[i]) == 'object') {
+                var flatObject = flattenObject(ob[i]);
 
-                			for (var x in flatObject) {
-                				if (!flatObject.hasOwnProperty(x)) continue;
-                				toReturn[i + '.' + x] = flatObject[x];
-                			}
+                for (var x in flatObject) {
+                    if (!flatObject.hasOwnProperty(x)) continue;
+                    toReturn[i + '.' + x] = flatObject[x];
+                }
 
-                		} else {
-                			toReturn[i] = ob[i];
-                		}
-                	}
-                	return toReturn;
-                };
+            } else {
+                toReturn[i] = ob[i];
+            }
+        }
+        return toReturn;
+    };
+
+     // Sort arrays by key
+     function sortByKey(array, key, reverse) {
+          return array.sort(function (a, b) {
+            var x = a[key];
+            var y = b[key];
+            return ((x < y) ? -1 * reverse : ((x > y) ? 1 * reverse : 0));
+          });
+     }
 });
-
 
 //TODO Clean me up! ALL shit happens here
 dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, FlatTableFactory) {
