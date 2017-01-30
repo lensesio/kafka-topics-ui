@@ -2,13 +2,12 @@
     selectedTabNnumber
     search.$
     onTabChanges('topic')
-    getPartitions
+    getPartitions / partitions (?) >> topic.partitions
 -->
 <div style="background-color:#F5F5F5;" ng-cloak layout-margin>
 
     <!--4.2 TOPIC FILTERS & CHARTS-->
     <div ng-include="'src/kafka-topics/view/templates/data/data-chart.html'"></div>
-
 
     <!--4.3 TOPIC DATASET-->
     <div style="background-color:#fff;" >
@@ -24,12 +23,12 @@
             </div>
 
             <!--Why don't we handle keyType as well? -->
-            <md-tab   label="Topic" ng-click="onTabChanges('topic', cluster)" ng-if="topic.valueType != 'binary' ">
+            <md-tab label="Topic" ng-click="onTabChanges('topic', cluster)" ng-if="topic.valueType != 'binary' ">
                 <div ng-include="'src/kafka-topics/view/templates/data/data-tree-view.html'"></div>
             </md-tab>
 
             <md-tab label="Table" ng-click="onTabChanges('table', cluster)" ng-if="topic.valueType != 'binary' ">
-                <div ng-include="'src/kafka-topics/view/templates/data/flatten/data-flatten-view.html'"></div>
+                <flat-table data="rows" partitions=""></flat-table>
             </md-tab>
 
             <md-tab label="Raw Data" ng-click="onTabChanges('rawdata', cluster)" >

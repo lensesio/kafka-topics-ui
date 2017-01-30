@@ -17,7 +17,8 @@ var angularAPP = angular.module('angularAPP', [
   'topicsList',
   'totalBrokers',
   'totalTopics',
-  'env'
+  'env',
+  'flatTable'
 ]);
 
 //angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $location, $route) { });
@@ -57,7 +58,7 @@ angularAPP.run(['$route', '$rootScope', '$location', function ($route, $rootScop
         }
         return original.apply($location, [path]);
     };
-}])
+}]);
 
 angularAPP.config(function ($routeProvider) {
   $routeProvider

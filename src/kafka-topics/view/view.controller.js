@@ -165,54 +165,6 @@ function getTopicData(topicName, topicType) {
 
 /*******************************
  *
- * data-flatten-view.html
- *
-********************************/
-
-   $scope.allCols = [
-     {id: "offset", label: "offset"},
-     {id: "partition", label: "partition"},
-     {id: "key", label: "key"},
-     {id: "value", label: "value"}];
-
-  $scope.selectedCols = {};
-
-  $scope.checkAndHide = function checkAndHide(name) {
-    if ($scope.selectedCols.searchText){
-        var showCol = $scope.selectedCols.searchText.some(function (selectedCols) {
-          return selectedCols === name;
-        });
-        return showCol
-    }
-  }
-
-  $scope.addColumnClass = function (columnIndex) {
-      columnIndex = columnIndex + 1;
-      var columnClass = '';
-      if (columnIndex == 1 ) {columnClass='offset'}
-      else if(columnIndex == 2) {columnClass='partition'}
-      else if(columnIndex < 4 + $scope.keyFlatColumns.length ) {columnClass='key'}
-      else if(columnIndex < 5 + $scope.keyFlatColumns.length  + $scope.valueFlatColumns.length ) {columnClass='value'}
-      return columnClass;
-  }
-
-  $scope.query = { order: 'partition', limit: 100, page: 1 };
-
-  // This one is called each time - the user clicks on an md-table header (applies sorting)
-  $scope.logOrder = function (a) {
-      // $log.info("Ordering event " + a);
-      sortTopic(a);
-  };
-    //TODO ??? Same name??
-    // This one is called each time - the user clicks on an md-table header (applies sorting)
-    $scope.logOrder = function (a) {
-      $log.info("Ordering event " + a);
-      sortSchema(a);
-    };
-
-
-/*******************************
- *
  * various private methods / to organise
  *
 ********************************/
@@ -226,96 +178,9 @@ function getTopicData(topicName, topicType) {
       }
   }
 
-  function sortTopic(type) {
-      var reverse = 1;
-      if (type.indexOf('-') == 0) {
-        // remove the - symbol
-        type = type.substring(1, type.length);
-        reverse = -1;
-      }
-       $log.info(type + " " + reverse);
-      $scope.flatRows = UtilsFactory.sortByKey($scope.flatRows, type, reverse);
-  }
-
-  function sortSchema(type) {
-      var reverse = 1;
-      if (type.indexOf('-') == 0) {
-        // remove the - symbol
-        type = type.substring(1, type.length);
-        reverse = -1;
-      }
-      // $log.info(type + " " + reverse);
-      $scope.rows = UtilsFactory.sortByKey($scope.rows, type, reverse);
-  }
-
-  function flattenTable(rows) {
-
-          var extraColumnsNumberValue = 0;
-          var extraColumnsNumberKey = 0;
-          var rowWithMoreColumns;
-
-          $scope.flatRows = [];
-
-          if (rows.length > 0) {
-              angular.forEach(rows, function (row) {
-                    if (row.key == undefined || row.key == null) row.key = '';
-                    if (row.value == undefined || row.value == null) row.value = '';
-
-                    if(angular.isNumber(row.value) || angular.isString(row.value)) {
-                          extraColumnsNumberValue = 0
-                          extraColumnsNumberKey = 0
-                          var newRow = {
-                              "offset" : row.offset,
-                              "partition" : row.partition,
-                              "key" : row.key,
-                              "value" : 'value' +  row.value
-                          }
-                          $scope.flatColumns = Object.keys(UtilsFactory.flattenObject(newRow));
-                          $scope.keyFlatColumns = [];
-                          $scope.valueFlatColumns = [];
-                    } else {
-                          var flatValue = UtilsFactory.flattenObject(row.value);
-                          var flatKey = UtilsFactory.flattenObject(row.key);
-                          var rowExtraColumnsValues = Object.keys(flatValue).length;
-                          var rowExtraColumnsKeys = Object.keys(flatKey).length;
-
-                          if(extraColumnsNumberValue < rowExtraColumnsValues) {
-                              extraColumnsNumberValue = rowExtraColumnsValues;
-                              rowWithMoreColumns = row;
-                          }
-
-                          if(extraColumnsNumberKey < rowExtraColumnsKeys) {
-                              extraColumnsNumberKey = rowExtraColumnsKeys;
-                              rowWithMoreColumns = row;
-                          }
-
-                          var newRow = {
-                              "offset" : rowWithMoreColumns.offset,
-                              "partition" : rowWithMoreColumns.partition,
-                              "key" : rowWithMoreColumns.key,
-                              "value" : rowWithMoreColumns.value
-                          }
-
-                          $scope.flatColumns =  Object.keys(UtilsFactory.flattenObject(newRow));
-                          $scope.valueFlatColumns = Object.keys(UtilsFactory.flattenObject(newRow.value));
-                          $scope.keyFlatColumns = Object.keys(UtilsFactory.flattenObject(newRow.key));
-
-                    }
-
-                   $scope.flatRows.push(UtilsFactory.flattenObject(row));
-
-                  });
-
-                  $scope.extraColsNumValues = extraColumnsNumberValue;
-                  $scope.extraColsNumKeys = extraColumnsNumberKey;
-
-       }
-  }
-
   function setDataState(allData, topicType) {
         (topicType == 'json') ? $scope.aceString = allData :$scope.aceString = angular.toJson(allData, true);
         $scope.rows = allData;
-        flattenTable(allData);
         $scope.showSpinner = false;
   }
 
