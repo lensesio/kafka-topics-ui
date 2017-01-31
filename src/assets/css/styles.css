@@ -93,6 +93,12 @@ font-size: 10px;
 md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
 min-height:1260px;
 }
+
+md-tabs.md-default-theme md-ink-bar, md-tabs md-ink-bar {
+    color: #F5F5F5 !important;
+    background-color:#F5F5F5 !important;
+}
+
 .md-tab {text-transform:none;}
 md-tabs .md-tab.md-active {color:#fb9678}
 

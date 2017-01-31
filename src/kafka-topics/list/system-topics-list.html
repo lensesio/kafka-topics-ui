@@ -33,7 +33,7 @@
           <td class="td-center">{{topic.partitions}}</td>
           <td class="td-center"><span class="label-type label-type-{{topic.keyType}}" ng-if="topic.keyType != ''">{{topic.keyType}}</span></td>
           <td class="td-center"><span class="label-type label-type-{{topic.valueType}}" ng-if="topic.valueType != ''">{{topic.valueType}}</span></td>
-          <td><span ng-if="topic.customConfig.length > 0">{{topic.customConfig.length}} config changed</span></td>
+          <td class="td-center"><span ng-if="topic.customConfig.length > 0">{{topic.customConfig.length}}</span></td>
         </tr>
         </tbody>
       </table>
