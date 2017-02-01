@@ -71,7 +71,7 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, Flat
         }
    })
 
-  $scope.paginationItems = 10;
+  $scope.paginationItems = 20;
 
   $scope.allCols = [
      {id: "offset", label: "offset"},

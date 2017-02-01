@@ -83,7 +83,11 @@ angularAPP.config(function ($routeProvider) {
         templateUrl: 'src/kafka-topics/view/view.html',
         controller: 'ViewTopicCtrl'
       })
-    .when('/cluster/:cluster/topic/:topicCategoryUrl/:topicName/:selectedTabIndex', {
+    .when('/cluster/:cluster/topic/:topicCategoryUrl/:topicName/:menuItem', {
+      templateUrl: 'src/kafka-topics/view/view.html',
+      controller: 'ViewTopicCtrl'
+    })
+    .when('/cluster/:cluster/topic/:topicCategoryUrl/:topicName/:menuItem/:selectedTabIndex', {
       templateUrl: 'src/kafka-topics/view/view.html',
       controller: 'ViewTopicCtrl'
     }).otherwise({

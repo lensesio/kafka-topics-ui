@@ -1,8 +1,53 @@
-<!--
-    topic
--->
+<md-content style="padding:10px;">
 
-Total number of Partitions: {{topic.partitions}}
-<div ng-repeat="mpp in topic.messagesPerPartition">
-    Partition {{mpp.partition}} : {{mpp.messages}} Messages
-</div>
+    <p style="color: #797979;padding-left:10px;"><b>
+    Total messages in topic: {{topic.totalMessages}} ,
+
+    Total number of Partitions: {{topic.partitions}}
+    </b></p>
+
+
+
+
+    <table class="topics-table" flex="80" style="margin-left:10px;">
+
+        <tbody>
+
+        <tr><td >Replication:</td><td>{{topic.replication}}</td>
+           <td>Partitions:</td><td>{{topic.partitions}}</td>
+          <td>Brokers for Topic:</td><td>xxx</td>
+         <td>Undereplicated partitions:</td><td>xxx</td> </tr>
+        </tr>
+        </tbody>
+    </table>
+
+    <div id="treemap" style="width:80%; height:250px; text-align:center" ng-if="topic.partitions > 1"></div>
+
+
+    <table class="topics-table">
+        <thead>
+        <tr>
+            <th class="td-center">PARTITION</th>
+            <th class="td-center">MESSAGES</th>
+            <th class="td-center">BROKER</th>
+            <th class="td-center">LEADER</th>
+            <!--<th class="td-center">xx</th>-->
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="mpp in topic.messagesPerPartition | orderBy:'-messages'">
+            <td class="td-center">{{mpp.partition}}</td>
+            <td class="td-center">{{mpp.messages}}</td>
+            <td class="td-center">xxx.xxx.xxx.xxx</td>
+            <td class="td-center">xxx.xxx.xxx.xxx</td>
+            <!--<td style="float:right;">-->
+                <!--<div ng-if="mpp.partition == 20" id="abc" style="margin:0;padding:0">abc</div>-->
+            <!--</td>-->
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+<!--<div id="spider" style="min-width: 600px; max-width: 600px; height: 600px; margin: 0 auto"></div>-->
+
+</md-content>

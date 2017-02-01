@@ -3,8 +3,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
 
   var topicName = $routeParams.topicName;
-  var selectedTabIndex = $routeParams.selectedTabIndex
+  var selectedTabIndex = $routeParams.selectedTabIndex;
   var topicCategoryUrl = $routeParams.topicCategoryUrl;
+  var topicMenuItem = $routeParams.menuItem;
 
   $scope.showSpinner = true;
 
@@ -16,7 +17,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
   })
   .then(function () {
      TopicFactory.getChartData(topicName, $scope.cluster.KAFKA_BACKEND).then(function response(response){
-           charts.getFullChart(topicName, response);
+//           charts.getFullChart(topicName, response);
+//            charts.getSpiderChart(topicName, response)
+            charts.getTreeChart(topicName, $scope.topic.messagesPerPartition)
+//            charts.samplePartition();
      });
   });
 
@@ -53,6 +57,13 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
   };
 
 /*******************************
+* topic-configuration.html
+********************************/
+
+//    $scope.abc = charts.samplePartition();
+
+
+/*******************************
  * data-chart.html
 ********************************/
 
@@ -77,10 +88,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
 
   $scope.selectedTabNnumber = setSelectedDataTab(selectedTabIndex);
 
-  $scope.onTabChanges = function(currentTabIndex, cluster){
-    $location.path ("cluster/"+ cluster.NAME + "/topic/" +  topicCategoryUrl + "/" + topicName + "/" + currentTabIndex, false);
-  };
-
   function setSelectedDataTab(selectedTabIndex) {
     switch(selectedTabIndex) {
         case "topic": return 0;
@@ -89,6 +96,17 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
         default: return 0;
     }
   }
+
+  $scope.selectedMenuItem = (topicMenuItem != undefined) ? topicMenuItem : 'data';
+
+  $scope.setMenuSelection = function(currentMenuItem, cluster) {
+        $scope.selectedMenuItem = currentMenuItem;
+        $location.path("cluster/"+ cluster.NAME + "/topic/" +  topicCategoryUrl + "/" + topicName + "/" + currentMenuItem, false);
+  }
+
+  $scope.onTabChanges = function(currentTabIndex, cluster){
+      $location.path ("cluster/"+ cluster.NAME + "/topic/" +  topicCategoryUrl + "/" + topicName +  "/" + $scope.selectedMenuItem + "/" + currentTabIndex, false);
+  };
 
 /*******************************
  * still Depends on Kafka Rest
@@ -159,6 +177,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
   //            messagesPerPartition : [ ]
   //          }
   //      $scope.topic = mockedTopic;
+
+
+
 
 });
 

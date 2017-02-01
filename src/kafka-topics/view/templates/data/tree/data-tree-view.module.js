@@ -6,7 +6,7 @@ dataTreeViewModule.directive('treeView', function() {
     restrict: 'E',
     scope: {
       data: '=',
-      partitions: '=',
+      partitions: '=', //Pass pagination?
       search: '='
     },
     templateUrl: 'src/kafka-topics/view/templates/data/tree/data-tree-view.html',
@@ -23,7 +23,7 @@ dataTreeViewModule.controller('dataTreeViewCtrl', function ($scope, $log) {
         }
    })
 
-   $scope.paginationItems = 10;
+   $scope.paginationItems = 20;
 
    $scope.showTree = function (keyOrValue) {
       return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));

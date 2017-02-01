@@ -4,27 +4,33 @@
     toggleMoreDesc()         > Function
  -->
 
- <md-tab-body>
-    <md-content class="md-padding">
-        <table class="flat-table"  ng-if="topic.customConfig">
+
+    <md-content style="padding:10px;">
+
+        <p style="color: #797979;padding-left:10px;" ng-if="topic.customConfig.length > 1"><b>
+            Total configurations: {{topic.customConfig.length}}
+        </b></p>
+
+
+        <table class="topics-table"  ng-if="topic.customConfig">
           <thead>
           <tr>
-            <th class="td-center">Configuration</th>
-            <th  class="td-center">Value</th>
-            <th  class="td-center">Default Value</th>
-            <th  class="td-center">Description</th>
+            <th>CONFIG</th>
+            <th>VALUE</th>
+            <th>DEFAULT</th>
+            <th>DESCRIPTION</th>
           </tr>
           </thead>
           <tbody>
 
           <tr ng-repeat="config in topic.customConfig track by $index">
-            <td  class="td-center">
+            <td>
               <span>{{config.configuration}}</span>
             </td>
-            <td  class="td-center">
+            <td>
               <span>{{config.value}}</span>
             </td>
-            <td  class="td-center">
+            <td>
               <span>{{config.defaultValue}}</span>
             </td>
             <td style="max-width:500px;" class="td-left">
@@ -47,4 +53,4 @@
             </div>
         </div>
     </md-content>
-  </md-tab-body>
+
