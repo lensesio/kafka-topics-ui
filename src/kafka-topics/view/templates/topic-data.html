@@ -13,14 +13,25 @@
     <div style="background-color:#fff;" >
         <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
 
-            <div>
+            <div layout="row">
                 <input ng-model="search.$" flex placeholder="Filter" style="width: 300px;margin: 7px; line-height: 30px;"/>
 
                 <select class="form-control button" ng-model="search.partition" style="float:right; width: 120px;margin: 7px; line-height: 30px;">
                     <option value="" selected>All partitions</option>
                     <option ng-repeat="i in getPartitions(partitions)" track by $index value="{{$index}}">Partition {{$index}}</option>
                 </select>
+
+                <md-button
+                        ng-hide="topic.totalMessages == 0"
+                        ng-click="showDownloadDiv = !showDownloadDiv"
+                        aria-label="Download data"
+                        aria-hidden="false">
+                    <i class="fa fa-download" ng-show="!showDownloadDiv" aria-hidden="true" style="color:#333"></i>
+                    <i class="fa fa-close" ng-show="showDownloadDiv" aria-hidden="true" style="color:#333"></i>
+                </md-button>
             </div>
+
+
 
             <!--TODO Why don't we handle keyType as well? -->
             <md-tab label="Topic" ng-click="onTabChanges('topic', cluster)" ng-if="topic.valueType != 'binary' ">
@@ -36,5 +47,30 @@
             </md-tab>
 
         </md-tabs>
+
+        <div class="downloadDiv" ng-show="showDownloadDiv">
+            <h4>Download Options</h4>
+            <ul>
+                <li>
+                    <div class="checkbox checkbox-info">
+                        <input id="checkbox1" type="checkbox" checked="checked" class="fxhdr">
+                        <label for="checkbox1">Download Avro encoded file</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="checkbox checkbox-success">
+                        <input id="checkbox4" type="checkbox" class="open-close">
+                        <label for="checkbox4"> Download only filtered data</label>
+                    </div>
+                </li>
+            </ul>
+            <md-button style="float:right"  download="true"
+                       ng-click="downloadData(topic.topicName, rows)"
+                       aria-label="Download data"
+                       aria-hidden="false">
+                <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
+            </md-button>
+
+        </div>
     </div>
 </div>

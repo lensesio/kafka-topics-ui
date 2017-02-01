@@ -45,39 +45,39 @@
             <span class="labelType label-type-{{topic.keyType}}"> {{topic.keyType}} </span> /
             <span class="labelType label-type-{{topic.valueType}}"> {{topic.valueType}} </span> </small>
 
-        <md-button
-                ng-hide="topic.totalMessages == 0"
-                ng-click="showDownloadDiv = !showDownloadDiv"
-                aria-label="Download data"
-                aria-hidden="false">
-            <i class="fa fa-download" ng-show="!showDownloadDiv" aria-hidden="true" style="color:#333"></i>
-            <i class="fa fa-close" ng-show="showDownloadDiv" aria-hidden="true" style="color:#333"></i>
-        </md-button>
+        <!--<md-button-->
+                <!--ng-hide="topic.totalMessages == 0"-->
+                <!--ng-click="showDownloadDiv = !showDownloadDiv"-->
+                <!--aria-label="Download data"-->
+                <!--aria-hidden="false">-->
+            <!--<i class="fa fa-download" ng-show="!showDownloadDiv" aria-hidden="true" style="color:#333"></i>-->
+            <!--<i class="fa fa-close" ng-show="showDownloadDiv" aria-hidden="true" style="color:#333"></i>-->
+        <!--</md-button>-->
     </div>
 
-    <div class="downloadDiv" ng-show="showDownloadDiv">
-        <h4>Download Options</h4>
-        <ul>
-            <li>
-                <div class="checkbox checkbox-info">
-                    <input id="checkbox1" type="checkbox" checked="checked" class="fxhdr">
-                    <label for="checkbox1">Download Avro encoded file</label>
-                </div>
-            </li>
-            <li>
-                <div class="checkbox checkbox-success">
-                    <input id="checkbox4" type="checkbox" class="open-close">
-                    <label for="checkbox4"> Download only filtered data</label>
-                </div>
-            </li>
-        </ul>
-        <md-button style="float:right"  download="true"
-                   ng-click="downloadData(topic.topicName, rows)"
-                   aria-label="Download data"
-                   aria-hidden="false">
-            <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
-        </md-button>
+    <!--<div class="downloadDiv" ng-show="showDownloadDiv">-->
+        <!--<h4>Download Options</h4>-->
+        <!--<ul>-->
+            <!--<li>-->
+                <!--<div class="checkbox checkbox-info">-->
+                    <!--<input id="checkbox1" type="checkbox" checked="checked" class="fxhdr">-->
+                    <!--<label for="checkbox1">Download Avro encoded file</label>-->
+                <!--</div>-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--<div class="checkbox checkbox-success">-->
+                    <!--<input id="checkbox4" type="checkbox" class="open-close">-->
+                    <!--<label for="checkbox4"> Download only filtered data</label>-->
+                <!--</div>-->
+            <!--</li>-->
+        <!--</ul>-->
+        <!--<md-button style="float:right"  download="true"-->
+                   <!--ng-click="downloadData(topic.topicName, rows)"-->
+                   <!--aria-label="Download data"-->
+                   <!--aria-hidden="false">-->
+            <!--<i class="fa fa-download" aria-hidden="true" style="color:#333"></i>-->
+        <!--</md-button>-->
 
-    </div>
+    <!--</div>-->
 
 </md-toolbar>

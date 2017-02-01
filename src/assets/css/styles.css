@@ -665,11 +665,21 @@ json-tree .branch-preview {
   color: #fb9678;
 }
 
-.downloadDiv {
+/*.downloadDiv {
     background: white;
     position: absolute;
     right: 8px;
     top: 60px;
+    border: 1px solid #ccc;
+    border-top: 0px;
+    padding: 0;
+}*/
+
+.downloadDiv {
+    background: white;
+    position: absolute;
+    right: 18px;
+    top: 180px;
     border: 1px solid #ccc;
     border-top: 0px;
     padding: 0;
