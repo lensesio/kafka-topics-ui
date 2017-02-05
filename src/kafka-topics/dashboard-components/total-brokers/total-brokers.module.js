@@ -9,7 +9,7 @@ totalBrokersModule.directive('totalBrokers', function(templates) {
   };
 });
 
-topicsListModule.factory('BrokersBackendFactory', function (HttpFactory) {
+totalBrokersModule.factory('BrokersBackendFactory', function (HttpFactory) {
     return {
         getBrokers: function () {
            return HttpFactory.req('GET',"https://kafka-rest-proxy.demo.landoop.com" + '/brokers');

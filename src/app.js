@@ -13,10 +13,11 @@ var angularAPP = angular.module('angularAPP', [
   'ui.grid',
   'ui.grid.resizeColumns',
   'angular-json-tree',
+  'env',
+  'HttpFactory',
   'topicsList',
   'totalBrokers',
   'totalTopics',
-  'env',
   'flatView',
   'treeView',
   'rawView'

@@ -51,7 +51,6 @@ module.exports = function (grunt) {
           // 'bower_components/angularUtils-pagination/dirPagination.js',
           'bower_components/angular-material-data-table/dist/md-data-table.min.css',
           'bower_components/angular-material-data-table/dist/md-data-table.min.js',
-
           'bower_components/angular-ui-grid/ui-grid.min.css',
           'bower_components/angular-ui-grid/ui-grid.min.js',
           'bower_components/angular-ui-grid/ui-grid.svg',
@@ -71,7 +70,7 @@ module.exports = function (grunt) {
 
     concat: {
       dist: {
-        src: ['src/*.js', 'src/factories/*.js', 'src/kafka-topics/**/*.controller.js'],
+        src: ['src/*.js', 'src/factories/*.js', 'src/libs/**/*.js', 'src/kafka-topics/**/*.controller.js', 'src/kafka-topics/**/*.module.js'],
         dest: 'dist/combined.js'
       }
     },
