@@ -289,6 +289,7 @@ function getTreeChart(topicName, data) {
    var partitionData = [];
 
 //   angular.forEach(data, function(dato) {
+    var i;
     for (i = 0; i < data.length; i++) {
         var a = {
             name : '[' + data[i].partition + ']',
