@@ -1,0 +1,166 @@
+<!--<h3>Overview</h3>-->
+<div layout="row" flex="100">
+    <md-content flex layout-padding>
+            <div layout="column" style="margin-top: 15px;padding:20px;">
+                <div layout="row">
+                    <div layout="column" flex="50">
+                        <i style="font-size:30px; font-weight:100; color: #eaeaea; padding:10px 0px;" class="fa fa-folder-o" aria-hidden="true"></i>
+                        <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">Messages</div>
+                    </div>
+
+                    <div flex style="font-size: 40px; font-weight: 100;text-align:right; vertical-align: middle; padding-top:15px;">{{topic.totalMessages | humanize}}</div>
+                </div>
+                <div class="progress" style="margin-top:5px;">
+                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"> <span class="sr-only"></span> </div>
+                </div>
+            </div>
+    </md-content>
+    <md-content flex layout-padding>
+
+            <div layout="column" style="border-left: 1px solid rgba(120,130,140,.13);margin-top: 15px;padding:20px;">
+
+                <div layout="row">
+                    <div layout="column" flex="50">
+                        <i style="font-size:30px; font-weight:100; color: #eaeaea; padding:10px 0px;" class="fa fa-pie-chart" aria-hidden="true"></i>
+                        <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">Partitions</div>
+                    </div>
+
+                    <div flex style="font-size: 40px; font-weight: 100;text-align:right; vertical-align: middle; padding-top:15px;">{{topic.partitions}}</div>
+                </div>
+                <div class="progress" style="margin-top:5px;">
+                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"> <span class="sr-only"></span> </div>
+                </div>
+
+            </div>
+    </md-content>
+    <md-content flex layout-padding>
+            <div layout="column" style="border-left: 1px solid rgba(120,130,140,.13);margin-top: 15px;padding:20px;">
+
+
+                <div layout="row">
+                    <div layout="column" flex="50">
+                        <i style="font-size:30px; font-weight:100; color: #eaeaea; padding:10px 0px;" class="fa fa-cogs" aria-hidden="true"></i>
+                        <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">Configurations</div>
+                    </div>
+
+                    <div flex style="font-size: 40px; font-weight: 100;text-align:right; vertical-align: middle; padding-top:15px;">{{topic.customConfig.length ? topic.customConfig.length : 0}}</div>
+                </div>
+                <div class="progress" style="margin-top:5px;">
+                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"> <span class="sr-only"></span> </div>
+                </div>
+
+            </div>
+    </md-content>
+    <md-content flex layout-padding>
+            <div layout="column" style="border-left: 1px solid rgba(120,130,140,.13);margin-top: 15px;padding:20px;">
+
+
+                <div layout="row">
+                    <div layout="column" flex="50">
+                        <i style="font-size:30px; font-weight:100; color: #eaeaea; padding:10px 0px;" class="fa fa-shopping-basket" aria-hidden="true"></i>
+                        <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">Consumers</div>
+                    </div>
+
+                    <div flex style="font-size: 40px; font-weight: 100;text-align:right; vertical-align: middle; padding-top:15px;">{{topic.consumers ? topic.consumers : 0}}</div>
+                </div>
+                <div class="progress" style="margin-top:5px;">
+                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"> <span class="sr-only"></span> </div>
+                </div>
+
+            </div>
+   </md-content>
+</div>
+
+<!--<div layout="row" flex="100" >-->
+
+    <!--<md-content flex layout-padding>-->
+        <!--<div layout="column">-->
+            <!--&lt;!&ndash;<div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">Schemas</div>&ndash;&gt;-->
+            <!--<div layout="row">-->
+                <!--<p>KEY TYPE: <span class="labelType label-type-{{topic.keyType}}"> {{topic.keyType}} </span></p>-->
+                <!--<p>VALUE TYPE: <span class="labelType label-type-{{topic.valueType}}"> {{topic.valueType}} </span></p>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</md-content>-->
+
+<!--</div>-->
+
+<div layout="row" flex="100">
+
+<md-content flex="60" style="margin-right:8px" layout-padding>
+    <div flex>
+        <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">HISTORY LOG</div>
+            <md-list flex>
+                <md-list-item class="md-3-line">
+                    <i class="fa fa-shopping-basket md-avatar"  style="font-size:30px; font-weight:100; color: #eaeaea;" aria-hidden="true"></i>
+                    <div class="md-list-item-text" layout="column">
+                        <h3>New Consumer</h3>
+                        <h4>lorem spectrum...</h4>
+                        <p>4 sec ago</p>
+                    </div>
+                </md-list-item>
+                <md-list-item class="md-3-line">
+                    <i class="fa fa-pie-chart md-avatar"  style="font-size:30px; font-weight:100; color: #eaeaea;" aria-hidden="true"></i>
+                    <div class="md-list-item-text" layout="column">
+                        <h3>Partition Rebalance</h3>
+                        <h4>lorem spectrum...</h4>
+                        <p>2h ago</p>
+                    </div>
+                </md-list-item>
+                <md-list-item class="md-3-line">
+                    <i class="fa fa-file-text-o md-avatar"  style="font-size:30px; font-weight:100; color: #eaeaea;" aria-hidden="true"></i>
+                    <div class="md-list-item-text" layout="column">
+                        <h3>Schema Evolution</h3>
+                        <h4>lorem spectrum...</h4>
+                        <p>3 days ago</p>
+                    </div>
+                </md-list-item>
+                <md-list-item class="md-3-line">
+                    <i class="fa fa-file-text-o md-avatar"  style="font-size:30px; font-weight:100; color: #eaeaea;" aria-hidden="true"></i>
+                    <div class="md-list-item-text" layout="column">
+                        <h3>Schema Creation</h3>
+                        <h4>lorem spectrum...</h4>
+                        <p>3 days ago</p>
+                    </div>
+                </md-list-item>
+                <md-list-item class="md-3-line">
+                    <i class="fa fa-cogs md-avatar"  style="font-size:30px; font-weight:100; color: #eaeaea;" aria-hidden="true"></i>
+                    <div class="md-list-item-text" layout="column">
+                        <h3>Configuration update</h3>
+                        <h4>lorem spectrum...</h4>
+                        <p>1 month ago</p>
+                    </div>
+                </md-list-item>
+                <md-list-item class="md-3-line">
+                    <i class="fa fa-cogs md-avatar"  style="font-size:30px; font-weight:100; color: #eaeaea;" aria-hidden="true"></i>
+                    <div class="md-list-item-text" layout="column">
+                        <h3>Configuration update</h3>
+                        <h4>lorem spectrum...</h4>
+                        <p>2 Jan 2017</p>
+                    </div>
+                </md-list-item>
+            </md-list>
+
+    </div>
+
+</md-content>
+
+<div layout="column" flex>
+    <md-content flex layout-padding style="margin-bottom:8px">
+        <div layout="column">
+            <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">Schemas</div>
+            <div layout="column">
+                <p>KEY TYPE: <span> {{topic.keyType}} </span></p>
+                <!--<p>KEY TYPE: <span class="labelType label-type-{{topic.keyType}}"> {{topic.keyType}} </span></p>-->
+                <p>VALUE TYPE: <span> {{topic.valueType}} </span></p>
+                <!--<p>VALUE TYPE: <span class="labelType label-type-{{topic.valueType}}"> {{topic.valueType}} </span></p>-->
+            </div>
+        </div>
+    </md-content>
+    <md-content flex layout-padding >
+
+    <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">METRICS AVG</div>
+
+</md-content>
+</div>
+</div>
