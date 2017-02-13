@@ -24,8 +24,7 @@ topicsListModule.directive('topicsList', function(templates) {
 topicsListModule.factory('templates', function() {
   return {
     compact: 'src/kafka-topics/list/compact-topics-list.html',
-    system:  'src/kafka-topics/list/system-topics-list.html',
-    normal:  'src/kafka-topics/list/normal-topics-list.html'
+    home:  'src/kafka-topics/list/topics-list.html'
   };
 });
 
@@ -33,11 +32,36 @@ topicsListModule.factory('SummariesBackendFactory', function (HttpFactory) {
     return {
         getListInfo: function (endpoint) {
            return HttpFactory.req('GET', endpoint + '/topics/summaries');
+        },
+        sortByKey: function (array, key, reverse) {
+          return sortByKey(array, key, reverse);
         }
+    }
+    function sortByKey(array, key, reverse) {
+        return array.sort(function (a, b) {
+          var x = a[key];
+          var y = b[key];
+          return ((x < y) ? -1 * reverse : ((x > y) ? 1 * reverse : 0));
+        });
     }
 });
 
-topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, SummariesBackendFactory) {
+topicsListModule.factory('shortList', function (HttpFactory) {
+  return {
+    sortByKey: function (array, key, reverse) {
+    return sortByKey(array, key, reverse);
+    }
+  }
+  function sortByKey(array, key, reverse) {
+    return array.sort(function (a, b) {
+      var x = a[key];
+      var y = b[key];
+      return ((x < y) ? -1 * reverse : ((x > y) ? 1 * reverse : 0));
+    });
+  }
+})
+
+topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, SummariesBackendFactory, shortList) {
 
   $scope.$watch(
     function () { return $scope.cluster; },
@@ -48,22 +72,72 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
     return shortenControlCenterName(topic);
   }
 
+  $scope.query = { order: '-totalMessages', limit: 100, page: 1 };
+
+  // This one is called each time - the user clicks on an md-table header (applies sorting)
+  $scope.logOrder = function (a) {
+      sortTopics(a);
+  };
+
+  $scope.totalMessages = function (topic) {
+    if(topic.totalMessages == 0) return '0';
+    var sizes = ['', 'K', 'M', 'B', 'T', 'Quan', 'Quin'];
+    var i = +Math.floor(Math.log(topic.totalMessages) / Math.log(1000));
+    return (topic.totalMessages / Math.pow(1000, i)).toFixed(i ? 1 : 0) + sizes[i];
+  }
+
+  $scope.selectTopicList = function (displayingControlTopics) {
+    $scope.selectedTopics = $scope.topics.filter(function(el) {return el.isControlTopic == displayingControlTopics})
+  }
+
   $scope.listClick = function (topicName, isControlTopic) {
     var urlType = (isControlTopic == true) ? 'c' : 'n';
     $location.path("cluster/" + $scope.cluster.NAME + "/topic/" + urlType + "/" + topicName, false);
   }
 
+  $scope.allCols = [
+     {id: "topicName", label: "Topic name", selected: true},
+     {id: "totalMessages", label: "Total messages",selected: true},
+     {id: "replication", label: "Replication", selected: false},
+     {id: "partitions", label: "Partitions", selected: false},
+     {id: "unreplicatedPartitions", label: "Unreplicated partitions", selected: false},
+     {id: "retention", label: "Retention", selected: false},
+     {id: "brokersForTopic", label: "Brokers for topic", selected: false},
+     {id: "consumerGroups", label: "Consumer groups", selected: false},
+     {id: "keyType", label: "Key type", selected: true},
+     {id: "valueType", label: "Value type", selected: true},
+     {id: "customConfigs", label: "Custom configs", selected: true}];
+
+  $scope.selectedCols = {};
+
+  $scope.checkAndHide = function checkAndHide(name) {
+    if ($scope.selectedCols.searchText){
+        var showCol = $scope.selectedCols.searchText.some(function (selectedCols) {
+          return selectedCols === name;
+        });
+        return showCol
+    }
+  }
+
   function getLeftListTopics() {
     SummariesBackendFactory.getListInfo($scope.cluster.KAFKA_BACKEND.trim()).then(function (allData){
         $scope.topics = allData;
-        $scope.controlTopics = $scope.topics.filter(isControlTopic);
-        $scope.normalTopics = $scope.topics.filter(isNormalTopic);
+        $scope.selectedTopics = $scope.topics.filter(function(el) {return el.isControlTopic == false});
     }); // TODO error message?
-
-    //internal for the filters
-    function isControlTopic(value) { return value.isControlTopic;  }
-    function isNormalTopic(value) { return !isControlTopic(value); }
   }
+
+  function sortTopics(type) {
+      var reverse = 1;
+      if (type.indexOf('-') == 0) {
+        // remove the - symbol
+        type = type.substring(1, type.length);
+        reverse = -1;
+      }
+       console.log(type + " " + reverse);
+      $scope.selectedTopics = shortList.sortByKey($scope.selectedTopics, type, reverse);
+  }
+
+
 
   //TODO
   function shortenControlCenterName(topic) {

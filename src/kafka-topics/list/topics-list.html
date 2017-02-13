@@ -1,0 +1,63 @@
+<md-content>
+  <div layout="column">
+
+    <!-- 1. SEARCH TOPICS -->
+  <div>
+    <div style="display:inline-block;width:50%;">
+      <md-input-container class="md-block" style="margin:0;">
+        <label>Search topics:</label>
+        <input ng-model="search">
+      </md-input-container>
+    </div>
+    <div style="display:inline-block;float:right;margin-top: 7px;">Show/Hide columns:
+      <md-input-container style="width:200px;margin: -5px 0 0 5px;">
+        <md-select ng-model="selectedCols.searchText" multiple>
+          <md-option ng-value="col.id" ng-repeat="col in allCols" ng-selected="col.selected">{{col.label}}</md-option>
+        </md-select>
+      </md-input-container>
+    </div>
+  </div>
+    <!-- 2. TOPICS LIST TABLE-->
+    <div flex>
+      <table class="topics-table" md-table>
+        <thead  md-head md-order="query.order" md-on-reorder="logOrder">
+          <tr>
+            <th md-column md-order-by="topicName" ng-show="checkAndHide('topicName')">TOPIC NAME</th>
+            <th  md-column md-order-by="totalMessages" ng-show="checkAndHide('totalMessages')">TOTAL MESSAGES</th>
+            <th  md-column md-order-by="replication" ng-show="checkAndHide('replication')">REPLICATION</th>
+            <th  md-column md-order-by="partitions" ng-show="checkAndHide('partitions')">PARTITIONS</th>
+            <th  md-column md-order-by="unreplicatedPartitions" ng-show="checkAndHide('unreplicatedPartitions')">UNREPLICATED<br />PARTITIONS</th>
+            <th  md-column md-order-by="retention" ng-show="checkAndHide('retention')">RETENTION</th>
+            <th  md-column md-order-by="brokersForTopic" ng-show="checkAndHide('brokersForTopic')">BROKERS<br />FOR TOPIC</th>
+            <th  md-column md-order-by="offset" ng-show="checkAndHide('offset')">CONSUMER<br />GROUPS</th>
+            <th  md-column md-order-by="keyType" ng-show="checkAndHide('keyType')">KEY TYPE</th>
+            <th  md-column md-order-by="valueType" ng-show="checkAndHide('valueType')">VALUE TYPE</th>
+            <th md-column md-order-by="customConfig.length" ng-show="checkAndHide('customConfig')">CONFIGS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr dir-paginate="topic in selectedTopics| orderBy:query.order | filter: search | itemsPerPage:25"
+              pagination-id="topics"
+              ng-click="listClick(topic.topicName, displayingControlTopics)"
+              ng-class="{ 'selectedListItem': topic.topicName == topicName }">
+            <td ng-show="checkAndHide('topicName')">{{shortenControlCenterName(topic)}}</td>
+            <td  ng-show="checkAndHide('totalMessages')">{{totalMessages(topic)}}</td>
+            <td  ng-show="checkAndHide('replication')">{{topic.replication}}</td>
+            <td  ng-show="checkAndHide('partitions')">{{topic.partitions}}</td>
+            <td  ng-show="checkAndHide('unreplicatedPartitions')">{{topic.unreplicatedPartitions}}</td>
+            <td  ng-show="checkAndHide('retention')">{{topic.retention}}</td>
+            <td  ng-show="checkAndHide('brokersForTopic')">{{topic.brokersForTopic}}</td>
+            <td  ng-show="checkAndHide('consumerGroups')">{{topic.consumerGroups}}</td>
+            <td  ng-show="checkAndHide('keyType')"><span class="label-type label-type-{{topic.keyType}}" ng-if="topic.keyType != ''">{{topic.keyType}}</span></td>
+            <td  ng-show="checkAndHide('valueType')"><span class="label-type label-type-{{topic.valueType}}" ng-if="topic.valueType != ''">{{topic.valueType}}</span></td>
+            <td  ng-if="topic.customConfig.length > 0" ng-show="checkAndHide('customConfig')"><span>{{topic.customConfig.length}} configs changed</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div flex class="leftlistPagination">
+      <dir-pagination-controls pagination-id="topics" style="margin:0;"></dir-pagination-controls>
+    </div>
+  </div>
+
+</md-content>
