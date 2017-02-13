@@ -9,7 +9,7 @@
           <span ng-show="displayingControlTopics"><b>{{controlTopics.length}}</b> TOPICS</span>
         </h3>
         <span flex></span>
-        <md-switch style="font-size:14px"  class="md-icon-button" ng-model='displayingControlTopics' ng-change="selectTopicList()" aria-label="Show system topics">
+        <md-switch style="font-size:14px"  class="md-icon-button" ng-model='displayingControlTopics' ng-change="selectTopicList(displayingControlTopics)" aria-label="Show system topics">
           <div ng-if="displayingControlTopics"><b>System Topics</b></div>
           <div ng-if="!displayingControlTopics"><b>System Topics</b></div>
         </md-switch>

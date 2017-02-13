@@ -44,10 +44,24 @@ topicsListModule.factory('SummariesBackendFactory', function (HttpFactory) {
           return ((x < y) ? -1 * reverse : ((x > y) ? 1 * reverse : 0));
         });
     }
-
 });
 
-topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, SummariesBackendFactory) {
+topicsListModule.factory('shortList', function (HttpFactory) {
+  return {
+    sortByKey: function (array, key, reverse) {
+    return sortByKey(array, key, reverse);
+    }
+  }
+  function sortByKey(array, key, reverse) {
+    return array.sort(function (a, b) {
+      var x = a[key];
+      var y = b[key];
+      return ((x < y) ? -1 * reverse : ((x > y) ? 1 * reverse : 0));
+    });
+  }
+})
+
+topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, SummariesBackendFactory, shortList) {
 
   $scope.$watch(
     function () { return $scope.cluster; },
@@ -58,7 +72,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
     return shortenControlCenterName(topic);
   }
 
-  $scope.query = { order: 'totalMessages', limit: 100, page: 1 };
+  $scope.query = { order: '-totalMessages', limit: 100, page: 1 };
 
   // This one is called each time - the user clicks on an md-table header (applies sorting)
   $scope.logOrder = function (a) {
@@ -120,8 +134,9 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
         reverse = -1;
       }
        console.log(type + " " + reverse);
-      $scope.selectedTopics = SummariesBackendFactory.sortByKey($scope.selectedTopics, type, reverse);
+      $scope.selectedTopics = shortList.sortByKey($scope.selectedTopics, type, reverse);
   }
+
 
 
   //TODO
