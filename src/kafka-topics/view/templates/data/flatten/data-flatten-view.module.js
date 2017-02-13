@@ -67,7 +67,7 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, Flat
 
    $scope.$watch("data", function() {
         if($scope.data) {
-            flattenTable($scope.data); // because data is async/ly coming from an http call, we need to watch it, directive gets compiled from the beginning. 
+            flattenTable($scope.data); // because data is async/ly coming from an http call, we need to watch it, directive gets compiled from the beginning.
         }
    })
 
@@ -107,15 +107,8 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, Flat
       // $log.info("Ordering event " + a);
       sortTopic(a);
   };
-    //TODO ??? Same name??
-    // This one is called each time - the user clicks on an md-table header (applies sorting)
-    $scope.logOrder = function (a) {
-      $log.info("Ordering event " + a);
-      sortSchema(a);
-    };
-
   function flattenTable(rows) {
-
+console.log(rows)
           var extraColumnsNumberValue = 0;
           var extraColumnsNumberKey = 0;
           var rowWithMoreColumns;
@@ -126,7 +119,7 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, Flat
               angular.forEach(rows, function (row) {
                     if (row.key == undefined || row.key == null) row.key = '';
                     if (row.value == undefined || row.value == null) row.value = '';
-
+                    row.value=JSON.parse(row.value);
                     if(angular.isNumber(row.value) || angular.isString(row.value)) {
                           extraColumnsNumberValue = 0
                           extraColumnsNumberKey = 0
@@ -134,7 +127,7 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, Flat
                               "offset" : row.offset,
                               "partition" : row.partition,
                               "key" : row.key,
-                              "value" : 'value' +  row.value
+                              "value" : 'value' + row.value
                           }
                           $scope.flatColumns = Object.keys(FlatTableFactory.flattenObject(newRow));
                           $scope.keyFlatColumns = [];
@@ -188,18 +181,4 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, Flat
        $log.info(type + " " + reverse);
       $scope.flatRows = FlatTableFactory.sortByKey($scope.flatRows, type, reverse);
   }
-
-  function sortSchema(type) {
-      var reverse = 1;
-      if (type.indexOf('-') == 0) {
-        // remove the - symbol
-        type = type.substring(1, type.length);
-        reverse = -1;
-      }
-      // $log.info(type + " " + reverse);
-      $scope.rows = FlatTableFactory.sortByKey($scope.rows, type, reverse);
-  }
-
-
-
 });

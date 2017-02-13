@@ -14,32 +14,28 @@
             <i ng-show="showList" class="fa fa-arrow-circle-o-left" aria-hidden="true" style="color:#333"></i>
             <i ng-hide="showList" class="fa fa-bars" aria-hidden="true" style="color:#333"></i>
         </md-button>
-        <h4 style="font-size:16px;">
-            <span>{{topic.topicName}}</span>
-        </h4>
 
 
 
-        <!--<form ng-submit="$event.preventDefault()">-->
-            <!--<md-autocomplete style="width:300px"-->
-                    <!--md-selected-item="topic.topicName"-->
-                    <!--md-search-text-change=""-->
-                    <!--md-search-text=""-->
-                    <!--md-selected-item-change=""-->
-                    <!--md-items="item in ['1','2','3']"-->
-                    <!--md-item-text="item.display"-->
-                    <!--md-min-length="0">-->
-                <!--<md-item-template>-->
-                    <!--<span md-highlight-text="" md-highlight-flags="^i">{{topic.topicName}}</span>-->
-                <!--</md-item-template>-->
-                <!--<md-not-found>-->
-                    <!--No states matching "{{ctrl.searchText}}" were found.-->
-                <!--</md-not-found>-->
-            <!--</md-autocomplete>-->
-        <!--</form>-->
 
-
-
+        <form ng-submit="$event.preventDefault()" ng-show="allTopics.length > 0">
+            <md-autocomplete style="width:300px"
+                    md-selected-item=""
+                    md-search-text-change=""
+                    md-search-text="searchText"
+                    md-selected-item-change="goTo(item)"
+                    md-items="item in querySearch(searchText)"
+                    md-item-text="item.topicName"
+                    placeholder="{{topic.topicName}}"
+                    md-min-length="0">
+                <md-item-template>
+                    <span md-highlight-text="" md-highlight-flags="^i">{{item.topicName}}</span>
+                </md-item-template>
+                <md-not-found>
+                    No topics matching "{{searchText}}" were found.
+                </md-not-found>
+            </md-autocomplete>
+        </form>
         <span flex></span>
         <small style="color:#333;font-size:10px;">
             <span class="labelType label-type-{{topic.keyType}}"> {{topic.keyType}} </span> /

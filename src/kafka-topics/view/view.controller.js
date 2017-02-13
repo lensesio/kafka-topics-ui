@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $location, $http, KafkaRestProxyFactory, TopicFactory, charts) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $location, $http, KafkaRestProxyFactory, TopicFactory, charts, $q, $timeout ) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
 
@@ -13,7 +13,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
   TopicFactory.getTopicSummary(topicName, $scope.cluster.KAFKA_BACKEND)
   .then(function success(topic){
         $scope.topic = topic;
-        getTopicData(topicName, topic.valueType);
+        TopicFactory.getTopicData(topicName, $scope.cluster.KAFKA_BACKEND).then(function success(allData){
+          setTopicMessages(allData, $scope.topic.valueType)
+     });
   })
   .then(function () {
      TopicFactory.getChartData(topicName, $scope.cluster.KAFKA_BACKEND).then(function response(response){
@@ -24,11 +26,16 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
      });
   });
 
+    TopicFactory.getAllTopics($scope.cluster.KAFKA_BACKEND)
+    .then(function success(allTopics){
+      $scope.allTopics = allTopics;
+    });
+
 
 /*******************************
  * topic-toolbar.html
 ********************************/
- 
+
   $scope.showDownloadDiv = false;
   $scope.showList = true;
 
@@ -47,9 +54,38 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
   };
 
 /*******************************
+ * AUTO COMPLETE
+********************************/
+  $scope.simulateQuery = false;
+
+  $scope.querySearch = function querySearch (query) {
+    var results = query ? $scope.allTopics.filter( createFilterFor(query) ) : $scope.allTopics,
+        deferred;
+    if ($scope.simulateQuery) {
+      deferred = $q.defer();
+      $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
+      return deferred.promise;
+    } else {
+      return results;
+    }
+  }
+  $scope.goTo = function goTo (topic) {
+   var urlType = (topic.isControlTopic == true) ? 'c' : 'n';
+    $location.path ("cluster/"+ $scope.cluster.NAME + "/topic/" +  urlType + "/" + topic.topicName);
+  }
+  function createFilterFor(query) {
+    var lowercaseQuery = angular.lowercase(query);
+
+    return function filterFn(item) {
+      return (item.topicName.indexOf(lowercaseQuery) === 0);
+    };
+
+  }
+
+/*******************************
  * topic-configuration.html
 ********************************/
- 
+
   $scope.showMoreDesc = [];
 
   $scope.toggleMoreDesc = function (index) {
@@ -114,33 +150,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
 
   /****************** SUPER CLEAN UP REQUIRED HERE / STARTS (this is the only dep to KAFKA_REST) *****************/
   //If data is empty don't try to deserialize
-  function getTopicData(topicName, topicType) {
-
-        if ((topicType == "json") || (topicType == "binary") || (topicType == "avro")) {
-          KafkaRestProxyFactory.consumeKafkaRest(topicType, topicName).then(function (allData) {
-             setTopicMessages(allData, topicType);
-          }, function (error) { getDeserializationErrorMessage(error, topicType); });
-        } else {
-          // If we don't know we need to guess by trying Avro -> JSon -> Binary
-          KafkaRestProxyFactory.consumeKafkaRest("avro", topicName).then(
-             function (allData) {
-                if (JSON.stringify(allData).indexOf("error") > 0) {
-                  KafkaRestProxyFactory.consumeKafkaRest("json", topicName).then(
-                      function (allData) {
-                          if (JSON.stringify(allData).indexOf("error_code") > 0) {
-                            KafkaRestProxyFactory.consumeKafkaRest("binary", topicName).then(
-                              function (allData) { setTopicMessages(allData, 'binary'); },
-                              function (error) { getDeserializationErrorMessage(error, 'binary') });
-                          } else {
-                            setTopicMessages(allData, 'json');
-                          }
-                    }, function (error) { getDeserializationErrorMessage(error, 'json') });
-                } else {
-                  setTopicMessages(allData,'avro')
-                }
-          }, function (error) { getDeserializationErrorMessage(error, 'avro') });
-        }
-  }
 
   function setTopicMessages(allData, topicType) {
      $scope.rows = allData;
@@ -179,8 +188,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
   //      $scope.topic = mockedTopic;
 
 
-
-
 });
 
 angularAPP.factory('TopicFactory', function (HttpFactory) {
@@ -188,8 +195,14 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
           getTopicSummary: function (topicName, endpoint) {
              return HttpFactory.req('GET', endpoint  + '/topics/summary/' + topicName);
           },
+          getTopicData: function (topicName,  endpoint) {
+             return HttpFactory.req('GET', endpoint  + '/topics/data/' + topicName);
+          },
           getChartData: function(topicName, endpoint) {
             return HttpFactory.req('GET', endpoint + "/topics/chart/"+ topicName)
+          },
+          getAllTopics: function(endpoint) {
+            return HttpFactory.req('GET', endpoint + "/topics/summaries")
           }
     }
 });

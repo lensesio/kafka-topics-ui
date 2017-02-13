@@ -812,3 +812,6 @@ margin:3px 0;
 .vertical-mdl-tabs.mdl-tabs .mdl-tabs__tab {
     text-align: left;
 }
+
+/* md autocomplete bug fix */
+.md-scroll-mask {display:none;}
