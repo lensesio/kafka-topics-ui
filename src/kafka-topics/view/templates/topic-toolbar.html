@@ -22,6 +22,12 @@
         <i ng-show="showList" class="fa fa-arrow-circle-o-left" aria-hidden="true" style="color:#333"></i>
         <i ng-hide="showList" class="fa fa-bars" aria-hidden="true" style="color:#333"></i>
         </md-button>
-        {{cluster.NAME}}<span style="padding: 0px 10px; ">/</span> <a href="#/">topics</a> <span style="padding: 0px 10px; ">/</span> {{topic.topicName}}
+        {{cluster.NAME}}<span style="padding: 0px 10px; ">/</span>
+        <a href="#/">topics</a> <span style="padding: 0px 10px; ">/</span>
+        {{topic.topicName}}
+        <span ng-show="topic.totalMessages == 0" style="float:right; padding: 0px 15px; background:#fcf8e3;">
+            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+            This topic is empty.
+        </span>
     </md-content>
 </div>

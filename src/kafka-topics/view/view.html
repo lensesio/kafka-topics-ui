@@ -2,15 +2,12 @@
 
         <div flex="100">
              <div style="background-color:#F5F5F5;" ng-cloak>
-                 <!--2. SPINNER-->
+                 <!-- SPINNER -->
                  <md-progress-linear md-mode="indeterminate" ng-show="showSpinner"></md-progress-linear>
 
+                  <div layout="row" ng-hide="showSpinner" flex="100">
 
-
-              <!--3. LEFT MENU / TOPIC NAV-->
-              <div layout="row" ng-hide="showSpinner" flex="100">
-
-                        <!--220 doesnt work ?? -->
+                      <!-- LEFT MENU / TOPIC NAV-->
                       <div style="width:220px; z-index:0; background:#fff;box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);" ng-show="showList">
                              <md-content>
                                  <div layout="column">
@@ -61,20 +58,20 @@
 
                       <div  style="width:100%;">
 
-                          <!--1. TOOLBAR-->
+                          <!-- BREADCRUMBS -->
                           <div ng-include="'src/kafka-topics/view/templates/topic-toolbar.html'"></div>
 
+                          <!-- ACTUAL VIEW -->
+                          <div  style="width:100%; margin-top:8px">
 
-                            <div  style="width:100%; margin-top:8px">
-                          <div ng-if="selectedMenuItem == 'data'"
+                             <div ng-if="selectedMenuItem == 'data'"
                                   ng-include="'src/kafka-topics/view/templates/topic-data.html'"
                                   ng-hide="topic.totalMessages == 0"></div>
 
-                             <!-- 4.1 EMPTY TOPIC MESSAGE -->
-                             <div ng-show="topic.totalMessages == 0 && selectedMenuItem == 'data'" layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;">
+                             <!-- EMPTY TOPIC MESSAGE -->
+                             <div ng-show="topic.totalMessages == 0 && selectedMenuItem == 'data'" layout="row" layout-align="start center" style="margin:10px;padding:10px;">
                                  <div style="color:#333;">
-                                     <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                                     This topic is empty.
+                                    0 Messages
                                  </div>
                              </div>
 
