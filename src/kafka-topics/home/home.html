@@ -9,14 +9,13 @@
           <span ng-show="displayingControlTopics"><b>{{controlTopics.length}}</b> TOPICS</span>
         </h3>
         <span flex></span>
-        <md-switch style="font-size:14px"  class="md-icon-button" ng-model='displayingControlTopics' aria-label="Show system topics" >
-        <div ng-if="displayingControlTopics"><b>System Topics</b></div>
-        <div ng-if="!displayingControlTopics"><b>System Topics</b></div>
+        <md-switch style="font-size:14px"  class="md-icon-button" ng-model='displayingControlTopics' ng-change="selectTopicList()" aria-label="Show system topics">
+          <div ng-if="displayingControlTopics"><b>System Topics</b></div>
+          <div ng-if="!displayingControlTopics"><b>System Topics</b></div>
         </md-switch>
       </div>
     </md-toolbar>
-      <topics-list mode="normal" ng-show="!displayingControlTopics" cluster="{{cluster}}"></topics-list>
-      <topics-list mode="system" ng-show="displayingControlTopics" cluster="{{cluster}}"></topics-list>
+      <topics-list mode="home"></topics-list>
   </md-card>
 
   <!--2. DASHBOARD STUFF-->

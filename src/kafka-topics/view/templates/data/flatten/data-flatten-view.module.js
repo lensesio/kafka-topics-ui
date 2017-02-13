@@ -197,7 +197,7 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, Flat
         reverse = -1;
       }
       // $log.info(type + " " + reverse);
-      $scope.rows = FlatTableFactory.sortByKey($scope.rows, type, reverse);
+      $scope.flatRows = FlatTableFactory.sortByKey($scope.flatRows, type, reverse);
   }
 
 
