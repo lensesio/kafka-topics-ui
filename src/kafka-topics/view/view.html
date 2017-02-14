@@ -1,54 +1,54 @@
 <div layout="row"  layout-sm="column" layout-xs="column">
 
-        <!--<div style="width:220px; z-index:0; background:#fff;box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);" ng-show="showList">-->
-            <!--<topics-list mode="compact" cluster="{{cluster}}"></topics-list>-->
-        <!--</div>-->
-
         <div flex="100">
              <div style="background-color:#F5F5F5;" ng-cloak>
-              <!--1. TOOLBAR-->
-              <div ng-include="'src/kafka-topics/view/templates/topic-toolbar.html'"></div>
+                 <!-- SPINNER -->
+                 <md-progress-linear md-mode="indeterminate" ng-show="showSpinner"></md-progress-linear>
 
-              <!--2. LOADER-->
-              <md-progress-linear md-mode="indeterminate" ng-show="showSpinner"></md-progress-linear>
+                  <div layout="row" ng-hide="showSpinner" flex="100">
 
-                 <div layout="row" ng-hide="showSpinner">
-
-                        <!--220 doesnt work ?? -->
-                      <div style="width:260px; z-index:0; background:#fff;box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);" ng-show="showList">
+                      <!-- LEFT MENU / TOPIC NAV-->
+                      <div style="width:220px; z-index:0; background:#fff;box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);" ng-show="showList">
                              <md-content>
                                  <div layout="column">
+
                                      <div flex style="height:1200px; border-top: 1px solid #F1F1F1">
-                                         <md-list flex style="color:#333; padding-top:0px">
-                                             <!--<md-list-item ng-click="setMenuSelection('real-time')">-->
-                                                 <!--<div class="md-list-item-text" layout="column">-->
-                                                     <!--<h5><i class="fa fa-refresh" aria-hidden="true"></i> Real Time</h5>-->
-                                                 <!--</div>-->
-                                             <!--</md-list-item>-->
-                                             <md-list-item class="md-3-line" ng-click="setMenuSelection('data', cluster)" ng-class="{ 'selectedListItem': selectedMenuItem == 'data' }">
-                                                 <div class="md-list-item-text" layout="column" style="text-align: center; color:rgba(0,0,0,0.54);">
-                                                     <h4><i class="fa fa-table" aria-hidden="true" style="margin-bottom:5px;"></i><br>DATA</h4>
-                                                 </div>
+                                         <md-list flex style=" padding-top:0px; font-size:14px;width:220px;">
+                                             <!--TODO: Add real time & schemas-->
+                                             <!--<md-subheader class="md-no-sticky">Data</md-subheader>-->
+                                             <md-list-item ng-click="setMenuSelection('overview', cluster)" ng-class="{ 'selectedListItem': selectedMenuItem == 'overview' }">
+                                                 <p><i class="fa fa-table" aria-hidden="true" style="margin-right:5px;"></i>OVERVIEW</p>
                                              </md-list-item>
-                                             <md-list-item class="md-3-line" ng-click="setMenuSelection('partitions', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'partitions' }">
-                                                 <div class="md-list-item-text" layout="column" style="text-align: center; color:rgba(0,0,0,0.54);">
-                                                     <h5><i class="fa fa-bar-chart" aria-hidden="true" style="margin-bottom:5px;"></i><br>PARTITIONS</h5>
-                                                 </div>
+                                             <md-divider></md-divider>
+                                             <md-list-item ng-click="setMenuSelection('realtime', cluster)" ng-class="{ 'selectedListItem': selectedMenuItem == 'realtime' }">
+                                                 <p><i class="fa fa-table" aria-hidden="true" style="margin-right:5px;"></i>REAL TIME</p>
                                              </md-list-item>
-                                             <md-list-item class="md-3-line" ng-click="setMenuSelection('configuration', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'configuration' }">
-                                                 <div class="md-list-item-text" layout="column" style="text-align: center; color:rgba(0,0,0,0.54);">
-                                                     <h5><i class="fa fa-wrench" aria-hidden="true"style="margin-bottom:5px;"></i><br>CONFIGURATION</h5>
-                                                 </div>
+                                             <md-list-item ng-click="setMenuSelection('data', cluster)" ng-class="{ 'selectedListItem': selectedMenuItem == 'data' }">
+                                                     <p><i class="fa fa-table" aria-hidden="true" style="margin-right:5px;"></i>DATA</p>
                                              </md-list-item>
-                                             <md-list-item class="md-3-line" ng-click="setMenuSelection('metrics', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'metrics' }">
-                                                 <div class="md-list-item-text" layout="column" style="text-align: center; color:rgba(0,0,0,0.54);">
-                                                     <h5><i class="fa fa-line-chart" aria-hidden="true"style="margin-bottom:5px;"></i><br>METRICS</h5>
-                                                 </div>
+                                             <md-divider></md-divider>
+                                             <!--<md-subheader class="md-no-sticky"><i>Topic Configs</i></md-subheader>-->
+                                             <md-list-item ng-click="setMenuSelection('partitions', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'partitions' }">
+                                                     <p><i class="fa fa-bar-chart" aria-hidden="true" style="margin-right:5px;"></i>PARTITIONS</p>
+                                                     <span class="labelTypeSm label-type-null"> 50 </span>
                                              </md-list-item>
-                                             <md-list-item class="md-3-line" ng-click="setMenuSelection('consumers', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'consumers' }">
-                                                 <div class="md-list-item-text" layout="column" style="text-align: center; color:rgba(0,0,0,0.54);">
-                                                     <h5><i class="fa  fa-info-circle" aria-hidden="true"style="margin-bottom:5px;"></i><br>CONSUMERS</h5>
-                                                 </div>
+                                             <md-list-item  ng-click="setMenuSelection('configuration', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'configuration' }">
+                                                     <p><i class="fa fa-wrench" aria-hidden="true" style="margin-right:5px;"></i>CONFIGURATION</p>
+                                                     <span class="labelTypeSm label-type-null"> 3 </span>
+                                             </md-list-item>
+                                             <md-list-item ng-click="setMenuSelection('schemas', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'schemas' }">
+                                                 <p><i class="fa  fa-info-circle" aria-hidden="true" style="margin-right:5px;"></i> SCHEMAS</p>
+                                             </md-list-item>
+                                             <md-divider></md-divider>
+                                             <md-list-item ng-click="setMenuSelection('consumers', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'consumers' }">
+                                                 <p><i class="fa  fa-info-circle" aria-hidden="true" style="margin-right:5px;"></i> CONSUMERS</p>
+                                                 <span class="labelTypeSm label-type-null"> 3 </span>
+                                             </md-list-item>
+                                             <md-list-item ng-click="setMenuSelection('metrics', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'metrics' }">
+                                                 <p><i class="fa fa-line-chart" aria-hidden="true" style="margin-right:5px;"></i>METRICS</p>
+                                             </md-list-item>
+                                             <md-list-item ng-click="setMenuSelection('historylog', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'historylog' }">
+                                                 <p><i class="fa  fa-info-circle" aria-hidden="true" style="margin-right:5px;"></i> HISTORY LOG</p>
                                              </md-list-item>
                                          </md-list>
                                      </div>
@@ -56,58 +56,34 @@
                              </md-content>
                          </div>
 
-                         <!--3. TOPIC NAV  -->
-                     <div  style="width:100%; margin-top:8px">
+                      <div  style="width:100%;">
 
-                         <div ng-if="selectedMenuItem == 'data'"
-                              ng-include="'src/kafka-topics/view/templates/topic-data.html'"
-                              ng-hide="topic.totalMessages == 0"></div>
+                          <!-- BREADCRUMBS -->
+                          <div ng-include="'src/kafka-topics/view/templates/topic-toolbar.html'"></div>
 
-                         <!-- 4.1 EMPTY TOPIC MESSAGE -->
-                         <div ng-show="topic.totalMessages == 0 && selectedMenuItem == 'data'" layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;">
-                             <div style="color:#333;">
-                                 <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                                 This topic is empty.
+                          <!-- ACTUAL VIEW -->
+                          <div  style="width:100%; margin-top:8px">
+
+                             <div ng-if="selectedMenuItem == 'data'"
+                                  ng-include="'src/kafka-topics/view/templates/topic-data.html'"
+                                  ng-hide="topic.totalMessages == 0"></div>
+
+                             <!-- EMPTY TOPIC MESSAGE / TODO put me on data -->
+                             <div ng-show="topic.totalMessages == 0 && selectedMenuItem == 'data'" layout="row" layout-align="center center" style="margin-top:30px;font-weight:400">
+                                   There are no messages in this topic.
                              </div>
-                         </div>
 
-                         <div ng-show="selectedMenuItem == 'partitions'" ng-include="'src/kafka-topics/view/templates/topic-analytics.html'" layout-margin></div>
+                             <div ng-show="selectedMenuItem == 'overview'" ng-include="'src/kafka-topics/view/templates/topic-overview.html'" layout-margin></div>
 
-                         <div ng-show="selectedMenuItem == 'configuration'" ng-include="'src/kafka-topics/view/templates/topic-configuration.html'" layout-margin></div>
+                             <div ng-show="selectedMenuItem == 'partitions'" ng-include="'src/kafka-topics/view/templates/topic-partitions.html'" layout-margin></div>
 
-                         <div ng-show="selectedMenuItem == 'metrics'" ng-include="'src/kafka-topics/view/templates/topic-metrics.html'" layout-margin></div>
+                             <div ng-show="selectedMenuItem == 'configuration'" ng-include="'src/kafka-topics/view/templates/topic-configuration.html'" layout-margin></div>
 
-                         <div ng-show="selectedMenuItem == 'consumers'" ng-include="'src/kafka-topics/view/templates/topic-consumers.html'" layout-margin></div>
+                             <div ng-show="selectedMenuItem == 'metrics'" ng-include="'src/kafka-topics/view/templates/topic-metrics.html'" layout-margin></div>
 
-
-                         <!--<md-tabs md-stretch-tabs="always" ng-hide="showSpinner" ng-cloak>-->
-
-                              <!--&lt;!&ndash;DATA&ndash;&gt;-->
-                              <!--<md-tab label="Data" md-dynamic-height md-border-botto md-dynamic-height="true" md-border-bottom>-->
-                                <!--<div ng-include="'src/kafka-topics/view/templates/topic-data.html'"-->
-                                     <!--ng-hide="topic.totalMessages == 0"></div>-->
-
-                              <!--&lt;!&ndash; 4.1 EMPTY TOPIC MESSAGE &ndash;&gt;-->
-                              <!--<div layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;" ng-show="topic.totalMessages == 0">-->
-                                  <!--<div style="color:#333;">-->
-                                      <!--<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>-->
-                                      <!--This topic is empty.-->
-                                  <!--</div>-->
-                              <!--</div>-->
-                              <!--</md-tab>-->
-
-                              <!--&lt;!&ndash;ANALYTICS&ndash;&gt;-->
-                              <!--<md-tab label="Analytics"  md-dynamic-height md-border-botto md-dynamic-height="true" md-border-bottom>-->
-                                        <!--<div ng-include="'src/kafka-topics/view/templates/topic-analytics.html'" layout-margin></div>-->
-                              <!--</md-tab>-->
-
-                              <!--&lt;!&ndash;CONFIGURATION&ndash;&gt;-->
-                              <!--<md-tab label="Configuration"  md-dynamic-height md-border-botto md-dynamic-height="true" md-border-bottom>-->
-                                    <!--<div ng-include="'src/kafka-topics/view/templates/topic-configuration.html'" layout-margin></div>-->
-                              <!--</md-tab>-->
-
-                      <!--</md-tabs>-->
-                     </div>
+                             <div ng-show="selectedMenuItem == 'consumers'" ng-include="'src/kafka-topics/view/templates/topic-consumers.html'" layout-margin></div>
+                            </div>
+                        </div>
                  </div>
             </div>
         </div>

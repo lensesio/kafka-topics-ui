@@ -1,83 +1,33 @@
-<!--
-    topic                    > Object
-
-    showList                 > State
-    showDownloadDiv          > State
-
-    toggleList()             > Function
-    downloadData(topicName)  > Function
--->
-
-<md-toolbar class="md-hue-2" style="background-color:#fff;color:#333">
-    <div class="md-toolbar-tools">
-        <md-button ng-click="toggleList()">
-            <i ng-show="showList" class="fa fa-arrow-circle-o-left" aria-hidden="true" style="color:#333"></i>
-            <i ng-hide="showList" class="fa fa-bars" aria-hidden="true" style="color:#333"></i>
-        </md-button>
-        <h4 style="font-size:16px;">
-            <span>{{topic.topicName}}</span>
-        </h4>
-
-
-
-        <!--<form ng-submit="$event.preventDefault()">-->
-            <!--<md-autocomplete style="width:300px"-->
-                    <!--md-selected-item="topic.topicName"-->
-                    <!--md-search-text-change=""-->
-                    <!--md-search-text=""-->
-                    <!--md-selected-item-change=""-->
-                    <!--md-items="item in ['1','2','3']"-->
-                    <!--md-item-text="item.display"-->
-                    <!--md-min-length="0">-->
-                <!--<md-item-template>-->
-                    <!--<span md-highlight-text="" md-highlight-flags="^i">{{topic.topicName}}</span>-->
-                <!--</md-item-template>-->
-                <!--<md-not-found>-->
-                    <!--No states matching "{{ctrl.searchText}}" were found.-->
-                <!--</md-not-found>-->
-            <!--</md-autocomplete>-->
-        <!--</form>-->
-
-
-
-        <span flex></span>
-        <small style="color:#333;font-size:10px;">
-            <span class="labelType label-type-{{topic.keyType}}"> {{topic.keyType}} </span> /
-            <span class="labelType label-type-{{topic.valueType}}"> {{topic.valueType}} </span> </small>
-
-        <!--<md-button-->
-                <!--ng-hide="topic.totalMessages == 0"-->
-                <!--ng-click="showDownloadDiv = !showDownloadDiv"-->
-                <!--aria-label="Download data"-->
-                <!--aria-hidden="false">-->
-            <!--<i class="fa fa-download" ng-show="!showDownloadDiv" aria-hidden="true" style="color:#333"></i>-->
-            <!--<i class="fa fa-close" ng-show="showDownloadDiv" aria-hidden="true" style="color:#333"></i>-->
+<!--<md-toolbar class="md-hue-2" style="background-color:#fff;color:#333">-->
+    <!--<div class="md-toolbar-tools">-->
+        <!--<md-button ng-click="toggleList()">-->
+            <!--<i ng-show="showList" class="fa fa-arrow-circle-o-left" aria-hidden="true" style="color:#333"></i>-->
+            <!--<i ng-hide="showList" class="fa fa-bars" aria-hidden="true" style="color:#333"></i>-->
         <!--</md-button>-->
-    </div>
+        <!--<h4 style="font-size:16px;">-->
+            <!--<span>{{topic.topicName}}</span>-->
+        <!--</h4>-->
 
-    <!--<div class="downloadDiv" ng-show="showDownloadDiv">-->
-        <!--<h4>Download Options</h4>-->
-        <!--<ul>-->
-            <!--<li>-->
-                <!--<div class="checkbox checkbox-info">-->
-                    <!--<input id="checkbox1" type="checkbox" checked="checked" class="fxhdr">-->
-                    <!--<label for="checkbox1">Download Avro encoded file</label>-->
-                <!--</div>-->
-            <!--</li>-->
-            <!--<li>-->
-                <!--<div class="checkbox checkbox-success">-->
-                    <!--<input id="checkbox4" type="checkbox" class="open-close">-->
-                    <!--<label for="checkbox4"> Download only filtered data</label>-->
-                <!--</div>-->
-            <!--</li>-->
-        <!--</ul>-->
-        <!--<md-button style="float:right"  download="true"-->
-                   <!--ng-click="downloadData(topic.topicName, rows)"-->
-                   <!--aria-label="Download data"-->
-                   <!--aria-hidden="false">-->
-            <!--<i class="fa fa-download" aria-hidden="true" style="color:#333"></i>-->
-        <!--</md-button>-->
+        <!--<span flex></span>-->
+        <!--<small style="color:#333;font-size:10px;">-->
+            <!--<span class="labelType label-type-{{topic.keyType}}"> {{topic.keyType}} </span> /-->
+            <!--<span class="labelType label-type-{{topic.valueType}}"> {{topic.valueType}} </span> </small>-->
 
     <!--</div>-->
+<!--</md-toolbar>-->
 
-</md-toolbar>
+<div layout="row" flex="100" style="min-height:34px; line-height:33px">
+    <md-content flex layout-padding style="border-bottom: 1px solid rgba(0,0,0,0.12);">
+        <md-button ng-click="toggleList()" style="margin:0px; line-height:0; min-height:0px;">
+        <i ng-show="showList" class="fa fa-arrow-circle-o-left" aria-hidden="true" style="color:#333"></i>
+        <i ng-hide="showList" class="fa fa-bars" aria-hidden="true" style="color:#333"></i>
+        </md-button>
+        {{cluster.NAME}}<span style="padding: 0px 10px; ">/</span>
+        <a href="#/">topics</a> <span style="padding: 0px 10px; ">/</span>
+        {{topic.topicName}}
+        <span ng-show="topic.totalMessages == 0" style="float:right; padding: 0px 15px; background:#fcf8e3;">
+            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+            This topic is empty.
+        </span>
+    </md-content>
+</div>

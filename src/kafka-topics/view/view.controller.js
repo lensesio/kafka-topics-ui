@@ -99,7 +99,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
     }
   }
 
-  $scope.selectedMenuItem = (topicMenuItem != undefined) ? topicMenuItem : 'data';
+  $scope.selectedMenuItem = (topicMenuItem != undefined) ? topicMenuItem : 'overview';
 
   $scope.setMenuSelection = function(currentMenuItem, cluster) {
         $scope.selectedMenuItem = currentMenuItem;

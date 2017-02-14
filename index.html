@@ -9,11 +9,15 @@
   <meta name="author" content="Landoop Team">
   <link rel="shortcut icon" href="src/assets/icons/favicon.png">
 
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <!--<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">-->
   <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
   <link rel="stylesheet" href="bower_components/angular-material-data-table/dist/md-data-table.min.css">
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.min.css">
+
+  <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
+
   <link rel="stylesheet" href="src/assets/css/styles.css">
 </head>
 
@@ -22,8 +26,8 @@
 <header class="header" style="background:{{cluster.COLOR}}">
   <div layout="row" layout-xs="column">
     <div class="top-left-part">
-      <h5 style="padding-top:10px;">
-        <a href="{{cluster ? '#/cluster/'+cluster.NAME : '#/'}}" style="color:#fff; text-decoration:none;">KAFKA TOPICS</a>
+      <h5 style="padding-top:20px;">
+        <a href="{{cluster ? '#/cluster/'+cluster.NAME : '#/'}}" style="color:#fff; text-decoration:none; font-weight: bold;">KAFKA TOPICS</a>
       </h5>
     </div>
     <span flex></span>

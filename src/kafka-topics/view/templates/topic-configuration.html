@@ -5,7 +5,7 @@
  -->
 
 
-    <md-content style="padding:10px;">
+    <md-content style="padding:10px;" ng-if ="topic.customConfig">
 
         <p style="color: #797979;padding-left:10px;" ng-if="topic.customConfig.length > 1"><b>
             Total configurations: {{topic.customConfig.length}}
@@ -45,12 +45,9 @@
           </tr>
           </tbody>
           </table>
-        <div class="container-fluid-centered ng-scope" ng-if ="!topic.customConfig">
-            <div class="row-fluid">
-                <div class="centering text-center">
-                  This topic retains the default configuration
-                </div>
-            </div>
-        </div>
+
     </md-content>
 
+ <div ng-if ="!topic.customConfig" layout="row" layout-align="center center" style="margin-top:30px; font-weight: 400">
+     This topic retains the default configuration.
+ </div>
