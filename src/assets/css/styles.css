@@ -5,13 +5,13 @@ html, body {
     background-color: #F5F5F5;
         font-family: "Lato";
         font-weight: 300;
+        color:rgba(21, 31, 39, 0.81);
 }
 
 /* Titles */
 h1, h2, h3, h4, h5, h6 {
     font-family: "Raleway";
     font-weight: 300;
-    color: #333;
     margin-top: 0px;
     padding-top:0px;
 }
@@ -510,11 +510,11 @@ table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
 .topics-table {
     background-color:transparent;
     width:100%;
-    color: #797979;
+    color: rgba(21, 31, 39, 0.81);
     margin-top: 20px;
 }
 
-.topics-table tbody { color: #797979; }
+.topics-table tbody { color: rgba(21, 31, 39, 0.81); font-weight: 400 }
 .topics-table tbody tr:nth-child(odd) { background-color:transparent; }
 .topics-table tbody tr:nth-child(even) { background-color:transparent; }
 .topics-table tr td { padding: 10px 8px; border-top: 1px solid #e4e7ea; line-height: 1.42857143; vertical-align: top; font-size: 14px;}

@@ -65,7 +65,7 @@
                         <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">Consumers</div>
                     </div>
 
-                    <div flex style="font-size: 40px; font-weight: 100;text-align:right; vertical-align: middle; padding-top:15px;">{{topic.consumers ? topic.consumers : 0}}</div>
+                    <div flex style="font-size: 40px; font-weight: 100;text-align:right; vertical-align: middle; padding-top:15px;">{{topic.consumers.length ? topic.consumers.length : 0}}</div>
                 </div>
                 <div class="progress" style="margin-top:5px;">
                     <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"> <span class="sr-only"></span> </div>
@@ -82,7 +82,7 @@
         <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">HISTORY LOG</div>
             <md-list flex>
                 <md-list-item class="md-3-line">
-                    <i class="fa fa-shopping-basket md-avatar"  style="font-size:30px; font-weight:100; color: rgba(81, 98, 114, 0.79);;" aria-hidden="true"></i>
+                    <i class="fa fa-shopping-basket md-avatar"  style="font-size:30px; font-weight:100; color: rgba(81, 98, 114, 0.79);" aria-hidden="true"></i>
                     <div class="md-list-item-text" layout="column">
                         <h3>New Consumer</h3>
                         <h4>lorem spectrum...</h4>
@@ -90,7 +90,7 @@
                     </div>
                 </md-list-item>
                 <md-list-item class="md-3-line">
-                    <i class="fa fa-pie-chart md-avatar"  style="font-size:30px; font-weight:100; color: rgba(81, 98, 114, 0.79);;" aria-hidden="true"></i>
+                    <i class="fa fa-pie-chart md-avatar"  style="font-size:30px; font-weight:100; color: rgba(81, 98, 114, 0.79);" aria-hidden="true"></i>
                     <div class="md-list-item-text" layout="column">
                         <h3>Partition Rebalance</h3>
                         <h4>lorem spectrum...</h4>
@@ -98,7 +98,7 @@
                     </div>
                 </md-list-item>
                 <md-list-item class="md-3-line">
-                    <i class="fa fa-file-text-o md-avatar"  style="font-size:30px; font-weight:100; color: rgba(81, 98, 114, 0.79);;" aria-hidden="true"></i>
+                    <i class="fa fa-file-text-o md-avatar"  style="font-size:30px; font-weight:100; color: rgba(81, 98, 114, 0.79);" aria-hidden="true"></i>
                     <div class="md-list-item-text" layout="column">
                         <h3>Schema Evolution</h3>
                         <h4>lorem spectrum...</h4>
@@ -106,23 +106,7 @@
                     </div>
                 </md-list-item>
                 <md-list-item class="md-3-line">
-                    <i class="fa fa-file-text-o md-avatar"  style="font-size:30px; font-weight:100; color: rgba(81, 98, 114, 0.79);;" aria-hidden="true"></i>
-                    <div class="md-list-item-text" layout="column">
-                        <h3>Schema Creation</h3>
-                        <h4>lorem spectrum...</h4>
-                        <p>3 days ago</p>
-                    </div>
-                </md-list-item>
-                <md-list-item class="md-3-line">
-                    <i class="fa fa-cogs md-avatar"  style="font-size:30px; font-weight:100; color: rgba(81, 98, 114, 0.79);;" aria-hidden="true"></i>
-                    <div class="md-list-item-text" layout="column">
-                        <h3>Configuration update</h3>
-                        <h4>lorem spectrum...</h4>
-                        <p>1 month ago</p>
-                    </div>
-                </md-list-item>
-                <md-list-item class="md-3-line">
-                    <i class="fa fa-cogs md-avatar"  style="font-size:30px; font-weight:100; color: rgba(81, 98, 114, 0.79);;" aria-hidden="true"></i>
+                    <i class="fa fa-cogs md-avatar"  style="font-size:30px; font-weight:100; color: rgba(81, 98, 114, 0.79);" aria-hidden="true"></i>
                     <div class="md-list-item-text" layout="column">
                         <h3>Configuration update</h3>
                         <h4>lorem spectrum...</h4>
@@ -139,18 +123,20 @@
     <md-content flex layout-padding style="margin-bottom:8px">
         <div layout="column">
             <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">Schemas</div>
-            <div layout="column">
-                <p>KEY TYPE: <span> {{topic.keyType}} </span></p>
-                <!--<p>KEY TYPE: <span class="labelType label-type-{{topic.keyType}}"> {{topic.keyType}} </span></p>-->
-                <p>VALUE TYPE: <span> {{topic.valueType}} </span></p>
-                <!--<p>VALUE TYPE: <span class="labelType label-type-{{topic.valueType}}"> {{topic.valueType}} </span></p>-->
+            <div layout="row" layout-align="center center">
+                <div>
+                    <p style="text-align:center">Key type </p>
+                    <span class="labelType label-type-{{topic.keyType}}"> {{topic.keyType}} </span>
+                </div>
+                <div style="border-left: 1px solid rgba(120,130,140,.13);">
+                    <p style="text-align:center">Value type </p>
+                    <span class="labelType label-type-{{topic.keyType}}"> {{topic.valueType}} </span>
+                </div>
             </div>
         </div>
     </md-content>
     <md-content flex layout-padding >
-
-    <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">METRICS AVG</div>
-
-</md-content>
-</div>
+        <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">METRICS AVG</div>
+    </md-content>
+    </md-content>
 </div>

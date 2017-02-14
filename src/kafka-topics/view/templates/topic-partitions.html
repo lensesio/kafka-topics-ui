@@ -1,29 +1,21 @@
-<md-content style="padding:10px;">
+   <h3 style="padding: 10px 0px">Partitions</h3>
 
-    <p style="color: #797979;padding-left:10px;"><b>
-    Total messages in topic: {{topic.totalMessages}} ,
-
-    Total number of Partitions: {{topic.partitions}}
-    </b></p>
-
-
-
-
-    <table class="topics-table" flex="80" style="margin-left:10px;">
-
-        <tbody>
-
-        <tr><td >Replication:</td><td>{{topic.replication}}</td>
-           <td>Partitions:</td><td>{{topic.partitions}}</td>
-          <td>Brokers for Topic:</td><td>xxx</td>
-         <td>Undereplicated partitions:</td><td>xxx</td> </tr>
-        </tr>
-        </tbody>
-    </table>
-
-    <div id="treemap" style="width:80%; height:250px; text-align:center" ng-if="topic.partitions > 1"></div>
+    <md-content flex="100" style="padding:10px">
+        <table class="topics-table" style="padding-top:0px; margin-top:0px">
+            <tr>
+                <td style="border:0px;" flex>TOTAL PARTITIONS:<span style="margin-left:20px"> {{topic.partitions}}</span></td>
+                <td style="border:0px;">REPLICATION: <span style="margin-left:20px">{{topic.replication}}</span></td>
+            </tr>
+            <tr>
+                <td>UNREPLICATED PARTITIONS:<span style="margin-left:20px">xx</span></td>
+                <td>TOPIC BROKERS: <span style="margin-left:20px">xx</span></td>
+            </tr>
+        </table>
+    </md-content>
 
 
+<md-content layout="column" style="padding:10px;">
+        <div id="treemap" style="width:80%; height:250px; text-align:center" ng-if="topic.partitions > 1"></div>
     <table class="topics-table">
         <thead>
         <tr>

@@ -13,7 +13,7 @@
                                  <div layout="column">
 
                                      <div flex style="height:1200px; border-top: 1px solid #F1F1F1">
-                                         <md-list flex style="color:#333; padding-top:0px; color:rgba(0,0,0,0.54); font-size:14px;width:220px;">
+                                         <md-list flex style=" padding-top:0px; font-size:14px;width:220px;">
                                              <!--TODO: Add real time & schemas-->
                                              <!--<md-subheader class="md-no-sticky">Data</md-subheader>-->
                                              <md-list-item ng-click="setMenuSelection('overview', cluster)" ng-class="{ 'selectedListItem': selectedMenuItem == 'overview' }">
@@ -24,7 +24,7 @@
                                                  <p><i class="fa fa-table" aria-hidden="true" style="margin-right:5px;"></i>REAL TIME</p>
                                              </md-list-item>
                                              <md-list-item ng-click="setMenuSelection('data', cluster)" ng-class="{ 'selectedListItem': selectedMenuItem == 'data' }">
-                                                     <p><i class="fa fa-table" aria-hidden="true" style="margin-right:5px;"></i>DATA SAMPLES</p>
+                                                     <p><i class="fa fa-table" aria-hidden="true" style="margin-right:5px;"></i>DATA</p>
                                              </md-list-item>
                                              <md-divider></md-divider>
                                              <!--<md-subheader class="md-no-sticky"><i>Topic Configs</i></md-subheader>-->
@@ -68,16 +68,14 @@
                                   ng-include="'src/kafka-topics/view/templates/topic-data.html'"
                                   ng-hide="topic.totalMessages == 0"></div>
 
-                             <!-- EMPTY TOPIC MESSAGE -->
-                             <div ng-show="topic.totalMessages == 0 && selectedMenuItem == 'data'" layout="row" layout-align="start center" style="margin:10px;padding:10px;">
-                                 <div style="color:#333;">
-                                    0 Messages
-                                 </div>
+                             <!-- EMPTY TOPIC MESSAGE / TODO put me on data -->
+                             <div ng-show="topic.totalMessages == 0 && selectedMenuItem == 'data'" layout="row" layout-align="center center" style="margin-top:30px;font-weight:400">
+                                   There are no messages in this topic.
                              </div>
 
                              <div ng-show="selectedMenuItem == 'overview'" ng-include="'src/kafka-topics/view/templates/topic-overview.html'" layout-margin></div>
 
-                             <div ng-show="selectedMenuItem == 'partitions'" ng-include="'src/kafka-topics/view/templates/topic-analytics.html'" layout-margin></div>
+                             <div ng-show="selectedMenuItem == 'partitions'" ng-include="'src/kafka-topics/view/templates/topic-partitions.html'" layout-margin></div>
 
                              <div ng-show="selectedMenuItem == 'configuration'" ng-include="'src/kafka-topics/view/templates/topic-configuration.html'" layout-margin></div>
 
