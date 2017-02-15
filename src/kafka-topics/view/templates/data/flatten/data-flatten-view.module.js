@@ -67,7 +67,7 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, Flat
 
    $scope.$watch("data", function() {
         if($scope.data) {
-            flattenTable($scope.data); // because data is async/ly coming from an http call, we need to watch it, directive gets compiled from the beginning. 
+            flattenTable($scope.data); // because data is async/ly coming from an http call, we need to watch it, directive gets compiled from the beginning.
         }
    })
 
@@ -107,13 +107,6 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, Flat
       // $log.info("Ordering event " + a);
       sortTopic(a);
   };
-    //TODO ??? Same name??
-    // This one is called each time - the user clicks on an md-table header (applies sorting)
-    $scope.logOrder = function (a) {
-      $log.info("Ordering event " + a);
-      sortSchema(a);
-    };
-
   function flattenTable(rows) {
 
           var extraColumnsNumberValue = 0;
@@ -188,18 +181,5 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, Flat
        $log.info(type + " " + reverse);
       $scope.flatRows = FlatTableFactory.sortByKey($scope.flatRows, type, reverse);
   }
-
-  function sortSchema(type) {
-      var reverse = 1;
-      if (type.indexOf('-') == 0) {
-        // remove the - symbol
-        type = type.substring(1, type.length);
-        reverse = -1;
-      }
-      // $log.info(type + " " + reverse);
-      $scope.flatRows = FlatTableFactory.sortByKey($scope.flatRows, type, reverse);
-  }
-
-
 
 });

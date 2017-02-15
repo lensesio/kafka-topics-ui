@@ -7,7 +7,9 @@ html, body {
         font-weight: 300;
         color:rgba(21, 31, 39, 0.81);
 }
-
+button, html, input, select, textarea {
+    font-family: "Lato";
+}
 /* Titles */
 h1, h2, h3, h4, h5, h6 {
     font-family: "Raleway";
@@ -875,3 +877,24 @@ margin:3px 0;
 table.md-table:not(.md-row-select) td.md-cell:first-child, table.md-table:not(.md-row-select) th.md-column:first-child {
   padding: 15px 8px;
 }
+/* md autocomplete bug fix */
+.md-scroll-mask {display:none;}
+
+.topic-toolbar ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: rgba(0,0,0,0.87);
+}
+.topic-toolbar ::-moz-placeholder { /* Firefox 19+ */
+  color: rgba(0,0,0,0.87);
+}
+.topic-toolbar :-ms-input-placeholder { /* IE 10+ */
+  color: rgba(0,0,0,0.87);
+}
+.topic-toolbar :-moz-placeholder { /* Firefox 18- */
+  color: rgba(0,0,0,0.87);
+}
+
+.topic-toolbar md-autocomplete-wrap input {margin:0;padding:0;}
+.topic-toolbar md-autocomplete {height:34px;}
+
+[ng-click] {cursor:pointer;}
+.topics-table tbody tr[ng-click]:hover {background:rgba(0,0,0,0.5);color:#fff;}

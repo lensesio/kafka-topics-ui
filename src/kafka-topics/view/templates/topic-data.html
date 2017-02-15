@@ -36,7 +36,7 @@
 
             <!--TODO Why don't we handle keyType as well? -->
             <md-tab label="Topic" ng-click="onTabChanges('topic', cluster)" ng-if="topic.valueType != 'binary' ">
-                <tree-view data="rows" partitions="" search="search"></tree-view>
+               <tree-view data="rows" topic="topic" partitions="" search="search"></tree-view>
             </md-tab>
 
             <md-tab label="Table" ng-click="onTabChanges('table', cluster)" ng-if="topic.valueType != 'binary' ">

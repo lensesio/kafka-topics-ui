@@ -16,7 +16,7 @@
     <!--</div>-->
 <!--</md-toolbar>-->
 
-<div layout="row" flex="100" style="min-height:34px; line-height:33px">
+<div layout="row" flex="100" style="min-height:34px; line-height:33px" class="topic-toolbar">
     <md-content flex layout-padding style="border-bottom: 1px solid rgba(0,0,0,0.12);">
         <md-button ng-click="toggleList()" style="margin:0px; line-height:0; min-height:0px;">
         <i ng-show="showList" class="fa fa-arrow-circle-o-left" aria-hidden="true" style="color:#333"></i>
@@ -24,7 +24,24 @@
         </md-button>
         {{cluster.NAME}}<span style="padding: 0px 10px; ">/</span>
         <a href="#/">topics</a> <span style="padding: 0px 10px; ">/</span>
-        {{topic.topicName}}
+        <form ng-submit="$event.preventDefault()" ng-show="allTopics.length > 0"  style="display: inline-block;padding: 0;margin: 0;text-indent: 0px;">
+            <md-autocomplete style="width:300px"
+                             md-selected-item=""
+                             md-search-text-change=""
+                             md-search-text="searchText"
+                             md-selected-item-change="goTo(item)"
+                             md-items="item in querySearch(searchText)"
+                             md-item-text="item.topicName"
+                             placeholder="{{topic.topicName}}"
+                             md-min-length="0">
+                <md-item-template>
+                    <span md-highlight-text="" md-highlight-flags="^i">{{item.topicName}}</span>
+                </md-item-template>
+                <md-not-found>
+                    No topics matching "{{searchText}}" were found.
+                </md-not-found>
+            </md-autocomplete>
+        </form>
         <span ng-show="topic.totalMessages == 0" style="float:right; padding: 0px 15px; background:#fcf8e3;">
             <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
             This topic is empty.

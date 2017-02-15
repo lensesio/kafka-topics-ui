@@ -106,7 +106,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
      {id: "consumerGroups", label: "Consumer groups", selected: false},
      {id: "keyType", label: "Key type", selected: true},
      {id: "valueType", label: "Value type", selected: true},
-     {id: "customConfigs", label: "Custom configs", selected: true}];
+     {id: "customConfig", label: "Custom configs", selected: true}];
 
   $scope.selectedCols = {};
 
