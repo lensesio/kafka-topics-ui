@@ -30,11 +30,11 @@
                                              <!--<md-subheader class="md-no-sticky"><i>Topic Configs</i></md-subheader>-->
                                              <md-list-item ng-click="setMenuSelection('partitions', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'partitions' }">
                                                      <p><i class="fa fa-bar-chart" aria-hidden="true" style="margin-right:5px;"></i>PARTITIONS</p>
-                                                     <span class="labelTypeSm label-type-null"> 50 </span>
+                                                     <span class="labelTypeSm label-type-null"> {{topic.partitions}} </span>
                                              </md-list-item>
                                              <md-list-item  ng-click="setMenuSelection('configuration', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'configuration' }">
                                                      <p><i class="fa fa-wrench" aria-hidden="true" style="margin-right:5px;"></i>CONFIGURATION</p>
-                                                     <span class="labelTypeSm label-type-null"> 3 </span>
+                                                     <span class="labelTypeSm label-type-null"> {{!topic.customConfig ? topic.customConfig.length=0 : ''}}{{topic.customConfig.length}} </span>
                                              </md-list-item>
                                              <md-list-item ng-click="setMenuSelection('schemas', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'schemas' }">
                                                  <p><i class="fa  fa-info-circle" aria-hidden="true" style="margin-right:5px;"></i> SCHEMAS</p>
@@ -42,7 +42,7 @@
                                              <md-divider></md-divider>
                                              <md-list-item ng-click="setMenuSelection('consumers', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'consumers' }">
                                                  <p><i class="fa  fa-info-circle" aria-hidden="true" style="margin-right:5px;"></i> CONSUMERS</p>
-                                                 <span class="labelTypeSm label-type-null"> 3 </span>
+                                                 <span class="labelTypeSm label-type-null"> {{topic.consumers.length}} </span>
                                              </md-list-item>
                                              <md-list-item ng-click="setMenuSelection('metrics', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'metrics' }">
                                                  <p><i class="fa fa-line-chart" aria-hidden="true" style="margin-right:5px;"></i>METRICS</p>
