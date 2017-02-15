@@ -7,6 +7,7 @@ dataTreeViewModule.directive('treeView', function() {
     scope: {
       data: '=',
       partitions: '=', //Pass pagination?
+      topic: '=', //Pass pagination?
       search: '='
     },
     templateUrl: 'src/kafka-topics/view/templates/data/tree/data-tree-view.html',

@@ -20,12 +20,12 @@
             <div layout="row">
                   <div layout="column" flex="90">
                     <div ng-if="t.key != ''">
-                      <json-tree ng-show="showTree(t.key)" object="t.key" root-name="'Key'" style="max-width: 100%;"></json-tree>
-                      <div ng-hide="showTree(t.key)">{{t.key}}</div>
+                      <json-tree ng-show="topic.keyType=='json' || topic.keyType=='avro'"  object="t.key" root-name="'Key'" style="max-width: 100%;"></json-tree>
+                      <div ng-hide="topic.keyType='json' || topic.keyType='avro'">{{t.key}}</div>
                     </div>
                     <div ng-if="t.value != ''" >
-                      <json-tree ng-show="showTree(t.value)" object="t.value" root-name="'Value'" style=" max-width: 100%;"></json-tree>
-                      <div ng-hide="showTree(t.value)">{{t.value}}</div>
+                      <json-tree ng-show="topic.valueType=='json' || topic.valueType=='avro'" object="t.value" root-name="'Value'" style=" max-width: 100%;"></json-tree>
+                      <div ng-hide="topic.valueType=='json' || topic.valueType=='avro'">{{t.value}}</div>
                     </div>
                   </div>
 

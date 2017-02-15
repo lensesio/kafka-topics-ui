@@ -4,12 +4,12 @@
     <!-- 1. SEARCH TOPICS -->
   <div>
     <div style="display:inline-block;width:50%;">
-      <md-input-container class="md-block" style="margin:0;">
+      <md-input-container class="md-block" style="margin-bottom:0;">
         <label>Search topics:</label>
         <input ng-model="search">
       </md-input-container>
     </div>
-    <div style="display:inline-block;float:right;margin-top: 7px;">Show/Hide columns:
+    <div style="display:inline-block;float:right;margin-top: 30px;">Show/Hide columns:
       <md-input-container style="width:200px;margin: -5px 0 0 5px;">
         <md-select ng-model="selectedCols.searchText" multiple>
           <md-option ng-value="col.id" ng-repeat="col in allCols" ng-selected="col.selected">{{col.label}}</md-option>
@@ -50,7 +50,9 @@
             <td  ng-show="checkAndHide('consumerGroups')">{{topic.consumerGroups}}</td>
             <td  ng-show="checkAndHide('keyType')"><span class="label-type label-type-{{topic.keyType}}" ng-if="topic.keyType != ''">{{topic.keyType}}</span></td>
             <td  ng-show="checkAndHide('valueType')"><span class="label-type label-type-{{topic.valueType}}" ng-if="topic.valueType != ''">{{topic.valueType}}</span></td>
-            <td  ng-if="topic.customConfig.length > 0" ng-show="checkAndHide('customConfig')"><span>{{topic.customConfig.length}} configs changed</span></td>
+            <td  ng-show="checkAndHide('customConfig')"><span >{{(!topic.customConfig) ? topic.customConfig.length=0 : "";}} {{topic.customConfig.length}} configs changed</span></td>
+
+
           </tr>
         </tbody>
       </table>

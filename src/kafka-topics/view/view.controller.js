@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $location, $http, KafkaRestProxyFactory, TopicFactory, charts) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $location, $http, KafkaRestProxyFactory, TopicFactory, charts, $q, $timeout ) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
 
@@ -26,11 +26,16 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
      });
   });
 
+    TopicFactory.getAllTopics($scope.cluster.KAFKA_BACKEND)
+    .then(function success(allTopics){
+      $scope.allTopics = allTopics;
+    });
+
 
 /*******************************
  * topic-toolbar.html
 ********************************/
- 
+
   $scope.showDownloadDiv = false;
   $scope.showList = true;
 
@@ -49,9 +54,38 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
   };
 
 /*******************************
+ * AUTO COMPLETE
+********************************/
+  $scope.simulateQuery = false;
+
+  $scope.querySearch = function querySearch (query) {
+    var results = query ? $scope.allTopics.filter( createFilterFor(query) ) : $scope.allTopics,
+        deferred;
+    if ($scope.simulateQuery) {
+      deferred = $q.defer();
+      $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
+      return deferred.promise;
+    } else {
+      return results;
+    }
+  }
+  $scope.goTo = function goTo (topic) {
+   var urlType = (topic.isControlTopic == true) ? 'c' : 'n';
+    $location.path ("cluster/"+ $scope.cluster.NAME + "/topic/" +  urlType + "/" + topic.topicName);
+  }
+  function createFilterFor(query) {
+    var lowercaseQuery = angular.lowercase(query);
+
+    return function filterFn(item) {
+      return (item.topicName.indexOf(lowercaseQuery) === 0);
+    };
+
+  }
+
+/*******************************
  * topic-configuration.html
 ********************************/
- 
+
   $scope.showMoreDesc = [];
 
   $scope.toggleMoreDesc = function (index) {
@@ -119,6 +153,14 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
 
   function setTopicMessages(allData, topicType) {
      $scope.rows = allData;
+     angular.forEach($scope.rows, function (row) {
+       if($scope.topic.valueType=='avro' || $scope.topic.valueType=='json'  ){
+       row.value=JSON.parse(row.value)
+       }
+       if($scope.topic.keyType=='avro' || $scope.topic.keyType=='json'  ){
+       row.key=JSON.parse(row.key)
+       }
+     })
      $scope.showSpinner = false;
   }
 
@@ -166,6 +208,9 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
           },
           getChartData: function(topicName, endpoint) {
             return HttpFactory.req('GET', endpoint + "/topics/chart/"+ topicName)
+          },
+          getAllTopics: function(endpoint) {
+            return HttpFactory.req('GET', endpoint + "/topics/summaries")
           }
     }
 });
