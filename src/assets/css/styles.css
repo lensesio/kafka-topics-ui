@@ -10,6 +10,9 @@ html, body {
 button, html, input, select, textarea {
     font-family: "Lato";
 }
+
+table td {font-weight:normal}
+
 /* Titles */
 h1, h2, h3, h4, h5, h6 {
     font-family: "Raleway";
@@ -500,7 +503,7 @@ table tbody tr:nth-child(odd) { background-color:#eee; }
 table tbody tr:nth-child(even) { background-color:#fff; }
 table tr th {padding:10px;}
 table tr td {padding:5px;}
-table thead tr { color: rgba(0,0,0,.54); font-size: 12px; font-weight: 700;white-space: nowrap; text-align:left; }
+table thead tr { color: rgba(0,0,0,.54); font-size: 13px; font-weight: 700;white-space: nowrap; text-align:left; }
 table tbody { color: rgba(0,0,0,.87);font-size: 13px;vertical-align: middle; }
 table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
 .td-center {text-align:center}
@@ -596,10 +599,7 @@ json-tree .expandable::before,
 json-tree .expandable > .key {
   cursor: pointer;
 }
-json-tree .branch-preview {
-  display: inline-block;
-  vertical-align: middle;
-}
+
 /* Looks */
 json-tree ul {
   padding-left: 20px;
@@ -632,19 +632,29 @@ json-tree json-node.expandable.expanded::before {
   -webkit-transform: rotate(90deg);
           transform: rotate(90deg);
 }
+
 json-tree .leaf-value,
 json-tree .branch-preview {
   word-break: break-all;
 }
+
 json-tree .branch-preview {
-  overflow: hidden;
-  font-style: italic;
-  max-width: 100%;
-  height: 1.5em;
-  opacity: .7;
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    font-style: italic;
+    max-width: 90%;
+    height: 16px;
+    opacity: .8;
+    font-size: 14px;
 }
 
-
+.view-container {width:100%;}
+.view-container.listOpened {
+     width: -webkit-calc(100% - 220px);
+     width:    -moz-calc(100% - 220px);
+     width:         calc(100% - 220px);
+ }​
 
 
 
@@ -898,3 +908,5 @@ table.md-table:not(.md-row-select) td.md-cell:first-child, table.md-table:not(.m
 
 [ng-click] {cursor:pointer;}
 .topics-table tbody tr[ng-click]:hover {background:rgba(0,0,0,0.5);color:#fff;}
+
+table.md-table:not(.md-row-select) td.md-cell:nth-child(n+2):nth-last-child(n+2), table.md-table:not(.md-row-select) th.md-column:nth-child(n+2):nth-last-child(n+2) {padding:10px;}

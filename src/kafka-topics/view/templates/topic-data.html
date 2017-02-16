@@ -19,7 +19,7 @@
 
                 <select class="form-control button" ng-model="search.partition" style="float:right; width: 120px;margin: 7px; line-height: 30px;">
                     <option value="" selected>All partitions</option>
-                    <option ng-repeat="i in getPartitions(partitions)" track by $index value="{{$index}}">Partition {{$index}}</option>
+                    <option ng-repeat="i in topic.messagesPerPartition | orderBy:'partition'" track by $index value="{{i.partition}}">Partition {{i.partition}}</option>
                 </select>
 
                 <md-button

@@ -100,7 +100,7 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, Flat
       return columnClass;
   }
 
-  $scope.query = { order: 'partition', limit: 100, page: 1 };
+  $scope.query = { order: 'offset', limit: 100, page: 1 };
 
   // This one is called each time - the user clicks on an md-table header (applies sorting)
   $scope.logOrder = function (a) {

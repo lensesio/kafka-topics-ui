@@ -12,7 +12,7 @@
                              <md-content>
                                  <div layout="column">
 
-                                     <div flex style="height:1200px; border-top: 1px solid #F1F1F1">
+                                     <div flex style="border-top: 1px solid #F1F1F1">
                                          <md-list flex style=" padding-top:0px; font-size:14px;width:220px;">
                                              <!--TODO: Add real time & schemas-->
                                              <!--<md-subheader class="md-no-sticky">Data</md-subheader>-->
@@ -55,8 +55,7 @@
                                  </div>
                              </md-content>
                          </div>
-
-                      <div  style="width:100%;">
+                      <div  ng-class="showList ? 'listOpened' : ''" class="view-container">
 
                           <!-- BREADCRUMBS -->
                           <div ng-include="'src/kafka-topics/view/templates/topic-toolbar.html'"></div>
