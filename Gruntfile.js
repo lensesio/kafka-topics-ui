@@ -28,8 +28,6 @@ module.exports = function (grunt) {
           'bower_components/angular/angular.min.js.map',                 // Include source-maps
           'bower_components/angular-spinner/angular-spinner.min.js',
           'bower_components/angular-spinner/angular-spinner.min.js.map', // Include source-maps
-          'bower_components/bootstrap/dist/css/bootstrap.min.css',
-          'bower_components/bootstrap/dist/css/bootstrap.min.css.map',   // Include source-maps
           'bower_components/angular-route/angular-route.min.js',
           'bower_components/angular-route/angular-route.min.js.map',     // Include source-maps
           'bower_components/angular-animate/angular-animate.min.js',
@@ -51,16 +49,10 @@ module.exports = function (grunt) {
           // 'bower_components/angularUtils-pagination/dirPagination.js',
           'bower_components/angular-material-data-table/dist/md-data-table.min.css',
           'bower_components/angular-material-data-table/dist/md-data-table.min.js',
-          'bower_components/angular-ui-grid/ui-grid.min.css',
-          'bower_components/angular-ui-grid/ui-grid.min.js',
-          'bower_components/angular-ui-grid/ui-grid.svg',
-          'bower_components/angular-ui-grid/ui-grid.ttf',
-          'bower_components/angular-ui-grid/ui-grid.woff',
-          'bower_components/angular-base64/angular-base64.min.js',
-          'bower_components/oboe/dist/oboe-browser.min.js',
-          'bower_components/angular-oboe/dist/angular-oboe.min.js',
           'bower_components/angular-json-tree/dist/angular-json-tree.min.js',
-          'bower_components/angular-json-tree/dist/angular-json-tree.css'
+          'bower_components/angular-json-tree/dist/angular-json-tree.css',
+          'bower_components/angular-google-chart/ng-google-chart.min.js'
+
 
         ],
         dest: 'dist',
