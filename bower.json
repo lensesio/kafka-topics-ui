@@ -21,17 +21,15 @@
     "angular-animate": "1.5.9",
     "angular-aria": "1.5.9",
     "angular-ui-ace": "bower",
-    "bootstrap": "^3.3.6",
     "angular-messages":"1.5.9",
     "angular-spinner": "0.8.1",
     "angular-material": "1.0.9",
     "angularUtils-pagination": "angular-utils-pagination#^0.11.1",
     "font-awesome": "fontawesome#^4.6.3",
     "angular-material-data-table": "^0.10.9",
-    "angular-base64": "~2.0.5",
-    "angular-oboe": "*",
-    "angular-ui-grid": "~3.2.1",
-    "angular-json-tree": "^1.0.1"
+    "angular-json-tree": "^1.0.1",
+    "angular-google-chart": "^0.1.0"
+
   },
   "resolutions": {
     "angular": "1.5.9"

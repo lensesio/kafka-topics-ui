@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $location, $http, KafkaRestProxyFactory, TopicFactory, charts, $q, $timeout ) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $location, $http, TopicFactory, charts, $q, $timeout ) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
 
