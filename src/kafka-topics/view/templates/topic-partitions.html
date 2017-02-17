@@ -15,7 +15,7 @@
 
 
 <md-content layout="column" style="padding:10px;">
-        <div id="treemap" style="width:80%; height:250px; text-align:center" ng-if="topic.partitions > 1"></div>
+    <div flex="100" google-chart chart="chartObject" ng-if="topic.partitions > 1"></div>
     <table class="topics-table">
         <thead>
         <tr>

@@ -16,7 +16,8 @@ var angularAPP = angular.module('angularAPP', [
   'totalTopics',
   'flatView',
   'treeView',
-  'rawView'
+  'rawView',
+  'googlechart'
 ]);
 
 //angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $location, $route) { });

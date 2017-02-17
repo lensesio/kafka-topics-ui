@@ -21,8 +21,40 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
      TopicFactory.getChartData(topicName, $scope.cluster.KAFKA_BACKEND).then(function response(response){
 //           charts.getFullChart(topicName, response);
 //            charts.getSpiderChart(topicName, response)
-            charts.getTreeChart(topicName, $scope.topic.messagesPerPartition)
+//              charts.getTreeChart(topicName, $scope.topic.messagesPerPartition)
 //            charts.samplePartition();
+
+        $scope.chartData = [
+          ['partition','Parent','messages', 'messages'],
+          [topicName + ' partitions',null,0,0]
+        ];
+
+        $scope.chartObject = {};
+
+        angular.forEach ($scope.topic.messagesPerPartition, function (partition){
+          $scope.chartData.push([partition.partition+'',topicName + ' partitions',partition.messages,partition.messages])
+        })
+
+        $scope.chartObject.type = "TreeMap";
+        var data =$scope.chartData;
+
+        $scope.chartObject.data = data;
+        $scope.chartObject.options = {
+         headerColor: '#F5F5F5',
+         minColor: '#FEFEFF',
+         midColor: '#8BAED0',
+         maxColor: '#7DB6EC',
+         showScale: true,
+         generateTooltip: showStaticTooltip
+       };
+
+        function showStaticTooltip(row, size, value) {
+               return '<div style="background:#777; color:#fff; padding:10px; border-style:solid">' +
+               'Messages: <b>' + size + '</b> <br>' +
+               'Broker: <b> XXx.xx.xxx.xx</b><br>' +
+               'Leader Broker: <b> XXx.xx.xxx.xx</b><br></div>';
+        }
+
      });
   });
 
