@@ -525,7 +525,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                   if (row.key == undefined || row.key == null) row.key = '';
                   if (row.value == undefined || row.value == null) row.value = '';
 
-                  if(angular.isNumber(row.value) || angular.isString(row.value)) {
+                  if((angular.isNumber(row.value) || angular.isString(row.value)) && (angular.isNumber(row.key) || angular.isString(row.key))) {
                         extraColumnsNumberValue = 0
                         extraColumnsNumberKey = 0
                         var newRow = {
@@ -540,8 +540,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                   } else {
                         var flatValue = flattenObject(row.value);
                         var flatKey = flattenObject(row.key);
-                        var rowExtraColumnsValues = Object.keys(flatValue).length;
-                        var rowExtraColumnsKeys = Object.keys(flatKey).length;
+                        var rowExtraColumnsValues = (!(angular.isNumber(row.value) || angular.isString(row.value))) ? Object.keys(flatValue).length : 0;
+                        var rowExtraColumnsKeys = (!(angular.isNumber(row.key) || angular.isString(row.key))) ? Object.keys(flatKey).length : 0;
 
                         if(extraColumnsNumberValue < rowExtraColumnsValues) {
                             extraColumnsNumberValue = rowExtraColumnsValues;
@@ -561,8 +561,19 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                         }
 
                         $scope.cols =  Object.keys(flattenObject(newRow));
-                        $scope.cols2 = Object.keys(flattenObject(newRow.value));
-                        $scope.cols3 = Object.keys(flattenObject(newRow.key));
+                        if (!(angular.isNumber(row.value) || angular.isString(row.value))){
+                          $scope.cols2 = Object.keys(flattenObject(newRow.value));
+                        }
+                        else {
+                          $scope.cols2 = []
+                        }
+                        if (!(angular.isNumber(row.key) || angular.isString(row.key))){
+                          $scope.cols3 = Object.keys(flattenObject(newRow.key));
+                        }
+                        else {
+                          $scope.cols3 = [];
+                        }
+
                   }
 
                   $scope.flatRows.push(flattenObject(row));
