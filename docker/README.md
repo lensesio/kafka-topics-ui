@@ -35,3 +35,6 @@ Caddy server will proxy the traffic to the REST Proxy:
 > from your computer, instead of `http://127.0.1:8082` you must use
 > `http://192.168.5.65:8082`.
 
+If your REST Proxy uses self-signed SSL certificates, you can use the
+`PROXY_SKIP_VERIFY=true` environment variable to instruct the proxy to
+not verify the backend TLS certificate.
