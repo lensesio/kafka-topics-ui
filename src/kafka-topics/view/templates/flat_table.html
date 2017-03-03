@@ -27,10 +27,15 @@
                     </tr>
                     </tbody>
                 </table>
-
-                <div flex>
-                    <dir-pagination-controls pagination-id="flatView" style="margin:0;"></dir-pagination-controls>
-                </div>
-
         </md-content>
+        <div flex>
+            <dir-pagination-controls pagination-id="flatView" style="margin:0;"></dir-pagination-controls>
+            <div style="width:100%;text-align:center;margin:-5px 0 10px;">items/page :
+                <select ng-model="paginationItems">
+                    <option selected>{{fittingItems}}</option>
+                    <option>50</option>
+                    <option>100</option>
+                </select>
+            </div>
+        </div>
     </md-tab-body>

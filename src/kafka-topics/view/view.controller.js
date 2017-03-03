@@ -585,8 +585,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                 $scope.extraColsNumValues = extraColumnsNumberValue;
                 $scope.extraColsNumKeys = extraColumnsNumberKey;
 
-         var itemsPerPage = (window.innerHeight - 330) / 31
-         Math.floor(itemsPerPage) < 10 ? $scope.paginationItems =10 : $scope.paginationItems = Math.floor(itemsPerPage);
+         var itemsPerPage = (window.innerHeight - 360) / 31
+         Math.floor(itemsPerPage) < 10 ? $scope.fittingItems =10 : $scope.fittingItems = Math.floor(itemsPerPage);
+         $scope.paginationItems = $scope.fittingItems;
          $scope.showHideAllButtonLabel = 'show ' + rows.length;
      }
 }
