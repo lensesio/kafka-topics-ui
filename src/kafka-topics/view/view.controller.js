@@ -588,14 +588,16 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
          var itemsPerPage = (window.innerHeight - 360) / 31
          Math.floor(itemsPerPage) < 10 ? $scope.fittingItems =10 : $scope.fittingItems = Math.floor(itemsPerPage);
          $scope.paginationChanged = function(num) {
-         console.log(typeof parseInt(num))
-         if (isNaN(parseInt(num))) {
-          $scope.paginationItems = $scope.fittingItems;
-         } else if (num > 200) {
-          $scope.paginationItems = 100
-         }
-          else {
-          $scope.paginationItems = num}
+           if (isNaN(parseInt(num))) {
+            $scope.paginationItems = $scope.fittingItems;
+           } else if (num > 200) {
+            $scope.paginationItems = 200
+           } else if (num == 0) {
+            $scope.paginationItems = $scope.fittingItems
+           }
+            else {
+            $scope.paginationItems = num
+            }
          }
 
          $scope.paginationItems = $scope.fittingItems;

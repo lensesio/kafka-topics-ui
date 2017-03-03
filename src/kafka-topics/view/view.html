@@ -30,16 +30,16 @@
           This topic is empty.</div>
     </div>
     <div ng-hide=" getExtraConfig(topicName) == '' && topicIsEmpty">
-        <div flex layout="row" ng-hide="showSpinner || topicIsEmpty || topicType == 'binary' || selectedTabNnumber > 1 ">
+        <div flex layout="row" ng-hide="showSpinner || topicIsEmpty || topicType == 'binary' || selectedTabNnumber > 1 " style="margin-bottom:-25px">
             <md-input-container  class="md-block" style="" flex="85">
               <label>Filter</label>
-              <input ng-model="searchMessages">
+              <input ng-model="searchMessages"  ng-model-options="{ debounce: 500 }">
               <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
 
             </md-input-container>
             <md-input-container   class="md-block" style="" flex="15">
                 <label>Items per page</label>
-                <input ng-model="paginationItems" type="number" ng-change="paginationChanged(paginationItems)" ng-model-options="{ debounce: 1000 }">
+                <input ng-model="paginationItems" type="number" ng-change="paginationChanged(paginationItems)" ng-model-options="{ debounce: 500 }">
             </md-input-container>
         </div>
     <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
