@@ -72,7 +72,7 @@ var clusters =
   </md-card>
 </div>
 <!--Main Content Starts here-->
-<div layout="row" layout-margin layout-sm="column" layout-xs="column" ng-controller="KafkaTopicsConfigCtrl" ng-hide="missingEnvJS">
+<div layout="row" layout-margin layout-sm="column" layout-xs="column" ng-controller="KafkaTopicsConfigCtrl" ng-hide="missingEnvJS" style="margin-bottom:0;">
   <div flex-gt-sm="33" ng-show="showList">
     <div ng-controller="KafkaTopicsListCtrl" ng-include="'src/kafka-topics/list/left-list.html'"></div>
     <br>
@@ -80,21 +80,10 @@ var clusters =
   </div>
   <div flex >
     <ng-view></ng-view>
-    <br>
     <div ng-include="'src/kafka-topics/config/config.html'" show-sm hide-gt-sm></div>
   </div>
 </div>
 
-<!-- Landoop team promo -->
-<div layout-margin flex>
-  <div flex="nogrow">
-    <img ng-src="src/assets/icons/landoop-dark.svg" style="width:20px;float: left;padding-right:5px;"></div>
-  <div flex>
-    <p class="md-caption">Powered by <a href="http://www.landoop.com/" target="_blank">Landoop</a></p>
-  </div>
-</div>
-
-<!--CUSTOM-FOOTER-->
 <!-- analytics -->
 
 <script src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>

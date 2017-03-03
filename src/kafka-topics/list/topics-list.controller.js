@@ -99,7 +99,8 @@ function getLeftListTopics() {
           $log.error('Failed: ' + reason);
         });
 
-      $scope.topicsPerPage = 7;
+      var itemsPerPage = (window.innerHeight - 380) / 48
+      Math.floor(itemsPerPage) < 3 ? $scope.topicsPerPage =3 : $scope.topicsPerPage = Math.floor(itemsPerPage);
 
       $scope.controlTopicIndex = $scope.controlTopics.indexOf($rootScope.topicName );
       $scope.controlTopicPage = Math.ceil($scope.controlTopicIndex / $scope.topicsPerPage);

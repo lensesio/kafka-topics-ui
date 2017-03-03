@@ -8,6 +8,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
   $scope.$on('$routeChangeSuccess', function() {
     $scope.cluster = env.getSelectedCluster().NAME;//$routeParams.cluster;
+    $scope.maxHeight = window.innerHeight - 215;
+    if ($scope.maxHeight < 310) {$scope.maxHeight = 310}
   })
 
     if ($routeParams.selectedTabIndex == "topic") {
@@ -61,7 +63,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     $scope.editor.$blockScrolling = Infinity;
     _editor.setOptions({
       minLines: 33,
-      maxLines: 33
+      maxLines: $scope.maxHeight / 15
     });
 
   };
@@ -583,7 +585,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                 $scope.extraColsNumValues = extraColumnsNumberValue;
                 $scope.extraColsNumKeys = extraColumnsNumberKey;
 
-         $scope.paginationItems = 10;
+         var itemsPerPage = (window.innerHeight - 330) / 31
+         Math.floor(itemsPerPage) < 10 ? $scope.paginationItems =10 : $scope.paginationItems = Math.floor(itemsPerPage);
          $scope.showHideAllButtonLabel = 'show ' + rows.length;
      }
 }

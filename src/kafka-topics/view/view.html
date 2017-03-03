@@ -47,7 +47,11 @@
         </md-tab>
 
         <md-tab label="Raw Data" ng-click="onTabChanges('rawdata')" ng-if=" !topicIsEmpty">
-            <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
+            <md-tab-body>
+                <md-content class="md-padding" style="max-height:{{maxHeight}}px;height:{{maxHeight}}px">
+                    <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
+                    </md-content>
+                </md-tab-body>
         </md-tab>
 
         <md-tab label="Configuration" ng-click="onTabChanges('config')"  ng-if=" selectedTabNnumber == '3' || getExtraConfig(topicName) != ''">
