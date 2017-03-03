@@ -8,9 +8,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $rootScope.topicCategoryUrl = $routeParams.topicCategoryUrl;
   $scope.$on('$routeChangeSuccess', function() {
     $scope.cluster = env.getSelectedCluster().NAME;//$routeParams.cluster;
+  })
     $scope.maxHeight = window.innerHeight - 215;
     if ($scope.maxHeight < 310) {$scope.maxHeight = 310}
-  })
 
     if ($routeParams.selectedTabIndex == "topic") {
       $scope.selectedTabNnumber=0;
@@ -587,6 +587,17 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
          var itemsPerPage = (window.innerHeight - 360) / 31
          Math.floor(itemsPerPage) < 10 ? $scope.fittingItems =10 : $scope.fittingItems = Math.floor(itemsPerPage);
+         $scope.paginationChanged = function(num) {
+         console.log(typeof parseInt(num))
+         if (isNaN(parseInt(num))) {
+          $scope.paginationItems = $scope.fittingItems;
+         } else if (num > 200) {
+          $scope.paginationItems = 100
+         }
+          else {
+          $scope.paginationItems = num}
+         }
+
          $scope.paginationItems = $scope.fittingItems;
          $scope.showHideAllButtonLabel = 'show ' + rows.length;
      }

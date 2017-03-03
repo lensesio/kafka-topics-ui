@@ -30,12 +30,18 @@
           This topic is empty.</div>
     </div>
     <div ng-hide=" getExtraConfig(topicName) == '' && topicIsEmpty">
-    <md-input-container  class="md-block" ng-hide="showSpinner || topicIsEmpty || topicType == 'binary' || selectedTabNnumber > 1 " style="margin-bottom:-25px;">
-      <label>Filter</label>
-      <input ng-model="searchMessages">
-      <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
+        <div flex layout="row" ng-hide="showSpinner || topicIsEmpty || topicType == 'binary' || selectedTabNnumber > 1 ">
+            <md-input-container  class="md-block" style="" flex="85">
+              <label>Filter</label>
+              <input ng-model="searchMessages">
+              <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
 
-    </md-input-container>
+            </md-input-container>
+            <md-input-container   class="md-block" style="" flex="15">
+                <label>Items per page</label>
+                <input ng-model="paginationItems" ng-change="paginationChanged(paginationItems)">
+            </md-input-container>
+        </div>
     <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
 
         <md-tab   label="Topic" ng-click="onTabChanges('topic')"   ng-if="topicType != 'binary' && !topicIsEmpty ">
