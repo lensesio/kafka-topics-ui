@@ -587,17 +587,17 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
          var itemsPerPage = (window.innerHeight - 360) / 31
          Math.floor(itemsPerPage) < 10 ? $scope.fittingItems =10 : $scope.fittingItems = Math.floor(itemsPerPage);
-         $scope.paginationChanged = function(num) {
-         console.log('test')
-           if (isNaN(parseInt(num))) {
-            $scope.paginationItems = $scope.fittingItems;
-           } else if (num == 0) {
-            $scope.paginationItems = $scope.fittingItems
-           }
-            else {
-            $scope.paginationItems = num
-            }
-         }
+//         $scope.paginationChanged = function(num) {
+//         console.log('test')
+//           if (isNaN(parseInt(num))) {
+//            $scope.paginationItems = $scope.fittingItems;
+//           } else if (num == 0) {
+//            $scope.paginationItems = $scope.fittingItems
+//           }
+//            else {
+//            $scope.paginationItems = num
+//            }
+//         }
 
          $scope.paginationItems = $scope.fittingItems;
          $scope.showHideAllButtonLabel = 'show ' + rows.length;

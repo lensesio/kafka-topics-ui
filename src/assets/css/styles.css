@@ -341,3 +341,9 @@ table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
 }
 
 section.pagination {margin:0;}
+
+md-option.itemsPerPage {
+    height: 27px;
+    border-top: 1px dashed #ccc;
+    text-align:center;
+}

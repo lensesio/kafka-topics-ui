@@ -39,7 +39,15 @@
             </md-input-container>
             <md-input-container   class="md-block" style="" flex="15">
                 <label>Items per page</label>
-                <input ng-model="paginationItems" type="number" ng-change="paginationChanged(paginationItems)" ng-model-options="{ debounce: 500 }">
+                <md-select ng-model-options="{ debounce: 500 }" ng-model="paginationItems" >
+                    <md-option class="itemsPerPage" style="border:0;">{{fittingItems}}</md-option>
+                    <md-option class="itemsPerPage">50</md-option>
+                    <md-option class="itemsPerPage">100</md-option>
+                    <md-option class="itemsPerPage">200</md-option>
+                    <md-option class="itemsPerPage">300</md-option>
+                    <md-option class="itemsPerPage">Show all items</md-option>
+                </md-select>
+                <!--<input ng-model="paginationItems" type="number" ng-change="paginationChanged(paginationItems)" ng-model-options="{ debounce: 500 }">-->
             </md-input-container>
         </div>
     <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
