@@ -1,20 +1,46 @@
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
     background-color: #F5F5F5;
 }
-.selectCluster {margin: 7px 10px;text-indent:15px;padding: 0;line-height: 1.2;}
-.selectCluster md-select {background:white;}
-.selectCluster md-select md-option,
-.selectCluster md-select md-select-value{color:#333}
-.selectClusterLabel{color: rgb(204, 204, 204);font-size: 12px;line-height: 44px;padding-top: 0px;margin: 0;}
 
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-  display: none !important;
+.selectCluster {
+    margin: 7px 10px;
+    text-indent: 15px;
+    padding: 0;
+    line-height: 1.2;
 }
 
-md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
+.selectCluster md-select {
+    background: white;
+}
+
+.selectCluster md-select md-option,
+.selectCluster md-select md-select-value {
+    color: #333
+}
+
+.selectClusterLabel {
+    color: white;
+    font-size: 12px;
+    line-height: 44px;
+    padding-top: 0px;
+    margin: 0;
+}
+
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak {
+    display: none !important;
+}
+
+md-toast.md-default-theme .md-toast-content,
+md-toast .md-toast-content {
     margin-right: 25px;
     background-color: white;
     color: black;
@@ -51,7 +77,10 @@ header.header {
     padding: 0;
 }
 
-a:link, header.a:visited, header.a:hover, header.a:active {
+a:link,
+header.a:visited,
+header.a:hover,
+header.a:active {
     text-decoration: none;
 }
 
@@ -79,14 +108,16 @@ a:link, header.a:visited, header.a:hover, header.a:active {
     border: 1px solid #ddd;
     z-index: 2;
 }
+
 .normalcontent.ng-scope {
-    overflow:initial}
+    overflow: initial
 }
 
+
+}
 .leftlistPagination .pagination {
-    margin:0;
+    margin: 0;
 }
-
 .toggleconfig {
     float: right;
     color: #448AFF;
@@ -94,11 +125,9 @@ a:link, header.a:visited, header.a:hover, header.a:active {
 .example1:after {
     content: "Register a Complex Schema";
 }
-
 .example2:after {
     content: "Test Schema Compatibility";
 }
-
 .example:after {
     position: absolute;
     top: 0;
@@ -110,27 +139,22 @@ a:link, header.a:visited, header.a:hover, header.a:active {
     color: #9da0a4;
     border-radius: 4px 0 4px 0;
 }
-
 .snippet {
     position: relative;
     overflow: visible;
 }
-
 pre {
     margin-top: 0;
     margin-bottom: 0;
     font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
-
 .centering {
     float: none;
     margin: 0 auto;
 }
-
 .bs-callout-warning {
     border-left-color: #228415 !important;
 }
-
 .bs-callout {
     padding: 10px;
     margin: 10px 0;
@@ -189,17 +213,13 @@ pre {
 .dropdown:hover .dropbtn {
     background-color: #4f6375;
 }
-
 md-card {
     margin: 0;
 }
-
-
-
-md-chips.md-default-theme .md-chips, md-chips .md-chips {
+md-chips.md-default-theme .md-chips,
+md-chips .md-chips {
     box-shadow: none;
 }
-
 .md-button.light-blue {
     background-color: rgba(74, 163, 223, 1);
 }
@@ -213,10 +233,11 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
 .label-primary {
     background-color: #286090;
 }
-
-.md-whiteframe-1dp, .md-whiteframe-z1 {
+.md-whiteframe-1dp,
+.md-whiteframe-z1 {
     box-shadow: none;
 }
+
 /*
 .md-whiteframe-2dp {
     box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
@@ -226,21 +247,17 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
     box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.4), 0 2px 2px 0 rgba(0, 0, 0, 0.28), 0 3px 1px -2px rgba(0, 0, 0, 0.24);
 }
 */
-
 .md-button.light-blue {
     background-color: rgba(74, 163, 223, 1);
 }
-
 .fabSpeedDial.text-capitalize {
     text-transform: capitalize;
 }
-
 .md-button.md-fab {
     width: 42px;
     height: 42px;
     background-color: white;
 }
-
 .fabSpeedDial .lock-size {
     min-width: 300px;
     min-height: 300px;
@@ -249,44 +266,52 @@ md-chips.md-default-theme .md-chips, md-chips .md-chips {
     margin-left: auto;
     margin-right: auto;
 }
-
-a.md-button.md-default-theme.md-warn.md-raised, a.md-button.md-warn.md-raised, a.md-button.md-default-theme.md-warn.md-fab, a.md-button.md-warn.md-fab, .md-button.md-default-theme.md-warn.md-raised, .md-button.md-warn.md-raised, .md-button.md-default-theme.md-warn.md-fab, .md-button.md-warn.md-fab {
+a.md-button.md-default-theme.md-warn.md-raised,
+a.md-button.md-warn.md-raised,
+a.md-button.md-default-theme.md-warn.md-fab,
+a.md-button.md-warn.md-fab,
+.md-button.md-default-theme.md-warn.md-raised,
+.md-button.md-warn.md-raised,
+.md-button.md-default-theme.md-warn.md-fab,
+.md-button.md-warn.md-fab {
     color: rgb(255, 255, 255);
     background-color: rgba(169, 169, 169, 0.1);
 }
 
 /* Custom topics-ui CSS */
-md-list-item.md-2-line, md-list-item.md-2-line > .md-no-style {
+md-list-item.md-2-line,
+md-list-item.md-2-line > .md-no-style {
     min-height: 0;
 }
-
-.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+.table > tbody > tr > td,
+.table > tbody > tr > th,
+.table > tfoot > tr > td,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > thead > tr > th {
     padding-top: 10px;
     padding-bottom: 10px;
     vertical-align: middle;
 }
-
 md-card md-card-title {
     padding-bottom: 10px;
 }
-
 .md-tooltip ._md-content {
     height: auto;
 }
-
 .grid {
     width: 920px;
     height: 525px;
 }
-
 .grid-center {
     text-align: center;
 }
 
 /*.ui-grid-header-cell {*/
-/*border-color: #d4d4d4 !important;*/
-/*}*/
 
+/*border-color: #d4d4d4 !important;*/
+
+/*}*/
 .grid-header-landoop {
     color: #a8a8a8;
     background-color: #fafafa !important;
@@ -299,7 +324,8 @@ md-card md-card-title {
 }
 
 /*Funny Orange Fab color*/
-.md-fab:hover, .md-fab.md-focused {
+.md-fab:hover,
+.md-fab.md-focused {
     background-color: rgba(230, 100, 0, .9) !important;
 }
 
@@ -307,22 +333,50 @@ md-card md-card-title {
 .selectedListItem {
     background-color: rgba(158, 158, 158, 0.2);
 }
-
-
-table {border-spacing: 0; width:100%}
-table tbody tr:nth-child(odd) { background-color:#eee; }
-table tbody tr:nth-child(even) { background-color:#fff; }
-table tr th {padding:10px;}
-table tr td {padding:5px;}
-table thead tr { color: rgba(0,0,0,.54); font-size: 12px; font-weight: 700;white-space: nowrap; text-align:left; }
-table tbody { color: rgba(0,0,0,.87);font-size: 13px;vertical-align: middle; }
-table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
-.td-center {text-align:center}
-
-.flat-table tr td {border:1px #ccc solid;}
-.flat-table tr th {border:1px #ccc solid;}
-.blue {background-color:#dcedf7};
-
+table {
+    border-spacing: 0;
+    width: 100%
+}
+table tbody tr:nth-child(odd) {
+    background-color: #eee;
+}
+table tbody tr:nth-child(even) {
+    background-color: #fff;
+}
+table tr th {
+    padding: 10px;
+}
+table tr td {
+    padding: 5px;
+}
+table thead tr {
+    color: rgba(0, 0, 0, .54);
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-align: left;
+}
+table tbody {
+    color: rgba(0, 0, 0, .87);
+    font-size: 13px;
+    vertical-align: middle;
+}
+table tbody tr {
+    border-top: 1px rgba(0, 0, 0, .12) solid;
+}
+.td-center {
+    text-align: center
+}
+.flat-table tr td {
+    border: 1px #ccc solid;
+}
+.flat-table tr th {
+    border: 1px #ccc solid;
+}
+.blue {
+    background-color: #dcedf7
+}
+;
 .json-tree .branch-preview {
     overflow: hidden;
     font-style: italic;
@@ -330,15 +384,12 @@ table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
     height: 1.5em;
     opacity: .7;
 }
-
-.md-tabs
-{
+.md-tabs {
     transition: none;
     transition-duration: 0ms;
     transition-delay: 0ms;
 }
-.md-tab
-{
+.md-tab {
     transition: none;
     transition-duration: 0ms;
     transition-delay: 0ms;
