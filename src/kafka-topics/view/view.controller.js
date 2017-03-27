@@ -639,7 +639,7 @@ $scope.$parent.$parent.$watch("showList",function() {
 
   $scope.limit = 2000;
   $scope.height= 500
-
+  var hotRows;
  function createHotTable(){
     hotRows = [];
     $scope.hotTableHeaders = [];
