@@ -523,7 +523,13 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
         var rowWithMoreColumns;
         $scope.flatRows = [];
         if (rows.length > 0) {
-            angular.forEach(rows, function (row) {
+            angular.forEach(rows, function ( row, key) {
+            row= {
+              'offset' : row.offset,
+              'partition': row.partition,
+              'key' : row.key,
+              'value' : row.value
+            }
                   if (row.key == undefined || row.key == null) row.key = '';
                   if (row.value == undefined || row.value == null) row.value = '';
 
@@ -577,13 +583,22 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                         }
 
                   }
-
                   $scope.flatRows.push(flattenObject(row));
+
+                  if (key == rows.length -1) {
+                      setTimeout(function () {
+                              $scope.$apply(function () {
+                                  createHotTable()
+                              });
+                    }, 500)
+                  }
+
 
                 });
 
                 $scope.extraColsNumValues = extraColumnsNumberValue;
                 $scope.extraColsNumKeys = extraColumnsNumberKey;
+
 
          var itemsPerPage = (window.innerHeight - 360) / 31
          Math.floor(itemsPerPage) < 10 ? $scope.fittingItems =10 : $scope.fittingItems = Math.floor(itemsPerPage);
@@ -601,11 +616,69 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
 
          $scope.paginationItems = $scope.fittingItems;
          $scope.showHideAllButtonLabel = 'show ' + rows.length;
+
      }
 }
 
  $scope.showTree = function (keyOrValue) {
-    return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
- }
+  return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
+}
 
+var t = 0
+$scope.$parent.$parent.$watch("showList",function() {
+  if (t !=0 ) {
+    setTimeout(function () {
+      $scope.$apply(function () {
+       createHotTable();
+      });
+    })
+  }
+  t++
+})
+
+
+  $scope.limit = 2000;
+  $scope.height= 500
+
+ function createHotTable(){
+    hotRows = [];
+    $scope.hotTableHeaders = [];
+
+     $scope.hotTableHeaders.push('Offset', 'Partition')
+
+     if ($scope.extraColsNumKeys > 0){
+       angular.forEach($scope.cols3, function(colheader) {
+         $scope.hotTableHeaders.push('key.'+colheader)
+       })
+     } else {
+       $scope.hotTableHeaders = ['Key']
+     }
+
+     if ($scope.extraColsNumValues > 0){
+       angular.forEach($scope.cols2, function(colheader) {
+         $scope.hotTableHeaders.push('value.'+colheader)
+       })
+     } else {
+         $scope.hotTableHeaders.push('Value')
+     }
+
+console.log('giannis', $scope.flatRows[1])
+     angular.forEach($scope.flatRows, function (rows) {
+       var hotCol = [];
+       angular.forEach(rows, function (col, key) {
+         if( key !== "$$hashKey" ) {
+          hotCol.push(col)
+         }
+       })
+
+       hotRows.push(hotCol)
+     })
+
+     $scope.refreshData();
+   }
+
+  $scope.refreshData = function() {
+       $scope.hotRows = $filter('filter')(hotRows, $scope.searchMessages);
+
+  };
 });

@@ -31,23 +31,10 @@
     </div>
     <div ng-hide=" getExtraConfig(topicName) == '' && topicIsEmpty">
         <div flex layout="row" ng-hide="showSpinner || topicIsEmpty || topicType == 'binary' || selectedTabNnumber > 1 " style="margin-bottom:-25px">
-            <md-input-container  class="md-block" style="" flex="85">
+            <md-input-container  class="md-block" style="" flex="100">
               <label>Filter</label>
-              <input ng-model="searchMessages"  ng-model-options="{ debounce: 500 }">
+              <input ng-model="searchMessages" ng-change="refreshData()"  ng-model-options="{ debounce: 500 }">
               <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
-
-            </md-input-container>
-            <md-input-container   class="md-block" style="" flex="15">
-                <label>Items per page</label>
-                <md-select ng-model-options="{ debounce: 500 }" ng-model="paginationItems" >
-                    <md-option class="itemsPerPage" style="border:0;">{{fittingItems}}</md-option>
-                    <md-option class="itemsPerPage">50</md-option>
-                    <md-option class="itemsPerPage">100</md-option>
-                    <md-option class="itemsPerPage">200</md-option>
-                    <md-option class="itemsPerPage">300</md-option>
-                    <md-option class="itemsPerPage">Show all items</md-option>
-                </md-select>
-                <!--<input ng-model="paginationItems" type="number" ng-change="paginationChanged(paginationItems)" ng-model-options="{ debounce: 500 }">-->
             </md-input-container>
         </div>
     <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">

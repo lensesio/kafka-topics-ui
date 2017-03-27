@@ -61,7 +61,10 @@ module.exports = function (grunt) {
           'bower_components/oboe/dist/oboe-browser.min.js',
           'bower_components/angular-oboe/dist/angular-oboe.min.js',
           'bower_components/angular-json-tree/dist/angular-json-tree.min.js',
-          'bower_components/angular-json-tree/dist/angular-json-tree.css'
+          'bower_components/angular-json-tree/dist/angular-json-tree.css',
+          'bower_components/handsontable/dist/handsontable.full.js',
+          'bower_components/ngHandsontable/dist/ngHandsontable.js',
+          'bower_components/handsontable/dist/handsontable.full.css'
 
         ],
         dest: 'dist',
