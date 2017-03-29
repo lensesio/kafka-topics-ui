@@ -7,7 +7,7 @@
         <i ng-hide="showList" class="fa fa-compress" aria-hidden="true"></i>
       </md-button>
       <h4>
-        <span>{{topicName}}</span>
+        <span>{{topicName}} </span>
       </h4>
       <span flex></span>
       <md-button
@@ -29,16 +29,12 @@
       <div style="color:#333;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
           This topic is empty.</div>
     </div>
-    <div ng-hide=" getExtraConfig(topicName) == '' && topicIsEmpty">
-        <div flex layout="row" ng-hide="showSpinner || topicIsEmpty || topicType == 'binary' || selectedTabNnumber > 1 " style="margin-bottom:-25px">
-            <md-input-container  class="md-block" style="" flex="100">
-              <label>Filter</label>
-              <input ng-model="searchMessages" ng-change="refreshData()"  ng-model-options="{ debounce: 500 }">
-              <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
-            </md-input-container>
-        </div>
-    <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
 
+    <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber" ≈>
+        <div layout="row" ng-hide="selectedTabNnumber >1 || topicType == 'binary'" >
+                <input  ng-model="searchMessages" ng-change="refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" style="width: 300px;margin: 7px; line-height: 30px;">
+                <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
+        </div>
         <md-tab   label="Topic" ng-click="onTabChanges('topic')"   ng-if="topicType != 'binary' && !topicIsEmpty ">
             <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
         </md-tab>
@@ -61,6 +57,7 @@
 
     </md-tabs>
   </div>
+    <span ng-hide ="showSpinner || topicIsEmpty" style="text-align:right;margin-right:10px;color:#aaa">Lines fetched: {{rows.length}}</span>
   </div>
 
 </md-card>

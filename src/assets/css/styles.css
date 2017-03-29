@@ -347,3 +347,11 @@ md-option.itemsPerPage {
     border-top: 1px dashed #ccc;
     text-align:center;
 }
+
+md-tab-data {
+    opacity: 1;
+    display: table;
+    right: 0;
+    left: initial;
+    z-index: 20;
+}
