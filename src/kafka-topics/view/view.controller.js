@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, env) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, env, hotRegisterer) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
@@ -588,12 +588,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                   if (key == rows.length -1) {
                       setTimeout(function () {
                               $scope.$apply(function () {
-                                  createHotTable()
+                                 createHotTable()
                               });
                     }, 500)
                   }
-
-
                 });
 
                 $scope.extraColsNumValues = extraColumnsNumberValue;
@@ -662,7 +660,6 @@ $scope.$parent.$parent.$watch("showList",function() {
          $scope.hotTableHeaders.push('Value')
      }
 
-console.log('giannis', $scope.flatRows[1])
      angular.forEach($scope.flatRows, function (rows) {
        var hotCol = [];
        angular.forEach(rows, function (col, key) {
@@ -673,12 +670,19 @@ console.log('giannis', $scope.flatRows[1])
 
        hotRows.push(hotCol)
      })
-
      $scope.refreshData();
    }
 
   $scope.refreshData = function() {
-       $scope.hotRows = $filter('filter')(hotRows, $scope.searchMessages);
+   $scope.hotRows = $filter('filter')(hotRows, $scope.searchMessages);
+    var hotsinstance = hotRegisterer.getInstance('my-handsontable');
 
+    hotsinstance.addHook('afterRender', function () {
+    $scope.hotsWidth = 15;
+      angular.forEach($scope.hotTableHeaders, function (value, key) {
+       $scope.hotsWidth = $scope.hotsWidth + hotsinstance.getColWidth(key);
+      })
+    });
   };
+
 });
