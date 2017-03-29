@@ -598,7 +598,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                 $scope.extraColsNumKeys = extraColumnsNumberKey;
 
 
-         var itemsPerPage = (window.innerHeight - 360) / 31
+         var itemsPerPage = (window.innerHeight - 300) / 31
          Math.floor(itemsPerPage) < 10 ? $scope.fittingItems =10 : $scope.fittingItems = Math.floor(itemsPerPage);
 //         $scope.paginationChanged = function(num) {
 //         console.log('test')
@@ -634,10 +634,7 @@ $scope.$parent.$parent.$watch("showList",function() {
   t++
 })
 
-
-  $scope.limit = 2000;
-  $scope.height= 500
-  var hotRows;
+ var hotRows;
  function createHotTable(){
     hotRows = [];
     $scope.hotTableHeaders = [];
