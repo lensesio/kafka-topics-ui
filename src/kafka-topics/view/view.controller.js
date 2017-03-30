@@ -635,7 +635,7 @@ $scope.$parent.$parent.$watch("showList",function() {
          $scope.hotTableHeaders.push('key.'+colheader)
        })
      } else {
-       $scope.hotTableHeaders = ['Key']
+       $scope.hotTableHeaders.push('Key')
      }
 
      if ($scope.extraColsNumValues > 0){

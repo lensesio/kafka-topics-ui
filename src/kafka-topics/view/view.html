@@ -31,7 +31,7 @@
     </div>
 
     <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber" ≈>
-        <div layout="row" ng-hide="selectedTabNnumber >1 || topicType == 'binary'" >
+        <div layout="row" ng-hide="selectedTabNnumber >1 || topicType == 'binary' || topicIsEmpty" >
                 <input  ng-model="searchMessages" ng-change="refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" style="width: 300px;margin: 7px; line-height: 30px;">
                 <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
         </div>

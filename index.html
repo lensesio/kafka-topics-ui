@@ -26,7 +26,7 @@
 <header class="header" ng-controller="HeaderCtrl" style="background:{{color}}">
   <div layout="row" layout-xs="column">
     <div flex>
-      <h5><a ng-click="showLeftList()" href="{{cluster ? '#/cluster/'+cluster.NAME : '#/'}}" style="text-decoration:none; padding-left:15px;">KAFKA TOPICS</a></h5>
+      <span><a ng-click="showLeftList()" href="{{cluster ? '#/cluster/'+cluster.NAME : '#/'}}" style="text-decoration:none;color:#fff;padding-left:15px;line-height: 44px;">KAFKA TOPICS</a></span>
     </div>
     <label ng-show="!missingEnvJS && clusters.length > 1" class="selectClusterLabel"><b>SELECT CLUSTER :</b></label>
     <md-input-container ng-show="!missingEnvJS && clusters.length > 1" class="selectCluster">

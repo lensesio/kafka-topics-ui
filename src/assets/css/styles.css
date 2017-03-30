@@ -355,3 +355,5 @@ md-tab-data {
     left: initial;
     z-index: 20;
 }
+#my-handsontable,
+hot-table {text-align:center}
