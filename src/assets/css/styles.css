@@ -21,10 +21,6 @@ md-toast.md-default-theme .md-toast-content, md-toast .md-toast-content {
     text-align: center;
 }
 
-.ace_editor {
-    height: 460px;
-}
-
 .ace_gutter {
     background: #f9f9f9 !important;
 }
@@ -342,4 +338,20 @@ table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
     transition: none;
     transition-duration: 0ms;
     transition-delay: 0ms;
+}
+
+section.pagination {margin:0;}
+
+md-option.itemsPerPage {
+    height: 27px;
+    border-top: 1px dashed #ccc;
+    text-align:center;
+}
+
+md-tab-data {
+    opacity: 1;
+    display: table;
+    right: 0;
+    left: initial;
+    z-index: 20;
 }

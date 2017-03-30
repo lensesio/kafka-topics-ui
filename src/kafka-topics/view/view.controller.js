@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, env) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $routeParams, $log, $mdToast, $location, $mdDialog, $http, KafkaRestProxyFactory, UtilsFactory, env, hotRegisterer) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
   $scope.topicName = $routeParams.topicName;
@@ -9,6 +9,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
   $scope.$on('$routeChangeSuccess', function() {
     $scope.cluster = env.getSelectedCluster().NAME;//$routeParams.cluster;
   })
+    $scope.maxHeight = window.innerHeight - 215;
+    if ($scope.maxHeight < 310) {$scope.maxHeight = 310}
 
     if ($routeParams.selectedTabIndex == "topic") {
       $scope.selectedTabNnumber=0;
@@ -61,7 +63,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
     $scope.editor.$blockScrolling = Infinity;
     _editor.setOptions({
       minLines: 33,
-      maxLines: 33
+      maxLines: $scope.maxHeight / 15
     });
 
   };
@@ -521,7 +523,13 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
         var rowWithMoreColumns;
         $scope.flatRows = [];
         if (rows.length > 0) {
-            angular.forEach(rows, function (row) {
+            angular.forEach(rows, function ( row, key) {
+            row= {
+              'offset' : row.offset,
+              'partition': row.partition,
+              'key' : row.key,
+              'value' : row.value
+            }
                   if (row.key == undefined || row.key == null) row.key = '';
                   if (row.value == undefined || row.value == null) row.value = '';
 
@@ -575,21 +583,92 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $rootScope, $filter, $r
                         }
 
                   }
-
                   $scope.flatRows.push(flattenObject(row));
 
+                  if (key == rows.length -1) {
+                      setTimeout(function () {
+                              $scope.$apply(function () {
+                                 createHotTable()
+                              });
+                    }, 500)
+                  }
                 });
 
                 $scope.extraColsNumValues = extraColumnsNumberValue;
                 $scope.extraColsNumKeys = extraColumnsNumberKey;
 
-         $scope.paginationItems = 10;
-         $scope.showHideAllButtonLabel = 'show ' + rows.length;
+
+         var itemsPerPage = (window.innerHeight - 300) / 31
+         Math.floor(itemsPerPage) < 10 ? $scope.fittingItems =10 : $scope.fittingItems = Math.floor(itemsPerPage);
+
+       $scope.paginationItems = $scope.fittingItems;
+       $scope.showHideAllButtonLabel = 'show ' + rows.length;
+
      }
 }
 
  $scope.showTree = function (keyOrValue) {
-    return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
- }
+  return !(angular.isNumber(keyOrValue) || angular.isString(keyOrValue) || (keyOrValue==null));
+}
+
+var t = 0
+$scope.$parent.$parent.$watch("showList",function() {
+  if (t !=0 ) {
+    setTimeout(function () {
+      $scope.$apply(function () {
+       createHotTable();
+      });
+    })
+  }
+  t++
+})
+
+ var hotRows;
+ function createHotTable(){
+    hotRows = [];
+    $scope.hotTableHeaders = [];
+
+     $scope.hotTableHeaders.push('Offset', 'Partition')
+
+     if ($scope.extraColsNumKeys > 0){
+       angular.forEach($scope.cols3, function(colheader) {
+         $scope.hotTableHeaders.push('key.'+colheader)
+       })
+     } else {
+       $scope.hotTableHeaders = ['Key']
+     }
+
+     if ($scope.extraColsNumValues > 0){
+       angular.forEach($scope.cols2, function(colheader) {
+         $scope.hotTableHeaders.push('value.'+colheader)
+       })
+     } else {
+         $scope.hotTableHeaders.push('Value')
+     }
+
+     angular.forEach($scope.flatRows, function (rows) {
+       var hotCol = [];
+       angular.forEach(rows, function (col, key) {
+         if( key !== "$$hashKey" ) {
+          hotCol.push(col)
+         }
+       })
+
+       hotRows.push(hotCol)
+     })
+     $scope.refreshData();
+   }
+
+  $scope.refreshData = function() {
+   $scope.hotRows = $filter('filter')(hotRows, $scope.searchMessages);
+    var hotsinstance = hotRegisterer.getInstance('my-handsontable');
+
+    hotsinstance.addHook('afterRender', function () {
+    $scope.hotsWidth = 15;
+      angular.forEach($scope.hotTableHeaders, function (value, key) {
+       $scope.hotsWidth = $scope.hotsWidth + hotsinstance.getColWidth(key);
+      })
+    });
+  };
 
 });

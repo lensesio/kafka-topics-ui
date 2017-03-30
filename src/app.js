@@ -13,7 +13,8 @@ var angularAPP = angular.module('angularAPP', [
   'ngOboe',
   'ui.grid',
   'ui.grid.resizeColumns',
-  'angular-json-tree'
+  'angular-json-tree',
+  'ngHandsontable'
 ]);
 
 angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $location, $route) {

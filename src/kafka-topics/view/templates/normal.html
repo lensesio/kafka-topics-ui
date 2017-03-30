@@ -13,7 +13,7 @@
           </thead>
           <tbody>
           <!--TODO remove gridOptions-->
-          <tr dir-paginate="t in gridOptions.data | filter : searchMessages | itemsPerPage: paginationItems"  pagination-id="treeView">
+          <tr dir-paginate="t in gridOptions.data | filter : searchMessages | itemsPerPage: paginationItems"  pagination-id="data">
             <td valign="top" class="td-center">{{t.offset}}</td>
             <td valign="top" class="td-center">{{t.partition}}</td>
 
@@ -34,10 +34,9 @@
           </tr>
           </tbody>
         </table>
-
-        <div flex>
-          <dir-pagination-controls pagination-id="treeView"></dir-pagination-controls>
-        </div>
-
     </md-content>
+
+      <div flex>
+        <dir-pagination-controls pagination-id="data" style="margin:0;"></dir-pagination-controls>
+      </div>
   </md-tab-body>
