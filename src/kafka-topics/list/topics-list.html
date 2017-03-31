@@ -15,15 +15,16 @@
       <md-list class="md-dense" flex>
         <md-list-item dir-paginate="topic in topics| orderBy:'topic' | filter : search | itemsPerPage:topicsPerPage"
                       pagination-id="topics"
-                      ng-click="listClick(topic)" class="md-2-line"
+                      ng-click="listClick(topic)"
+                      class="md-2-line"
                       current-page="normalTopicPage"
                       ng-class="{ 'selectedListItem': topic == topicName }">
 
           <div class="md-list-item-text" layout="column">
             <h4>{{topic}}</h4>
             <p style="font-size:12px;">
-              {{getPartitionMessage(topic)}}<span ng-if="hasExtraConfig(topic) > 0">,
-              {{hasExtraConfig(topic)}} config changed</span>
+              {{getPartitionMessage(topic)}}<span ng-if="hasExtraConfig(topic) > 0" style="display:inline-block;">
+&nbsp;&nbsp;  {{hasExtraConfig(topic)}} configs</span>
             </p>
           </div>
           <div style="display:block;background-color:rgba(44, 152, 240, 0.3);border-radius: 5px; width:60px; color:#333; text-align:center; font-size:12px">
@@ -38,5 +39,4 @@
       <dir-pagination-controls pagination-id="topics" style="margin:0;"></dir-pagination-controls>
     </div>
   </div>
-
 </md-content>
