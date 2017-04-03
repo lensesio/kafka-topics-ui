@@ -589,7 +589,10 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
         angular.forEach($rootScope.topicDetails, function (detail) {
           if (detail.name === topicName) {
             angular.forEach(angular.fromJson(schemas), function (schema) {
-              if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) {
+              if (
+              ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) &&
+              ((schema.key != null) && (schema.key.subject != null) && (schema.key.subject == topicName + "-key"))
+                ) {
                 //$log.info("FOUND YOU !! " + topicName);
                 dataType = "avro";
               }
