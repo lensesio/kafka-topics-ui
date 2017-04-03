@@ -1,63 +1,64 @@
-<md-card>
+<md-progress-linear md-mode="indeterminate" ng-show="showSpinner"></md-progress-linear>
+<div layout="row" layout-margin layout-sm="column" layout-xs="column">
 
-  <md-toolbar ng-show="!displayingControlTopics" class="md-hue-2">
-    <div class="md-toolbar-tools">
-      <md-button ng-click="toggleList()">
-        <i ng-show="showList" class="fa fa-expand" aria-hidden="true"></i>
-        <i ng-hide="showList" class="fa fa-compress" aria-hidden="true"></i>
-      </md-button>
-      <h4>
-        <span>{{topicName}} </span>
-      </h4>
-      <span flex></span>
-      <md-button
-              ng-hide ="showSpinner || topicIsEmpty"
-              download="true"
-              ng-click="getData(topicName)"
-              aria-label="Download data"
-              aria-hidden="false">
-        <i class="fa fa-download" aria-hidden="true"></i>
-      </md-button>
-    </div>
-  </md-toolbar>
-
-  <div flex style="padding: 2px;padding-bottom:2px;">
-
-    <!-- Spinner -->
-    <div us-spinner="{radius:10, width:3, length: 5}" ng-show="showSpinner" style="height:100%"></div>
-    <div layout="row" layout-align="start center" style="margin:10px;padding:10px;background:#fcf8e3;" ng-show="topicIsEmpty">
-      <div style="color:#333;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-          This topic is empty.</div>
-    </div>
-
-    <md-tabs ng-hide="showSpinner" style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber" ≈>
-        <div layout="row" ng-hide="selectedTabNnumber >1 || topicType == 'binary' || topicIsEmpty" >
-                <input  ng-model="searchMessages" ng-change="refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" style="width: 300px;margin: 7px; line-height: 30px;">
-                <!--<md-button style="position: absolute;right: 0px;top: -15px;" class="md-mini" ng-click="showAll()">{{showHideAllButtonLabel}}</md-button>-->
+        <div flex="33" flex-sm="100" ng-show="showList">
+            <topics-list mode="home"></topics-list>
         </div>
-        <md-tab   label="Topic" ng-click="onTabChanges('topic')"   ng-if="topicType != 'binary' && !topicIsEmpty ">
-            <div ng-include="'src/kafka-topics/view/templates/normal.html'"></div>
-        </md-tab>
 
-        <md-tab   label="Table" ng-click="onTabChanges('table')" ng-if="topicType != 'binary' && !topicIsEmpty">
-            <div ng-include="'src/kafka-topics/view/templates/flat_table.html'"></div>
-        </md-tab>
+        <div flex>
+            <md-card ng-hide="showSpinner" style="box-shadow:none;">
 
-        <md-tab label="Raw Data" ng-click="onTabChanges('rawdata')" ng-if=" !topicIsEmpty">
-            <md-tab-body>
-                <md-content class="md-padding" style="max-height:{{maxHeight}}px;height:{{maxHeight}}px">
-                    <div ng-include="'src/kafka-topics/view/templates/raw_data.html'"></div>
+                <md-toolbar ng-show="!displayingControlTopics" class="md-hue-2">
+                    <div class="md-toolbar-tools">
+                        <md-button ng-click="toggleList()">
+                            <i ng-show="showList" class="fa fa-expand" aria-hidden="true"></i>
+                            <i ng-hide="showList" class="fa fa-compress" aria-hidden="true"></i>
+                        </md-button>
+                        <h3>
+                            <span>{{topic.name}} </span>
+                        </h3>
+                        <span flex></span>
+                    </div>
+                </md-toolbar>
+                    <div layout="row" flex style="background:rgba(158, 158, 158, 0.2)">
+
+                        <div flex ng-click="setMenuSelection('data', cluster)" class="nonSelectedMenuItem" ng-class="{'selectedListItem': selectedMenuItem == 'data'}" style="min-height:20px; padding:10px; text-align:center; font-size:14px;">
+                            <i class="fa fa-table" aria-hidden="true" style="margin-right:5px;"></i>DATA
+                        </div>
+
+                        <div flex ng-click="setMenuSelection('overview', cluster)" ng-class="{ 'selectedListItem': selectedMenuItem == 'overview' }" style="min-height:20px; padding:10px; text-align:center;font-size:14px;">
+                            <i class="fa fa-table" aria-hidden="true" style="margin-right:5px;"></i>PARTITIONS
+                            <span class="labelTypeSm" ng-if="topic.partitions.length > 0"> {{topic.partitions.length}} </span>
+                        </div>
+
+                        <div flex ng-click="setMenuSelection('configuration', cluster)"  ng-class="{ 'selectedListItem': selectedMenuItem == 'configuration' }" style="min-height:20px; padding:10px; text-align:center;font-size:14px;">
+                            <i class="fa fa-wrench" aria-hidden="true" style="margin-right:5px;"></i>CONFIGURATION
+                            <span class="labelTypeSm" ng-if="topic.configs.length > 0"> {{topic.configs.length}} </span>
+                        </div>
+                    </div>
+                    <md-content>
+                        <div  ng-class="showList ? 'listOpened' : ''" class="view-container" id="view-container">
+
+                            <!-- ACTUAL VIEW -->
+                            <div flex style="width:100%; margin-top:8px">
+
+                                <div ng-if="selectedMenuItem == 'data'"
+                                     ng-include="'src/kafka-topics/view/templates/topic-data.html'"
+                                     ng-hide="topic.totalMessages == 0"></div>
+
+                                <!-- EMPTY TOPIC MESSAGE / TODO put me on data -->
+                                <div ng-show="topic.totalMessages == 0 && selectedMenuItem == 'data'" layout="row" layout-align="center center" style="margin-top:30px;font-weight:400">
+                                    There are no messages in this topic.
+                                </div>
+
+                                <div ng-show="selectedMenuItem == 'overview'" ng-include="'src/kafka-topics/view/templates/topic-overview.html'" layout-margin></div>
+
+                                <div ng-if="selectedMenuItem == 'configuration'" ng-include="'src/kafka-topics/view/templates/topic-configuration.html'" layout-margin></div>
+
+                            </div>
+                        </div>
                     </md-content>
-                </md-tab-body>
-        </md-tab>
+            </md-card>
 
-        <md-tab label="Configuration" ng-click="onTabChanges('config')"  ng-if=" selectedTabNnumber == '3' || getExtraConfig(topicName) != ''">
-            <div ng-include="'src/kafka-topics/view/templates/withConfiguration.html'"></div>
-        </md-tab>
-
-    </md-tabs>
-  </div>
-    <span ng-hide ="showSpinner || topicIsEmpty || selectedTabNnumber==3" style="text-align:right;margin-right:10px;color:#aaa">Lines fetched: {{rows.length}}</span>
-  </div>
-
-</md-card>
+        </div>
+</div>

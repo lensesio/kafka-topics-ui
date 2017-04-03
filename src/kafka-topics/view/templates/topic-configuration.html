@@ -1,0 +1,51 @@
+
+    <md-content ng-if="topic.configs.length > 0">
+
+        <p style="color: #797979;padding-left:10px;" ng-if="topic.configs.length > 1"><b>
+            Total configurations: {{topic.configs.length}}
+        </b></p>
+
+
+        <table class="topics-table"  ng-if="topic.configs">
+          <thead>
+          <tr>
+            <th>CONFIG</th>
+            <th>VALUE</th>
+            <th>DEFAULT</th>
+            <th>DESCRIPTION</th>
+          </tr>
+          </thead>
+          <tbody>
+
+          <tr ng-repeat="config in topic.configs track by $index">
+            <td>
+              <span>{{config.configuration}}</span>
+            </td>
+            <td>
+              <span>{{config.value}}</span>
+            </td>
+            <td>
+              <span>{{config.defaultValue}}</span>
+            </td>
+              <td>
+                  <span>{{config.documentation}}</span>
+              </td>
+              <!--TODO-->
+            <!--<td style="max-width:500px;" class="td-left">-->
+              <!--<span ng-hide="showMoreDesc[$index] || {{config.documentation.length}} < 200">{{ config.documentation | limitTo:100 }}...</span>-->
+              <!--<span ng-show="showMoreDesc[$index]">{{config.documentation}}</span>-->
+
+              <!--<span class="toggleconfig" ng-click="toggleMoreDesc($index)">-->
+                <!--<span ng-show="showMoreDesc[$index]" aria-hidden="true">Show Less</span>-->
+                <!--<span ng-hide="showMoreDesc[$index] || {{config.documentation.length}} < 200" aria-hidden="true">Show More</span>-->
+                <!--</span>-->
+            <!--</td>-->
+          </tr>
+          </tbody>
+          </table>
+
+    </md-content>
+
+ <div ng-if ="!topic.configs || topic.configs <=0"  layout="row" layout-align="center center" style="margin-top:30px; font-weight: 400; min-height:300px">
+     This topic retains the default configuration.
+ </div>

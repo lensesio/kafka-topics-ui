@@ -1,0 +1,51 @@
+
+ <!--
+  rows
+  paginationItems
+  showTree
+  search
+ -->
+
+  <md-tab-body>
+    <md-content class="normalcontent">
+
+      <md-list class="md-dense" flex style="padding:0px 25px">
+        <md-list-item class="md-2-line"
+                      dir-paginate="t in rows |  filter:search:strict | itemsPerPage: paginationItems"
+                      pagination-id="treeView"
+                      style="border-bottom:1px solid #f4f5f7; padding-top: 5px">
+
+          <div class="md-list-item-text" layout="column">
+
+            <div layout="row">
+                  <div layout="column" flex="100" layout-align="center left">
+                    <div ng-if="t.key != '' && topic.keyType !== 'binary'">
+                      <json-tree ng-if="isAvroOrJsonValue(topic.keyType)"  object="t.key" root-name="'Key'" style="max-width: 100%;"></json-tree>
+                      <div ng-if="!isAvroOrJsonValue(topic.keyType) ">{{t.key}}</div>
+                    </div>
+                    <div ng-if="t.value != '' && topic.valueType !== 'binary'" >
+                      <json-tree ng-if="isAvroOrJsonValue(topic.valueType)" object="t.value" root-name="'Value'" style=" max-width: 100%;"></json-tree>
+                      <div ng-if="!isAvroOrJsonValue(topic.valueType)">{{t.value}}</div>
+                    </div>
+                  </div>
+
+                  <span flex></span>
+
+                  <div layout="column" flex="10" style="flex:0 0 100px">
+                    <small style="float:right;text-align:right;color:#ccc"><i>Partition: {{t.partition}}</i></small>
+                    <small style="float:right;text-align:right;color:#ccc"><i>Offset: {{t.offset}}</i></small>
+                  </div>
+            </div>
+
+          </div>
+
+        </md-list-item>
+        <md-divider></md-divider>
+      </md-list>
+
+        <div flex>
+          <dir-pagination-controls pagination-id="treeView"></dir-pagination-controls>
+        </div>
+
+    </md-content>
+  </md-tab-body>

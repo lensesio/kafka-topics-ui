@@ -301,7 +301,15 @@ md-card md-card-title {
 
 /* When a user has selected a topic in the topic list */
 .selectedListItem {
-    background-color: rgba(158, 158, 158, 0.2);
+    background-color:#fff;
+}
+
+.selectedListItemList {
+ background:rgba(158, 158, 158, 0.2);;
+}
+
+.nonSelectedListItem {
+ background:rgba(158, 158, 158, 0.2);;
 }
 
 
@@ -357,3 +365,17 @@ md-tab-data {
 }
 #my-handsontable,
 hot-table {text-align:center}
+
+.labelTypeSm {
+    font-size: 12px;
+    padding: 5px;
+    background-color: #fb9678;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+}

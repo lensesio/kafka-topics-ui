@@ -1,8 +1,20 @@
-<div class="container-fluid-centered" style="height: 500px;">
-  <div class="row-fluid">
-    <div class="centering text-center">
-      <p> Welcome to <b>kafka-topics</b><br/>
-      <p> select a <b>topic</b> on the left </p><br/>
+<div layout-margin layout="row" layout-sm="column">
+
+  <div flex="33" flex-sm="100">
+    <topics-list mode="home"></topics-list>
+  </div>
+
+  <div flex>
+
+    <div layout="row" flex>
+      <total-topics flex="50" style="margin-right:15px"></total-topics>
+      <total-brokers flex="50"></total-brokers>
     </div>
+
+    <div layout="column">
+      <div ng-include="'src/kafka-topics/dashboard-components/config/config.html'"></div>
+      <div ng-include="'src/kafka-topics/dashboard-components/version/project-version.html'"></div>
+    </div>
+
   </div>
 </div>
