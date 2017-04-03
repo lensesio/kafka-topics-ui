@@ -579,6 +579,8 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
 
     getDataType: function (topicName) {
       var dataType = "...";
+      var dataType_key = "...";
+      var dataType_value = "...";
       // Check if we know the topic data type a priory
       if (TOPIC_CONFIG.JSON_TOPICS && TOPIC_CONFIG.JSON_TOPICS.indexOf(topicName) > -1) {
         dataType = "json";
@@ -589,14 +591,18 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
         angular.forEach($rootScope.topicDetails, function (detail) {
           if (detail.name === topicName) {
             angular.forEach(angular.fromJson(schemas), function (schema) {
-              if (
-              ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) &&
-              ((schema.key != null) && (schema.key.subject != null) && (schema.key.subject == topicName + "-key"))
-                ) {
+              if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) {
                 //$log.info("FOUND YOU !! " + topicName);
-                dataType = "avro";
+                dataType_value = "avro";
+              }
+              if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-key")) {
+                //$log.info("FOUND YOU !! " + topicName);
+                dataType_key = "avro";
               }
             });
+            if (dataType_value=="avro" && dataType_key=="avro") {
+              dataType="avro";
+            }
           }
         });
       }
