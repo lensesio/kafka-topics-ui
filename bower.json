@@ -22,7 +22,7 @@
     "angular-aria": "1.5.9",
     "angular-ui-ace": "bower",
     "bootstrap": "^3.3.6",
-    "angular-messages":"1.5.9",
+    "angular-messages": "1.5.9",
     "angular-spinner": "0.8.1",
     "angular-material": "1.0.9",
     "angularUtils-pagination": "angular-utils-pagination#^0.11.1",
@@ -32,8 +32,8 @@
     "angular-oboe": "*",
     "angular-ui-grid": "~3.2.1",
     "angular-json-tree": "^1.0.1",
-    "ngHandsontable": "0.13.0"
-
+    "ngHandsontable": "0.13.0",
+    "angular-cookies": "1.5.9"
   },
   "resolutions": {
     "angular": "1.5.9"

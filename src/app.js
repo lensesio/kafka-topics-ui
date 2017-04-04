@@ -4,6 +4,7 @@ var angularAPP = angular.module('angularAPP', [
   'ngRoute',
   'ngMaterial',
   'ngAnimate',
+  'ngCookies',
   'md.data.table',
   'ngAria',
   'ui.ace',

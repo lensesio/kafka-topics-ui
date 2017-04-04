@@ -2,7 +2,7 @@
 <div layout="row" layout-margin layout-sm="column" layout-xs="column">
 
         <div flex="33" flex-sm="100" ng-show="showList">
-            <topics-list mode="home"></topics-list>
+            <topics-list mode="home" cluster="{{cluster}}"></topics-list>
         </div>
 
         <div flex>
@@ -22,7 +22,7 @@
                 </md-toolbar>
                     <div layout="row" flex style="background:rgba(158, 158, 158, 0.2)">
 
-                        <div flex ng-click="setMenuSelection('data', cluster)" class="nonSelectedMenuItem" ng-class="{'selectedListItem': selectedMenuItem == 'data'}" style="min-height:20px; padding:10px; text-align:center; font-size:14px;">
+                        <div flex ng-click="setMenuSelection('data', cluster)" ng-class="{'selectedListItem': selectedMenuItem == 'data'}" style="min-height:20px; padding:10px; text-align:center; font-size:14px;">
                             <i class="fa fa-table" aria-hidden="true" style="margin-right:5px;"></i>DATA
                         </div>
 

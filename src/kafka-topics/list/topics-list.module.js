@@ -98,35 +98,11 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
     $location.path("cluster/" + $scope.cluster.NAME + "/topic/" + urlType + "/" + topicName, false);
   }
 
-  $scope.allCols = [
-     {id: "topicName", label: "Topic name", selected: true},
-     {id: "totalMessages", label: "Total messages",selected: false},
-     {id: "replication", label: "Replication", selected: true},
-     {id: "partitions", label: "Partitions", selected: true},
-     {id: "unreplicatedPartitions", label: "Unreplicated partitions", selected: false},
-     {id: "retention", label: "Retention", selected: false},
-     {id: "brokersForTopic", label: "Brokers for topic", selected: false},
-     {id: "consumerGroups", label: "Consumer groups", selected: false},
-     {id: "keyType", label: "Key type", selected: false},
-     {id: "valueType", label: "Value type", selected: false},
-     {id: "customConfig", label: "Custom configs", selected: true}];
-
-  $scope.selectedCols = {};
-
-  $scope.checkAndHide = function checkAndHide(name) {
-    if ($scope.selectedCols.searchText){
-        var showCol = $scope.selectedCols.searchText.some(function (selectedCols) {
-          return selectedCols === name;
-        });
-        return showCol
-    }
-  }
 
   function getLeftListTopics() {
     TopicsListFactory.getTopics($scope.cluster.KAFKA_REST.trim()).then(function (allData){
         var topics = [];
         angular.forEach(allData, function(topic) {
-            console.log(topic)
             TopicsListFactory.getTopicDetails(topic, $scope.cluster.KAFKA_REST.trim()).then(function(res){
 
                 var configsCounter = 0;
@@ -140,7 +116,6 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
                     isControlTopic : checkIsControlTopic(res.name)
                 }
 
-                console.log(topicImproved);
                 topics.push(topicImproved);
             })
         })
@@ -152,7 +127,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
         angular.forEach($scope.topics, function(topic) {
             //TODO Fetch Type Avro, Binary, Json
             //When do that, what happens with selectedTopics? They are not going to be updated ?
-            console.log(topic);
+//            console.log(topic);
 
         })
     }); // TODO error message?
@@ -165,7 +140,6 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
         type = type.substring(1, type.length);
         reverse = -1;
       }
-       console.log(type + " " + reverse);
       $scope.selectedTopics = shortList.sortByKey($scope.selectedTopics, type, reverse);
   }
 

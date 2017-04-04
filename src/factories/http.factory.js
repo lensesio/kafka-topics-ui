@@ -3,7 +3,7 @@ angular.
     factory('HttpFactory', function ($http, $log, $q) {
 
     return {
-        req: function(method, url, data) {
+        req: function(method, url, data, contentType) {
              var deferred = $q.defer();
              var request = {
                    method: method,
@@ -11,8 +11,8 @@ angular.
                    data: data,
                    dataType: 'json',
                    headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
+                            'Content-Type': contentType,
+                            'Accept': contentType //'application/json'
                             }
                  };
 

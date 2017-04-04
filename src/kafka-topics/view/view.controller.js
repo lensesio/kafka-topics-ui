@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $location, $http, TopicFactory, $q, $timeout ) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $location,$cookies, $http, TopicFactory, $q, $timeout , HttpFactory) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
 
@@ -23,7 +23,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
 //              setTopicMessages(allData, $scope.topic.valueType)
 //            });
         //MOCKING HERE
-        setTopicMessages(TopicFactory.getTopicData(topicName, $scope.cluster.KAFKA_REST))
+//        setTopicMessages(TopicFactory.getTopicData(topicName, $scope.cluster.KAFKA_REST))
   });
 
 
@@ -128,7 +128,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
     }
   }
 
-  $scope.selectedMenuItem = (topicMenuItem != undefined) ? topicMenuItem : 'overview';
+  $scope.selectedMenuItem = (topicMenuItem != undefined) ? topicMenuItem : 'data';
 
   $scope.setMenuSelection = function(currentMenuItem, cluster) {
         $scope.selectedMenuItem = currentMenuItem;
@@ -166,9 +166,114 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $log, $lo
       return $log.debug('Failed with '+ type +' type :(  (' + reason + ')');
   }
 
+    // Experiment
+    var endpoint = $scope.cluster.KAFKA_REST;
+    //TODO chain them & dynamic cookies & type detection
+
+    //STEP 1 : getOrCreateConsumer
+//    var consumer = JSON.parse($cookies.get('avroConsumer'));
+    var milliseconds = (new Date).getTime();
+    if($cookies.get('avroConsumer')) {
+        var consumer = JSON.parse($cookies.get('avroConsumer'));
+        console.log("cookie exists will reuse", consumer)
+
+        createConsumer('', consumer.group);
+//        subscribeAndGetData(consumer);
+    } else {
+        createConsumer(milliseconds, 'kafka-rest-proxy-avro-consumer-group-'+milliseconds);
+    }
+
+    function createConsumer(milliseconds, consumerGroup) {
+        $http({
+          method: 'POST',
+          url: endpoint + '/consumers/'+consumerGroup+'-'+milliseconds, //TODO Timestamp or UUID or Both
+          data: '{"name": "kafka-rest-proxy-avro-consumer-instance", "format": "avro", "auto.offset.reset": "earliest"}',
+          headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
+        }).then(function successCallback(response1) {
+            console.log("S1",response1);
+            $cookies.put('avroConsumer', JSON.stringify({group : consumerGroup, instance: 'kafka-rest-proxy-avro-consumer-instance'}));
+            consumer = JSON.parse($cookies.get('avroConsumer'));
+            subscribeAndGetData(consumer);
+        }, function errorCallback(response) {
+            console.log("s2", response)
+            if(response.data.error_code == 40902) {
+                consumer = JSON.parse($cookies.get('avroConsumer'));
+                console.log(consumer);
+                subscribeAndGetData(consumer)
+            }
+        });
+    }
+
+    function subscribeAndGetData(consumer) {
+    //STEP3 : Check existing subscriptions
+      $http({
+        method: 'GET',
+        url: endpoint + '/consumers/'+consumer.group+'/instances/'+consumer.instance+'/subscription',
+        headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
+      }).then(function successCallback(response) {
+          console.log("S3aa",response);
+          if(response.data.topics.length == 0) {
+            //subscribe
+            $http({
+              method: 'POST',
+              url: endpoint + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription',
+              data: '{"topics":["' + topicName + '"]}',
+              headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
+            }).then(function successCallback(response) {
+                    console.log("Got Subscription ", response);
+                      //STEP4 : Get Records
+                      $http({
+                        method: 'GET',
+                        url: endpoint + '/consumers/'+consumer.group+'/instances/'+consumer.instance+'/records?timeout=3000&max_bytes=300000',
+                        headers: {'Content-Type': 'application/vnd.kafka.v2+json', 'Accept': 'application/vnd.kafka.avro.v2+json' }
+                      }).then(function successCallback(response4) {
+                          console.log("S4aaaaaaaa",response4);
+                          setTopicMessages(response4.data);
+                        }, function errorCallback(response) {
+                          // called asynchronously if an error occurs
+                          // or server returns response with an error status.
+                        });
+            })
+          } else {
+            //unsubscribe and then subscribe
+            $http({
+                method: 'DELETE',
+                url: endpoint + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription',
+                headers : {'Accept': 'application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json'}
+            }).then(function successCallback(response){
+                    $http({
+                      method: 'POST',
+                      url: endpoint + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription',
+                      data: '{"topics":["' + topicName + '"]}',
+                      headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
+                    }).then(function successCallback(response) {
+                            console.log("Got Subscription ", response);
+                          //STEP4 : Get Records
+                          $http({
+                            method: 'GET',
+                            url: endpoint + '/consumers/'+consumer.group+'/instances/'+consumer.instance+'/records?timeout=3000&max_bytes=300000',
+                            headers: {'Content-Type': 'application/vnd.kafka.v2+json', 'Accept': 'application/vnd.kafka.avro.v2+json' }
+                          }).then(function successCallback(response4) {
+                              console.log("S4bbbbbbbb",response4);
+                              setTopicMessages(response4.data);
+                            }, function errorCallback(response) {
+                              // called asynchronously if an error occurs
+                              // or server returns response with an error status.
+                            });
+                    })
+            })
+          }
+      }, function errorCallback(response) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+      });
+      }
+
 });
 
 angularAPP.factory('TopicFactory', function (HttpFactory) {
+    var defaultContentType = 'application/vnd.kafka.avro.v2+json';
+
     return {
           getTopicSummary: function (topicName, endpoint) {
              return HttpFactory.req('GET', endpoint  + '/topics/' + topicName);
@@ -190,6 +295,48 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
           },
           getAllTopics: function(endpoint) {
             return HttpFactory.req('GET', endpoint + "/topics")
+          },
+          getDataFromConsumer: function(endpoint) {
+            createConsumer(endpoint).then(function(response) {
+                console.log(response);
+
+            })
+          },
+          createConsumerInstance: function(endpoint, consumerGroup, consumerInstance, format) {
+            return createConsumer(endpoint, consumerGroup, consumerInstance)
+          },
+          deleteConsumerInstance: function(endpoint, consumerGroup, consumerInstance) {
+            return HttpFactory.req('DELETE', endpoint + '/consumers/' + consumerGroup, defaultContentType )
+          },
+          subscribeConsumerToTopic: function(endpoint, consumerGroup, consumerInstance, topics) {
+            return subscribeToTopics(endpoint, consumerGroup, consumerInstance, topics)
+          },
+          fetchRecords: function(endpoint, consumerGroup, consumerInstance, topics) {
+            return
           }
     }
+
+
+
+     function createConsumer(endpoint, consumerGroup, consumerInstance, format) {
+          var data = {
+                    "name": consumerInstance,
+                    "format": format,
+                    "auto.offset.reset": "earliest",
+                    "auto.commit.enable": "true"
+                  }
+          var contentType = 'application/vnd.kafka.avro.v2+json';
+          return HttpFactory.req('POST', endpoint + '/consumers/' + consumerGroup, data, contentType )
+      }
+
+     function subscribeToTopics(endpoint, consumerGroup, consumerInstance, topics) {
+           var data2 = {
+                        topics : [
+                          "position-reports"
+                        ]
+                      }
+
+           var data = '{"topics":["position-reports"]}';
+          return HttpFactory.req('POST', endpoint + '/consumers/' + consumerGroup + '/instances/' + consumerInstance + '/subscription', data, defaultContentType )
+     }
 });
