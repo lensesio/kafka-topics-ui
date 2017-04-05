@@ -379,3 +379,23 @@ hot-table {text-align:center}
     -webkit-border-radius: 50px;
     border-radius: 50px;
 }
+json-tree .branch-preview {
+    overflow: hidden;
+    font-style: italic;
+    max-width: 90%;
+    height: 1.5em;
+    opacity: .7;
+    font-size: 11px;
+    line-height: 14px;
+}
+
+json-tree .key {
+    color: #D02828;
+    padding: 5px 10px 5px 15px;
+    font-size: 13px;
+}
+
+json-tree json-node.expandable::before {
+  top:5px;
+  font-size:8px;
+}

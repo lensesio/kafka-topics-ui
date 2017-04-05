@@ -9,22 +9,26 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $filter, 
 
   $scope.showSpinner = true;
 
-  //TODO add error messages for failed requrests + false spinner
-  TopicFactory.getTopicSummary(topicName, $scope.cluster.KAFKA_REST)
-  .then(function success(topic){
-        topic.configs = makeConfigsArray(topic.configs);
+      //TODO add error messages for failed requrests + false spinner
+      TopicFactory.getTopicSummary(topicName, $scope.cluster.KAFKA_REST)
+      .then(function success(topic){
+            topic.data.configs = makeConfigsArray(topic.data.configs);
 
-        $scope.topic = topic;
+            $scope.topic = topic.data;
+            console.log('kwstas', $scope.topic)
 
-        //TODO get Data from consumer
-//        TopicFactory.getTopicData(topicName, $scope.cluster.KAFKA_REST)
-//            .then(function success(allData){
-//              console.log("abc",allData)
-//              setTopicMessages(allData, $scope.topic.valueType)
-//            });
-        //MOCKING HERE
-//        setTopicMessages(TopicFactory.getTopicData(topicName, $scope.cluster.KAFKA_REST))
-  });
+            //TODO get Data from consumer
+    //        TopicFactory.getTopicData(topicName, $scope.cluster.KAFKA_REST)
+    //            .then(function success(allData){
+    //              console.log("abc",allData)
+    //              setTopicMessages(allData, $scope.topic.valueType)
+    //            });
+            //MOCKING HERE
+    //        setTopicMessages(TopicFactory.getTopicData(topicName, $scope.cluster.KAFKA_REST))
+      },
+     function failure(responseError2) {
+     console.log('kwstas2', responseError2)
+     });
 
 
     TopicFactory.getAllTopics($scope.cluster.KAFKA_REST)
@@ -283,6 +287,7 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
 
     return {
           getTopicSummary: function (topicName, endpoint) {
+          console.log('ttttetteeeeest')
              return HttpFactory.req('GET', endpoint  + '/topics/' + topicName);
           },
           getTopicData: function (topicName,  endpoint) {

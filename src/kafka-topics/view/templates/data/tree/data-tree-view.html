@@ -19,12 +19,12 @@
 
             <div layout="row">
                   <div layout="column" flex="100" layout-align="center left">
-                    <div ng-if="t.key != '' && topic.keyType !== 'binary'">
+                    <div>
                       <json-tree   object="t.key" root-name="'Key'" style="max-width: 100%;"></json-tree>
                       <!--<div ng-if="!isAvroOrJsonValue(topic.keyType) ">{{t.key}}</div>-->
                     </div>
-                    <div ng-if="t.value != '' && topic.valueType !== 'binary'" >
-                      <json-tree ng-if="isAvroOrJsonValue(topic.valueType)" object="t.value" root-name="'Value'" style=" max-width: 100%;"></json-tree>
+                    <div>
+                      <json-tree object="t.value" root-name="'Value'" style=" max-width: 100%;"></json-tree>
                       <!--<div ng-if="!isAvroOrJsonValue(topic.valueType)">{{t.value}}</div>-->
                     </div>
                   </div>
