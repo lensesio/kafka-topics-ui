@@ -1,6 +1,12 @@
+// Replace with the URL where a Kafka REST service is listening
 var clusters = [{
-        NAME: "UAT",
-        KAFKA_REST: "http://cloudera03.landoop.com:16781/api/kafka-rest-proxy",
-        MAX_BYTES: "?max_bytes=250000",     // Sets the defaul maximum amount of bytes to fetch from each topic
+        NAME: "prod",
+        KAFKA_REST: "localhost",
+        MAX_BYTES: "?max_bytes=50000", 	// Sets the default maximum amount of bytes to fetch from each topic
         COLOR: "#141414" // Optional
+    }, {
+        NAME: "dev",
+        KAFKA_REST: "localhost:8083",
+        MAX_BYTES: "?max_bytes=50000",
+        COLOR: "red"
     }];
