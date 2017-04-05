@@ -17,8 +17,8 @@ var angularAPP = angular.module('angularAPP', [
   'totalTopics',
   'flatView',
   'treeView',
-  'rawView',
-  'googlechart'
+  'ngHandsontable',
+  'rawView'
 ]);
 
 //angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $location, $route) { });
@@ -60,7 +60,9 @@ angularAPP.run(['$route', '$rootScope', '$location', function ($route, $rootScop
     };
 }]);
 
-angularAPP.config(function ($routeProvider) {
+angularAPP.config(function ($routeProvider, $locationProvider) {
+$locationProvider.html5Mode();
+  $locationProvider.hashPrefix('');
   $routeProvider
     .when('/', {
       templateUrl: 'src/kafka-topics/home/home.html',

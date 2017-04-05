@@ -24,7 +24,7 @@
 
       <div flex>
         <md-list class="md-dense" flex>
-          <md-list-item dir-paginate="topic in topics| orderBy:query.order | filter : search | itemsPerPage:5"
+          <md-list-item dir-paginate="topic in selectedTopics | orderBy:query.order | filter : search | itemsPerPage:5"
                         pagination-id="topics"
                         ng-click="listClick(topic.topicName, displayingControlTopics)"
                         class="md-2-line">

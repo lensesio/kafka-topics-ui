@@ -67,13 +67,33 @@ topicsListModule.factory('FlatTableFactory', function (HttpFactory) {
 });
 
 //TODO Clean me up! ALL shit happens here
-dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, $routeParams, FlatTableFactory, env) {
+dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, $routeParams, $filter, FlatTableFactory, env, hotRegisterer) {
+
+ $scope.maxHeight = window.innerHeight - 215;
+    if ($scope.maxHeight < 310) {$scope.maxHeight = 310}
+
+console.log ($scope.$parent)
 
    $scope.$watch("data", function() {
         if($scope.data) {
             flattenTable($scope.data); // because data is async/ly coming from an http call, we need to watch it, directive gets compiled from the beginning.
         }
    })
+
+  var t =0;
+
+  $scope.$parent.$parent.$parent.$parent.$watch("showList",function() {
+    if (t !=0 ) {
+      setTimeout(function () {
+        $scope.$apply(function () {
+         createHotTable();
+        });
+      })
+    }
+  t++
+  })
+
+
   var doFlattenValue;
   var doFlattenKey;
   var doNotFlatten;
@@ -129,81 +149,145 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, $rou
   };
 
 
-  function flattenTable(rows) {
+ function flattenTable(rows) {
 
-          var extraColumnsNumberValue = 0;
-          var extraColumnsNumberKey = 0;
-          var rowWithMoreColumns;
+         var extraColumnsNumberValue = 0;
+         var extraColumnsNumberKey = 0;
+         var rowWithMoreColumns;
+         $scope.flatRows = [];
+         if (rows.length > 0) {
+             angular.forEach(rows, function ( row, key) {
+             row= {
+               'offset' : row.offset,
+               'partition': row.partition,
+               'key' : row.key,
+               'value' : row.value
+             }
+                   if (row.key == undefined || row.key == null) row.key = '';
+                   if (row.value == undefined || row.value == null) row.value = '';
 
-          $scope.flatRows = [];
+                   if((angular.isNumber(row.value) || angular.isString(row.value)) && (angular.isNumber(row.key) || angular.isString(row.key))) {
+                         extraColumnsNumberValue = 0
+                         extraColumnsNumberKey = 0
+                         var newRow = {
+                             "offset" : row.offset,
+                             "partition" : row.partition,
+                             "key" : row.key,
+                             "value" : row.value
+                         }
+                         $scope.cols = Object.keys(FlatTableFactory.flattenObject(newRow));
+                         $scope.cols2 = [];
+                         $scope.cols3 = [];
+                   } else {
+                         var flatValue = FlatTableFactory.flattenObject(row.value);
+                         var flatKey = FlatTableFactory.flattenObject(row.key);
+                         var rowExtraColumnsValues = (!(angular.isNumber(row.value) || angular.isString(row.value))) ? Object.keys(flatValue).length : 0;
+                         var rowExtraColumnsKeys = (!(angular.isNumber(row.key) || angular.isString(row.key))) ? Object.keys(flatKey).length : 0;
 
-          if (rows.length > 0) {
-              angular.forEach(rows, function (row) {
-                if ($scope.topic.keyType == 'binary'){row.key = '-binary data-'}
-                if ($scope.topic.valueType == 'binary'){row.value = '-binary data-'}
+                         if(extraColumnsNumberValue < rowExtraColumnsValues) {
+                             extraColumnsNumberValue = rowExtraColumnsValues;
+                             rowWithMoreColumns = row;
+                         }
 
-                    if (row.key == undefined || row.key == null) row.key = '';
-                    if (row.value == undefined || row.value == null) row.value = '';
+                         if(extraColumnsNumberKey < rowExtraColumnsKeys) {
+                             extraColumnsNumberKey = rowExtraColumnsKeys;
+                             rowWithMoreColumns = row;
+                         }
 
-                    if(doNotFlatten) {
-                          extraColumnsNumberValue = 0
-                          extraColumnsNumberKey = 0
-                          var newRow = {
-                              "offset" : row.offset,
-                              "partition" : row.partition,
-                              "key" : row.key,
-                              "value" : 'value' +  row.value
-                          }
-                          $scope.flatColumns = Object.keys(FlatTableFactory.flattenObject(newRow));
-                          $scope.keyFlatColumns = [];
-                          $scope.valueFlatColumns = [];
-                    } else {
-                          var flatValue = FlatTableFactory.flattenObject(row.value);
-                          var flatKey = FlatTableFactory.flattenObject(row.key);
-                          var rowExtraColumnsValues = doFlattenValue ? Object.keys(flatValue).length : 1;
-                          var rowExtraColumnsKeys = doFlattenKey ? Object.keys(flatKey).length : 1;
+                         var newRow = {
+                             "offset" : rowWithMoreColumns.offset,
+                             "partition" : rowWithMoreColumns.partition,
+                             "key" : rowWithMoreColumns.key,
+                             "value" : rowWithMoreColumns.value
+                         }
 
-                          if(extraColumnsNumberValue < rowExtraColumnsValues) {
-                              extraColumnsNumberValue = rowExtraColumnsValues;
-                              rowWithMoreColumns = row;
-                          }
+                         $scope.cols =  Object.keys(FlatTableFactory.flattenObject(newRow));
+                         if (!(angular.isNumber(row.value) || angular.isString(row.value))){
+                           $scope.cols2 = Object.keys(FlatTableFactory.flattenObject(newRow.value));
+                         }
+                         else {
+                           $scope.cols2 = []
+                         }
+                         if (!(angular.isNumber(row.key) || angular.isString(row.key))){
+                           $scope.cols3 = Object.keys(FlatTableFactory.flattenObject(newRow.key));
+                         }
+                         else {
+                           $scope.cols3 = [];
+                         }
 
-                          if(extraColumnsNumberKey < rowExtraColumnsKeys) {
-                              extraColumnsNumberKey = rowExtraColumnsKeys;
-                              rowWithMoreColumns = row;
-                          }
-
-                          var newRow = {
-                              "offset" : rowWithMoreColumns.offset,
-                              "partition" : rowWithMoreColumns.partition,
-                              "key" : rowWithMoreColumns.key,
-                              "value" : rowWithMoreColumns.value
-                          }
-
-                          $scope.flatColumns =  Object.keys(FlatTableFactory.flattenObject(newRow));
-
-                        if (doFlattenValue){
-                          $scope.valueFlatColumns = Object.keys(FlatTableFactory.flattenObject(newRow.value));
-                        }
-                        else {
-                           $scope.valueFlatColumns  = []
-                        }
-                        if (doFlattenKey){
-                          $scope.keyFlatColumns = Object.keys(FlatTableFactory.flattenObject(newRow.key));
-                        }
-                        else {
-                           $scope.keyFlatColumns  = []
-                        }
-                    }
+                   }
                    $scope.flatRows.push(FlatTableFactory.flattenObject(row));
 
-                  });
+                   if (key == rows.length -1) {
+                       setTimeout(function () {
+                               $scope.$apply(function () {
+                                  createHotTable()
+                               });
+                     }, 500)
+                   }
+                 });
 
-                  $scope.extraColsNumValues = extraColumnsNumberValue;
-                  $scope.extraColsNumKeys = extraColumnsNumberKey;
+                 $scope.extraColsNumValues = extraColumnsNumberValue;
+                 $scope.extraColsNumKeys = extraColumnsNumberKey;
 
-       }
-  }
+
+          var itemsPerPage = (window.innerHeight - 300) / 31
+          Math.floor(itemsPerPage) < 10 ? $scope.fittingItems =10 : $scope.fittingItems = Math.floor(itemsPerPage);
+
+        $scope.paginationItems = $scope.fittingItems;
+        $scope.showHideAllButtonLabel = 'show ' + rows.length;
+
+      }
+ }
+
+  var hotRows;
+  function createHotTable(){
+     hotRows = [];
+     $scope.hotTableHeaders = [];
+
+      $scope.hotTableHeaders.push('Offset', 'Partition')
+
+      if ($scope.extraColsNumKeys > 0){
+        angular.forEach($scope.cols3, function(colheader) {
+          $scope.hotTableHeaders.push('key.'+colheader)
+        })
+      } else {
+        $scope.hotTableHeaders.push('Key')
+      }
+
+      if ($scope.extraColsNumValues > 0){
+        angular.forEach($scope.cols2, function(colheader) {
+          $scope.hotTableHeaders.push('value.'+colheader)
+        })
+      } else {
+          $scope.hotTableHeaders.push('Value')
+      }
+
+      angular.forEach($scope.flatRows, function (rows) {
+        var hotCol = [];
+        angular.forEach(rows, function (col, key) {
+          if( key !== "$$hashKey" ) {
+           hotCol.push(col)
+          }
+        })
+
+        hotRows.push(hotCol)
+      })
+      $scope.refreshData();
+    }
+
+   $scope.refreshData = function() {
+    $scope.hotRows = $filter('filter')(hotRows, $scope.searchMessages);
+     var hotsinstance = hotRegisterer.getInstance('my-handsontable');
+
+     hotsinstance.addHook('afterRender', function () {
+     $scope.hotsWidth = 15;
+       angular.forEach($scope.hotTableHeaders, function (value, key) {
+        $scope.hotsWidth = $scope.hotsWidth + hotsinstance.getColWidth(key);
+       })
+     });
+   };
+
 
   function sortTopic(type) {
       var reverse = 1;

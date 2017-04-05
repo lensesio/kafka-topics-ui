@@ -64,7 +64,7 @@ topicsListModule.factory('shortList', function (HttpFactory) {
   }
 })
 
-topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, TopicsListFactory, shortList) {
+topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, $cookies, $filter, $log, $q, $http, TopicsListFactory, shortList) {
 
   $scope.$watch(
     function () { return $scope.cluster; },
@@ -97,23 +97,19 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
     var urlType = (isControlTopic == true) ? 'c' : 'n';
     $location.path("cluster/" + $scope.cluster.NAME + "/topic/" + urlType + "/" + topicName, false);
   }
-
-
   function getLeftListTopics() {
     TopicsListFactory.getTopics($scope.cluster.KAFKA_REST.trim()).then(function (allData){
         var topics = [];
-        angular.forEach(allData, function(topic) {
+        angular.forEach(allData.data, function(topic) {
             TopicsListFactory.getTopicDetails(topic, $scope.cluster.KAFKA_REST.trim()).then(function(res){
-
                 var configsCounter = 0;
-                angular.forEach(res.configs, function(value, key) { configsCounter++;});
-
+                angular.forEach(res.data.configs, function(value, key) { configsCounter++;});
                 var topicImproved = {
-                    topicName : res.name,
-                    partitions : res.partitions.length,
-                    replication : res.partitions[0].replicas.length,
+                    topicName : res.data.name,
+                    partitions : res.data.partitions.length,
+                    replication : res.data.partitions[0].replicas.length,
                     customConfig : configsCounter,
-                    isControlTopic : checkIsControlTopic(res.name)
+                    isControlTopic : checkIsControlTopic(res.data.name)
                 }
 
                 topics.push(topicImproved);
@@ -121,7 +117,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
         })
 
         $scope.topics = topics;
-        $scope.selectedTopics = topics.filter(function(el) { return el.isControlTopic == true}); //TODO
+        $scope.selectTopicList(true);
 
     }).then(function(topics){
         angular.forEach($scope.topics, function(topic) {
@@ -164,6 +160,40 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
         return topic.topicName;
       }
   }
+      if(!$cookies.getAll().uuid) {
+        var DATE = $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss");
+        $cookies.put('uuid', DATE);
+        var uuid = $cookies.getAll().uuid
+        //loadSchemas(uuid)
+
+      } else {
+        var uuid=$cookies.getAll().uuid
+        console.log('uuid: ', uuid)
+       // loadSchemas(uuid)
+
+      }
+
+
+    //News
+    function loadSchemas (uuid) {
+      var start = new Date().getTime();
+
+      createConsumers(uuid);
+
+//          schemasPromise.then(function (allSchemas) {
+//             var end = new Date().getTime();
+////            $rootScope.schemas = allSchemas;
+//             $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
+//             schemas = allSchemas
+//             return schemas;
+//          }, function (reason) {
+//            $log.error('Failed: ' + reason);
+//          }, function (update) {
+//            $log.info('Got notification: ' + update);
+//          });
+    }
+
+
 
   //TODO
     function checkIsControlTopic(topicName) {

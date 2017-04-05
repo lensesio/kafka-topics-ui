@@ -20,7 +20,7 @@ totalBrokersModule.factory('BrokersBackendFactory', function (HttpFactory) {
 totalBrokersModule.controller('TotalBrokersCtrl', function ($scope,  $log, BrokersBackendFactory) {
     BrokersBackendFactory.getBrokers().then(
       function success(brokers) {
-        $scope.totalBrokers = brokers.brokers.length;
+       // $scope.totalBrokers = brokers.brokers.length;
       },
       function failure() {
         $scope.connectionFailure = true;

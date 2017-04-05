@@ -17,10 +17,9 @@ angular.
                  };
 
              $http(request)
-               .success(function (response) {
+             .then(function (response){
                   deferred.resolve(response);
-                })
-               .error(function (responseError) {
+                },function (responseError){
                     var msg = "Failed at method [" + method + "] [" + url + "] with error: \n" + JSON.stringify(responseError);
                     $log.error(msg);
                     deferred.reject(msg);

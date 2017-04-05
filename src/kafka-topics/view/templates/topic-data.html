@@ -4,12 +4,13 @@
     onTabChanges('topic')
     getPartitions / partitions (?) >> topic.partitions
 -->
-
-    <div style="background-color:#fff;" ng-cloak layout-margin >
+    <div ng-show="rows.length==0">
+        Topic is empty
+    </div>
+    <div style="background-color:#fff;" ng-cloak layout-margin  ng-hide="rows.length==0">
         <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
-
             <div layout="row">
-                <input ng-model="search.$" flex placeholder="Filter" style="width: 300px;margin: 7px; line-height: 30px;"/>
+                <input  ng-model="searchMessages" ng-change="refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" style="width: 300px;margin: 7px; line-height: 30px;">
 
                 <select class="form-control button" ng-model="search.partition" style="float:right; width: 120px;margin: 7px; line-height: 30px;">
                     <option value="" selected>All partitions</option>
@@ -30,11 +31,11 @@
 
             <!--TODO Why don't we handle keyType as well? -->
             <md-tab label="Topic" ng-click="onTabChanges('topic', cluster)" ng-if="!hideTab">
-               <tree-view data="rows" topic="topic" partitions="" search="search"></tree-view>
+               <tree-view data="rows" topic="topic" partitions="" search="searchMessages"></tree-view>
             </md-tab>
 
             <md-tab label="Table" ng-click="onTabChanges('table', cluster)" ng-if="!hideTab">
-                <flat-view data="rows" topic="topic" partitions="" search="search"></flat-view>
+                <flat-view data="rows" topic="topic" partitions="" search="searchMessages"></flat-view>
             </md-tab>
 
             <md-tab label="Raw Data" ng-click="onTabChanges('rawdata', cluster)" >

@@ -177,6 +177,56 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
   }
 
   // Consumers
+ function createConsumers() {
+
+    // Setting a cookie
+    if(!$cookies.getAll().uuid) {
+      var DATE = $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss");
+      $cookies.put('uuid', DATE);
+      var uuid = $cookies.getAll().uuid
+    } else {
+      var uuid=$cookies.getAll().uuid
+      console.log('giannis', uuid)
+    }
+    var formats = ["avro", "json", "binary"];
+    angular.forEach(formats, function(format){
+      var url = env.KAFKA_REST() + '/consumers/kafka-topics-ui-' + format + '_' + uuid;
+      var data = '{"name": "kafka_topics_ui_' + format + '", "format": "' + format + '", "auto.offset.reset": "earliest"}';
+
+      var postCreateConsumer = {
+        method: 'POST',
+        url: url,
+        data: data,
+        headers: {'Content-Type': 'application/vnd.kafka.v2+json'}
+      };
+
+      var curlCreateConsumer = 'curl -X POST -H "Content-Type: ' + 'application/vnd.kafka.v2+json' + '" ' + "--data '" + data + "' " + url;
+      $log.debug("  " + curlCreateConsumer);
+
+      var deferred = $q.defer();
+
+      $http(postCreateConsumer).then(
+        function success(response) {
+          $log.info("Success in creating kwstas " + format + " consumer. instance_id = " + response.data.instance_id + " base_uri = " + response.data.base_uri);
+          $rootScope.allCurlCommands = $rootScope.allCurlCommands + "\n" +
+            "// Creating " + format + " consumer\n" + curlCreateConsumer + "\n";
+          deferred.resolve(response.data);
+        },
+        function failure(response, statusText) {
+          var msg = response.data.message;
+          if (response.status == 409) msg = "409 " + msg;
+          $log.warn( msg);
+          deferred.reject();
+        }
+      );
+
+    })
+
+
+  }
+
+
+
 
   /**
    * Create a new consumer instance in the consumer group.
@@ -582,6 +632,8 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
 
     getDataType: function (topicName) {
       var dataType = "...";
+      var dataType_key;
+      var dataType_value;
       // Check if we know the topic data type a priory
       if (TOPIC_CONFIG.JSON_TOPICS && TOPIC_CONFIG.JSON_TOPICS.indexOf(topicName) > -1) {
         dataType = "json";
@@ -594,9 +646,16 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
             angular.forEach(angular.fromJson(schemas), function (schema) {
               if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) {
                 //$log.info("FOUND YOU !! " + topicName);
-                dataType = "avro";
+                dataType_value = "avro";
+              }
+              if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-key")) {
+                //$log.info("FOUND YOU !! " + topicName);
+                dataType_key = "avro";
               }
             });
+            if (dataType_value=="avro" && dataType_key=="avro") {
+              dataType="avro";
+            }
           }
         });
       }
@@ -614,6 +673,8 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
      *   Delete consumer
      */
     consumeKafkaRest: function (format, topicName) {
+    //curl -X GET $REST/consumers/kafka-topics-ui-avro/instances/kafka_topics_ui_avro_${DATE}/subscription
+
       $rootScope.allCurlCommands = "";
 
       var start = (new Date()).getTime();
@@ -649,18 +710,19 @@ angularAPP.factory('KafkaRestProxyFactory', function ($rootScope, $http, $log, $
     //News
     loadSchemas: function () {
           var start = new Date().getTime();
-          var schemasPromise = this.consumeKafkaRest("json", "_schemas");
-          schemasPromise.then(function (allSchemas) {
-             var end = new Date().getTime();
-//            $rootScope.schemas = allSchemas;
-             $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
-             schemas = allSchemas
-             return schemas;
-          }, function (reason) {
-            $log.error('Failed: ' + reason);
-          }, function (update) {
-            $log.info('Got notification: ' + update);
-          });
+          //var schemasPromise = this.consumeKafkaRest("json", "_schemas");
+          createConsumers();
+//          schemasPromise.then(function (allSchemas) {
+//             var end = new Date().getTime();
+////            $rootScope.schemas = allSchemas;
+//             $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
+//             schemas = allSchemas
+//             return schemas;
+//          }, function (reason) {
+//            $log.error('Failed: ' + reason);
+//          }, function (update) {
+//            $log.info('Got notification: ' + update);
+//          });
     }
 
   }
