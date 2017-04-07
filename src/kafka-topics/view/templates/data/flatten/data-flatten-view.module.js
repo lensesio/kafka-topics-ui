@@ -72,13 +72,18 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, $rou
  $scope.maxHeight = window.innerHeight - 215;
     if ($scope.maxHeight < 310) {$scope.maxHeight = 310}
 
-console.log ($scope.$parent)
 
    $scope.$watch("data", function() {
         if($scope.data) {
             flattenTable($scope.data); // because data is async/ly coming from an http call, we need to watch it, directive gets compiled from the beginning.
         }
    })
+
+
+   $scope.$watch("search", function(newValue) {
+    $scope.refreshData()
+   })
+
 
   var t =0;
 
@@ -277,7 +282,7 @@ console.log ($scope.$parent)
     }
 
    $scope.refreshData = function() {
-    $scope.hotRows = $filter('filter')(hotRows, $scope.searchMessages);
+    $scope.hotRows = $filter('filter')(hotRows, $scope.search);
      var hotsinstance = hotRegisterer.getInstance('my-handsontable');
 
      hotsinstance.addHook('afterRender', function () {

@@ -64,7 +64,8 @@ topicsListModule.factory('shortList', function (HttpFactory) {
   }
 })
 
-topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, $cookies, $filter, $log, $q, $http, TopicsListFactory, shortList) {
+topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, $rootScope, $cookies, $filter, $log, $q, $http, TopicsListFactory, shortList) {
+  $rootScope.showList = true;
 
   $scope.$watch(
     function () { return $scope.cluster; },
@@ -95,7 +96,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
 
   $scope.listClick = function (topicName, isControlTopic) {
     var urlType = (isControlTopic == true) ? 'c' : 'n';
-    $location.path("cluster/" + $scope.cluster.NAME + "/topic/" + urlType + "/" + topicName, false);
+    $location.path("cluster/" + $scope.cluster.NAME + "/topic/" + urlType + "/" + topicName, true);
   }
   function getLeftListTopics() {
     TopicsListFactory.getTopics($scope.cluster.KAFKA_REST.trim()).then(function (allData){
@@ -116,8 +117,9 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
             })
         })
 
+        $scope.selectedTopics = topics;
         $scope.topics = topics;
-        $scope.selectTopicList(true);
+        //$scope.selectTopicList(true);
 
     }).then(function(topics){
         angular.forEach($scope.topics, function(topic) {
@@ -138,8 +140,6 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
       }
       $scope.selectedTopics = shortList.sortByKey($scope.selectedTopics, type, reverse);
   }
-
-
 
   //TODO
   function shortenControlCenterName(topic) {

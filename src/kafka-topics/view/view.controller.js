@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $filter, $log, $location,$cookies, $http, TopicFactory, $q, $timeout , HttpFactory) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScope, $filter, $log, $location,$cookies, $http, TopicFactory, $q, $timeout , HttpFactory) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
 
@@ -15,8 +15,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $filter, 
             topic.data.configs = makeConfigsArray(topic.data.configs);
 
             $scope.topic = topic.data;
-            console.log('kwstas', $scope.topic)
-
             //TODO get Data from consumer
     //        TopicFactory.getTopicData(topicName, $scope.cluster.KAFKA_REST)
     //            .then(function success(allData){
@@ -27,7 +25,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $filter, 
     //        setTopicMessages(TopicFactory.getTopicData(topicName, $scope.cluster.KAFKA_REST))
       },
      function failure(responseError2) {
-     console.log('kwstas2', responseError2)
      });
 
 
@@ -41,10 +38,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $filter, 
 ********************************/
 
   $scope.showDownloadDiv = false;
-  $scope.showList = true;
 
   $scope.toggleList = function () {
-     $scope.showList = !$scope.showList;
+     $rootScope.showList = !$rootScope.showList;
   };
 
   $scope.downloadData = function (topicName, data) {
@@ -253,13 +249,15 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $filter, 
                         headers: {'Content-Type': 'application/vnd.kafka.v2+json', 'Accept': 'application/vnd.kafka.'+format+'.v2+json' }
               }).then(function successCallback(response4) {
                   console.log('Format is:', format)
+                  console.log(response4)
+                  setTopicMessages(response4.data);
+
                   if(format=='binary') {
                     console.log('Its binary!')
                     $scope.hideTab = true
                   } else {
                     $scope.hideTab = false;
                   }
-                  setTopicMessages(response4.data);
                 }, function errorCallback(response) {
                 if (format=='avro') {
                   console.log('Its not avro!')

@@ -44,8 +44,17 @@
 </div>
 
 <!--Main Content here-->
-<ng-view style="width:100%" ng-hide="missingEnvJS"></ng-view>
 
+
+<div layout-no-margin layout="row" layout-sm="column">
+
+
+  <div flex="33" flex-sm="100" style="margin:16px" ng-show="showList">
+    <topics-list mode="home" cluster="{{cluster}}"></topics-list>
+  </div>
+  <ng-view style="margin:0" flex ng-hide="missingEnvJS"></ng-view>
+
+</div>
 <!--<div layout-margin flex>-->
   <!--<div flex="nogrow">-->
     <!--<img ng-src="src/assets/icons/landoop-dark.svg" style="width:20px;float: left;padding-right:5px;"></div>-->

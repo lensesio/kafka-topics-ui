@@ -10,7 +10,7 @@
     <div style="background-color:#fff;" ng-cloak layout-margin  ng-hide="rows.length==0">
         <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
             <div layout="row">
-                <input  ng-model="searchMessages" ng-change="refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" style="width: 300px;margin: 7px; line-height: 30px;">
+                <input  ng-model="searchMessages" ng-change="dataFlatTableCtrl.refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" style="width: 300px;margin: 7px; line-height: 30px;">
 
                 <select class="form-control button" ng-model="search.partition" style="float:right; width: 120px;margin: 7px; line-height: 30px;">
                     <option value="" selected>All partitions</option>
@@ -39,7 +39,7 @@
             </md-tab>
 
             <md-tab label="Raw Data" ng-click="onTabChanges('rawdata', cluster)" >
-                <raw-view data="rows" topic="topic" topicType="topic.valueType"></raw-view>
+                <raw-view data="rows"  topic="topic" topicType="topic.valueType"></raw-view>
             </md-tab>
 
         </md-tabs>

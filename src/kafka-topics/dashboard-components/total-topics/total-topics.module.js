@@ -19,6 +19,6 @@ totalTopicsModule.factory('TopicsCountBackendFactory', function (HttpFactory) {
 
 totalTopicsModule.controller('TotalTopicsCtrl', function ($scope, TopicsCountBackendFactory, env) {
     TopicsCountBackendFactory.getTopics(env.KAFKA_REST()).then(function(data) {
-      $scope.totalTopics = data.length
+      $scope.totalTopics = data.data.length
     })
 });
