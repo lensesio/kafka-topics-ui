@@ -183,7 +183,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
 
     } else {
       var uuid=$cookies.getAll().uuid
-      console.log('uuid: ', uuid)
       createConsumers(uuid)
     }
 
@@ -212,6 +211,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
           function success(response) {
             $log.info(response);
             $scope.consumers.push({group :'kafka_topics_ui_' + format + '_' + uuid, instance: 'kafka-topics-ui-' + format })
+
             if(key==2){
               subscribeAndGetData($scope.consumers[0], 'avro')
             }
@@ -235,6 +235,12 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
     }
 
     function subscribeAndGetData(consumer, format) {
+     $http({
+      method: 'DELETE',
+      url: endpoint + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription',
+      headers : {'Accept': 'application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json'}
+  }).then(function successCallback(response156){
+
     $http({
       method: 'POST',
       url: endpoint + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription',
@@ -249,7 +255,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
                         headers: {'Content-Type': 'application/vnd.kafka.v2+json', 'Accept': 'application/vnd.kafka.'+format+'.v2+json' }
               }).then(function successCallback(response4) {
                   console.log('Format is:', format)
-                  console.log(response4)
                   setTopicMessages(response4.data);
 
                   if(format=='binary') {
@@ -275,7 +280,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
            // called asynchronously if an error occurs
            // or server returns response with an error status.
          })
-      }
+
+  }, function failure (responseFailed5){
+    });
+  }
 
 
 });
@@ -341,10 +349,10 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
 
      function subscribeToTopics(endpoint, consumerGroup, consumerInstance, topics) {
            var data2 = {
-                        topics : [
-                          "position-reports"
-                        ]
-                      }
+              topics : [
+                "position-reports"
+              ]
+            }
 
            var data = '{"topics":["position-reports"]}';
           return HttpFactory.req('POST', endpoint + '/consumers/' + consumerGroup + '/instances/' + consumerInstance + '/subscription', data, defaultContentType )

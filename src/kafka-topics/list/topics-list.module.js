@@ -64,8 +64,20 @@ topicsListModule.factory('shortList', function (HttpFactory) {
   }
 })
 
-topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, $rootScope, $cookies, $filter, $log, $q, $http, TopicsListFactory, shortList) {
+topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, $rootScope, $routeParams, $cookies, $filter, $log, $q, $http, TopicsListFactory, shortList) {
   $rootScope.showList = true;
+
+  $scope.topic = $routeParams.topicName
+
+
+  $scope.$watch(
+    function () { return $routeParams.topicName },
+    function () { if(angular.isDefined($routeParams.topicName)) {
+      $scope.topicName = $routeParams.topicName
+      console.log('test', $routeParams.topicName)
+    }
+ },
+   true);
 
   $scope.$watch(
     function () { return $scope.cluster; },
@@ -94,14 +106,19 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
     $scope.selectedTopics = $scope.topics.filter(function(el) {return el.isControlTopic == displayingControlTopics})
   }
 
+
+  var itemsPerPage = (window.innerHeight - 280) / 48;
+  Math.floor(itemsPerPage) < 3 ? $scope.topicsPerPage =3 : $scope.topicsPerPage = Math.floor(itemsPerPage);
+
   $scope.listClick = function (topicName, isControlTopic) {
     var urlType = (isControlTopic == true) ? 'c' : 'n';
     $location.path("cluster/" + $scope.cluster.NAME + "/topic/" + urlType + "/" + topicName, true);
   }
+
   function getLeftListTopics() {
     TopicsListFactory.getTopics($scope.cluster.KAFKA_REST.trim()).then(function (allData){
         var topics = [];
-        angular.forEach(allData.data, function(topic) {
+        angular.forEach(allData.data, function(topic, key) {
             TopicsListFactory.getTopicDetails(topic, $scope.cluster.KAFKA_REST.trim()).then(function(res){
                 var configsCounter = 0;
                 angular.forEach(res.data.configs, function(value, key) { configsCounter++;});
@@ -114,14 +131,29 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
                 }
 
                 topics.push(topicImproved);
+               if (key == allData.data.length -1) {
+                  $scope.selectedTopics = topics.filter(function(el) {return el.isControlTopic == false});
+                  $scope.topics = topics;
+
+                  $scope.topicsIndex = arrayObjectIndexOf($scope.selectedTopics, $routeParams.topicName, 'topicName' ) + 1;
+                  $scope.topicsPage = Math.ceil($scope.topicsIndex / $scope.topicsPerPage);
+
+                  if ($scope.topicsPage < 1) {
+                    $scope.topicsPage = 1
+                  }
+                  $scope.selectTopicList(false)
+
+               }
             })
+
         })
 
-        $scope.selectedTopics = topics;
-        $scope.topics = topics;
         //$scope.selectTopicList(true);
 
     }).then(function(topics){
+
+
+
         angular.forEach($scope.topics, function(topic) {
             //TODO Fetch Type Avro, Binary, Json
             //When do that, what happens with selectedTopics? They are not going to be updated ?
@@ -140,6 +172,14 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
       }
       $scope.selectedTopics = shortList.sortByKey($scope.selectedTopics, type, reverse);
   }
+
+
+function arrayObjectIndexOf(myArray, searchTerm, property) {
+    for(var i = 0, len = myArray.length; i < len; i++) {
+        if (myArray[i][property] === searchTerm) return i;
+    }
+    return -1;
+}
 
   //TODO
   function shortenControlCenterName(topic) {

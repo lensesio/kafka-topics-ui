@@ -399,3 +399,7 @@ json-tree json-node.expandable::before {
   top:5px;
   font-size:8px;
 }
+
+.selectedListItem {
+    background-color: rgba(158, 158, 158, 0.2);
+}

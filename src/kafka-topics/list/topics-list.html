@@ -21,16 +21,17 @@
         <label>Search topics:</label>
         <input ng-model="search">
       </md-input-container>
-
       <div flex>
         <md-list class="md-dense" flex>
-          <md-list-item dir-paginate="topic in selectedTopics | orderBy:query.order | filter : search | itemsPerPage:5"
+          <md-list-item dir-paginate="topic in selectedTopics | orderBy:query.order | filter : search | itemsPerPage:topicsPerPage"
                         pagination-id="topics"
                         ng-click="listClick(topic.topicName, displayingControlTopics)"
-                        class="md-2-line">
-                        <!--TODO: 1) Selected Page, 2) Selected topic gray-->
+                        class="md-2-line"
+                        current-page="topicsPage"
+                        ng-class="{ 'selectedListItem': topicName == topic.topicName }">
+
+            <!--TODO: 1) Selected Page, 2) Selected topic gray-->
                         <!--current-page="normalTopicPage">-->
-                        <!--ng-class="{ 'selectedListItemList': topic == topic.topicName }">-->
 
             <div class="md-list-item-text" layout="column">
               <!--<h4>{{shortenControlCenterName(topic.topicName)}}</h4>-->
