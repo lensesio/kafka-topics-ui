@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScope, $filter, $log, $location,$cookies, $http, TopicFactory, $q, $timeout , HttpFactory) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScope, $filter, $log, $location,$cookies, $http, TopicFactory, $q, $timeout , consumerFactory, HttpFactory) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
 
@@ -13,20 +13,10 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
       TopicFactory.getTopicSummary(topicName, $scope.cluster.KAFKA_REST)
       .then(function success(topic){
             topic.data.configs = makeConfigsArray(topic.data.configs);
-
             $scope.topic = topic.data;
-            //TODO get Data from consumer
-    //        TopicFactory.getTopicData(topicName, $scope.cluster.KAFKA_REST)
-    //            .then(function success(allData){
-    //              console.log("abc",allData)
-    //              setTopicMessages(allData, $scope.topic.valueType)
-    //            });
-            //MOCKING HERE
-    //        setTopicMessages(TopicFactory.getTopicData(topicName, $scope.cluster.KAFKA_REST))
       },
      function failure(responseError2) {
      });
-
 
     TopicFactory.getAllTopics($scope.cluster.KAFKA_REST)
     .then(function success(allTopics){
@@ -167,126 +157,37 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
       return $log.debug('Failed with '+ type +' type :(  (' + reason + ')');
   }
 
-    // Experiment
-    var endpoint = $scope.cluster.KAFKA_REST;
-    //TODO chain them & dynamic cookies & type detection
+  createAndFetch ('avro', topicName);
 
-    //STEP 1 : getOrCreateConsumer
-//    var consumer = JSON.parse($cookies.get('avroConsumer'));
-
-
-    if(!$cookies.getAll().uuid) {
-      var DATE = $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss");
-      $cookies.put('uuid', DATE);
-      var uuid = $cookies.getAll().uuid
-      createConsumers(uuid)
-
-    } else {
-      var uuid=$cookies.getAll().uuid
-      createConsumers(uuid)
-    }
-
-
-   function createConsumers(uuid) {
-
-      // Setting a cookie
-      $scope.consumers = [];
-      var formats = ["avro", "json", "binary"];
-      angular.forEach(formats, function(format, key){
-        var url = $scope.cluster.KAFKA_REST.trim() + '/consumers/kafka_topics_ui_' + format + '_' + uuid;
-        var data = '{"name": "kafka-topics-ui-' + format + '", "format": "' + format + '", "auto.offset.reset": "earliest"}';
-        var postCreateConsumer = {
-          method: 'POST',
-          url: url,
-          data: data,
-          headers: {'Content-Type': 'application/vnd.kafka.v2+json'}
-        };
-
-        var curlCreateConsumer = 'curl -X POST -H "Content-Type: ' + 'application/vnd.kafka.v2+json' + '" ' + "--data '" + data + "' " + url;
-        $log.debug("  " + curlCreateConsumer);
-
-        var deferred = $q.defer();
-
-        $http(postCreateConsumer).then(
-          function success(response) {
-            $log.info(response);
-            $scope.consumers.push({group :'kafka_topics_ui_' + format + '_' + uuid, instance: 'kafka-topics-ui-' + format })
-
-            if(key==2){
-              subscribeAndGetData($scope.consumers[0], 'avro')
+  function createAndFetch (format, topicName) {
+    consumerFactory.createConsumers(format, topicName).then( function (response) {
+      var uuid=$cookies.getAll().uuid;
+        if (response.status == 409 || response.status == 200) {
+          var consumer = {group :'kafka_topics_ui_'+format+'_' + uuid, instance: 'kafka-topics-ui-'+ format };
+          consumerFactory.subscribeAndGetData(consumer, format, topicName).then(function (allData) {
+            if (allData.status == 500 && format=='avro') {
+              createAndFetch('json', topicName)
             }
-            deferred.resolve(response.data);
-          },
-          function failure(response, statusText) {
-
-            var msg = response.data.message;
-            if (response.status == 409) {
-              msg = "409 " + msg;
-              $scope.consumers.push({group :'kafka_topics_ui_' + format + '_' + uuid, instance: 'kafka-topics-ui-' + format })
-              if(key==2){
-                subscribeAndGetData($scope.consumers[0], 'avro')
-              }
-
+            else if (allData.status == 500 && format=='json') {
+              createAndFetch('binary', topicName)
+            } else {
+              console.log('Format is:', format)
+              setTopicMessages(allData.data)
+              $scope.showSpinner = false;
             }
-            $log.warn( msg);
-            deferred.reject();
-          });
-      })
-    }
-
-    function subscribeAndGetData(consumer, format) {
-     $http({
-      method: 'DELETE',
-      url: endpoint + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription',
-      headers : {'Accept': 'application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json'}
-  }).then(function successCallback(response156){
-
-    $http({
-      method: 'POST',
-      url: endpoint + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription',
-      data: '{"topics":["' + topicName + '"]}',
-      headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
-    }).then(function successCallback(response) {
-            console.log("Got Subscription ", response);
-              //STEP4 : Get Records
-              $http({
-                method: 'GET',
-                url: endpoint + '/consumers/'+consumer.group+'/instances/'+consumer.instance+'/records?timeout=5000&max_bytes=300000',
-                        headers: {'Content-Type': 'application/vnd.kafka.v2+json', 'Accept': 'application/vnd.kafka.'+format+'.v2+json' }
-              }).then(function successCallback(response4) {
-                  console.log('Format is:', format)
-                  setTopicMessages(response4.data);
-
-                  if(format=='binary') {
-                    console.log('Its binary!')
-                    $scope.hideTab = true
-                  } else {
-                    $scope.hideTab = false;
-                  }
-                }, function errorCallback(response) {
-                if (format=='avro') {
-                  console.log('Its not avro!')
-                  subscribeAndGetData($scope.consumers[1], 'json')
-                }
-                else if (format == 'json') {
-                  console.log('Its not json!')
-                  subscribeAndGetData($scope.consumers[2], 'binary')
-                }
-                  // called asynchronously if an error occurs
-                  // or server returns response with an error status.
-                });
-      }, function errorCallback(response) {
-      console.log('POST not working')
-           // called asynchronously if an error occurs
-           // or server returns response with an error status.
-         })
-
-  }, function failure (responseFailed5){
-    });
+          })
+          if (response.status == 409) {
+              var msg = response.data.message;
+              msg = "Conflict 409. " + msg;
+              $log.warn(msg)
+           }
+         } else {
+          $log.warn(response.data.message)
+         }
+    })
   }
-
-
 });
+
 
 angularAPP.factory('TopicFactory', function (HttpFactory) {
     var defaultContentType = 'application/vnd.kafka.avro.v2+json';
@@ -295,21 +196,6 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
           getTopicSummary: function (topicName, endpoint) {
           console.log('ttttetteeeeest')
              return HttpFactory.req('GET', endpoint  + '/topics/' + topicName);
-          },
-          getTopicData: function (topicName,  endpoint) {
-               var a =  {
-                        	"key": "1",
-                        	"value": {
-                        		"Type": 1
-                        	},
-                        	"partition": 0,
-                        	"offset": 3307068020
-                        };
-               var b = [];
-               b.push(a);
-               return b;
-               //TODO BRING THE DATA!!!!!!
-//             return HttpFactory.req('GET', endpoint  + '/topics/' + topicName);
           },
           getAllTopics: function(endpoint) {
             return HttpFactory.req('GET', endpoint + "/topics")

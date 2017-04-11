@@ -24,7 +24,7 @@ topicsListModule.directive('topicsList', function(templates) {
 topicsListModule.factory('templates', function() {
   return {
     compact: 'src/kafka-topics/list/compact-topics-list.html',
-    home:  'src/kafka-topics/list/topics-list.html'
+    home:  'src/kafka-topics/list/topics-list.html',
   };
 });
 
@@ -64,17 +64,18 @@ topicsListModule.factory('shortList', function (HttpFactory) {
   }
 })
 
-topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, $rootScope, $routeParams, $cookies, $filter, $log, $q, $http, TopicsListFactory, shortList) {
+topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, $rootScope, $routeParams, $cookies, $filter, $log, $q, $http, TopicsListFactory, shortList, consumerFactory) {
   $rootScope.showList = true;
 
   $scope.topic = $routeParams.topicName
 
+  var schemas;
+  loadSchemas()
 
   $scope.$watch(
     function () { return $routeParams.topicName },
     function () { if(angular.isDefined($routeParams.topicName)) {
       $scope.topicName = $routeParams.topicName
-      console.log('test', $routeParams.topicName)
     }
  },
    true);
@@ -200,19 +201,6 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
         return topic.topicName;
       }
   }
-      if(!$cookies.getAll().uuid) {
-        var DATE = $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss");
-        $cookies.put('uuid', DATE);
-        var uuid = $cookies.getAll().uuid
-        //loadSchemas(uuid)
-
-      } else {
-        var uuid=$cookies.getAll().uuid
-        console.log('uuid: ', uuid)
-       // loadSchemas(uuid)
-
-      }
-
 
     //News
     function loadSchemas (uuid) {
@@ -234,6 +222,76 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
     }
 
 
+  function loadSchemas(){
+    consumerFactory.createConsumers('json', '_schemas').then( function (response) {
+
+    var uuid=$cookies.getAll().uuid;
+      if (response.status == 409 || response.status == 200) {
+
+        var consumer = {group :'kafka_topics_ui_json_' + uuid, instance: 'kafka-topics-ui-json' };
+           consumerFactory.subscribeAndGetData(consumer,'json', '_schemas').then(function (allSchemas) {
+             $rootScope.schemas = allSchemas;
+             schemas = allSchemas
+             return schemas
+           })
+        if (response.status == 409) {
+            var msg = response.data.message;
+            msg = "Conflict 409. " + msg;
+            $log.warn(msg)
+         }
+       } else {
+        $log.warn(response.data.message)
+       }
+    })
+  }
+
+
+  var TOPIC_CONFIG = {
+  //  KAFKA_TOPIC_DELETE_COMMAND : "kafka-topics --zookeeper zookeeper-host:2181/confluent --delete --topic",
+    // Pre-configure the Data Type on particular well-known topics
+    JSON_TOPICS: ["_schemas"],
+    BINARY_TOPICS: ["connect-configs", "connect-offsets", "__consumer_offsets", "_confluent-monitoring", "_confluent-controlcenter", "__confluent.support.metr"],
+    // If a topic starts with this particular prefix - it's a control topic
+    CONTROL_TOPICS: ["_confluent-controlcenter", "_confluent-command", "_confluent-metrics", "connect-configs", "connect-offsets", "__confluent", "__consumer_offsets", "_confluent-monitoring", "connect-status", "_schemas"]
+    };
+  function getDataType (topicName) {
+    var dataType = "...";
+    var dataType_key;
+    var dataType_value;
+    // Check if we know the topic data type a priory
+    if (TOPIC_CONFIG.JSON_TOPICS && TOPIC_CONFIG.JSON_TOPICS.indexOf(topicName) > -1) {
+      dataType = "json";
+    } else if (TOPIC_CONFIG.BINARY_TOPICS && TOPIC_CONFIG.BINARY_TOPICS.indexOf(topicName.substring(0, 24)) > -1) {
+      dataType = "binary";
+    } else {
+      // If topicDetails are not available wait
+          if (schemas) {
+          angular.forEach(angular.fromJson(schemas.data), function (schema) {
+            if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) {
+              //$log.info("FOUND YOU !! " + topicName);
+              dataType_value = "avro";
+            }
+            if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-key")) {
+              //$log.info("FOUND YOU !! " + topicName);
+              dataType_key = "avro";
+            }
+          });
+          if (dataType_value=="avro" && dataType_key=="avro") {
+            dataType="avro";
+          }
+}
+    }
+    if (dataType == "") {
+      $log.warn("Could not find the message type of topic [" + topicName + "]");
+    }
+    return dataType;
+  }
+
+   $scope.getDataType = function (topicName) {
+      return getDataType(topicName);
+    };
+
+
 
   //TODO
     function checkIsControlTopic(topicName) {
@@ -244,15 +302,6 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
       });
       return isControlTopic;
     }
-
-    var TOPIC_CONFIG = {
-    //  KAFKA_TOPIC_DELETE_COMMAND : "kafka-topics --zookeeper zookeeper-host:2181/confluent --delete --topic",
-      // Pre-configure the Data Type on particular well-known topics
-      JSON_TOPICS: ["_schemas"],
-      BINARY_TOPICS: ["connect-configs", "connect-offsets", "__consumer_offsets", "_confluent-monitoring", "_confluent-controlcenter", "__confluent.support.metr"],
-      // If a topic starts with this particular prefix - it's a control topic
-      CONTROL_TOPICS: ["_confluent-controlcenter", "_confluent-command", "_confluent-metrics", "connect-configs", "connect-offsets", "__confluent", "__consumer_offsets", "_confluent-monitoring", "connect-status", "_schemas"]
-      };
 
 
 });
