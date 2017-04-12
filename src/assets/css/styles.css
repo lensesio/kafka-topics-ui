@@ -403,3 +403,11 @@ json-tree json-node.expandable::before {
 .selectedListItem {
     background-color: rgba(158, 158, 158, 0.2);
 }
+
+label.checkbox {
+    margin: 6px 2px;
+    padding: 2px 0 2px 4px;
+    border: 1px dashed #bbb;
+    text-align: center;
+    display: inline-block;
+}

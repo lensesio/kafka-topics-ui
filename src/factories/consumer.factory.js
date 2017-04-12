@@ -45,9 +45,7 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
       headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
     }).then(function successCallback(response) {
 
-    console.log("Got Subscription ", response);
     seekToBeginningOrEnd('beginning', consumer, topicName).then(function (responseSeek) {
-    console.log('response seek',responseSeek)
       //STEP4 : Get Records
       $http({
         method: 'GET',
@@ -152,7 +150,6 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     deleteConsumerSubscriptions(consumer).then(function(responseDelete){
 
       var data = {'partitions':[]}
-      console.log('partitions', data)
       angular.forEach(partitions, function (partition){
         data.partitions.push({'topic':topicName, 'partition': partition})
       })
@@ -169,10 +166,37 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
           deferred.resolve(response);
         },
         function failure(response) {
-
           deferred.resolve(response);
        });
     })
+
+  return deferred.promise
+
+  }
+
+  function postConsumerPositions(consumer, topicName, partitions, offset) {
+    var deferred = $q.defer();
+
+     var data = {'offsets':[]}
+      angular.forEach(partitions, function (partition){
+        data.offsets.push({'topic':topicName, 'partition': partition, 'offset':offset})
+      })
+
+      var postConsumerOffsets = {
+        method: 'POST',
+        url: env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions',
+        data: data,
+        headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
+      }
+
+      $http(postConsumerOffsets).then(
+        function success(response) {
+          deferred.resolve(response);
+
+        },
+        function failure(response) {
+          deferred.resolve(response);
+       });
 
   return deferred.promise
 
@@ -232,6 +256,9 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
         },
     seekToBeginningOrEnd: function (beginningOrEnd, consumer, topicName) {
           return seekToBeginningOrEnd(beginningOrEnd, consumer, topicName);
+        },
+    postConsumerPositions: function (consumer, topicName, partition, offset) {
+          return postConsumerPositions(consumer, topicName, partition, offset);
         },
     postConsumerAssignments: function (consumer, topicName, partitions) {
           return postConsumerAssignments(consumer, topicName, partitions);

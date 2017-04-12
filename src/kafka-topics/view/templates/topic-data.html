@@ -11,18 +11,18 @@
 
     <div ng-show="showAdvanced">
         <div class="partitionSelection" style="background:#eee;padding:10px">
-
+            Select partition:<br />
             <span ng-repeat="partition in topic.partitions | orderBy : 'partition' ">
               <label class="checkbox">
-                <input type="checkbox" ng-checked="exists(partition.partition, selectedPartitions)"
+              {{partition.partition}}
+                <input type="radio" name="partition" ng-checked="exists(partition.partition, selectedPartitions)"
                        ng-click="toggle(partition.partition, selectedPartitions)"
                 />
-                {{partition.partition}}
               </label>
-            </span>
-            <md-button ng-click="assignPartitions(selectedPartitions)">assign partitions</md-button> <br />
-            <input placeholder="set offset" type="number" ng-model="offset" />
-            <md-button ng-click="setOffset(offset)">Set offset</md-button> <br />
+            </span><br />
+            <input placeholder="Set offset*" type="number" ng-model="offset" />
+            <md-button ng-click="assignPartitions(selectedPartitions, offset)">GO</md-button> <br />
+            <small style="color:#999"><i>*If left empty, sets offset to the earliest value</i></small>
 
         </div>
     </div>
@@ -43,7 +43,6 @@
                 <i class="fa fa-close" ng-show="showDownloadDiv" aria-hidden="true" style="color:#333"></i>
             </md-button>
         </div>
-
 
 
         <!--TODO Why don't we handle keyType as well? -->

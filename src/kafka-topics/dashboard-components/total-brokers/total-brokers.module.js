@@ -11,14 +11,15 @@ totalBrokersModule.directive('totalBrokers', function(templates) {
 
 totalBrokersModule.factory('BrokersBackendFactory', function (HttpFactory) {
     return {
-        getBrokers: function () {
-           return HttpFactory.req('GET',"https://kafka-rest-proxy.demo.landoop.com" + '/brokers');
+        getBrokers: function (endpoint) {
+           return HttpFactory.req('GET', endpoint + '/brokers');
         }
     }
 });
 
-totalBrokersModule.controller('TotalBrokersCtrl', function ($scope,  $log, BrokersBackendFactory) {
-    BrokersBackendFactory.getBrokers().then(
+totalBrokersModule.controller('TotalBrokersCtrl', function ($scope,  $log, BrokersBackendFactory, env) {
+var endpoint = env.KAFKA_REST().trim()
+    BrokersBackendFactory.getBrokers(endpoint).then(
       function success(brokers) {
        $scope.totalBrokers = brokers.data.brokers.length;
       },

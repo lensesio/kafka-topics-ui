@@ -169,7 +169,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
   }
 
   createAndFetch ('avro', topicName);
-
+ $scope.hideTab = false;
   function createAndFetch (format, topicName) {
     consumerFactory.createConsumers(format, topicName).then( function (response) {
       var uuid=$cookies.getAll().uuid;
@@ -188,6 +188,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
               $scope.format=format;
               setTopicMessages(allData.data)
               $scope.showSpinner = false;
+              if(format=='binary') {
+                $scope.hideTab = true;
+              }
             } else {
             }
           })
@@ -235,13 +238,16 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
         return list.indexOf(item) > -1;
       };
 
-  $scope.assignPartitions = function assignPartitions (partitions) {
+  $scope.assignPartitions = function assignPartitions (partitions, offset) {
   $scope.showSpinner = true;
+  if (!angular.isDefined(offset)){offset = 0}
     consumerFactory.postConsumerAssignments($scope.consumer, topicName, partitions).then(function (responseAssign){
-      consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
-        setTopicMessages(allData.data)
-        $scope.showSpinner = false;
-      }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
+      consumerFactory.postConsumerPositions($scope.consumer, topicName, partitions, offset).then(function(responseOffset){
+        consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
+          setTopicMessages(allData.data)
+          $scope.showSpinner = false;
+        }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
+      })
     })
   }
 
@@ -257,45 +263,6 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
           },
           getAllTopics: function(endpoint) {
             return HttpFactory.req('GET', endpoint + "/topics")
-          },
-          getDataFromConsumer: function(endpoint) {
-            createConsumer(endpoint).then(function(response) {
-                console.log(response);
-            })
-          },
-          createConsumerInstance: function(endpoint, consumerGroup, consumerInstance, format) {
-            return createConsumer(endpoint, consumerGroup, consumerInstance)
-          },
-          deleteConsumerInstance: function(endpoint, consumerGroup, consumerInstance) {
-            return HttpFactory.req('DELETE', endpoint + '/consumers/' + consumerGroup, defaultContentType )
-          },
-          subscribeConsumerToTopic: function(endpoint, consumerGroup, consumerInstance, topics) {
-            return subscribeToTopics(endpoint, consumerGroup, consumerInstance, topics)
-          },
-          fetchRecords: function(endpoint, consumerGroup, consumerInstance, topics) {
-            return
           }
     }
-
-     function createConsumer(endpoint, consumerGroup, consumerInstance, format) {
-          var data = {
-                    "name": consumerInstance,
-                    "format": format,
-                    "auto.offset.reset": "earliest",
-                    "auto.commit.enable": "true"
-                  }
-          var contentType = 'application/vnd.kafka.avro.v2+json';
-          return HttpFactory.req('POST', endpoint + '/consumers/' + consumerGroup, data, contentType )
-      }
-
-     function subscribeToTopics(endpoint, consumerGroup, consumerInstance, topics) {
-           var data2 = {
-              topics : [
-                "position-reports"
-              ]
-            }
-
-           var data = '{"topics":["position-reports"]}';
-          return HttpFactory.req('POST', endpoint + '/consumers/' + consumerGroup + '/instances/' + consumerInstance + '/subscription', data, defaultContentType )
-     }
 });
