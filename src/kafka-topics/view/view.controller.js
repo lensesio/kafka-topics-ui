@@ -9,6 +9,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
 
   $scope.showSpinner = true;
 
+
       //TODO add error messages for failed requrests + false spinner
       TopicFactory.getTopicSummary(topicName, $scope.cluster.KAFKA_REST)
       .then(function success(topic){
@@ -23,6 +24,16 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
       $scope.allTopics = allTopics;
     });
 
+  $scope.showOrHideAdvanced = 'Show advanced';
+  $scope.showAdvanced = false;
+  $scope.toggleAdvanced = function(){
+  if($scope.showAdvanced)
+    $scope.showOrHideAdvanced = 'Show advanced';
+    else
+    $scope.showOrHideAdvanced = 'Hide advanced';
+
+    $scope.showAdvanced = !$scope.showAdvanced
+  }
 /*******************************
  * topic-toolbar.html
 ********************************/
@@ -164,16 +175,20 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
       var uuid=$cookies.getAll().uuid;
         if (response.status == 409 || response.status == 200) {
           var consumer = {group :'kafka_topics_ui_'+format+'_' + uuid, instance: 'kafka-topics-ui-'+ format };
+          $scope.consumer=consumer;
           consumerFactory.subscribeAndGetData(consumer, format, topicName).then(function (allData) {
-            if (allData.status == 500 && format=='avro') {
+            if ((allData.status == 500 || allData.data.error_code == 404 ) && format=='avro') {
               createAndFetch('json', topicName)
             }
-            else if (allData.status == 500 && format=='json') {
+            else if ((allData.status == 500 || allData.data.error_code == 404 ) && format=='json') {
               createAndFetch('binary', topicName)
-            } else {
+            } else if (!(allData.status == 500 || allData.data.error_code == 404 )){
+
               console.log('Format is:', format)
+              $scope.format=format;
               setTopicMessages(allData.data)
               $scope.showSpinner = false;
+            } else {
             }
           })
           if (response.status == 409) {
@@ -186,6 +201,50 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
          }
     })
   }
+    $scope.selectedPartitions = []
+//    For select/deselect all partitions
+
+//    $scope.isIndeterminate = function() {
+//      return ($scope.selectedPartitions.length !== 0 &&
+//          $scope.selectedPartitions.length !== $scope.topic.partitions.length);
+//    };
+//
+//    $scope.isChecked = function() {
+//      return $scope.selectedPartitions.length === $scope.topic.partitions.length;
+//    };
+//
+//    $scope.toggleAll = function() {
+//      if ($scope.selectedPartitions.length === $scope.topic.partitions.length) {
+//        $scope.selectedPartitions = [];
+//      } else if ($scope.selectedPartitions.length === 0 || $scope.selectedPartitions.length > 0) {
+//        $scope.selectedPartitions = $scope.topic.partitions.slice(0);
+//      }
+//    };
+
+    $scope.toggle = function (item, list) {
+        var idx = list.indexOf(item);
+        if (idx > -1) {
+          list.splice(idx, 1);
+        }
+        else {
+          list.push(item);
+        }
+      };
+
+      $scope.exists = function (item, list) {
+        return list.indexOf(item) > -1;
+      };
+
+  $scope.assignPartitions = function assignPartitions (partitions) {
+  $scope.showSpinner = true;
+    consumerFactory.postConsumerAssignments($scope.consumer, topicName, partitions).then(function (responseAssign){
+      consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
+        setTopicMessages(allData.data)
+        $scope.showSpinner = false;
+      }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
+    })
+  }
+
 });
 
 
@@ -194,7 +253,6 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
 
     return {
           getTopicSummary: function (topicName, endpoint) {
-          console.log('ttttetteeeeest')
              return HttpFactory.req('GET', endpoint  + '/topics/' + topicName);
           },
           getAllTopics: function(endpoint) {
@@ -203,7 +261,6 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
           getDataFromConsumer: function(endpoint) {
             createConsumer(endpoint).then(function(response) {
                 console.log(response);
-
             })
           },
           createConsumerInstance: function(endpoint, consumerGroup, consumerInstance, format) {
@@ -219,8 +276,6 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
             return
           }
     }
-
-
 
      function createConsumer(endpoint, consumerGroup, consumerInstance, format) {
           var data = {

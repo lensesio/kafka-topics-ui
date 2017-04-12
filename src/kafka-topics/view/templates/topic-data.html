@@ -4,68 +4,85 @@
     onTabChanges('topic')
     getPartitions / partitions (?) >> topic.partitions
 -->
-    <div ng-show="rows.length==0">
-        Topic is empty
-    </div>
-    <div style="background-color:#fff;" ng-cloak layout-margin  ng-hide="rows.length==0">
-        <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
-            <div layout="row">
-                <input  ng-model="searchMessages" ng-change="dataFlatTableCtrl.refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" style="width: 300px;margin: 7px; line-height: 30px;">
+<div ng-show="rows.length==0">
+    Topic is empty
+</div>
+<div style="background-color:#fff;" ng-cloak layout-margin  ng-hide="rows.length==0">
 
-                <select class="form-control button" ng-model="search.partition" style="float:right; width: 120px;margin: 7px; line-height: 30px;">
-                    <option value="" selected>All partitions</option>
-                    <option ng-repeat="i in topic.partitions | orderBy:'partition'" track by $index value="{{i.partition}}">Partition {{i.partition}}</option>
-                </select>
+    <div ng-show="showAdvanced">
+        <div class="partitionSelection" style="background:#eee;padding:10px">
 
-                <md-button
-                        ng-hide="topic.totalMessages == 0"
-                        ng-click="showDownloadDiv = !showDownloadDiv"
-                        aria-label="Download data"
-                        aria-hidden="false">
-                    <i class="fa fa-download" ng-show="!showDownloadDiv" aria-hidden="true" style="color:#333"></i>
-                    <i class="fa fa-close" ng-show="showDownloadDiv" aria-hidden="true" style="color:#333"></i>
-                </md-button>
-            </div>
-
-
-
-            <!--TODO Why don't we handle keyType as well? -->
-            <md-tab label="Topic" ng-click="onTabChanges('topic', cluster)" ng-if="!hideTab">
-               <tree-view data="rows" topic="topic" partitions="" search="searchMessages"></tree-view>
-            </md-tab>
-
-            <md-tab label="Table" ng-click="onTabChanges('table', cluster)" ng-if="!hideTab">
-                <flat-view data="rows" topic="topic" partitions="" search="searchMessages"></flat-view>
-            </md-tab>
-
-            <md-tab label="Raw Data" ng-click="onTabChanges('rawdata', cluster)" >
-                <raw-view data="rows"  topic="topic" topicType="topic.valueType"></raw-view>
-            </md-tab>
-
-        </md-tabs>
-
-        <div class="downloadDiv" ng-show="showDownloadDiv">
-            <h4>Download Options</h4>
-            <ul>
-                <li>
-                    <div class="checkbox checkbox-info">
-                        <input id="checkbox1" type="checkbox" checked="checked" class="fxhdr">
-                        <label for="checkbox1">Download Avro encoded file</label>
-                    </div>
-                </li>
-                <li>
-                    <div class="checkbox checkbox-success">
-                        <input id="checkbox4" type="checkbox" class="open-close">
-                        <label for="checkbox4"> Download only filtered data</label>
-                    </div>
-                </li>
-            </ul>
-            <md-button style="float:right"  download="true"
-                       ng-click="downloadData(topic.topicName, rows)"
-                       aria-label="Download data"
-                       aria-hidden="false">
-                <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
-            </md-button>
+            <span ng-repeat="partition in topic.partitions | orderBy : 'partition' ">
+              <label class="checkbox">
+                <input type="checkbox" ng-checked="exists(partition.partition, selectedPartitions)"
+                       ng-click="toggle(partition.partition, selectedPartitions)"
+                />
+                {{partition.partition}}
+              </label>
+            </span>
+            <md-button ng-click="assignPartitions(selectedPartitions)">assign partitions</md-button> <br />
+            <input placeholder="set offset" type="number" ng-model="offset" />
+            <md-button ng-click="setOffset(offset)">Set offset</md-button> <br />
 
         </div>
     </div>
+
+    <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
+        <div layout="row">
+            <input  ng-model="searchMessages" ng-change="dataFlatTableCtrl.refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" style="width: 300px;margin: 7px; line-height: 30px;">
+
+            <md-button ng-click="toggleAdvanced()">{{showOrHideAdvanced}}</md-button>
+
+
+            <md-button
+                    ng-hide="topic.totalMessages == 0"
+                    ng-click="showDownloadDiv = !showDownloadDiv"
+                    aria-label="Download data"
+                    aria-hidden="false">
+                <i class="fa fa-download" ng-show="!showDownloadDiv" aria-hidden="true" style="color:#333"></i>
+                <i class="fa fa-close" ng-show="showDownloadDiv" aria-hidden="true" style="color:#333"></i>
+            </md-button>
+        </div>
+
+
+
+        <!--TODO Why don't we handle keyType as well? -->
+        <md-tab label="Topic" ng-click="onTabChanges('topic', cluster)" ng-if="!hideTab">
+            <tree-view data="rows" topic="topic" partitions="" search="searchMessages"></tree-view>
+        </md-tab>
+
+        <md-tab label="Table" ng-click="onTabChanges('table', cluster)" ng-if="!hideTab">
+            <flat-view data="rows" topic="topic" partitions="" search="searchMessages"></flat-view>
+        </md-tab>
+
+        <md-tab label="Raw Data" ng-click="onTabChanges('rawdata', cluster)" >
+            <raw-view data="rows"  topic="topic" topicType="topic.valueType"></raw-view>
+        </md-tab>
+
+    </md-tabs>
+
+    <div class="downloadDiv" ng-show="showDownloadDiv">
+        <h4>Download Options</h4>
+        <ul>
+            <li>
+                <div class="checkbox checkbox-info">
+                    <input id="checkbox1" type="checkbox" checked="checked" class="fxhdr">
+                    <label for="checkbox1">Download Avro encoded file</label>
+                </div>
+            </li>
+            <li>
+                <div class="checkbox checkbox-success">
+                    <input id="checkbox4" type="checkbox" class="open-close">
+                    <label for="checkbox4"> Download only filtered data</label>
+                </div>
+            </li>
+        </ul>
+        <md-button style="float:right"  download="true"
+                   ng-click="downloadData(topic.topicName, rows)"
+                   aria-label="Download data"
+                   aria-hidden="false">
+            <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
+        </md-button>
+
+    </div>
+</div>
