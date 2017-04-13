@@ -327,13 +327,6 @@ table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
 .flat-table tr th {border:1px #ccc solid;}
 .blue {background-color:#dcedf7};
 
-.json-tree .branch-preview {
-    overflow: hidden;
-    font-style: italic;
-    max-width: 70%;
-    height: 1.5em;
-    opacity: .7;
-}
 
 .md-tabs
 {
@@ -383,7 +376,7 @@ json-tree .branch-preview {
     overflow: hidden;
     font-style: italic;
     max-width: 90%;
-    height: 1.5em;
+    height: 14px;
     opacity: .7;
     font-size: 11px;
     line-height: 14px;
@@ -410,4 +403,23 @@ label.checkbox {
     border: 1px dashed #bbb;
     text-align: center;
     display: inline-block;
+}
+
+json-tree .leaf-value {
+    word-break: break-all;
+    font-size: 12px;
+    opacity: 0.8;
+    line-height: 12px;
+}
+
+json-tree .key .key {
+    color: #D02828;
+    padding: 5px 10px 5px 15px;
+    font-size: 12px;
+}
+
+json-tree ul {
+    padding-left: 20px;
+    margin-top: 0;
+    font-size: 12px;
 }

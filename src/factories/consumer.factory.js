@@ -46,6 +46,7 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     }).then(function successCallback(response) {
 
     seekToBeginningOrEnd('beginning', consumer, topicName).then(function (responseSeek) {
+    console.log('Seek to beginning response:', responseSeek)
       //STEP4 : Get Records
       $http({
         method: 'GET',
@@ -87,9 +88,10 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     var deferred = $q.defer();
 
     getPartitions(topicName).then(function(partitions){
+    console.log('Partitions: ', partitions)
       var data = {'partitions':[]}
 
-      angular.forEach(partitions, function (partition){
+      angular.forEach(partitions.data, function (partition){
         data.partitions.push({'topic':topicName, 'partition': partition.partition})
       })
 

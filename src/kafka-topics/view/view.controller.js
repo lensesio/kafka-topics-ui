@@ -47,6 +47,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
   $scope.downloadData = function (topicName, data) {
     $log.info("Download requested for " + data.length + " bytes ");
     var json = data;
+    console.log(data)
     var blob = new Blob([json], {type: "application/json;charset=utf-8;"});
     var downloadLink = angular.element('<a></a>');
     downloadLink.attr('href', window.URL.createObjectURL(blob));

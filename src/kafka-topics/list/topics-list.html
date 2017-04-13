@@ -3,8 +3,7 @@
   <md-toolbar class="md-hue-2">
     <div class="md-toolbar-tools">
       <h3>
-        <span ng-show="!displayingControlTopics"><b>{{normalTopics.length}}</b> TOPICS</span>
-        <span ng-show="displayingControlTopics"><b>{{controlTopics.length}}</b> TOPICS</span>
+        <span><b>{{selectedTopics.length}}</b> TOPICS </span>
       </h3>
       <span flex></span>
       <md-switch style="font-size:14px"  class="md-icon-button" ng-model='displayingControlTopics' ng-change="selectTopicList(displayingControlTopics)" aria-label="Show system topics">
@@ -37,9 +36,9 @@
               <!--<h4>{{shortenControlCenterName(topic.topicName)}}</h4>-->
               <h4>{{topic.topicName}}</h4>
               <p style="font-size:12px;">
-                {{topic.partitions}} Partitions &#10799; {{topic.replication}} Replication Factor
-                <span ng-if="hasExtraConfig(topic) > 0" style="display:inline-block;">
-                &nbsp;&nbsp;  {{(topic.customConfig > 0) ? '| '+ topic.customConfig + 'configs' : ''}}
+                {{topic.partitions}} Partitions &#10799; {{topic.replication}} Replication
+                <span ng-if="topic.customConfig > 0" style="display:inline-block;">
+                {{(topic.customConfig > 0) ? '| '+ topic.customConfig + 'configs' : ''}}
                 </span>
               </p>
             </div>
