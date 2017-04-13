@@ -423,3 +423,7 @@ json-tree ul {
     margin-top: 0;
     font-size: 12px;
 }
+
+.handsontable th, .handsontable td {
+  text-align:left;
+}

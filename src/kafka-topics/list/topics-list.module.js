@@ -133,8 +133,11 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
 
                 topics.push(topicImproved);
                if (key == allData.data.length -1) {
-                  $scope.selectedTopics = topics.filter(function(el) {return el.isControlTopic == false});
                   $scope.topics = topics;
+                  $scope.selectedTopics = topics.filter(function(el) {return el.isControlTopic == false});
+                  console.log('Total topics fetched:', allData.data.length)
+                  console.log('Length of improved topic array:', topics.length)
+                  console.log('Selected topics(listed):', $scope.selectedTopics.length)
 
                   $scope.topicsIndex = arrayObjectIndexOf($scope.selectedTopics, $routeParams.topicName, 'topicName' ) + 1;
                   $scope.topicsPage = Math.ceil($scope.topicsIndex / $scope.topicsPerPage);
@@ -142,8 +145,6 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
                   if ($scope.topicsPage < 1) {
                     $scope.topicsPage = 1
                   }
-                  $scope.selectTopicList(false)
-
                }
             })
 
@@ -152,8 +153,6 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
         //$scope.selectTopicList(true);
 
     }).then(function(topics){
-
-
 
         angular.forEach($scope.topics, function(topic) {
             //TODO Fetch Type Avro, Binary, Json
@@ -220,7 +219,6 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
 //            $log.info('Got notification: ' + update);
 //          });
     }
-
 
   function loadSchemas(){
     consumerFactory.createConsumers('json', '_schemas').then( function (response) {
@@ -302,6 +300,5 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
       });
       return isControlTopic;
     }
-
 
 });
