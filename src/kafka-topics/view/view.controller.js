@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScope, $filter, $log, $location,$cookies, $http, TopicFactory, $q, $timeout , consumerFactory, HttpFactory) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScope, $filter, $log, $location,$cookies, $http, TopicFactory, env, $q, $timeout , consumerFactory, HttpFactory) {
 
   $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
 
@@ -26,6 +26,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
 
   $scope.showOrHideAdvanced = 'Show advanced';
   $scope.showAdvanced = false;
+  $scope.disableAllPartitionButtons = false;
   $scope.toggleAdvanced = function(){
   if($scope.showAdvanced)
     $scope.showOrHideAdvanced = 'Show advanced';
@@ -188,17 +189,34 @@ $scope.slider = {
   function setTopicMessages(allData, topicType) {
      $scope.rows = allData;
 
+
     if(allData.length > 0) {
+
+     var floor = $scope.firstOffsetForPartition ? $scope.firstOffsetForPartition : allData[0].offset;
+
      $scope.slider = {
+       id : 'slider-id',
        minValue: allData[0].offset,
        maxValue: allData[allData.length - 1].offset,
        options: {
-         floor: allData[0].offset,
-         ceil: allData[allData.length - 1].offset + 10000,
-         draggableRangeOnly: true
+         floor: floor,
+         ceil: allData[allData.length - 1].offset + 100,
+         draggableRangeOnly: true,
+         onChange: function() {
+               console.log('on change ', $scope.slider.minValue); // logs 'on end slider-id'
+         },
+         onEnd: function(){
+             console.log('on end ', $scope.slider.minValue, $scope.selectedPartition); //TODO
+             $scope.assignPartitions($scope.selectedPartition, $scope.slider.minValue, false)
+         }
        }
      };
      }
+
+//      $scope.$watch('slider.minValue', function() {
+//             console.log("AA", $scope.slider.minValue, $scope.selectedPartition);
+//             $scope.assignPartitions($scope.selectedPartition, $scope.slider.minValue, false)
+//         });
 
 //     $scope.rows = allData;
 
@@ -218,9 +236,7 @@ $scope.slider = {
       return $log.debug('Failed with '+ type +' type :(  (' + reason + ')');
   }
 
-  var a = consumerFactory.getConsumerType(topicName);
-  console.log("MY FORMAT A", a)
-  createAndFetch(a, topicName);
+  createAndFetch(consumerFactory.getConsumerType(topicName), topicName);
   $scope.hideTab = false;
 
   function retry(previousFormatTried, topicName){ //todo put me in factory and just return types
@@ -249,6 +265,7 @@ $scope.slider = {
                     retry(format, topicName);
                 } else {
                       console.log("NEED TO RENDER", allData, $scope.consumer, topicName);
+                      console.log("DATA LENGTH", allData.data.length)
                       $scope.format=format;
                       setTopicMessages(allData.data)
                       $scope.showSpinner = false;
@@ -320,32 +337,89 @@ $scope.slider = {
 //      }
 //    };
 
-    $scope.toggle = function (item, list) {
-        var idx = list.indexOf(item);
-        if (idx > -1) {
-          list.splice(idx, 1);
-        }
-        else {
-          list.push(item);
-        }
-      };
+//    $scope.toggle = function (item, list) {
+//        var idx = list.indexOf(item);
+//        if (idx > -1) {
+//          list.splice(idx, 1);
+//        }
+//        else {
+//          list.push(item);
+//        }
+//      };
+//
+//      $scope.exists = function (item, list) {
+//        return list.indexOf(item) > -1;
+//      };
 
-      $scope.exists = function (item, list) {
-        return list.indexOf(item) > -1;
-      };
 
-  $scope.assignPartitions = function assignPartitions (partitions, offset) {
-  $scope.showSpinner = true;
+  $scope.assignPartitions = function assignPartitions (partitions, offset, firstTime) {
+//  $scope.showSpinner = true;
   if (!angular.isDefined(offset)){offset = 0}
     consumerFactory.postConsumerAssignments($scope.consumer, topicName, partitions).then(function (responseAssign){
       consumerFactory.postConsumerPositions($scope.consumer, topicName, partitions, offset).then(function(responseOffset){
         consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
           setTopicMessages(allData.data)
-          $scope.showSpinner = false;
+//          $scope.showSpinner = false;
+            if(firstTime) { console.log('IS FIRST');$scope.firstOffsetForPartition = allData.data[0].offset }
+            $scope.showAdvanced = true;
         }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
       })
     })
   }
+
+
+
+//    $scope.assignPartitions = function assignPartitions(partitions, offset, firstTime) {
+//        $scope.selectedPartition = partitions;
+//  //      $scope.showSpinner = true;
+//        if (!angular.isDefined(offset)){ offset = 0 }
+//  //        beginning = true
+//          console.log("SKATA", partitions)
+//          consumerFactory.postConsumerAssignments($scope.consumer, topicName, partitions).then(function (responseAssign){
+//
+//
+//  //          if(beginning) {
+//  //            console.log("GOING BEGINNING")
+//  //              consumerFactory.seekToBeginningOrEnd('beginning', $scope.consumer, topicName, partitions).then(function(responseOffset){
+//  //                consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
+//  //                  setTopicMessages(allData.data)
+//  //    //              $scope.showSpinner = false;
+//  //                  $scope.showAdvanced = true;
+//  //                  $scope.disableAllPartitionButtons = true;
+//  //                }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
+//  //              })
+//  //
+//  //          } else {
+//                console.log("GOING FIRST TIME")
+//                consumerFactory.postConsumerPositions($scope.consumer, topicName, partitions, offset).then(function(responseOffset){
+//
+//                  //for debug
+//  //                var getAssignments = {
+//  //                              method: 'GET',
+//  //                              url: env.KAFKA_REST().trim() + '/consumers/' + $scope.consumer.group + '/instances/' + $scope.consumer.instance + '/assignments',
+//  //                              headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
+//  //                            }
+//  //
+//  //                $http(getAssignments).then(function(v) {
+//  //                    console.log("MAAAS ", v);
+//  //                })
+//
+//
+//                  consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
+//
+//                    if(firstTime) { console.log('IS FIRST');$scope.firstOffsetForPartition = allData.data[0].offset }
+//                    setTopicMessages(allData.data)
+//
+//  //                  $scope.showSpinner = false;
+//                    $scope.showAdvanced = true;
+//                    $scope.disableAllPartitionButtons = true;
+//                  }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
+//                })
+//
+//  //          }
+//
+//          })
+//    }
 
 });
 

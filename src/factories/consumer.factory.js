@@ -3,7 +3,7 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
 
   var URL_PREFIX = env.KAFKA_REST().trim();
   var CONSUMER_NAME_PREFIX = 'kafka-topics-ui-';
-  var RECORDS_TIMEOUT = '5000';
+  var RECORDS_TIMEOUT = '500'; //TODO put to env for the user to decide
   var RECORDS_MAX_BYTES = env.MAX_BYTES().trim();
   var CONTENT_TYPE_JSON = 'application/vnd.kafka.v2+json';
 
@@ -15,13 +15,11 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
   }
 
   function createConsumers(format, topicName, withDebug) {
-    console.log("MY FORMAT ",format);
-
     //why instance and group names different?
     var url = URL_PREFIX + '/consumers/' + getConsumer(format).group;
-    var data = '{"name": "' + getConsumer(format).instance + '", "format": "' + format + '", "auto.offset.reset": "earliest"}';//TODO shall we parameterise?
+    var data = '{"name": "' + getConsumer(format).instance + '", "format": "' + format + '", "auto.offset.reset": "earliest", "auto.commit.enable": "false"}';//TODO shall we parameterise?
 
-    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, true); //return existing ?
+    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, false); //return existing ?
   }
 
   /**
@@ -38,18 +36,22 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     var data = '{"topics":["' + topicName + '"]}';
 
     return $q.all([HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, true),
-                   seekToBeginningOrEnd('beginning', consumer, topicName)])
+                   seekToBeginningOrEnd('beginning', consumer, topicName, -1)])
              .then(function(res1, res2) {
                  return getRecords(consumer, format)
                                 .then(function (r) {
-                                        console.log("AAAAAAa", r)
-                                        if(r.data.length == 0)
-                                            saveTopicTypeToCookie(topicName, 'empty');
-                                        else
-                                            saveTopicTypeToCookie(topicName, format);
+                                        if(r.data.length != 0) saveTopicTypeToCookie(topicName, format);
                                         return r;
                                       }, function(er){ console.log("ER",er); return -1});
              });
+//    return $q.all([HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, true)])
+//             .then(function(res1) {
+//                 return getRecords(consumer, format)
+//                                .then(function (r) {
+//                                        if(r.data.length != 0) saveTopicTypeToCookie(topicName, format);
+//                                        return r;
+//                                      }, function(er){ console.log("ER",er); return -1});
+//             });
   }
 
   function getRecords(consumer, format) {
@@ -61,10 +63,16 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
   function preparePartitionData(topicName, partitions) {
         var data = {'partitions':[]}
 
-        angular.forEach(partitions.data, function (partition){
+//        if(partitions.length == 1) {
+//            console.log("1 partition")
+//            data.partitions.push({'topic':topicName, 'partition': partitions})
+//        }
+
+        angular.forEach(partitions, function (partition){
           data.partitions.push({'topic':topicName, 'partition': partition.partition})
         });
 
+        console.log("FINAL PARTITIONS", JSON.stringify(data))
         return data;
   }
 
@@ -72,10 +80,22 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     return $q.all([getPartitions(topicName)])
              .then(function(partitions) {
                      var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd;
-                     var data = preparePartitionData(topicName, partitions);
+                     var data = preparePartitionData(topicName, partitions.data);
                      return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
              });
   }
+
+// TODO this is the correct one ^ doesnt work
+//   function seekToBeginningOrEnd (beginningOrEnd, consumer, topicName, partition) {
+//          console.log("PARTTTT", partition)
+//              return getPartitions(topicName)
+//                           .then(function(partitions) {
+//                                   var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd;
+//                                   var data = preparePartitionData(topicName, partitions.data);
+//                                   return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
+//                           });
+//  //        }
+//    }
 
   function getPartitions (topicName) {
      var url = env.KAFKA_REST().trim() + '/topics/' + topicName +'/partitions';
@@ -83,39 +103,42 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
   }
 
 //TODO
-  function getConsumerOffsets (consumer, topicName) {
-    var deferred = $q.defer();
+//  function getConsumerOffsets (consumer, topicName) {
+//    var deferred = $q.defer();
+//
+//    var data =
+//    {
+//      "partitions": [
+//        {
+//          "topic": topicName
+//        }
+//      ]
+//    }
+//
+//    var getConsumerOffsets = {
+//      method: 'GET',
+//      url: env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/offsets/',
+//      data: data,
+//      headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
+//    }
+//
+//    $http(getConsumerOffsets).then(
+//      function success(response) {
+//        deferred.resolve(response);
+//      },
+//      function failure(response) {
+//
+//        deferred.resolve(response);
+//      });
+//
+//      return deferred.promise
+//
+//  }
 
-    var data =
-    {
-      "partitions": [
-        {
-          "topic": topicName
-        }
-      ]
-    }
 
-    var getConsumerOffsets = {
-      method: 'GET',
-      url: env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/offsets/',
-      data: data,
-      headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
-    }
-
-    $http(getConsumerOffsets).then(
-      function success(response) {
-        deferred.resolve(response);
-      },
-      function failure(response) {
-
-        deferred.resolve(response);
-      });
-
-      return deferred.promise
-
-  }
-
+   //TODO but this works fine
   function postConsumerAssignments (consumer, topicName, partitions) {
+    console.log("WILL ASSIGN",partitions);
     var deferred = $q.defer();
     deleteConsumerSubscriptions(consumer).then(function(responseDelete){
 
@@ -133,6 +156,8 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
 
       $http(getConsumerOffsets).then(
         function success(response) {
+//          console.log("ASSIGNMENTS ",response)
+//          $http(getAssignments).then(function(res) { console.log("ASSSS", res)})
           deferred.resolve(response);
         },
         function failure(response) {
@@ -151,6 +176,8 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
       angular.forEach(partitions, function (partition){
         data.offsets.push({'topic':topicName, 'partition': partition, 'offset':offset})
       })
+
+      console.log("DDDDDD", data)
 
       var postConsumerOffsets = {
         method: 'POST',
@@ -212,7 +239,7 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
 
     function hasCookieType(topicName) {
        var a = $cookies.getAll();
-       return (a[topicName] && a[topicName] != 'empty') ? true : false;
+       return a[topicName] ? true : false;
     }
 
     function isKnownBinaryTopic(topicName) {
@@ -260,8 +287,8 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     subscribeAndGetData: function (consumer, format, topicName) {
           return subscribeAndGetData(consumer, format, topicName);
         },
-    seekToBeginningOrEnd: function (beginningOrEnd, consumer, topicName) {
-          return seekToBeginningOrEnd(beginningOrEnd, consumer, topicName);
+    seekToBeginningOrEnd: function (beginningOrEnd, consumer, topicName, partition) {
+          return seekToBeginningOrEnd(beginningOrEnd, consumer, topicName, partition);
         },
     postConsumerPositions: function (consumer, topicName, partition, offset) {
           return postConsumerPositions(consumer, topicName, partition, offset);
