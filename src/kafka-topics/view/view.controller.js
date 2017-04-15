@@ -89,7 +89,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
 ********************************/
 
 
-
 /*******************************
  * topic-configuration.html
 ********************************/
@@ -114,6 +113,41 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
     }, configArray);
     return configArray;
   }
+
+/*******************************
+ * topic data / advanced / slider
+********************************/
+
+//$scope.slider = {
+//    minValue: 40,
+//    maxValue: 60,
+//    options: {
+//        floor: 0,
+//        ceil: 1000000,
+//        step: 1,
+//        minRange: 10,
+//        maxRange: 30,
+//        pushRange: true
+//    }
+//};
+
+//
+//$scope.slider = {
+//  minValue: 10,
+//  maxValue: 90,
+//  options: {
+//    floor: 0,
+//    ceil: 100,
+//  }
+//};
+$scope.slider = {
+       minValue: 123,
+       maxValue: 156,
+       options: {
+         floor: 123,//allData[0].offset,
+         ceil: 234//allData[allData.length - 1].offset,
+       }
+     };
 
 /*******************************
  * topic data / Tabs handling
@@ -153,6 +187,21 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
 
   function setTopicMessages(allData, topicType) {
      $scope.rows = allData;
+
+    if(allData.length > 0) {
+     $scope.slider = {
+       minValue: allData[0].offset,
+       maxValue: allData[allData.length - 1].offset,
+       options: {
+         floor: allData[0].offset,
+         ceil: allData[allData.length - 1].offset + 10000,
+         draggableRangeOnly: true
+       }
+     };
+     }
+
+//     $scope.rows = allData;
+
      //TODO check
 //     angular.forEach($scope.rows, function (row) {
 //       if($scope.topic.valueType=='avro' || $scope.topic.valueType=='json'  ){
@@ -169,41 +218,87 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
       return $log.debug('Failed with '+ type +' type :(  (' + reason + ')');
   }
 
-  createAndFetch ('avro', topicName);
- $scope.hideTab = false;
-  function createAndFetch (format, topicName) {
-    consumerFactory.createConsumers(format, topicName).then( function (response) {
-      var uuid=$cookies.getAll().uuid;
-        if (response.status == 409 || response.status == 200) {
-          var consumer = {group :'kafka_topics_ui_'+format+'_' + uuid, instance: 'kafka-topics-ui-'+ format };
-          $scope.consumer=consumer;
-          consumerFactory.subscribeAndGetData(consumer, format, topicName).then(function (allData) {
-            if ((allData.status == 500 || allData.data.error_code == 404 ) && format=='avro') {
-              createAndFetch('json', topicName)
-            }
-            else if ((allData.status == 500 || allData.data.error_code == 404 ) && format=='json') {
-              createAndFetch('binary', topicName)
-            } else if (!(allData.status == 500 || allData.data.error_code == 404 )){
+  var a = consumerFactory.getConsumerType(topicName);
+  console.log("MY FORMAT A", a)
+  createAndFetch(a, topicName);
+  $scope.hideTab = false;
 
-              console.log('Format is:', format)
-              $scope.format=format;
-              setTopicMessages(allData.data)
-              $scope.showSpinner = false;
-              if(format=='binary') {
-                $scope.hideTab = true;
-              }
-            } else {
-            }
-          })
-          if (response.status == 409) {
-              var msg = response.data.message;
-              msg = "Conflict 409. " + msg;
-              $log.warn(msg)
-           }
-         } else {
-          $log.warn(response.data.message)
-         }
-    })
+  function retry(previousFormatTried, topicName){ //todo put me in factory and just return types
+    switch(previousFormatTried) {
+        case 'avro':
+            createAndFetch('json', topicName);
+            break;
+        case 'json':
+            createAndFetch('binary', topicName);
+            break;
+        default:
+            createAndFetch('binary', topicName);
+    }
+  }
+
+  function createAndFetch(format, topicName) {
+
+    consumerFactory.createConsumers(format, topicName)
+        .then(function(res){
+            $scope.consumer = consumerFactory.getConsumer(format); //TODO why scope? we should set in factory
+            return consumerFactory.getConsumer(format);
+        }).then(function(consumer) {
+            consumerFactory.subscribeAndGetData(consumer, format, topicName).then(function (allData) {
+                if(allData == -1) {
+                    console.log("NEED TO RETRY", allData, $scope.consumer, topicName);
+                    retry(format, topicName);
+                } else {
+                      console.log("NEED TO RENDER", allData, $scope.consumer, topicName);
+                      $scope.format=format;
+                      setTopicMessages(allData.data)
+                      $scope.showSpinner = false;
+                      if(format=='binary') {
+                        $scope.hideTab = true;
+                      }
+                }
+            });
+
+        })
+
+
+//    consumerFactory.createConsumers(format, topicName).then( function successCallback(response) {
+//        console.log("GOT IN")
+//        var uuid = $cookies.getAll().uuid;
+//        if (response.status == 409 || response.status == 200) { //Why we ignore 409 conflict here? if 409 should go to failure?
+//          //the same logic is in factory
+//          var consumer = {group :'kafka_topics_ui_'+format+'_' + uuid, instance: 'kafka-topics-ui-'+ format };
+//          $scope.consumer=consumer; //why scope? we should set in factory
+//
+//          consumerFactory.subscribeAndGetData(consumer, format, topicName).then(function (allData) {
+//            console.log("BBB", allData)
+//            if ((allData.status == 500 || allData.data.error_code == 404 ) && format=='avro') {
+//              createAndFetch('json', topicName)
+//            }
+//            else if ((allData.status == 500 || allData.data.error_code == 404 ) && format=='json') {
+//              createAndFetch('binary', topicName)
+//            } else if (!(allData.status == 500 || allData.data.error_code == 404 )){
+//
+//              console.log('Format is:', format)
+//              $scope.format=format;
+//              setTopicMessages(allData.data)
+//              $scope.showSpinner = false;
+//              if(format=='binary') {
+//                $scope.hideTab = true;
+//              }
+//            } else {
+//            }
+//          })
+//          if (response.status == 409) {
+//              var msg = response.data.message;
+//              msg = "Conflict 409. " + msg;
+//              $log.warn(msg)
+//           }
+//         } else {
+//          $log.warn(response.data.message)
+//         }
+//    }, function errorCallback(responseRecords) {
+//        console.warn('ERROR IS ',responseRecords)
+//    })
   }
     $scope.selectedPartitions = []
 //    For select/deselect all partitions

@@ -1,120 +1,88 @@
 
-angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $filter, $cookies, env) {
+angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $filter, $cookies, env, HttpFactory) {
 
-  function createConsumers(format, topicName) {
-    if(!$cookies.getAll().uuid) {
-      var DATE = $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss");
-      $cookies.put('uuid', DATE);
-      var uuid = $cookies.getAll().uuid
-    } else {
-      var uuid=$cookies.getAll().uuid
-    }
+  var URL_PREFIX = env.KAFKA_REST().trim();
+  var CONSUMER_NAME_PREFIX = 'kafka-topics-ui-';
+  var RECORDS_TIMEOUT = '5000';
+  var RECORDS_MAX_BYTES = env.MAX_BYTES().trim();
+  var CONTENT_TYPE_JSON = 'application/vnd.kafka.v2+json';
 
-    // Setting a cookie
-    var url = env.KAFKA_REST().trim() + '/consumers/kafka_topics_ui_' + format + '_' + uuid;
-    var data = '{"name": "kafka-topics-ui-' + format + '", "format": "' + format + '", "auto.offset.reset": "earliest"}';
-    var postCreateConsumer = {
-      method: 'POST',
-      url: url,
-      data: data,
-      headers: {'Content-Type': 'application/vnd.kafka.v2+json'}
-    };
-
-    var curlCreateConsumer = 'curl -X POST -H "Content-Type: ' + 'application/vnd.kafka.v2+json' + '" ' + "--data '" + data + "' " + url;
-    $log.debug("  " + curlCreateConsumer);
-
-    var deferred = $q.defer();
-
-    $http(postCreateConsumer).then(
-      function success(response) {
-        deferred.resolve(response);
-      },
-        function failure(response) {
-      deferred.resolve(response);
-    });
-    return deferred.promise
+  function getConsumer(format) {
+    var consumer = { group :'kafka_topics_ui_'+ format +'_' + consumerUUID(),
+                     instance: 'kafka-topics-ui-'+ format
+                   };
+    return consumer;
   }
 
+  function createConsumers(format, topicName, withDebug) {
+    console.log("MY FORMAT ",format);
+
+    //why instance and group names different?
+    var url = URL_PREFIX + '/consumers/' + getConsumer(format).group;
+    var data = '{"name": "' + getConsumer(format).instance + '", "format": "' + format + '", "auto.offset.reset": "earliest"}';//TODO shall we parameterise?
+
+    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, true); //return existing ?
+  }
+
+  /**
+   * Subscribe Instance to topic
+   * Then seek to beginning
+   * Then get records
+   * Then return records if ok, or -1 in case of error in order to retry with different format
+   **/
   function subscribeAndGetData(consumer, format, topicName) {
-    var deferred = $q.defer();
 
-    $http({
-      method: 'POST',
-      url: env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription',
-      data: '{"topics":["' + topicName + '"]}',
-      headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
-    }).then(function successCallback(response) {
+    $log.debug("Trying with consumer:", consumer);
 
-    seekToBeginningOrEnd('beginning', consumer, topicName).then(function (responseSeek) {
-    console.log('Seek to beginning response:', responseSeek)
-      //STEP4 : Get Records
-      $http({
-        method: 'GET',
-        url: env.KAFKA_REST().trim() + '/consumers/'+consumer.group+'/instances/'+consumer.instance+'/records?timeout=5000&max_bytes=' + env.MAX_BYTES().trim(),
-        headers: {'Content-Type': 'application/vnd.kafka.v2+json', 'Accept': 'application/vnd.kafka.'+format+'.v2+json' }
-      }).then(function successCallback(responseRecords) {
-          deferred.resolve(responseRecords)
-        }, function errorCallback(responseRecords) {
-          console.warn('Error in consuming data with',format,  responseRecords)
-          deferred.resolve(responseRecords)
-        });
-    })
-    }, function errorCallback(response) {
-      console.log('POST not working', response)
-    })
-    return deferred.promise
+    var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription'
+    var data = '{"topics":["' + topicName + '"]}';
+
+    return $q.all([HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, true),
+                   seekToBeginningOrEnd('beginning', consumer, topicName)])
+             .then(function(res1, res2) {
+                 return getRecords(consumer, format)
+                                .then(function (r) {
+                                        console.log("AAAAAAa", r)
+                                        if(r.data.length == 0)
+                                            saveTopicTypeToCookie(topicName, 'empty');
+                                        else
+                                            saveTopicTypeToCookie(topicName, format);
+                                        return r;
+                                      }, function(er){ console.log("ER",er); return -1});
+             });
   }
-
 
   function getRecords(consumer, format) {
-   var deferred = $q.defer();
-
-    $http({
-      method: 'GET',
-      url: env.KAFKA_REST().trim() + '/consumers/'+consumer.group+'/instances/'+consumer.instance+'/records?timeout=5000&max_bytes=' + env.MAX_BYTES().trim(),
-      headers: {'Content-Type': 'application/vnd.kafka.v2+json', 'Accept': 'application/vnd.kafka.'+format+'.v2+json' }
-    }).then(function successCallback(responseRecords) {
-        deferred.resolve(responseRecords)
-      }, function errorCallback(responseRecords) {
-        console.warn('Error in consuming data with',format,  responseRecords)
-        deferred.resolve(responseRecords)
-      });
-
-      return deferred.promise
+    var url = URL_PREFIX + '/consumers/'+consumer.group+'/instances/'+consumer.instance+'/records?timeout='+ RECORDS_TIMEOUT +'&max_bytes=' + RECORDS_MAX_BYTES;
+    var ACCEPT_HEADER = 'application/vnd.kafka.' + format + '.v2+json';
+    return HttpFactory.req('GET', url, '', CONTENT_TYPE_JSON, ACCEPT_HEADER, false, false);
   }
 
+  function preparePartitionData(topicName, partitions) {
+        var data = {'partitions':[]}
 
-  function seekToBeginningOrEnd (beginningOrEnd, consumer, topicName) {
-    var deferred = $q.defer();
-
-    getPartitions(topicName).then(function(partitions){
-    console.log('Partitions: ', partitions)
-      var data = {'partitions':[]}
-
-      angular.forEach(partitions.data, function (partition){
-        data.partitions.push({'topic':topicName, 'partition': partition.partition})
-      })
-
-      var postSeekToBeginningOrEnd = {
-        method: 'POST',
-        url: env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd,
-        data: data,
-        headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
-      }
-
-      $http(postSeekToBeginningOrEnd).then(
-        function success(response) {
-          deferred.resolve(response);
-        },
-        function failure(response) {
-          deferred.resolve(response);
+        angular.forEach(partitions.data, function (partition){
+          data.partitions.push({'topic':topicName, 'partition': partition.partition})
         });
 
-    })
-    return deferred.promise
-
+        return data;
   }
 
+  function seekToBeginningOrEnd (beginningOrEnd, consumer, topicName) {
+    return $q.all([getPartitions(topicName)])
+             .then(function(partitions) {
+                     var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd;
+                     var data = preparePartitionData(topicName, partitions);
+                     return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
+             });
+  }
+
+  function getPartitions (topicName) {
+     var url = env.KAFKA_REST().trim() + '/topics/' + topicName +'/partitions';
+     return HttpFactory.req('GET', url, '', '', 'application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json', false, false);
+  }
+
+//TODO
   function getConsumerOffsets (consumer, topicName) {
     var deferred = $q.defer();
 
@@ -204,7 +172,6 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
 
   }
 
-
   function deleteConsumerSubscriptions (consumer) {
     var deferred = $q.defer();
 
@@ -226,33 +193,70 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
       return deferred.promise
 
   }
-  function getPartitions (topicName) {
-    var deferred = $q.defer();
 
-    var getPartitions = {
-      method: 'GET',
-      url: env.KAFKA_REST().trim() + '/topics/' + topicName +'/partitions',
-      headers: {'Accept': 'application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json' }
+  //UTILITIES
+   function consumerUUID() {
+        if(!$cookies.getAll().uuid) {
+           $cookies.put('uuid', $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss")); //TODO milis
+           return $cookies.getAll().uuid
+        } else {
+          return $cookies.getAll().uuid
+        }
     }
 
-    $http(getPartitions).then(
-      function success(response) {
-        deferred.resolve(response);
-      },
-      function failure(response) {
+    function saveTopicTypeToCookie(topicName, format){
+      var expireDate = new Date();
+      expireDate.setDate(expireDate.getDate() + 1);
+      $cookies.put(topicName, format, {'expires': expireDate});
+    }
 
-        deferred.resolve(response);
-      });
+    function hasCookieType(topicName) {
+       var a = $cookies.getAll();
+       return (a[topicName] && a[topicName] != 'empty') ? true : false;
+    }
 
-      return deferred.promise
+    function isKnownBinaryTopic(topicName) {
+         var a = false;
+         angular.forEach(KNOWN_TOPICS.JSON_TOPICS, function(t){  //todo filter
+              if(t == topicName) a = true;
+         })
+         return a;
+    }
 
-  }
+    function isKnownJSONTopic(topicName) {
+         var a = false;
+             angular.forEach(KNOWN_TOPICS.BINARY_TOPICS, function(t){  //todo filter
+                  if(t == topicName) a = true;
+             })
+             return a;
+    }
 
+    function getConsumerType(topicName) {
+       if(isKnownBinaryTopic(topicName)) {
+          return 'binary';
+       } if(isKnownJSONTopic(topicName)) {
+          return 'json';
+       }  else if (hasCookieType(topicName)) {
+          var a = $cookies.getAll();
+          return a[topicName];
+       } else {
+          console.log("I dont know the type");
+          return 'avro'; //if type is unknown try with 'avro'
+       }
+    }
+
+    //PUBLIC METHODS
 
   return {
     createConsumers: function (format, topicName) {
-          return createConsumers(format, topicName);
+          return createConsumers(format, topicName); //TODO why plural?
         },
+    getConsumer: function (format) {
+          return getConsumer(format);
+    },
+    getConsumerType: function (topicName) {
+          return getConsumerType(topicName);
+    },
     subscribeAndGetData: function (consumer, format, topicName) {
           return subscribeAndGetData(consumer, format, topicName);
         },

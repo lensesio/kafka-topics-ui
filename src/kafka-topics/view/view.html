@@ -4,7 +4,7 @@
         <div flex>
             <md-card ng-hide="showSpinner" style="box-shadow:none;">
 
-                <md-toolbar class="md-hue-2">
+                <md-toolbar class="md-hue-2" flex style="padding:0px; font-size:13px">
                     <div class="md-toolbar-tools">
                         <md-button ng-click="toggleList()">
                             <i ng-show="showList" class="fa fa-expand" aria-hidden="true"></i>
@@ -36,7 +36,7 @@
                         <div  ng-class="showList ? 'listOpened' : ''" class="view-container" id="view-container">
 
                             <!-- ACTUAL VIEW -->
-                            <div flex style="width:100%; margin-top:8px">
+                            <div flex style="width:100%; margin-top:0px">
 
                                 <div ng-if="selectedMenuItem == 'data'"
                                      ng-include="'src/kafka-topics/view/templates/topic-data.html'"

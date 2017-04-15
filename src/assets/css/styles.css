@@ -427,3 +427,50 @@ json-tree ul {
 .handsontable th, .handsontable td {
   text-align:left;
 }
+
+
+.custom-slider.rzslider .rz-bar {
+  /*background: #ffe4d1;*/
+  background: rgba(251, 150, 120, 0.33);;
+  height: 3px;
+}
+.custom-slider.rzslider .rz-selection {
+  background: #fb9678;
+}
+
+.custom-slider.rzslider .rz-pointer {
+  width: 8px;
+  height: 16px;
+  top: auto; /* to remove the default positioning */
+  bottom: 0;
+  background-color: #333;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.custom-slider.rzslider .rz-pointer:after {
+  display: none;
+}
+
+.custom-slider.rzslider .rz-bubble {
+  bottom: 14px;
+}
+
+.custom-slider.rzslider .rz-limit {
+  font-weight: bold;
+  color: #fb9678;
+}
+
+.custom-slider.rzslider .rz-tick {
+  width: 1px;
+  height: 10px;
+  margin-left: 4px;
+  border-radius: 0;
+  /*background: #ffe4d1;*/
+  background: rgba(251, 150, 120, 0.33);
+  top: -1px;
+}
+
+.custom-slider.rzslider .rz-tick.rz-selected {
+  background: #fb9678;
+}

@@ -18,7 +18,8 @@ var angularAPP = angular.module('angularAPP', [
   'flatView',
   'treeView',
   'ngHandsontable',
-  'rawView'
+  'rawView',
+  'rzModule'
 ]);
 
 //angularAPP.controller('HeaderCtrl', function (env, $rootScope, $scope, $log, $location, $route) { });

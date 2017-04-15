@@ -243,7 +243,7 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
     })
   }
 
-
+  //TODO Duplication
   var TOPIC_CONFIG = {
   //  KAFKA_TOPIC_DELETE_COMMAND : "kafka-topics --zookeeper zookeeper-host:2181/confluent --delete --topic",
     // Pre-configure the Data Type on particular well-known topics

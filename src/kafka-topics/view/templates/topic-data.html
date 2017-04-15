@@ -7,32 +7,178 @@
 <div ng-show="rows.length==0">
     Topic is empty
 </div>
-<div style="background-color:#fff;" ng-cloak layout-margin  ng-hide="rows.length==0">
+<div style="background-color:#fff;" ng-cloak  ng-hide="rows.length==0">
 
-    <div ng-show="showAdvanced">
-        <div class="partitionSelection" style="background:#eee;padding:10px">
-            Select partition:<br />
-            <span ng-repeat="partition in topic.partitions | orderBy : 'partition' ">
-              <label class="checkbox">
-              {{partition.partition}}
-                <input type="radio" name="partition" ng-checked="exists(partition.partition, selectedPartitions)"
-                       ng-click="toggle(partition.partition, selectedPartitions)"
-                />
-              </label>
-            </span><br />
-            <input placeholder="Set offset*" type="number" ng-model="offset" />
-            <md-button ng-click="assignPartitions(selectedPartitions, offset)">GO</md-button> <br />
-            <small style="color:#999"><i>*If left empty, sets offset to the earliest value</i></small>
+    <div ng-show="true">
+        <div class="partitionSelection" >
 
+            <div class="column"  style="background:#ddd;">
+                <div style="font-size:14px; margin-left:8px">Total Messages: 1234567</div>
+
+
+
+
+            <div layout="row" style="background:#ddd;height:45px">
+
+
+
+
+                <input flex="100" ng-model="searchMessages" ng-change="dataFlatTableCtrl.refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" style="margin: 7px; line-height: 20px;    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;">
+
+                <!--<md-input-container md-no-float style="margin:0px" flex="80">-->
+                    <!--<input ng-model="searchMessages" type="text" placeholder="Filter " >-->
+                    <!--&lt;!&ndash;<md-icon md-svg-src="https://material.angularjs.org/latest/img/icons/ic_place_24px.svg" style="display:inline-block;"></md-icon>&ndash;&gt;-->
+                <!--</md-input-container>-->
+
+
+                <!--<md-button ng-click="toggleAdvanced()">{{showOrHideAdvanced}}</md-button>-->
+
+                <select flex="20" class="form-control button" ng-model="search.partition" style="float:right; margin: 7px; display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;">
+                    <option value="" selected>All partitions</option>
+                    <option ng-repeat="partition in topic.partitions | orderBy : 'partition' " track by $index value="{{i.partition}}">Partition {{i.partition}}</option>
+                </select>
+
+                <md-button>
+                    <md-tooltip
+                            md-direction="bottom">
+                        Seek to beginning
+                    </md-tooltip>
+                    <i class="fa fa-fast-backward" aria-hidden="true" style="font-size:16px"></i>
+                </md-button>
+
+
+                <md-button>
+                    <md-tooltip
+                            md-direction="bottom">
+                        Seek to end
+                    </md-tooltip>
+                    <i class="fa fa-fast-forward" aria-hidden="true" style="font-size:16px"></i>
+                </md-button>
+                <!--<select class="form-control button" ng-model="search.partition" style="float:right; margin: 7px; display: block;-->
+    <!--height: 34px;-->
+    <!--padding: 6px 12px;-->
+    <!--font-size: 14px;-->
+    <!--line-height: 1.42857143;-->
+    <!--color: #555;-->
+    <!--background-color: #fff;-->
+    <!--background-image: none;-->
+    <!--border: 1px solid #ccc;-->
+    <!--border-radius: 4px;">-->
+                    <!--<option value="" selected>earliest</option>-->
+                    <!--<option value="" selected>latest</option>-->
+                <!--</select>-->
+
+            </div>
+
+           <div layout="row" ng-show="true" style="background:rgba(221, 221, 221, 0.63);border-top:1px solid #ccc;margin-bottom:0px">
+
+               <!--<input placeholder="Set offset*" type="number" ng-model="offset" style="margin: 7px; line-height: 12px;"/>-->
+               <!--<label>Seek to offset:</label>-->
+               <!--<input placeholder="Set offset*" type="number" ng-model="slider.minValue" style="margin: 7px; line-height: 12px; height:26px; font-size:90% "/>-->
+               <!--<md-button ng-click="assignPartitions(selectedPartitions, offset)">GO</md-button> <br />-->
+
+
+               <md-input-container class="md-block" style="margin-left:7px; margin-bottom:0px">
+                   <label>Seek to offset</label>
+                   <input name="social" ng-model="slider.minValue" ng-pattern="/^[0-9]{3}-[0-9]{2}-[0-9]{4}$/" />
+
+
+                   <!--<input flex="100" ng-model="slider.minValue" ng-change="dataFlatTableCtrl.refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" style="margin: 7px; line-height: 20px;    display: block;-->
+    <!--width: 100%;-->
+    <!--height: 34px;-->
+    <!--padding: 6px 12px;-->
+    <!--font-size: 14px;-->
+    <!--line-height: 1.42857143;-->
+    <!--color: #555;-->
+    <!--background-color: #fff;-->
+    <!--background-image: none;-->
+    <!--border: 1px solid #ccc;-->
+    <!--border-radius: 4px;">-->
+
+
+                   <div class="hint" ng-if="true" style="    position: absolute;
+    left: 2px;
+    right: auto;
+    bottom: 7px;
+    font-size: 12px;
+    line-height: 14px;
+    transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+    color: grey;">Seek to offset</div>
+
+               </md-input-container>
+
+
+
+
+
+               <md-button>
+                   <md-tooltip
+                           md-direction="bottom">
+                       Seek to beginning
+                   </md-tooltip>
+                   <i class="fa fa-fast-backward" aria-hidden="true" style="font-size:16px"></i>
+               </md-button>
+               <rzslider class="custom-slider"
+                      rz-slider-model="slider.minValue"
+                      rz-slider-high="slider.maxValue"
+                      rz-slider-options="slider.options" style="margin-top:45px"></rzslider>
+               <md-button>
+                   <md-tooltip
+                           md-direction="bottom">
+                       Seek to end
+                   </md-tooltip>
+                   <i class="fa fa-fast-forward" aria-hidden="true" style="font-size:16px"></i>
+               </md-button>
+           </div>
+            <!--<div layout="row" style="background:rgba(221, 221, 221, 0.63);margin-top:0px">-->
+                <!--<small style="margin-left:7px"><i>Max Bytes: 50KB</i></small>-->
+            <!--</div>-->
+
+
+
+
+
+            <!--<rzslider rz-slider-model="slider.minValue"-->
+                      <!--rz-slider-high="slider.maxValue"-->
+                      <!--rz-slider-options="slider.options"></rzslider>-->
+
+            <!--Select partition:<br />-->
+            <!--<span ng-repeat="partition in topic.partitions | orderBy : 'partition' ">-->
+              <!--<label class="checkbox">-->
+              <!--{{partition.partition}}-->
+                <!--<input type="radio" name="partition" ng-checked="exists(partition.partition, selectedPartitions)"-->
+                       <!--ng-click="toggle(partition.partition, selectedPartitions)"/>-->
+              <!--</label>-->
+            <!--</span><br />-->
+            <!--<input placeholder="Set offset*" type="number" ng-model="offset" />-->
+            <!--<md-button ng-click="assignPartitions(selectedPartitions, offset)">GO</md-button> <br />-->
+            <!--<small style="color:#999"><i>*If left empty, sets offset to the earliest value</i></small>-->
+            </div>
         </div>
     </div>
 
     <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
         <div layout="row">
-            <input  ng-model="searchMessages" ng-change="dataFlatTableCtrl.refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" style="width: 300px;margin: 7px; line-height: 30px;">
-
-            <md-button ng-click="toggleAdvanced()">{{showOrHideAdvanced}}</md-button>
-
 
             <md-button
                     ng-hide="topic.totalMessages == 0"

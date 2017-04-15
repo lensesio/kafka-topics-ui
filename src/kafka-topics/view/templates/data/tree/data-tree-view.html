@@ -17,7 +17,7 @@
 
           <div class="md-list-item-text" layout="column">
 
-            <div layout="row">
+            <div layout="row" style="padding:10px">
                   <div layout="column" flex="100" layout-align="center left">
                     <div>
                       <json-tree   object="t.key" root-name="'Key'" style="max-width: 100%;"></json-tree>
@@ -29,12 +29,16 @@
                     </div>
                   </div>
 
-                  <span flex></span>
+                  <!--<span flex></span>-->
 
-                  <div layout="column" flex="10" style="flex:0 0 100px">
-                    <small style="float:right;text-align:right;color:#ccc"><i>Partition: {{t.partition}}</i></small>
-                    <small style="float:right;text-align:right;color:#ccc"><i>Offset: {{t.offset}}</i></small>
-                  </div>
+                  <!--<div layout="column" flex="10" style="flex:0 0 100px">-->
+                    <!--<small style="float:right;text-align:right;color:#ccc"><i>Partition: {{t.partition}}</i></small>-->
+                    <!--<small style="float:right;text-align:right;color:#ccc"><i>Offset: {{t.offset}}</i></small>-->
+                  <!--</div>-->
+              <div layout="column" flex="15" style="flex:0 0 100px">
+                <small style="float:right;text-align:right;color:rgba(0,0,0,0.59);font-size:11px">Partition: {{t.partition}}</small>
+                <small style="float:right;text-align:right;color:rgba(0,0,0,0.59);font-size:11px">Offset: {{t.offset}} </small>
+              </div>
             </div>
 
           </div>
