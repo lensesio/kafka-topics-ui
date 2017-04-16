@@ -15,7 +15,8 @@ angular.
             getAllClusters : function() { return allClusters },
             isMissingEnvJS : function() { return missingEnvJS},
             KAFKA_REST : function () { return selectedCluster.KAFKA_REST.trim(); },
-            MAX_BYTES : function () { return selectedCluster.MAX_BYTES.trim(); }
+            MAX_BYTES : function () { return selectedCluster.MAX_BYTES.trim(); },
+            DEBUG_LOGS_ENABLED : function () { return selectedCluster.DEBUG_LOGS_ENABLED.trim(); }
           };
         
           function setCluster(clusterName) {

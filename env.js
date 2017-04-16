@@ -12,7 +12,8 @@ var clusters = [
         NAME: "dev",
         KAFKA_REST: "/api",
         MAX_BYTES: "50000",
-        COLOR: "red"
+        COLOR: "red",
+        DEBUG_LOGS_ENABLED : true
     }
 
     ];

@@ -143,6 +143,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
 //    ceil: 100,
 //  }
 //};
+//TODO
 $scope.slider = {
        minValue: 123,
        maxValue: 156,
@@ -188,8 +189,24 @@ $scope.slider = {
   /****************** SUPER CLEAN UP REQUIRED HERE / STARTS (this is the only dep to KAFKA_REST) *****************/
   //If data is empty don't try to deserialize
 
-  function setTopicMessages(allData, topicType) {
+  function setTopicMessages(allData, format, forPartition) {
+
+    if(forPartition) {
+//       $scope.showSpinner = false;
+        //if(firstTime) { console.log('IS FIRST'); $scope.firstOffsetForPartition = allData.data[0].offset }
+        $scope.showAdvanced = true;
+        $scope.disableAllPartitionButtons = true;
+        $scope.showEmptyPartition = true;
+
+    }
+
      $scope.rows = allData;
+     $scope.format=format;
+       $scope.showSpinner = false;
+
+//       if(format=='binary') {
+//         $scope.hideTab = true;
+//       }
 
 
     if(allData.length > 0) {
@@ -214,24 +231,6 @@ $scope.slider = {
        }
      };
      }
-
-//      $scope.$watch('slider.minValue', function() {
-//             console.log("AA", $scope.slider.minValue, $scope.selectedPartition);
-//             $scope.assignPartitions($scope.selectedPartition, $scope.slider.minValue, false)
-//         });
-
-//     $scope.rows = allData;
-
-     //TODO check
-//     angular.forEach($scope.rows, function (row) {
-//       if($scope.topic.valueType=='avro' || $scope.topic.valueType=='json'  ){
-//       row.value=JSON.parse(row.value)
-//       }
-//       if($scope.topic.keyType=='avro' || $scope.topic.keyType=='json'  ){
-//       row.key=JSON.parse(row.key)
-//       }
-//     })
-     $scope.showSpinner = false;
   }
 
   function getDeserializationErrorMessage(reason, type) {
@@ -242,71 +241,83 @@ $scope.slider = {
   $scope.hideTab = false;
 
   function createAndFetch(format, topicName) {
+    $log.debug("... DATA FOR PARTITION [ ALL ]...")
     $scope.uuid = consumerFactory.genUUID();
-    consumerFactory.createConsumers(format, topicName, $scope.uuid)
+    consumerFactory
+        .createConsumer(format, topicName, $scope.uuid)
         .then(function(res){
-            $scope.consumer = consumerFactory.getConsumer(format, $scope.uuid); //TODO why scope? we should set in factory
             return consumerFactory.getConsumer(format, $scope.uuid);
-        }).then(function(consumer) {
-            $log.debug(topicName, "THE CONSUMER TO START POLLING IS", consumer);
-
-                var url_tmp = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments'
-                HttpFactory.req('GET', url_tmp, '', '', '', false, false).then(function(res){
-                    $log.debug(topicName, "EXISTING ASSIGNMENTS", res.data);
-
-
-                                consumerFactory.subscribeAndGetData(consumer, format, topicName).then(function (allData) {
-                                    if(allData == -1) {
-                                        console.log(topicName, "NEED TO RETRY", allData, $scope.consumer, topicName);
-                                        //TODO delete the consumer before retry? Or after failed to get records
-                                        createAndFetch(consumerFactory.getConsumerTypeRetry(format, topicName), topicName);
-                                    } else {
-                                          $log.debug(topicName, "NEED TO RENDER", allData, $scope.consumer);
-                                          console.log("DATA LENGTH", allData.data.length)
-                                          $scope.format=format;
-                                          setTopicMessages(allData.data)
-                                          $scope.showSpinner = false;
-                                          if(format=='binary') {
-                                            $scope.hideTab = true;
-                                          }
-                                    }
-                                });
-                })
-
         })
+        .then(function(consumer) {
+            consumerFactory.getDataFromBeginning(consumer, format, topicName).then(function (allData) {
+                if(allData == -1) {
+                    $log.debug(topicName, "FAILED TO GET DATA, NEED TO RETRY", allData, $scope.consumer, topicName);
+                    createAndFetch(consumerFactory.getConsumerTypeRetry(format, topicName), topicName);
+                } else {
+                      $log.debug(topicName, "GOT DATA, WILL RENDER", " [", allData.data.length, "] [", format, "] MESSAGES");
+                      setTopicMessages(allData.data, format, false)
+                }
+            });
+        });
   }
 
-  $scope.selectedPartitions = []
+  $scope.assignPartitions = function assignPartitions (partition, offset, firstTime) {
 
-  $scope.assignPartitions = function assignPartitions (partitions, offset, firstTime) {
-//  $scope.showSpinner = true;
-   var part = [ { "partition" : partitions } ]
+    $log.debug("... DATA FOR PARTITION [" + partition + "]...")
+    //TODO If partitions = all (somehow) then createAndFetch
+    //TODO make a loading for data only for the case partition is empty// $scope.showSpinner = true;
+    var partition = [ { "partition" : partition } ] //create array because assignments works for all too.
+    var format = consumerFactory.getConsumerType(topicName);//$scope.format; //TODO
+    if (!angular.isDefined(offset)){offset = 1}
+    $scope.uuid = consumerFactory.genUUID();
 
-  if (!angular.isDefined(offset)){offset = 1}
+    consumerFactory
+        .createConsumer(format, topicName, $scope.uuid)
+        .then(function(res){
+            return consumerFactory.getConsumer(format, $scope.uuid);
+        })
+        .then(function(consumer) {
+
+            $log.debug(topicName, "1) GOT PARTITION", partition)
+//            consumerFactory.postConsumerAssignments(consumer, topicName, partition).then(function (responseAssign){
+//              consumerFactory.postConsumerPositions(consumer, topicName, partition[0], offset).then(function(responseOffset){
+//                consumerFactory.getRecords(consumer, format)
+                consumerFactory.getDataForPartition(topicName, consumer, format, partition, offset)
+                .then(function(allData) {
+                    if(allData != -1) {
+                        if(firstTime) { $scope.firstOffsetForPartition = allData.data[0].offset }
+                        setTopicMessages(allData.data, format, true);
+                    } else {
+                        $scope.cannotGetDataForPartition = "Cannot get data for partition [" + partitions + "]. Please refresh."
+                    }
+//                })
+//              })
+            })
+        });
 
 
-    consumerFactory.postConsumerAssignments($scope.consumer, topicName, part).then(function (responseAssign){
 
-             $log.debug("Checking assignments for :", $scope.consumer);
-             var url_tmp = env.KAFKA_REST().trim() + '/consumers/' + $scope.consumer.group + '/instances/' + $scope.consumer.instance + '/assignments'
-             HttpFactory.req('GET', url_tmp, '', '', '', false, true).then(function(res){
-             console.log("Existing assignments ", res);
-
-
-      consumerFactory.postConsumerPositions($scope.consumer, topicName, partitions, offset).then(function(responseOffset){
-        consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
-          setTopicMessages(allData.data)
-//          $scope.showSpinner = false;
-            if(firstTime) { console.log('IS FIRST');$scope.firstOffsetForPartition = allData.data[0].offset }
-            $scope.showAdvanced = true;
-            $scope.disableAllPartitionButtons = true;
-            $scope.showEmptyPartition = true;
-        }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
-      })
-
-      })
-
-    })
+//    consumerFactory.postConsumerAssignments($scope.consumer, topicName, part).then(function (responseAssign){
+//
+////          $log.debug("Checking assignments for :", $scope.consumer);
+////          var url_tmp = env.KAFKA_REST().trim() + '/consumers/' + $scope.consumer.group + '/instances/' + $scope.consumer.instance + '/assignments'
+////          HttpFactory.req('GET', url_tmp, '', '', '', false, true).then(function(res){
+////          console.log("Existing assignments ", res);
+//
+//          consumerFactory.postConsumerPositions($scope.consumer, topicName, partitions, offset).then(function(responseOffset){
+//            consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
+//              setTopicMessages(allData.data)
+//    //          $scope.showSpinner = false;
+//                if(firstTime) { console.log('IS FIRST');$scope.firstOffsetForPartition = allData.data[0].offset }
+//                $scope.showAdvanced = true;
+//                $scope.disableAllPartitionButtons = true;
+//                $scope.showEmptyPartition = true;
+//            }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
+//          })
+//
+////      })
+//
+//    })
 
 
   }
@@ -326,3 +337,33 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
           }
     }
 });
+
+
+//BACKUP WITH CHECK //TODO deleteme
+//function createAndFetch(format, topicName) {
+//    $scope.uuid = consumerFactory.genUUID();
+//    consumerFactory
+//        .createConsumer(format, topicName, $scope.uuid)
+//        .then(function(res){
+//            return consumerFactory.getConsumer(format, $scope.uuid);
+//        })
+//        .then(function(consumer) {
+//             //TODO what if there are? At which conditions? should put in factory?
+//             var url_tmp = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments'
+//             HttpFactory.req('GET', url_tmp, '', '', '', false, false).then(function(res){
+//                   if(res.data.length > 0) $log.warn(topicName, "EXISTING ASSIGNMENTS", res.data);
+//             })
+//            return consumer;
+//        })
+//        .then(function(consumer) {
+//            consumerFactory.getDataFromBeginning(consumer, format, topicName).then(function (allData) {
+//                if(allData == -1) {
+//                    $log.debug(topicName, "FAILED TO GET DATA, NEED TO RETRY", allData, $scope.consumer, topicName);
+//                    createAndFetch(consumerFactory.getConsumerTypeRetry(format, topicName), topicName);
+//                } else {
+//                      $log.debug(topicName, "GOT DATA, WILL RENDER", " [", allData.data.length, "] [", format, "] MESSAGES");
+//                      setTopicMessages(allData.data, format)
+//                }
+//            });
+//        });
+//  }

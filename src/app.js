@@ -61,6 +61,10 @@ angularAPP.run(['$route', '$rootScope', '$location', function ($route, $rootScop
     };
 }]);
 
+angularAPP.config(function($logProvider){
+  $logProvider.debugEnabled(true); //todo get from env
+});
+
 angularAPP.config(function ($routeProvider, $locationProvider) {
 $locationProvider.html5Mode();
   $locationProvider.hashPrefix('');
