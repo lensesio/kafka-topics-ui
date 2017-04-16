@@ -261,9 +261,9 @@ $scope.slider = {
         });
   }
 
-  $scope.assignPartitions = function assignPartitions (partition, offset, firstTime) {
+  $scope.assignPartitions = function assignPartitions(partition, offset, position, firstTime) {
 
-    $log.debug("... DATA FOR PARTITION [" + partition + "]...")
+    $log.debug("... DATA FOR PARTITION [" + partition + "]...", position)
     //TODO If partitions = all (somehow) then createAndFetch
     //TODO make a loading for data only for the case partition is empty// $scope.showSpinner = true;
     var partition = [ { "partition" : partition } ] //create array because assignments works for all too.
@@ -277,49 +277,17 @@ $scope.slider = {
             return consumerFactory.getConsumer(format, $scope.uuid);
         })
         .then(function(consumer) {
-
             $log.debug(topicName, "1) GOT PARTITION", partition)
-//            consumerFactory.postConsumerAssignments(consumer, topicName, partition).then(function (responseAssign){
-//              consumerFactory.postConsumerPositions(consumer, topicName, partition[0], offset).then(function(responseOffset){
-//                consumerFactory.getRecords(consumer, format)
-                consumerFactory.getDataForPartition(topicName, consumer, format, partition, offset)
-                .then(function(allData) {
-                    if(allData != -1) {
-                        if(firstTime) { $scope.firstOffsetForPartition = allData.data[0].offset }
-                        setTopicMessages(allData.data, format, true);
-                    } else {
-                        $scope.cannotGetDataForPartition = "Cannot get data for partition [" + partitions + "]. Please refresh."
-                    }
-//                })
-//              })
-            })
+            consumerFactory.getDataForPartition(topicName, consumer, format, partition, offset, position)
+            .then(function(allData) {
+                if(allData != -1) {
+                    if(firstTime) { $scope.firstOffsetForPartition = allData.data[0].offset }
+                    setTopicMessages(allData.data, format, true);
+                } else {
+                    $scope.cannotGetDataForPartition = "Cannot get data for partition [" + partitions + "]. Please refresh."
+                }
+            });
         });
-
-
-
-//    consumerFactory.postConsumerAssignments($scope.consumer, topicName, part).then(function (responseAssign){
-//
-////          $log.debug("Checking assignments for :", $scope.consumer);
-////          var url_tmp = env.KAFKA_REST().trim() + '/consumers/' + $scope.consumer.group + '/instances/' + $scope.consumer.instance + '/assignments'
-////          HttpFactory.req('GET', url_tmp, '', '', '', false, true).then(function(res){
-////          console.log("Existing assignments ", res);
-//
-//          consumerFactory.postConsumerPositions($scope.consumer, topicName, partitions, offset).then(function(responseOffset){
-//            consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
-//              setTopicMessages(allData.data)
-//    //          $scope.showSpinner = false;
-//                if(firstTime) { console.log('IS FIRST');$scope.firstOffsetForPartition = allData.data[0].offset }
-//                $scope.showAdvanced = true;
-//                $scope.disableAllPartitionButtons = true;
-//                $scope.showEmptyPartition = true;
-//            }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
-//          })
-//
-////      })
-//
-//    })
-
-
   }
 
 });
@@ -337,33 +305,3 @@ angularAPP.factory('TopicFactory', function (HttpFactory) {
           }
     }
 });
-
-
-//BACKUP WITH CHECK //TODO deleteme
-//function createAndFetch(format, topicName) {
-//    $scope.uuid = consumerFactory.genUUID();
-//    consumerFactory
-//        .createConsumer(format, topicName, $scope.uuid)
-//        .then(function(res){
-//            return consumerFactory.getConsumer(format, $scope.uuid);
-//        })
-//        .then(function(consumer) {
-//             //TODO what if there are? At which conditions? should put in factory?
-//             var url_tmp = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments'
-//             HttpFactory.req('GET', url_tmp, '', '', '', false, false).then(function(res){
-//                   if(res.data.length > 0) $log.warn(topicName, "EXISTING ASSIGNMENTS", res.data);
-//             })
-//            return consumer;
-//        })
-//        .then(function(consumer) {
-//            consumerFactory.getDataFromBeginning(consumer, format, topicName).then(function (allData) {
-//                if(allData == -1) {
-//                    $log.debug(topicName, "FAILED TO GET DATA, NEED TO RETRY", allData, $scope.consumer, topicName);
-//                    createAndFetch(consumerFactory.getConsumerTypeRetry(format, topicName), topicName);
-//                } else {
-//                      $log.debug(topicName, "GOT DATA, WILL RENDER", " [", allData.data.length, "] [", format, "] MESSAGES");
-//                      setTopicMessages(allData.data, format)
-//                }
-//            });
-//        });
-//  }

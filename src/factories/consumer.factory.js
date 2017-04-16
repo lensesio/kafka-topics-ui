@@ -43,11 +43,10 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
   }
 
 //TODO Doesn't work
-  function getDataForPartition(topicName, consumer, format, partition, offset) {
-
+  function getDataForPartition(topicName, consumer, format, partition, offset, position) {
+  console.log("position ",position);
    return postConsumerAssignments(consumer, topicName, partition).then(function (responseAssign){
-//   return $q.all([postConsumerAssignments(consumer, topicName, partition)]).then(function(res1) {
-          return postConsumerPositions(consumer, topicName, partition[0], offset).then(function(responseOffset){
+          return postConsumerPositions(consumer, topicName, partition[0], offset, position).then(function(responseOffset){
               $log.debug(topicName,'4) SEEK TO OFFSET FOR PARTITION DONE')
               $log.debug(topicName, "5) START POLLING WITH CONSUMER:", consumer);
               return getRecords(consumer, format).then(function (r) {
@@ -125,11 +124,36 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
                })
   }
 
-  function postConsumerPositions(consumer, topicName, partition, offset) {
-     var data = {'offsets':[{'topic':topicName, 'partition': partition.partition, 'offset':offset}]}
-     $log.debug(topicName, "3) SEEK TO OFFSETS", data)
-     var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions';
-     return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+  function postConsumerPositions(consumer, topicName, partition, offset, position) {
+
+    switch(position) {
+                case 'beginning':
+                    var data = {'partitions':[{'topic':topicName, 'partition': partition.partition }]}
+                    $log.debug(topicName, "3) SEEK PARTITION TO BEGINNING", data)
+                    var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/beginning';
+                    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+                    break;
+                case 'end':
+                    var data = {'partitions':[{'topic':topicName, 'partition': partition.partition }]}
+                    $log.debug(topicName, "3) SEEK PARTITION TO END", data)
+                    var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/end';
+                    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+                    break;
+                case 'offset':
+                    var data = {'offsets':[{'topic':topicName, 'partition': partition.partition, 'offset':offset}]}
+                    $log.debug(topicName, "3) SEEK TO OFFSETS", data)
+                    var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions';
+                    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+                    break;
+                default:
+                    $log.debug("EEEERROR", position)
+//                    return 'binary';
+            }
+
+//     var data = {'offsets':[{'topic':topicName, 'partition': partition.partition, 'offset':offset}]}
+//     $log.debug(topicName, "3) SEEK TO OFFSETS", data)
+//     var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions';
+//     return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
   }
 
   function deleteConsumerSubscriptions (consumer) {
@@ -293,8 +317,8 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     genUUID: function () {
           return consumerUUID();
         },
-    getDataForPartition: function(topicName, consumer, format, partition, offset) {
-        return getDataForPartition(topicName, consumer, format, partition, offset);
+    getDataForPartition: function(topicName, consumer, format, partition, offset, position) {
+        return getDataForPartition(topicName, consumer, format, partition, offset, position);
     }
   }
 });

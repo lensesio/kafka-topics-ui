@@ -20,7 +20,7 @@
 
                 <select flex="20" class="form-control button"
                         ng-model="selectedPartition"
-                        ng-change="assignPartitions(selectedPartition, offset, true)"
+                        ng-change="assignPartitions(selectedPartition, offset, 'beginning', true)"
                         class="toolbox-input"
                         style="float:right; margin: 7px;">
                         <!--ng-show="{{topic.partitions.length > 1}}"-->
@@ -54,12 +54,12 @@
                    <label>Seek to offset</label>
                    <input type="number" min="{{rows[0].offset}}"
                           ng-model="slider.minValue"
-                          ng-change="assignPartitions(selectedPartition, slider.minValue, false)"
+                          ng-change="assignPartitions(selectedPartition, slider.minValue, 'offset', false)"
                           ng-model-options="{ debounce: 1500 }"/>
                    <div class="input-hint" ng-if="true">Seek to offset</div>
                </md-input-container>
 
-               <md-button>
+               <md-button ng-click="assignPartitions(selectedPartition, 0, 'beginning', false)">
                    <md-tooltip md-direction="bottom"> Seek to beginning </md-tooltip>
                    <i class="fa fa-fast-backward" aria-hidden="true" style="font-size:16px"></i>
                </md-button>
@@ -71,7 +71,7 @@
                       ng-model-options="{ debounce: 500 }">
                </rzslider>
 
-                <md-button>
+                <md-button ng-click="assignPartitions(selectedPartition, 0, 'end', false)">
                    <md-tooltip md-direction="bottom"> Seek to end </md-tooltip>
                    <i class="fa fa-fast-forward" aria-hidden="true" style="font-size:16px"></i>
                </md-button>
