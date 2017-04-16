@@ -6,114 +6,73 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
   var RECORDS_TIMEOUT = '500'; //TODO put to env for the user to decide
   var RECORDS_MAX_BYTES = env.MAX_BYTES().trim();
   var CONTENT_TYPE_JSON = 'application/vnd.kafka.v2+json';
+  var PRINT_DEBUG_CURLS = false;
 
-  function getConsumer(format) {
-    var consumer = { group :'kafka_topics_ui_'+ format +'_' + consumerUUID(),
+  function getConsumer(format, uuid) {
+    var consumer = { group :'kafka_topics_ui_'+ format +'_' + uuid,
                      instance: 'kafka-topics-ui-'+ format
                    };
     return consumer;
   }
 
-  function createConsumers(format, topicName, withDebug) {
-    //why instance and group names different?
-    var url = URL_PREFIX + '/consumers/' + getConsumer(format).group;
+  function createConsumers(format, topicName, uuid) {
+    $log.debug(topicName, "CREATING CONSUMER: ", getConsumer(format, uuid), uuid);
+    var url = URL_PREFIX + '/consumers/' + getConsumer(format, uuid).group;
     var data = '{"name": "' + getConsumer(format).instance + '", "format": "' + format + '", "auto.offset.reset": "earliest", "auto.commit.enable": "false"}';
-    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, true); //return existing ?
+    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
   }
 
-  /**
-   * Subscribe Instance to topic
-   * Then seek to beginning //???
-   * Then get records
-   * Then return records if ok, or -1 in case of error in order to retry with different format
-   **/
   function subscribeAndGetData(consumer, format, topicName) {
-
-    $log.debug("Trying with consumer:", consumer);
-
-         return $q.all([seekToBeginningOrEnd('beginning', consumer, topicName, -1)])
+         return $q.all([seekToBeginningOrEnd('beginning', consumer, topicName)])
+//                  return seekToBeginningOrEnd('beginning', consumer, topicName)
                   .then(function(res1) {
+//                        console.log("RES1", res1)
+                      $log.debug(topicName,'4) DONE: SEEK TO BEGGINING FOR ALL PARTITIONS DONE')
+                      $log.debug(topicName, "5) START POLLING WITH CONSUMER:", consumer);
                       return getRecords(consumer, format)
                                      .then(function (r) {
                                              if(r.data.length != 0) saveTopicTypeToCookie(topicName, format);
+                                             $log.debug(topicName, '6) DONE: GOT RECORDS', r.data.length);
+                                             $log.debug(topicName, '7) SAVING TYPE TO COOKIE', format);
+
+                                             HttpFactory.req('DELETE',
+                                             URL_PREFIX +'/consumers/'+ consumer.group +'/instances/'+ consumer.instance,
+                                             '', CONTENT_TYPE_JSON, '', false, false).then(function(res) {
+                                                $log.debug(topicName, "8) CONSUMER DELETED", consumer)
+                                             })
+
                                              return r;
                                            }, function(er){ console.log("ER",er); return -1});
                   });
-
-
-//    var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription'
-//    var data = '{"topics":["' + topicName + '"]}';
-
-//    return $q.all([HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, true),
-//                   seekToBeginningOrEnd('beginning', consumer, topicName, -1)])
-//             .then(function(res1, res2) {
-//                 return getRecords(consumer, format)
-//                                .then(function (r) {
-//                                        if(r.data.length != 0) saveTopicTypeToCookie(topicName, format);
-//                                        return r;
-//                                      }, function(er){ console.log("ER",er); return -1});
-//             });
-//    return $q.all([HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, true)])
-//             .then(function(res1) {
-//                 return getRecords(consumer, format)
-//                                .then(function (r) {
-//                                        if(r.data.length != 0) saveTopicTypeToCookie(topicName, format);
-//                                        return r;
-//                                      }, function(er){ console.log("ER",er); return -1});
-//             });
   }
 
   function getRecords(consumer, format) {
     var url = URL_PREFIX + '/consumers/'+consumer.group+'/instances/'+consumer.instance+'/records?timeout='+ RECORDS_TIMEOUT +'&max_bytes=' + RECORDS_MAX_BYTES;
     var ACCEPT_HEADER = 'application/vnd.kafka.' + format + '.v2+json';
-    return HttpFactory.req('GET', url, '', CONTENT_TYPE_JSON, ACCEPT_HEADER, false, false);
+    return HttpFactory.req('GET', url, '', CONTENT_TYPE_JSON, ACCEPT_HEADER, false, PRINT_DEBUG_CURLS);
   }
 
   function preparePartitionData(topicName, partitions) {
         var data = {'partitions':[]}
-
-//        if(partitions.length == 1) {
-//            console.log("1 partition")
-//            data.partitions.push({'topic':topicName, 'partition': partitions})
-//        }
-
         angular.forEach(partitions, function (partition){
           data.partitions.push({'topic':topicName, 'partition': partition.partition})
         });
-
-        console.log("FINAL PARTITIONS", JSON.stringify(data))
+        $log.debug(topicName, "PARTITIONS TO ASSIGN", data)
         return data;
   }
 
-//  function seekToBeginningOrEnd (beginningOrEnd, consumer, topicName) {
-//    return $q.all([getPartitions(topicName)])
-//             .then(function(partitions) {
-//                     var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd;
-//                     var data = preparePartitionData(topicName, partitions.data);
-//                     return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
-//             });
-//  }
-
 // TODO this is the correct one ^ doesnt work
-   function seekToBeginningOrEnd(beginningOrEnd, consumer, topicName, partition) {
-          console.log("SEEKING TO" + beginningOrEnd + 'FOR PARTITIONS', partition)
+   function seekToBeginningOrEnd(beginningOrEnd, consumer, topicName) {
               return getPartitions(topicName)
                            .then(function(partitions) {
-                                console.log('ALL PARTITIONS FOR TOPICS ARE', partitions)
-                                postConsumerAssignments(consumer, topicName, partitions.data).then(function(r) {
-                                   console.log('ASSINGING PARTITIONS', partitions)
-                                   console.log('SEEKING TO', beginningOrEnd)
+                                $log.debug(topicName,'1) DONE: GOT ALL PARTITIONS', partitions)
+                                return postConsumerAssignments(consumer, topicName, partitions.data).then(function(r) {
+                                   $log.debug(topicName,'3) DONE: ASSIGNED PARTITIONS TO CONSUMER');
                                    var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd;
                                    var data = preparePartitionData(topicName, partitions.data);
-                                   return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
+                                   return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, PRINT_DEBUG_CURLS);
                                 })
                            });
-//                           .then(function(partitions) {
-//                                   console.log('PARTTT2', partitions)
-//                                   var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd;
-//                                   var data = preparePartitionData(topicName, partitions.data);
-//                                   return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
-//                           });
     }
 
   function getPartitions (topicName) {
@@ -121,118 +80,26 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
      return HttpFactory.req('GET', url, '', '', 'application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json', false, false);
   }
 
-//TODO
-//  function getConsumerOffsets (consumer, topicName) {
-//    var deferred = $q.defer();
-//
-//    var data =
-//    {
-//      "partitions": [
-//        {
-//          "topic": topicName
-//        }
-//      ]
-//    }
-//
-//    var getConsumerOffsets = {
-//      method: 'GET',
-//      url: env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/offsets/',
-//      data: data,
-//      headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
-//    }
-//
-//    $http(getConsumerOffsets).then(
-//      function success(response) {
-//        deferred.resolve(response);
-//      },
-//      function failure(response) {
-//
-//        deferred.resolve(response);
-//      });
-//
-//      return deferred.promise
-//
-//  }
-
-
-   //TODO but this works fine
   function postConsumerAssignments (consumer, topicName, partitions) {
-    console.log("WILL ASSIGN",partitions);
-//    var deferred = $q.defer();
-    return deleteConsumerSubscriptions(consumer).then(function(responseDelete){
-
-    var data = {'partitions':[]}
-
-         angular.forEach(partitions, function (p){
-              console.log("P", p)
-              data.partitions.push({'topic':topicName, 'partition': p.partition})
-            })
-
-         console.log("WILL SEND", data);
-         var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments';
-         return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, true);
-    //
-
-    })
-
-
-//      var getConsumerOffsets = {
-//        method: 'POST',
-//        url: env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments',
-//        data: data,
-//        headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
-//      }
-//
-//
-//      $http(getConsumerOffsets).then(
-//        function success(response) {
-//          console.log("ASSIGNMENTS ",response)
-//          $http(getAssignments).then(function(res) { console.log("ASSSS", res)})
-//          deferred.resolve(response);
-//        },
-//        function failure(response) {
-//          deferred.resolve(response);
-//       });
-////    })
-//
-//  return deferred.promise
-
-
+//    return deleteConsumerSubscriptions(consumer).then(function(responseDelete){
+        var data = preparePartitionData(topicName, partitions)
+        $log.debug(topicName, "2) ACTUAL PARTITIONS TO ASSIGN", data)
+        var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments';
+        return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, PRINT_DEBUG_CURLS);
+//    })
   }
 
   function postConsumerPositions(consumer, topicName, partitions, offset) {
-    var deferred = $q.defer();
 
      var data = {'offsets':[]}
-      angular.forEach(partitions, function (partition){
+     angular.forEach(partitions, function (partition){
         data.offsets.push({'topic':topicName, 'partition': partition, 'offset':offset})
-      })
+     })
 
-      console.log("DDDDDD", data)
+     console.log("ASSIGNING POSITIONS TO OFFSETS", data)
 
-      var postConsumerOffsets = {
-        method: 'POST',
-        url: env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions',
-        data: data,
-        headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
-      }
-
-      $http(postConsumerOffsets).then(
-        function success(response) {
-          deferred.resolve(response);
-
-        },
-        function failure(response) {
-          deferred.resolve(response);
-       });
-
-  return deferred.promise
-
-//    console.log("Setting position to beg", partitions)
-//  var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + 'beginning';
-//  var data = preparePartitionData(topicName, partitions);
-//  return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
-
+     var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions';
+     return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
   }
 
   function deleteConsumerSubscriptions (consumer) {
@@ -259,12 +126,16 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
 
   //UTILITIES
    function consumerUUID() {
-        if(!$cookies.getAll().uuid) {
-           $cookies.put('uuid', $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss")); //TODO milis
-           return $cookies.getAll().uuid
-        } else {
-          return $cookies.getAll().uuid
-        }
+//        if(!$cookies.getAll().uuid) {
+//           $cookies.put('uuid', $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss")); //TODO milis
+//           return $cookies.getAll().uuid
+//        } else {
+//          return $cookies.getAll().uuid
+//        }
+       var a = $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss");
+//       $log.debug("CONSUMER UUID IS", a);
+       $cookies.put('uuid', $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss")); //TODO milis
+       return a;
     }
 
     function saveTopicTypeToCookie(topicName, format){
@@ -296,29 +167,51 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
 
     function getConsumerType(topicName) {
        if(isKnownBinaryTopic(topicName)) {
+          $log.debug(topicName, "DETECTING TYPE.. IT'S A KNOWN [ BINARY ] TOPIC [topics.config.js]")
           return 'binary';
        } if(isKnownJSONTopic(topicName)) {
+          $log.debug(topicName, "DETECTING TYPE.. IT'S A KNOWN [ JSON ] TOPIC [topics.config.js]")
           return 'json';
        }  else if (hasCookieType(topicName)) {
           var a = $cookies.getAll();
+          $log.debug(topicName, "DETECTING TYPE.. HAVE CONSUMED THIS TOPIC BEFORE, IT'S IN COOKIE. TYPE IS [" + a[topicName] + "]")
           return a[topicName];
        } else {
-          console.log("I dont know the type");
-          return 'avro'; //if type is unknown try with 'avro'
+          $log.debug(topicName, "DETECTING TYPE.. DON'T KNOW THE TYPE I WILL TRY WITH [ AVRO ] FIRST")
+          return 'avro';
        }
+    }
+
+    function getConsumerTypeRetry(previousFormatTried, topicName){
+        switch(previousFormatTried) {
+            case 'avro':
+                $log.debug(topicName, "DETECTING TYPE.. FAILED WITH AVRO, WILL TRY [ JSON ]")
+                return 'json';
+                break;
+            case 'json':
+                $log.debug(topicName, "DETECTING TYPE.. FAILED WITH JSON, WILL TRY [ BINARY ]")
+                return 'binary';
+                break;
+            default:
+                $log.debug(topicName, "DETECTING TYPE.. FAILED WITH AVRO & JSON, WILL TRY [ BINARY ]")
+                return 'binary';
+        }
     }
 
     //PUBLIC METHODS
 
   return {
-    createConsumers: function (format, topicName) {
-          return createConsumers(format, topicName); //TODO why plural?
+    createConsumers: function (format, topicName, uuid) {
+          return createConsumers(format, topicName, uuid); //TODO why plural?
         },
-    getConsumer: function (format) {
-          return getConsumer(format);
+    getConsumer: function (format, uuid) {
+          return getConsumer(format, uuid);
     },
     getConsumerType: function (topicName) {
           return getConsumerType(topicName);
+    },
+    getConsumerTypeRetry: function (previousFormatTried, topicName) {
+          return getConsumerTypeRetry(previousFormatTried, topicName);
     },
     subscribeAndGetData: function (consumer, format, topicName) {
           return subscribeAndGetData(consumer, format, topicName);
@@ -343,6 +236,9 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
         },
     getPartitions: function (topicName) {
           return getPartitions(topicName);
+        },
+    genUUID: function () {
+          return consumerUUID();
         }
   }
 });

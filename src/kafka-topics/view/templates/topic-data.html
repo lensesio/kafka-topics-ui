@@ -7,8 +7,9 @@
 <div ng-show="rows.length==0">
     Topic is empty
 </div>
-<div style="background-color:#fff;" ng-cloak  ng-hide="rows.length==0">
+<div style="background-color:#fff;" ng-cloak  ng-hide="{{rows.length==0 || showEmptyPartition}}">
 
+    <!--<div ng-show="showAdvanced">-->
     <div ng-show="true">
         <div class="partitionSelection" >
 

@@ -25,7 +25,7 @@ angular.
 
              $http(request)
              .then(function (response){
-                  deferred.resolve(response);
+                  deferred.resolve(response)
                 },function (responseError){
                     var msg = "Failed at method [" + method + "] [" + url + "] with error: \n" + JSON.stringify(responseError);
                     $log.error("HTTP ERROR: ",msg, '\nDATA SENT:', data);

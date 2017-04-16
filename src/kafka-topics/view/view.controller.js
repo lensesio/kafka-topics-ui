@@ -1,6 +1,6 @@
 angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScope, $filter, $log, $location,$cookies, $http, TopicFactory, env, $q, $timeout , consumerFactory, HttpFactory) {
 
-  $log.info("Starting kafka-topics controller : view ( topic = " + $routeParams.topicName + " )");
+  $log.debug($routeParams.topicName, "Starting [ViewTopicCtrl]");
 
   var topicName = $routeParams.topicName;
   var selectedTabIndex = $routeParams.selectedTabIndex;
@@ -241,40 +241,27 @@ $scope.slider = {
   createAndFetch(consumerFactory.getConsumerType(topicName), topicName);
   $scope.hideTab = false;
 
-  function retry(previousFormatTried, topicName){ //todo put me in factory and just return types
-    switch(previousFormatTried) {
-        case 'avro':
-            createAndFetch('json', topicName);
-            break;
-        case 'json':
-            createAndFetch('binary', topicName);
-            break;
-        default:
-            createAndFetch('binary', topicName);
-    }
-  }
-
   function createAndFetch(format, topicName) {
-
-    consumerFactory.createConsumers(format, topicName)
+    $scope.uuid = consumerFactory.genUUID();
+    consumerFactory.createConsumers(format, topicName, $scope.uuid)
         .then(function(res){
-            $scope.consumer = consumerFactory.getConsumer(format); //TODO why scope? we should set in factory
-            return consumerFactory.getConsumer(format);
+            $scope.consumer = consumerFactory.getConsumer(format, $scope.uuid); //TODO why scope? we should set in factory
+            return consumerFactory.getConsumer(format, $scope.uuid);
         }).then(function(consumer) {
-            console.log("consumer ",consumer, topicName)
+            $log.debug(topicName, "THE CONSUMER TO START POLLING IS", consumer);
 
-                $log.debug("Checking assignments for :", consumer);
                 var url_tmp = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments'
-                HttpFactory.req('GET', url_tmp, '', '', '', false, true).then(function(res){
-                    console.log("Existing assignments ", res);
+                HttpFactory.req('GET', url_tmp, '', '', '', false, false).then(function(res){
+                    $log.debug(topicName, "EXISTING ASSIGNMENTS", res.data);
 
 
                                 consumerFactory.subscribeAndGetData(consumer, format, topicName).then(function (allData) {
                                     if(allData == -1) {
-                                        console.log("NEED TO RETRY", allData, $scope.consumer, topicName);
-                                        retry(format, topicName);
+                                        console.log(topicName, "NEED TO RETRY", allData, $scope.consumer, topicName);
+                                        //TODO delete the consumer before retry? Or after failed to get records
+                                        createAndFetch(consumerFactory.getConsumerTypeRetry(format, topicName), topicName);
                                     } else {
-                                          console.log("NEED TO RENDER", allData, $scope.consumer, topicName);
+                                          $log.debug(topicName, "NEED TO RENDER", allData, $scope.consumer);
                                           console.log("DATA LENGTH", allData.data.length)
                                           $scope.format=format;
                                           setTopicMessages(allData.data)
@@ -286,91 +273,14 @@ $scope.slider = {
                                 });
                 })
 
-
-
-
         })
-
-
-//    consumerFactory.createConsumers(format, topicName).then( function successCallback(response) {
-//        console.log("GOT IN")
-//        var uuid = $cookies.getAll().uuid;
-//        if (response.status == 409 || response.status == 200) { //Why we ignore 409 conflict here? if 409 should go to failure?
-//          //the same logic is in factory
-//          var consumer = {group :'kafka_topics_ui_'+format+'_' + uuid, instance: 'kafka-topics-ui-'+ format };
-//          $scope.consumer=consumer; //why scope? we should set in factory
-//
-//          consumerFactory.subscribeAndGetData(consumer, format, topicName).then(function (allData) {
-//            console.log("BBB", allData)
-//            if ((allData.status == 500 || allData.data.error_code == 404 ) && format=='avro') {
-//              createAndFetch('json', topicName)
-//            }
-//            else if ((allData.status == 500 || allData.data.error_code == 404 ) && format=='json') {
-//              createAndFetch('binary', topicName)
-//            } else if (!(allData.status == 500 || allData.data.error_code == 404 )){
-//
-//              console.log('Format is:', format)
-//              $scope.format=format;
-//              setTopicMessages(allData.data)
-//              $scope.showSpinner = false;
-//              if(format=='binary') {
-//                $scope.hideTab = true;
-//              }
-//            } else {
-//            }
-//          })
-//          if (response.status == 409) {
-//              var msg = response.data.message;
-//              msg = "Conflict 409. " + msg;
-//              $log.warn(msg)
-//           }
-//         } else {
-//          $log.warn(response.data.message)
-//         }
-//    }, function errorCallback(responseRecords) {
-//        console.warn('ERROR IS ',responseRecords)
-//    })
   }
-    $scope.selectedPartitions = []
-//    For select/deselect all partitions
 
-//    $scope.isIndeterminate = function() {
-//      return ($scope.selectedPartitions.length !== 0 &&
-//          $scope.selectedPartitions.length !== $scope.topic.partitions.length);
-//    };
-//
-//    $scope.isChecked = function() {
-//      return $scope.selectedPartitions.length === $scope.topic.partitions.length;
-//    };
-//
-//    $scope.toggleAll = function() {
-//      if ($scope.selectedPartitions.length === $scope.topic.partitions.length) {
-//        $scope.selectedPartitions = [];
-//      } else if ($scope.selectedPartitions.length === 0 || $scope.selectedPartitions.length > 0) {
-//        $scope.selectedPartitions = $scope.topic.partitions.slice(0);
-//      }
-//    };
-
-//    $scope.toggle = function (item, list) {
-//        var idx = list.indexOf(item);
-//        if (idx > -1) {
-//          list.splice(idx, 1);
-//        }
-//        else {
-//          list.push(item);
-//        }
-//      };
-//
-//      $scope.exists = function (item, list) {
-//        return list.indexOf(item) > -1;
-//      };
-
+  $scope.selectedPartitions = []
 
   $scope.assignPartitions = function assignPartitions (partitions, offset, firstTime) {
 //  $scope.showSpinner = true;
-   var part = [
-    { "partition" : partitions }
-   ]
+   var part = [ { "partition" : partitions } ]
 
   if (!angular.isDefined(offset)){offset = 1}
 
@@ -390,7 +300,8 @@ $scope.slider = {
             if(firstTime) { console.log('IS FIRST');$scope.firstOffsetForPartition = allData.data[0].offset }
             $scope.showAdvanced = true;
             $scope.disableAllPartitionButtons = true;
-        })//.then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
+            $scope.showEmptyPartition = true;
+        }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
       })
 
       })
@@ -399,60 +310,6 @@ $scope.slider = {
 
 
   }
-
-
-
-//    $scope.assignPartitions = function assignPartitions(partitions, offset, firstTime) {
-//        $scope.selectedPartition = partitions;
-//  //      $scope.showSpinner = true;
-//        if (!angular.isDefined(offset)){ offset = 0 }
-//  //        beginning = true
-//          console.log("SKATA", partitions)
-//          consumerFactory.postConsumerAssignments($scope.consumer, topicName, partitions).then(function (responseAssign){
-//
-//
-//  //          if(beginning) {
-//  //            console.log("GOING BEGINNING")
-//  //              consumerFactory.seekToBeginningOrEnd('beginning', $scope.consumer, topicName, partitions).then(function(responseOffset){
-//  //                consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
-//  //                  setTopicMessages(allData.data)
-//  //    //              $scope.showSpinner = false;
-//  //                  $scope.showAdvanced = true;
-//  //                  $scope.disableAllPartitionButtons = true;
-//  //                }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
-//  //              })
-//  //
-//  //          } else {
-//                console.log("GOING FIRST TIME")
-//                consumerFactory.postConsumerPositions($scope.consumer, topicName, partitions, offset).then(function(responseOffset){
-//
-//                  //for debug
-//  //                var getAssignments = {
-//  //                              method: 'GET',
-//  //                              url: env.KAFKA_REST().trim() + '/consumers/' + $scope.consumer.group + '/instances/' + $scope.consumer.instance + '/assignments',
-//  //                              headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
-//  //                            }
-//  //
-//  //                $http(getAssignments).then(function(v) {
-//  //                    console.log("MAAAS ", v);
-//  //                })
-//
-//
-//                  consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
-//
-//                    if(firstTime) { console.log('IS FIRST');$scope.firstOffsetForPartition = allData.data[0].offset }
-//                    setTopicMessages(allData.data)
-//
-//  //                  $scope.showSpinner = false;
-//                    $scope.showAdvanced = true;
-//                    $scope.disableAllPartitionButtons = true;
-//                  }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
-//                })
-//
-//  //          }
-//
-//          })
-//    }
 
 });
 
