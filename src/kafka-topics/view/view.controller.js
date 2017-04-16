@@ -8,24 +8,26 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
   var topicMenuItem = $routeParams.menuItem;
 
   $scope.showSpinner = true;
-
+  $scope.showAdvanced = false;
 
       //TODO add error messages for failed requrests + false spinner
       TopicFactory.getTopicSummary(topicName, $scope.cluster.KAFKA_REST)
       .then(function success(topic){
             topic.data.configs = makeConfigsArray(topic.data.configs);
             $scope.topic = topic.data;
+            $scope.showAdvanced = ($scope.topic.partitions.length == 1 ? true : false )
+            $scope.disableAllPartitionButtons = ($scope.topic.partitions.length == 1 ? true : false )
       },
      function failure(responseError2) {
      });
 
-    TopicFactory.getAllTopics($scope.cluster.KAFKA_REST)
+    TopicFactory.getAllTopics($scope.cluster.KAFKA_REST) //TODO do we need this?
     .then(function success(allTopics){
       $scope.allTopics = allTopics;
     });
 
   $scope.showOrHideAdvanced = 'Show advanced';
-  $scope.showAdvanced = false;
+
   $scope.disableAllPartitionButtons = false;
   $scope.toggleAdvanced = function(){
   if($scope.showAdvanced)
@@ -259,21 +261,33 @@ $scope.slider = {
             $scope.consumer = consumerFactory.getConsumer(format); //TODO why scope? we should set in factory
             return consumerFactory.getConsumer(format);
         }).then(function(consumer) {
-            consumerFactory.subscribeAndGetData(consumer, format, topicName).then(function (allData) {
-                if(allData == -1) {
-                    console.log("NEED TO RETRY", allData, $scope.consumer, topicName);
-                    retry(format, topicName);
-                } else {
-                      console.log("NEED TO RENDER", allData, $scope.consumer, topicName);
-                      console.log("DATA LENGTH", allData.data.length)
-                      $scope.format=format;
-                      setTopicMessages(allData.data)
-                      $scope.showSpinner = false;
-                      if(format=='binary') {
-                        $scope.hideTab = true;
-                      }
-                }
-            });
+            console.log("consumer ",consumer, topicName)
+
+                $log.debug("Checking assignments for :", consumer);
+                var url_tmp = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments'
+                HttpFactory.req('GET', url_tmp, '', '', '', false, true).then(function(res){
+                    console.log("Existing assignments ", res);
+
+
+                                consumerFactory.subscribeAndGetData(consumer, format, topicName).then(function (allData) {
+                                    if(allData == -1) {
+                                        console.log("NEED TO RETRY", allData, $scope.consumer, topicName);
+                                        retry(format, topicName);
+                                    } else {
+                                          console.log("NEED TO RENDER", allData, $scope.consumer, topicName);
+                                          console.log("DATA LENGTH", allData.data.length)
+                                          $scope.format=format;
+                                          setTopicMessages(allData.data)
+                                          $scope.showSpinner = false;
+                                          if(format=='binary') {
+                                            $scope.hideTab = true;
+                                          }
+                                    }
+                                });
+                })
+
+
+
 
         })
 
@@ -354,17 +368,36 @@ $scope.slider = {
 
   $scope.assignPartitions = function assignPartitions (partitions, offset, firstTime) {
 //  $scope.showSpinner = true;
-  if (!angular.isDefined(offset)){offset = 0}
-    consumerFactory.postConsumerAssignments($scope.consumer, topicName, partitions).then(function (responseAssign){
+   var part = [
+    { "partition" : partitions }
+   ]
+
+  if (!angular.isDefined(offset)){offset = 1}
+
+
+    consumerFactory.postConsumerAssignments($scope.consumer, topicName, part).then(function (responseAssign){
+
+             $log.debug("Checking assignments for :", $scope.consumer);
+             var url_tmp = env.KAFKA_REST().trim() + '/consumers/' + $scope.consumer.group + '/instances/' + $scope.consumer.instance + '/assignments'
+             HttpFactory.req('GET', url_tmp, '', '', '', false, true).then(function(res){
+             console.log("Existing assignments ", res);
+
+
       consumerFactory.postConsumerPositions($scope.consumer, topicName, partitions, offset).then(function(responseOffset){
         consumerFactory.getRecords($scope.consumer, $scope.format).then(function(allData){
           setTopicMessages(allData.data)
 //          $scope.showSpinner = false;
             if(firstTime) { console.log('IS FIRST');$scope.firstOffsetForPartition = allData.data[0].offset }
             $scope.showAdvanced = true;
-        }).then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
+            $scope.disableAllPartitionButtons = true;
+        })//.then(consumerFactory.deleteConsumerSubscriptions($scope.consumer))
       })
+
+      })
+
     })
+
+
   }
 
 

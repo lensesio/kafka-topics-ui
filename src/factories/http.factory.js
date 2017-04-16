@@ -3,7 +3,7 @@ angular.
     factory('HttpFactory', function ($http, $log, $q) {
 
     function printDebugCurl(method, url, data, contentType){
-          var curlCreateConsumer = 'curl -X '+ method +' -H "Content-Type: ' + contentType + '" ' + "--data '" + data + "' " + url;
+          var curlCreateConsumer = 'curl -X '+ method +' -H "Content-Type: ' + contentType + '" ' + "--data '" + JSON.stringify(data) + "' " + url;
           $log.debug("HttpFactory:  " + curlCreateConsumer);
       }
 
@@ -28,7 +28,7 @@ angular.
                   deferred.resolve(response);
                 },function (responseError){
                     var msg = "Failed at method [" + method + "] [" + url + "] with error: \n" + JSON.stringify(responseError);
-                    $log.error("HTTP ERROR: ",msg);
+                    $log.error("HTTP ERROR: ",msg, '\nDATA SENT:', data);
                     if(resolveError && responseError.status == 409) deferred.resolve(responseError); //resolve conflicts to handle
                     else deferred.reject(msg);
                 });

@@ -70,7 +70,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
   $scope.topic = $routeParams.topicName
 
   var schemas;
-  loadSchemas()
+//  loadSchemas()
 
   $scope.$watch(
     function () { return $routeParams.topicName },

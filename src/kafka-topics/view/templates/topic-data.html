@@ -22,8 +22,9 @@
                         ng-change="assignPartitions(selectedPartition, offset, true)"
                         class="toolbox-input"
                         style="float:right; margin: 7px;">
+                        <!--ng-show="{{topic.partitions.length > 1}}"-->
                     <!--TODO allPartitions needs a default Value ?-->
-                    <option value="" selected>All partitions</option>
+                    <option value="" ng-show="{{topic.partitions.length > 1}}">All partitions</option>
                     <option ng-repeat="partition in topic.partitions | orderBy : 'partition' track by $index" value="{{partition.partition}}">Partition {{partition.partition}}</option>
                 </select>
 
@@ -39,7 +40,7 @@
                 </md-button>
             </div>
 
-            <div style="font-size:14px; margin-left:8px">Move offset for partition: {{selectedPartition}} </div>
+            <div ng-show="showAdvanced" style="font-size:14px; margin-left:8px">Move offset for partition: {{selectedPartition}} </div>
             <div layout="row" ng-show="showAdvanced" style="background:rgba(221, 221, 221, 0.63);border-top:1px solid #ccc;margin-bottom:0px">
 
                <!--<input placeholder="Set offset*" type="number" ng-model="offset" style="margin: 7px; line-height: 12px;"/>-->

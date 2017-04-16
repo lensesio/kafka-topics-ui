@@ -1,5 +1,5 @@
 
-angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $filter, $cookies, env, HttpFactory) {
+angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $filter, $cookies, env, HttpFactory, $timeout) {
 
   var URL_PREFIX = env.KAFKA_REST().trim();
   var CONSUMER_NAME_PREFIX = 'kafka-topics-ui-';
@@ -17,14 +17,13 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
   function createConsumers(format, topicName, withDebug) {
     //why instance and group names different?
     var url = URL_PREFIX + '/consumers/' + getConsumer(format).group;
-    var data = '{"name": "' + getConsumer(format).instance + '", "format": "' + format + '", "auto.offset.reset": "earliest", "auto.commit.enable": "false"}';//TODO shall we parameterise?
-
-    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, false); //return existing ?
+    var data = '{"name": "' + getConsumer(format).instance + '", "format": "' + format + '", "auto.offset.reset": "earliest", "auto.commit.enable": "false"}';
+    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, true); //return existing ?
   }
 
   /**
    * Subscribe Instance to topic
-   * Then seek to beginning
+   * Then seek to beginning //???
    * Then get records
    * Then return records if ok, or -1 in case of error in order to retry with different format
    **/
@@ -32,18 +31,28 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
 
     $log.debug("Trying with consumer:", consumer);
 
-    var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription'
-    var data = '{"topics":["' + topicName + '"]}';
+         return $q.all([seekToBeginningOrEnd('beginning', consumer, topicName, -1)])
+                  .then(function(res1) {
+                      return getRecords(consumer, format)
+                                     .then(function (r) {
+                                             if(r.data.length != 0) saveTopicTypeToCookie(topicName, format);
+                                             return r;
+                                           }, function(er){ console.log("ER",er); return -1});
+                  });
 
-    return $q.all([HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, true),
-                   seekToBeginningOrEnd('beginning', consumer, topicName, -1)])
-             .then(function(res1, res2) {
-                 return getRecords(consumer, format)
-                                .then(function (r) {
-                                        if(r.data.length != 0) saveTopicTypeToCookie(topicName, format);
-                                        return r;
-                                      }, function(er){ console.log("ER",er); return -1});
-             });
+
+//    var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/subscription'
+//    var data = '{"topics":["' + topicName + '"]}';
+
+//    return $q.all([HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, true),
+//                   seekToBeginningOrEnd('beginning', consumer, topicName, -1)])
+//             .then(function(res1, res2) {
+//                 return getRecords(consumer, format)
+//                                .then(function (r) {
+//                                        if(r.data.length != 0) saveTopicTypeToCookie(topicName, format);
+//                                        return r;
+//                                      }, function(er){ console.log("ER",er); return -1});
+//             });
 //    return $q.all([HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, true)])
 //             .then(function(res1) {
 //                 return getRecords(consumer, format)
@@ -76,26 +85,36 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
         return data;
   }
 
-  function seekToBeginningOrEnd (beginningOrEnd, consumer, topicName) {
-    return $q.all([getPartitions(topicName)])
-             .then(function(partitions) {
-                     var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd;
-                     var data = preparePartitionData(topicName, partitions.data);
-                     return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
-             });
-  }
+//  function seekToBeginningOrEnd (beginningOrEnd, consumer, topicName) {
+//    return $q.all([getPartitions(topicName)])
+//             .then(function(partitions) {
+//                     var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd;
+//                     var data = preparePartitionData(topicName, partitions.data);
+//                     return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
+//             });
+//  }
 
 // TODO this is the correct one ^ doesnt work
-//   function seekToBeginningOrEnd (beginningOrEnd, consumer, topicName, partition) {
-//          console.log("PARTTTT", partition)
-//              return getPartitions(topicName)
+   function seekToBeginningOrEnd(beginningOrEnd, consumer, topicName, partition) {
+          console.log("SEEKING TO" + beginningOrEnd + 'FOR PARTITIONS', partition)
+              return getPartitions(topicName)
+                           .then(function(partitions) {
+                                console.log('ALL PARTITIONS FOR TOPICS ARE', partitions)
+                                postConsumerAssignments(consumer, topicName, partitions.data).then(function(r) {
+                                   console.log('ASSINGING PARTITIONS', partitions)
+                                   console.log('SEEKING TO', beginningOrEnd)
+                                   var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd;
+                                   var data = preparePartitionData(topicName, partitions.data);
+                                   return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
+                                })
+                           });
 //                           .then(function(partitions) {
+//                                   console.log('PARTTT2', partitions)
 //                                   var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd;
 //                                   var data = preparePartitionData(topicName, partitions.data);
 //                                   return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
 //                           });
-//  //        }
-//    }
+    }
 
   function getPartitions (topicName) {
      var url = env.KAFKA_REST().trim() + '/topics/' + topicName +'/partitions';
@@ -139,33 +158,45 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
    //TODO but this works fine
   function postConsumerAssignments (consumer, topicName, partitions) {
     console.log("WILL ASSIGN",partitions);
-    var deferred = $q.defer();
-    deleteConsumerSubscriptions(consumer).then(function(responseDelete){
+//    var deferred = $q.defer();
+    return deleteConsumerSubscriptions(consumer).then(function(responseDelete){
 
-      var data = {'partitions':[]}
-      angular.forEach(partitions, function (partition){
-        data.partitions.push({'topic':topicName, 'partition': partition})
-      })
+    var data = {'partitions':[]}
 
-      var getConsumerOffsets = {
-        method: 'POST',
-        url: env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments',
-        data: data,
-        headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
-      }
+         angular.forEach(partitions, function (p){
+              console.log("P", p)
+              data.partitions.push({'topic':topicName, 'partition': p.partition})
+            })
 
-      $http(getConsumerOffsets).then(
-        function success(response) {
-//          console.log("ASSIGNMENTS ",response)
-//          $http(getAssignments).then(function(res) { console.log("ASSSS", res)})
-          deferred.resolve(response);
-        },
-        function failure(response) {
-          deferred.resolve(response);
-       });
+         console.log("WILL SEND", data);
+         var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments';
+         return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, true);
+    //
+
     })
 
-  return deferred.promise
+
+//      var getConsumerOffsets = {
+//        method: 'POST',
+//        url: env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments',
+//        data: data,
+//        headers: {'Content-Type': 'application/vnd.kafka.v2+json' }
+//      }
+//
+//
+//      $http(getConsumerOffsets).then(
+//        function success(response) {
+//          console.log("ASSIGNMENTS ",response)
+//          $http(getAssignments).then(function(res) { console.log("ASSSS", res)})
+//          deferred.resolve(response);
+//        },
+//        function failure(response) {
+//          deferred.resolve(response);
+//       });
+////    })
+//
+//  return deferred.promise
+
 
   }
 
@@ -196,6 +227,11 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
        });
 
   return deferred.promise
+
+//    console.log("Setting position to beg", partitions)
+//  var url = URL_PREFIX + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + 'beginning';
+//  var data = preparePartitionData(topicName, partitions);
+//  return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, false);
 
   }
 
