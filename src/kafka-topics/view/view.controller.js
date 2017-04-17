@@ -8,7 +8,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
   var topicMenuItem = $routeParams.menuItem;
 
   $scope.showSpinner = true;
-  $scope.showAdvanced = false;
+//  $scope.showAdvanced = false;
 
       //TODO add error messages for failed requrests + false spinner
       TopicFactory.getTopicSummary(topicName, $scope.cluster.KAFKA_REST)
@@ -29,14 +29,14 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
   $scope.showOrHideAdvanced = 'Show advanced';
 
   $scope.disableAllPartitionButtons = false;
-  $scope.toggleAdvanced = function(){
-  if($scope.showAdvanced)
-    $scope.showOrHideAdvanced = 'Show advanced';
-    else
-    $scope.showOrHideAdvanced = 'Hide advanced';
-
-    $scope.showAdvanced = !$scope.showAdvanced
-  }
+//  $scope.toggleAdvanced = function(){
+//  if($scope.showAdvanced)
+//    $scope.showOrHideAdvanced = 'Show advanced';
+//    else
+//    $scope.showOrHideAdvanced = 'Hide advanced';
+//
+//    $scope.showAdvanced = !$scope.showAdvanced
+//  }
 /*******************************
  * topic-toolbar.html
 ********************************/
@@ -187,6 +187,7 @@ $scope.slider = {
  * DATA stuff
 ********************************/
    $scope.partitionIsEmpty = false;
+   $scope.selectedPartition = -1;
 
   function setTopicMessages(allData, format, forPartition) {
 
@@ -260,10 +261,19 @@ $scope.slider = {
   $scope.assignPartitions = function assignPartitions(partition, offset, position, firstTime) {
 
     $log.debug("... DATA FOR PARTITION [" + partition + "]...", position)
+    var format = consumerFactory.getConsumerType(topicName);//$scope.format; //TODO
+
     //TODO If partitions = all (somehow) then createAndFetch
+    console.log("aa",partition)
+    if(partition == -1) {
+        $scope.showAdvanced = false;
+        createAndFetch(format, topicName);
+        return;
+    }
+
     //TODO make a loading for data only for the case partition is empty// $scope.showSpinner = true;
     var partition = [ { "partition" : partition } ] //create array because assignments works for all too.
-    var format = consumerFactory.getConsumerType(topicName);//$scope.format; //TODO
+
     if (!angular.isDefined(offset)){offset = 1}
     $scope.uuid = consumerFactory.genUUID();
 

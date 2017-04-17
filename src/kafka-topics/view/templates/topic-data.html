@@ -17,9 +17,8 @@
                             ng-change="assignPartitions(selectedPartition, offset, 'beginning', true)"
                             class="toolbox-input"
                             style="float:right; margin: 7px;">
-                            <!--ng-show="{{topic.partitions.length > 1}}"-->
-                        <!--TODO allPartitions needs a default Value ?-->
-                        <option value="" ng-show="{{topic.partitions.length > 1}}">All partitions</option>
+                            <!--ng-show="{{topic.partitions.length > 1}}" TODO -->
+                        <option value="-1">All partitions</option>
                         <option ng-repeat="partition in topic.partitions | orderBy : 'partition' track by $index" value="{{partition.partition}}">Partition {{partition.partition}}</option>
                     </select>
 
