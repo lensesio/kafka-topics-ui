@@ -187,7 +187,7 @@ $scope.slider = {
  * DATA stuff
 ********************************/
    $scope.partitionIsEmpty = false;
-   $scope.selectedPartition = -1;
+  // $scope.selectedPartition = -1;
 
   function setTopicMessages(allData, format, forPartition) {
 
@@ -218,12 +218,12 @@ $scope.slider = {
          floor: floor,
          ceil: allData[allData.length - 1].offset + 100,
          draggableRangeOnly: true,
-         onChange: function() {
-               console.log('on change ', $scope.slider.minValue); // logs 'on end slider-id'
-         },
+//         onChange: function() {
+//             console.log('on change ', $scope.slider.minValue); // logs 'on end slider-id'
+//         },
          onEnd: function(){
              console.log('on end ', $scope.slider.minValue, $scope.selectedPartition); //TODO
-             $scope.assignPartitions($scope.selectedPartition, $scope.slider.minValue, false)
+             $scope.assignPartitions($scope.selectedPartition, $scope.slider.minValue, 'offset', false)
          }
        }
      };
@@ -259,12 +259,12 @@ $scope.slider = {
   }
 
   $scope.assignPartitions = function assignPartitions(partition, offset, position, firstTime) {
+    $scope.selectedPartition = partition;
 
     $log.debug("... DATA FOR PARTITION [" + partition + "]...", position)
     var format = consumerFactory.getConsumerType(topicName);//$scope.format; //TODO
 
     //TODO If partitions = all (somehow) then createAndFetch
-    console.log("aa",partition)
     if(partition == -1) {
         $scope.showAdvanced = false;
         createAndFetch(format, topicName);
@@ -287,7 +287,7 @@ $scope.slider = {
             consumerFactory.getDataForPartition(topicName, consumer, format, partition, offset, position)
             .then(function(allData) {
                 if(allData != -1) {
-                    if(firstTime) { $scope.firstOffsetForPartition = allData.data[0].offset }
+                    if(firstTime && allData.data.length != 0) { $scope.firstOffsetForPartition = allData.data[0].offset }
                     setTopicMessages(allData.data, format, true);
                 } else {
                     $scope.cannotGetDataForPartition = "Cannot get data for partition [" + partitions + "]. Please refresh."

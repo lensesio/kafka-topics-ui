@@ -42,9 +42,7 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
               });
   }
 
-//TODO Doesn't work
   function getDataForPartition(topicName, consumer, format, partition, offset, position) {
-  console.log("position ",position);
    return postConsumerAssignments(consumer, topicName, partition).then(function (responseAssign){
           return postConsumerPositions(consumer, topicName, partition[0], offset, position).then(function(responseOffset){
               $log.debug(topicName,'4) SEEK TO OFFSET FOR PARTITION DONE')
@@ -127,35 +125,30 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
   function postConsumerPositions(consumer, topicName, partition, offset, position) {
 
     switch(position) {
-                case 'beginning':
-                    var data = {'partitions':[{'topic':topicName, 'partition': partition.partition }]}
-                    $log.debug(topicName, "3) SEEK PARTITION TO BEGINNING", data)
-                    var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/beginning';
-                    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
-                    break;
-                case 'end':
-                    var data = {'partitions':[{'topic':topicName, 'partition': partition.partition }]}
-                    $log.debug(topicName, "3) SEEK PARTITION TO END", data)
-                    var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/end';
-                    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
-                    break;
-                case 'offset':
-                    var data = {'offsets':[{'topic':topicName, 'partition': partition.partition, 'offset':offset}]}
-                    $log.debug(topicName, "3) SEEK TO OFFSETS", data)
-                    var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions';
-                    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
-                    break;
-                default:
-                    $log.debug("EEEERROR", position)
-//                    return 'binary';
-            }
-
-//     var data = {'offsets':[{'topic':topicName, 'partition': partition.partition, 'offset':offset}]}
-//     $log.debug(topicName, "3) SEEK TO OFFSETS", data)
-//     var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions';
-//     return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+        case 'beginning':
+            var data = {'partitions':[{'topic':topicName, 'partition': partition.partition }]}
+            $log.debug(topicName, "3) SEEK PARTITION TO BEGINNING", data)
+            var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/beginning';
+            return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+            break;
+        case 'end':
+            var data = {'partitions':[{'topic':topicName, 'partition': partition.partition }]}
+            $log.debug(topicName, "3) SEEK PARTITION TO END", data)
+            var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/end';
+            return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+            break;
+        case 'offset':
+            var data = {'offsets':[{'topic':topicName, 'partition': partition.partition, 'offset':offset}]}
+            $log.debug(topicName, "3) SEEK TO OFFSETS", data)
+            var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions';
+            return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+            break;
+        default:
+            $log.debug("EEEERROR", position)
+    }
   }
 
+//TODO not in used.
   function deleteConsumerSubscriptions (consumer) {
     var deferred = $q.defer();
 
@@ -180,69 +173,57 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
 
   //UTILITIES / STATICS
 
-    function getConsumer(format, uuid) {
-      var consumer = { group :'kafka_topics_ui_'+ format +'_' + uuid,
-                       instance: 'kafka-topics-ui-'+ format
-                     };
-      return consumer;
-    }
+  function getConsumer(format, uuid) {
+    return { group :'kafka_topics_ui_'+ format +'_' + uuid, instance: 'kafka-topics-ui-'+ format };
+  }
 
-      function preparePartitionData(topicName, partitions) {
+  function preparePartitionData(topicName, partitions) {
             var data = {'partitions':[]}
             angular.forEach(partitions, function (partition){
               data.partitions.push({'topic':topicName, 'partition': partition.partition})
             });
-//            $log.debug(topicName, "PARTITIONS TO ASSIGN", data)
             return data;
-      }
+   }
 
-   function consumerUUID() {
-//        if(!$cookies.getAll().uuid) {
-//           $cookies.put('uuid', $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss")); //TODO milis
-//           return $cookies.getAll().uuid
-//        } else {
-//          return $cookies.getAll().uuid
-//        }
+  function consumerUUID() {
        var a = $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss");
-//       $log.debug("CONSUMER UUID IS", a);
-       $cookies.put('uuid', $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss")); //TODO milis
+       $cookies.put('uuid', $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss")); //TODO milis, do we need the cookie ?
        return a;
-    }
+  }
 
-    function saveTopicTypeToCookie(topicName, format){
+  function saveTopicTypeToCookie(topicName, format){
       var expireDate = new Date();
       expireDate.setDate(expireDate.getDate() + 1);
       $cookies.put(topicName, format, {'expires': expireDate});
-    }
+  }
 
-    function hasCookieType(topicName) {
+  function hasCookieType(topicName) {
        var a = $cookies.getAll();
        return a[topicName] ? true : false;
-    }
+  }
 
-    function isKnownBinaryTopic(topicName) {
+  function isKnownBinaryTopic(topicName) {
          var a = false;
          angular.forEach(KNOWN_TOPICS.BINARY_TOPICS, function(t){  //todo filter
               if(t == topicName) a = true;
          })
          return a;
-    }
+  }
 
-    function isKnownJSONTopic(topicName) {
+  function isKnownJSONTopic(topicName) {
          var a = false;
              angular.forEach(KNOWN_TOPICS.JSON_TOPICS, function(t){  //todo filter
                   if(t == topicName) {
-                  console.log("AAA",t)
                   a = true;
                   }
              })
              return a;
-    }
+  }
 
-    /**
-     * If topic is not defined, or hasn't been consumed before, then will try detection start with Avro
-     **/
-    function getConsumerType(topicName) {
+  /**
+   * If topic is not defined, or hasn't been consumed before, then will try detection start with Avro
+   **/
+  function getConsumerType(topicName) {
        if(isKnownBinaryTopic(topicName)) {
           $log.debug(topicName, "DETECTING TYPE.. IT'S A KNOWN [ BINARY ] TOPIC [topics.config.js]")
           return 'binary';
@@ -257,25 +238,25 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
           $log.debug(topicName, "DETECTING TYPE.. DON'T KNOW THE TYPE I WILL TRY WITH [ AVRO ] FIRST")
           return 'avro';
        }
-    }
+  }
 
-    function getConsumerTypeRetry(previousFormatTried, topicName){
-        switch(previousFormatTried) {
-            case 'avro':
-                $log.debug(topicName, "DETECTING TYPE.. FAILED WITH AVRO, WILL TRY [ JSON ]")
-                return 'json';
-                break;
-            case 'json':
-                $log.debug(topicName, "DETECTING TYPE.. FAILED WITH JSON, WILL TRY [ BINARY ]")
-                return 'binary';
-                break;
-            default:
-                $log.debug(topicName, "DETECTING TYPE.. FAILED WITH AVRO & JSON, WILL TRY [ BINARY ]")
-                return 'binary';
-        }
+  function getConsumerTypeRetry(previousFormatTried, topicName){
+    switch(previousFormatTried) {
+        case 'avro':
+            $log.debug(topicName, "DETECTING TYPE.. FAILED WITH AVRO, WILL TRY [ JSON ]")
+            return 'json';
+            break;
+        case 'json':
+            $log.debug(topicName, "DETECTING TYPE.. FAILED WITH JSON, WILL TRY [ BINARY ]")
+            return 'binary';
+            break;
+        default:
+            $log.debug(topicName, "DETECTING TYPE.. FAILED WITH AVRO & JSON, WILL TRY [ BINARY ]")
+            return 'binary';
     }
+  }
 
-    //PUBLIC METHODS
+    //PUBLIC METHODS // TODO cleanup
 
   return {
     createConsumer: function (format, topicName, uuid) {

@@ -18,8 +18,12 @@
 
       <md-input-container class="md-block" style="margin-bottom:0;">
         <label>Search topics:</label>
-        <input ng-model="search">
+        <input ng-model="search" placeholder=" ">
       </md-input-container>
+
+      <!--<input flex="80" ng-model="search" placeholder="Search Topics" class="toolbox-input" style="margin: 7px;width:100%">-->
+
+
       <div flex>
         <md-list class="md-dense" flex>
           <md-list-item dir-paginate="topic in selectedTopics | orderBy:query.order | filter : search | itemsPerPage:topicsPerPage"

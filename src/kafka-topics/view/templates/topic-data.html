@@ -17,7 +17,7 @@
                             ng-change="assignPartitions(selectedPartition, offset, 'beginning', true)"
                             class="toolbox-input"
                             style="float:right; margin: 7px;">
-                            <!--ng-show="{{topic.partitions.length > 1}}" TODO -->
+                            <!--ng-show="{{topic.partitions.length > 1}}" TODO-->
                         <option value="-1">All partitions</option>
                         <option ng-repeat="partition in topic.partitions | orderBy : 'partition' track by $index" value="{{partition.partition}}">Partition {{partition.partition}}</option>
                     </select>
@@ -71,7 +71,8 @@
         </div>
     </div>
 
-    <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber" ng-show="!partitionIsEmpty">
+    <!--ng-show="!partitionIsEmpty"-->
+    <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber" >
         <!--Download button-->
         <div layout="row">
 
