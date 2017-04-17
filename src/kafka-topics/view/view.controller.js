@@ -143,13 +143,13 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
 //    ceil: 100,
 //  }
 //};
-//TODO
+//TODO delete me
 $scope.slider = {
-       minValue: 123,
-       maxValue: 156,
+       minValue: 0,
+       maxValue: 10,
        options: {
-         floor: 123,//allData[0].offset,
-         ceil: 234//allData[allData.length - 1].offset,
+         floor: 0,//allData[0].offset,
+         ceil: 100//allData[allData.length - 1].offset,
        }
      };
 
@@ -181,29 +181,25 @@ $scope.slider = {
 
 
   $scope.maxHeight = window.innerHeight - 215;
-    if ($scope.maxHeight < 310) {$scope.maxHeight = 310}
-/*******************************
- * still Depends on Kafka Rest
-********************************/
+  if ($scope.maxHeight < 310) {$scope.maxHeight = 310}
 
-  /****************** SUPER CLEAN UP REQUIRED HERE / STARTS (this is the only dep to KAFKA_REST) *****************/
-  //If data is empty don't try to deserialize
+/*******************************
+ * DATA stuff
+********************************/
+   $scope.partitionIsEmpty = false;
 
   function setTopicMessages(allData, format, forPartition) {
 
     if(forPartition) {
-//       $scope.showSpinner = false;
-        //if(firstTime) { console.log('IS FIRST'); $scope.firstOffsetForPartition = allData.data[0].offset }
         $scope.showAdvanced = true;
         $scope.disableAllPartitionButtons = true;
-        $scope.showEmptyPartition = true;
-
+        if(allData.length == 0) $scope.partitionIsEmpty = true;
     }
 
      $scope.rows = allData;
      $scope.format=format;
-       $scope.showSpinner = false;
-
+     $scope.showSpinner = false;
+// TODO RETHINK THIS
 //       if(format=='binary') {
 //         $scope.hideTab = true;
 //       }

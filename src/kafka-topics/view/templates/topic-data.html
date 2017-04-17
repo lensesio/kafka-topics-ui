@@ -1,109 +1,79 @@
-<!--
-    selectedTabNnumber
-    search.$
-    onTabChanges('topic')
-    getPartitions / partitions (?) >> topic.partitions
--->
-<div ng-show="rows.length==0">
-    Topic is empty
-</div>
-<div style="background-color:#fff;" ng-cloak  ng-hide="{{rows.length==0 || showEmptyPartition}}">
+
+<div style="background-color:#fff;" ng-cloak  ng-hide="rows.length==0 && !partitionIsEmpty">
 
     <!--<div ng-show="showAdvanced">-->
     <div ng-show="true">
         <div class="partitionSelection" >
 
             <div class="column"  style="background:#ddd;">
-                <div style="font-size:14px; margin-left:8px">Total Messages: 1234567 - {{rows.length}}</div>
-                <div layout="row" style="background:#ddd;height:45px">
-                <input flex="100" ng-model="searchMessages" ng-change="dataFlatTableCtrl.refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" class="toolbox-input" style="margin: 7px;">
 
-                <select flex="20" class="form-control button"
-                        ng-model="selectedPartition"
-                        ng-change="assignPartitions(selectedPartition, offset, 'beginning', true)"
-                        class="toolbox-input"
-                        style="float:right; margin: 7px;">
-                        <!--ng-show="{{topic.partitions.length > 1}}"-->
-                    <!--TODO allPartitions needs a default Value ?-->
-                    <option value="" ng-show="{{topic.partitions.length > 1}}">All partitions</option>
-                    <option ng-repeat="partition in topic.partitions | orderBy : 'partition' track by $index" value="{{partition.partition}}">Partition {{partition.partition}}</option>
-                </select>
+                <div style="font-size:14px; margin-left:8px; font-size: 12px;">Total Messages Fetched: {{rows.length}}</div>
 
-                <md-button ng-disabled="disableAllPartitionButtons">
-                    <md-tooltip md-direction="bottom"> Seek to beginning </md-tooltip>
-                    <i class="fa fa-fast-backward" aria-hidden="true" style="font-size:16px"></i>
-                </md-button>
+                <div layout="row" style="background:#ddd;height:50px;">
+                    <input flex="100" ng-model="searchMessages" ng-change="dataFlatTableCtrl.refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" class="toolbox-input" style="margin: 7px;">
 
+                    <select flex="20" class="form-control button"
+                            ng-model="selectedPartition"
+                            ng-change="assignPartitions(selectedPartition, offset, 'beginning', true)"
+                            class="toolbox-input"
+                            style="float:right; margin: 7px;">
+                            <!--ng-show="{{topic.partitions.length > 1}}"-->
+                        <!--TODO allPartitions needs a default Value ?-->
+                        <option value="" ng-show="{{topic.partitions.length > 1}}">All partitions</option>
+                        <option ng-repeat="partition in topic.partitions | orderBy : 'partition' track by $index" value="{{partition.partition}}">Partition {{partition.partition}}</option>
+                    </select>
 
-                <md-button ng-disabled="disableAllPartitionButtons">
-                    <md-tooltip md-direction="bottom"> Seek to end </md-tooltip>
-                    <i class="fa fa-fast-forward" aria-hidden="true" style="font-size:16px"></i>
-                </md-button>
-            </div>
-
-            <div ng-show="showAdvanced" style="font-size:14px; margin-left:8px">Move offset for partition: {{selectedPartition}} </div>
-            <div layout="row" ng-show="showAdvanced" style="background:rgba(221, 221, 221, 0.63);border-top:1px solid #ccc;margin-bottom:0px">
-
-               <!--<input placeholder="Set offset*" type="number" ng-model="offset" style="margin: 7px; line-height: 12px;"/>-->
-               <!--<label>Seek to offset:</label>-->
-               <!--<input placeholder="Set offset*" type="number" ng-model="slider.minValue" style="margin: 7px; line-height: 12px; height:26px; font-size:90% "/>-->
-               <!--<md-button ng-click="assignPartitions(selectedPartitions, offset)">GO</md-button> <br />-->
+                    <md-button ng-disabled="disableAllPartitionButtons">
+                        <md-tooltip md-direction="bottom"> Seek to beginning </md-tooltip>
+                        <i class="fa fa-fast-backward" aria-hidden="true" style="font-size:16px"></i>
+                    </md-button>
 
 
-               <md-input-container class="md-block" style="margin-left:7px; margin-bottom:0px">
-                   <label>Seek to offset</label>
-                   <input type="number" min="{{rows[0].offset}}"
-                          ng-model="slider.minValue"
-                          ng-change="assignPartitions(selectedPartition, slider.minValue, 'offset', false)"
-                          ng-model-options="{ debounce: 1500 }"/>
-                   <div class="input-hint" ng-if="true">Seek to offset</div>
-               </md-input-container>
+                    <md-button ng-disabled="disableAllPartitionButtons">
+                        <md-tooltip md-direction="bottom"> Seek to end </md-tooltip>
+                        <i class="fa fa-fast-forward" aria-hidden="true" style="font-size:16px"></i>
+                    </md-button>
+                </div>
 
-               <md-button ng-click="assignPartitions(selectedPartition, 0, 'beginning', false)">
-                   <md-tooltip md-direction="bottom"> Seek to beginning </md-tooltip>
-                   <i class="fa fa-fast-backward" aria-hidden="true" style="font-size:16px"></i>
-               </md-button>
+                <div ng-show="showAdvanced" style="font-size:14px; border-top: 1px solid #ccc; background:rgb(239, 239, 239); ">
+                   <div style="margin:10px 8px 0px 8px; font-size: 12px;"> Move position for partition: {{selectedPartition}} </div>
+                </div>
 
-               <rzslider class="custom-slider"
-                      rz-slider-model="slider.minValue"
-                      rz-slider-high="slider.maxValue"
-                      rz-slider-options="slider.options" style="margin-top:45px"
-                      ng-model-options="{ debounce: 500 }">
-               </rzslider>
+                <div layout="row" ng-show="showAdvanced" style="background:rgb(239, 239, 239);margin-bottom:0px;">
 
-                <md-button ng-click="assignPartitions(selectedPartition, 0, 'end', false)">
-                   <md-tooltip md-direction="bottom"> Seek to end </md-tooltip>
-                   <i class="fa fa-fast-forward" aria-hidden="true" style="font-size:16px"></i>
-               </md-button>
-           </div>
-            <!--<div layout="row" style="background:rgba(221, 221, 221, 0.63);margin-top:0px">-->
-                <!--<small style="margin-left:7px"><i>Max Bytes: 50KB</i></small>-->
-            <!--</div>-->
+                   <md-input-container class="md-block" style="margin-left:7px; margin-bottom:0px">
+                       <label>Seek to offset</label>
+                       <input type="number" min="{{rows[0].offset}}"
+                              ng-model="slider.minValue"
+                              ng-change="assignPartitions(selectedPartition, slider.minValue, 'offset', false)"
+                              ng-model-options="{ debounce: 1500 }"/>
+                       <div class="input-hint" ng-if="true">Change offset position</div>
+                   </md-input-container>
 
+                   <md-button ng-click="assignPartitions(selectedPartition, 0, 'beginning', false)">
+                       <md-tooltip md-direction="bottom"> Seek to beginning </md-tooltip>
+                       <i class="fa fa-fast-backward" aria-hidden="true" style="font-size:16px"></i>
+                   </md-button>
 
+                   <rzslider class="custom-slider"
+                          rz-slider-model="slider.minValue"
+                          rz-slider-high="slider.maxValue"
+                          rz-slider-options="slider.options" style="margin-top:45px"
+                          ng-model-options="{ debounce: 500 }">
+                   </rzslider>
 
+                    <md-button ng-click="assignPartitions(selectedPartition, 0, 'end', false)">
+                       <md-tooltip md-direction="bottom"> Seek to end </md-tooltip>
+                       <i class="fa fa-fast-forward" aria-hidden="true" style="font-size:16px"></i>
+                   </md-button>
+               </div>
 
-
-            <!--<rzslider rz-slider-model="slider.minValue"-->
-                      <!--rz-slider-high="slider.maxValue"-->
-                      <!--rz-slider-options="slider.options"></rzslider>-->
-
-            <!--Select partition:<br />-->
-            <!--<span ng-repeat="partition in topic.partitions | orderBy : 'partition' ">-->
-              <!--<label class="checkbox">-->
-              <!--{{partition.partition}}-->
-                <!--<input type="radio" name="partition" ng-checked="exists(partition.partition, selectedPartitions)"-->
-                       <!--ng-click="toggle(partition.partition, selectedPartitions)"/>-->
-              <!--</label>-->
-            <!--</span><br />-->
-            <!--<input placeholder="Set offset*" type="number" ng-model="offset" />-->
-            <!--<md-button ng-click="assignPartitions(selectedPartitions, offset)">GO</md-button> <br />-->
-            <!--<small style="color:#999"><i>*If left empty, sets offset to the earliest value</i></small>-->
             </div>
         </div>
     </div>
 
-    <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber">
+    <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber" ng-show="!partitionIsEmpty">
+        <!--Download button-->
         <div layout="row">
 
             <md-button
@@ -116,8 +86,6 @@
             </md-button>
         </div>
 
-
-        <!--TODO Why don't we handle keyType as well? -->
         <md-tab label="Topic" ng-click="onTabChanges('topic', cluster)" ng-if="!hideTab">
             <tree-view data="rows" topic="topic" partitions="" search="searchMessages"></tree-view>
         </md-tab>
@@ -126,10 +94,9 @@
             <flat-view data="rows" topic="topic" partitions="" search="searchMessages"></flat-view>
         </md-tab>
 
-        <md-tab label="Raw Data" ng-click="onTabChanges('rawdata', cluster)" >
+        <md-tab label="Raw Data" ng-click="onTabChanges('rawdata', cluster)">
             <raw-view data="rows"  topic="topic" topicType="topic.valueType"></raw-view>
         </md-tab>
-
     </md-tabs>
 
     <div class="downloadDiv" ng-show="showDownloadDiv">
@@ -155,5 +122,12 @@
             <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
         </md-button>
 
+    </div>
+</div>
+
+<div ng-show="rows.length==0">
+    <div style="color:grey; background: rgba(245, 245, 166, 0.57); padding: 20px; width:100%; font-size:14px">
+        <div ng-show="!partitionIsEmpty">Topic is empty</div>
+        <div ng-show="partitionIsEmpty">Partition is empty. Pick another partition.</div>
     </div>
 </div>
