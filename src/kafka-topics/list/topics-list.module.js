@@ -82,7 +82,9 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
 
   $scope.$watch(
     function () { return $scope.cluster; },
-    function () { if(typeof $scope.cluster == 'object'){  getLeftListTopics(); } },
+    function () { if(typeof $scope.cluster == 'object'){
+       getLeftListTopics();
+    } },
    true);
 
   $scope.shortenControlCenterName = function (topic) {
@@ -117,6 +119,8 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
   }
 
   function getLeftListTopics() {
+    $scope.selectedTopics = [];
+    $scope.topics = [];
     TopicsListFactory.getTopics($scope.cluster.KAFKA_REST.trim()).then(function (allData){
         var topics = [];
         angular.forEach(allData.data, function(topic, key) {
