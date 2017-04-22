@@ -24,7 +24,7 @@ topicsListModule.directive('topicsList', function(templates) {
 topicsListModule.factory('templates', function() {
   return {
     compact: 'src/kafka-topics/list/compact-topics-list.html',
-    home:  'src/kafka-topics/list/topics-list.html',
+    home:  'src/kafka-topics/list/topics-list.html'
   };
 });
 
@@ -39,7 +39,7 @@ topicsListModule.factory('TopicsListFactory', function (HttpFactory) {
         sortByKey: function (array, key, reverse) {
           return sortByKey(array, key, reverse);
         }
-    }
+    };
     function sortByKey(array, key, reverse) {
         return array.sort(function (a, b) {
           var x = a[key];
@@ -54,7 +54,7 @@ topicsListModule.factory('shortList', function (HttpFactory) {
     sortByKey: function (array, key, reverse) {
     return sortByKey(array, key, reverse);
     }
-  }
+  };
   function sortByKey(array, key, reverse) {
     return array.sort(function (a, b) {
       var x = a[key];
@@ -62,12 +62,12 @@ topicsListModule.factory('shortList', function (HttpFactory) {
       return ((x < y) ? -1 * reverse : ((x > y) ? 1 * reverse : 0));
     });
   }
-})
+});
 
 topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, $rootScope, $routeParams, $cookies, $filter, $log, $q, $http, TopicsListFactory, shortList, consumerFactory) {
   $rootScope.showList = true;
 
-  $scope.topic = $routeParams.topicName
+  $scope.topic = $routeParams.topicName;
 
   var schemas;
 //  loadSchemas()
@@ -82,12 +82,12 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
 
   $scope.$watch(
     function () { return $scope.cluster; },
-    function () { if(typeof $scope.cluster == 'object'){  getLeftListTopics(); } },
+    function () { if(typeof $scope.cluster === 'object'){  getLeftListTopics(); } },
    true);
 
   $scope.shortenControlCenterName = function (topic) {
     return shortenControlCenterName(topic);
-  }
+  };
 
   $scope.query = { order: '-totalMessages', limit: 100, page: 1 };
 
@@ -97,24 +97,24 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
   };
 
   $scope.totalMessages = function (topic) {
-    if(topic.totalMessages == 0) return '0';
+    if(topic.totalMessages === 0) return '0';
     var sizes = ['', 'K', 'M', 'B', 'T', 'Quan', 'Quin'];
     var i = +Math.floor(Math.log(topic.totalMessages) / Math.log(1000));
     return (topic.totalMessages / Math.pow(1000, i)).toFixed(i ? 1 : 0) + sizes[i];
-  }
+  };
 
   $scope.selectTopicList = function (displayingControlTopics) {
-    $scope.selectedTopics = $scope.topics.filter(function(el) {return el.isControlTopic == displayingControlTopics})
-  }
+    $scope.selectedTopics = $scope.topics.filter(function(el) {return el.isControlTopic === displayingControlTopics})
+  };
 
 
   var itemsPerPage = (window.innerHeight - 280) / 48;
   Math.floor(itemsPerPage) < 3 ? $scope.topicsPerPage =3 : $scope.topicsPerPage = Math.floor(itemsPerPage);
 
   $scope.listClick = function (topicName, isControlTopic) {
-    var urlType = (isControlTopic == true) ? 'c' : 'n';
+    var urlType = (isControlTopic === true) ? 'c' : 'n';
     $location.path("cluster/" + $scope.cluster.NAME + "/topic/" + urlType + "/" + topicName, true);
-  }
+  };
 
   function getLeftListTopics() {
     TopicsListFactory.getTopics($scope.cluster.KAFKA_REST.trim()).then(function (allData){
@@ -129,15 +129,12 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
                     replication : res.data.partitions[0].replicas.length,
                     customConfig : configsCounter,
                     isControlTopic : checkIsControlTopic(res.data.name)
-                }
+                };
 
                 topics.push(topicImproved);
-               if (key == allData.data.length -1) {
+               if (topics.length === allData.data.length) {
                   $scope.topics = topics;
-                  $scope.selectedTopics = topics.filter(function(el) {return el.isControlTopic == false});
-                  console.log('Total topics fetched:', allData.data.length)
-                  console.log('Length of improved topic array:', topics.length)
-                  console.log('Selected topics(listed):', $scope.selectedTopics.length)
+                  $scope.selectedTopics = topics.filter(function(el) {return el.isControlTopic === false});
 
                   $scope.topicsIndex = arrayObjectIndexOf($scope.selectedTopics, $routeParams.topicName, 'topicName' ) + 1;
                   $scope.topicsPage = Math.ceil($scope.topicsIndex / $scope.topicsPerPage);
@@ -165,7 +162,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
 
   function sortTopics(type) {
       var reverse = 1;
-      if (type.indexOf('-') == 0) {
+      if (type.indexOf('-') === 0) {
         // remove the - symbol
         type = type.substring(1, type.length);
         reverse = -1;
@@ -224,15 +221,15 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
     consumerFactory.createConsumers('json', '_schemas').then( function (response) {
 
     var uuid=$cookies.getAll().uuid;
-      if (response.status == 409 || response.status == 200) {
+      if (response.status === 409 || response.status === 200) {
 
         var consumer = {group :'kafka_topics_ui_json_' + uuid, instance: 'kafka-topics-ui-json' };
            consumerFactory.getDataFromBeginning(consumer,'json', '_schemas').then(function (allSchemas) {
              $rootScope.schemas = allSchemas;
-             schemas = allSchemas
+             schemas = allSchemas;
              return schemas
-           })
-        if (response.status == 409) {
+           });
+        if (response.status === 409) {
             var msg = response.data.message;
             msg = "Conflict 409. " + msg;
             $log.warn(msg)
@@ -265,21 +262,21 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
       // If topicDetails are not available wait
           if (schemas) {
           angular.forEach(angular.fromJson(schemas.data), function (schema) {
-            if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-value")) {
+            if ((schema.value !== null) && (schema.value.subject !== null) && (schema.value.subject === topicName + "-value")) {
               //$log.info("FOUND YOU !! " + topicName);
               dataType_value = "avro";
             }
-            if ((schema.value != null) && (schema.value.subject != null) && (schema.value.subject == topicName + "-key")) {
+            if ((schema.value !== null) && (schema.value.subject !== null) && (schema.value.subject === topicName + "-key")) {
               //$log.info("FOUND YOU !! " + topicName);
               dataType_key = "avro";
             }
           });
-          if (dataType_value=="avro" && dataType_key=="avro") {
+          if (dataType_value==="avro" && dataType_key==="avro") {
             dataType="avro";
           }
 }
     }
-    if (dataType == "") {
+    if (dataType === "") {
       $log.warn("Could not find the message type of topic [" + topicName + "]");
     }
     return dataType;
