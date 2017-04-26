@@ -27,7 +27,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
     });
 
   $scope.showOrHideAdvanced = 'Show advanced';
-
   $scope.disableAllPartitionButtons = false;
 //  $scope.toggleAdvanced = function(){
 //  if($scope.showAdvanced)
@@ -194,7 +193,7 @@ $scope.slider = {
     if(forPartition) {
         $scope.showAdvanced = true;
         $scope.disableAllPartitionButtons = true;
-        if(allData.length == 0) $scope.partitionIsEmpty = true;
+        if(allData.length === 0) $scope.partitionIsEmpty = true;
     }
 
      $scope.rows = allData;
@@ -238,7 +237,7 @@ $scope.slider = {
   $scope.hideTab = false;
 
   function createAndFetch(format, topicName) {
-    $log.debug("... DATA FOR PARTITION [ ALL ]...")
+    $log.debug("... DATA FOR PARTITION [ ALL ]...");
     $scope.uuid = consumerFactory.genUUID();
     consumerFactory
         .createConsumer(format, topicName, $scope.uuid)
@@ -247,7 +246,7 @@ $scope.slider = {
         })
         .then(function(consumer) {
             consumerFactory.getDataFromBeginning(consumer, format, topicName).then(function (allData) {
-                if(allData == -1) {
+                if(allData === -1) {
                     $log.debug(topicName, "FAILED TO GET DATA, NEED TO RETRY", allData, $scope.consumer, topicName);
                     createAndFetch(consumerFactory.getConsumerTypeRetry(format, topicName), topicName);
                 } else {
@@ -261,18 +260,18 @@ $scope.slider = {
   $scope.assignPartitions = function assignPartitions(partition, offset, position, firstTime) {
     $scope.selectedPartition = partition;
 
-    $log.debug("... DATA FOR PARTITION [" + partition + "]...", position)
+    $log.debug("... DATA FOR PARTITION [" + partition + "]...", position);
     var format = consumerFactory.getConsumerType(topicName);//$scope.format; //TODO
 
     //TODO If partitions = all (somehow) then createAndFetch
-    if(partition == -1) {
+    if(partition === -1) {
         $scope.showAdvanced = false;
         createAndFetch(format, topicName);
         return;
     }
 
     //TODO make a loading for data only for the case partition is empty// $scope.showSpinner = true;
-    var partition = [ { "partition" : partition } ] //create array because assignments works for all too.
+    var partition = [ { "partition" : partition } ]; //create array because assignments works for all too.
 
     if (!angular.isDefined(offset)){offset = 1}
     $scope.uuid = consumerFactory.genUUID();
@@ -283,11 +282,11 @@ $scope.slider = {
             return consumerFactory.getConsumer(format, $scope.uuid);
         })
         .then(function(consumer) {
-            $log.debug(topicName, "1) GOT PARTITION", partition)
+            $log.debug(topicName, "1) GOT PARTITION", partition);
             consumerFactory.getDataForPartition(topicName, consumer, format, partition, offset, position)
             .then(function(allData) {
-                if(allData != -1) {
-                    if(firstTime && allData.data.length != 0) { $scope.firstOffsetForPartition = allData.data[0].offset }
+                if(allData !== -1) {
+                    if(firstTime && allData.data.length !== 0) { $scope.firstOffsetForPartition = allData.data[0].offset }
                     setTopicMessages(allData.data, format, true);
                 } else {
                     $scope.cannotGetDataForPartition = "Cannot get data for partition [" + partitions + "]. Please refresh."

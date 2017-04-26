@@ -69,13 +69,15 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
 
   $scope.topic = $routeParams.topicName
 
-  var schemas;
-//  loadSchemas()
 
+  var schemas;
+  loadSchemas()
+  $scope.displayingControlTopics = false;
   $scope.$watch(
     function () { return $routeParams.topicName },
     function () { if(angular.isDefined($routeParams.topicName)) {
       $scope.topicName = $routeParams.topicName
+      $scope.displayingControlTopics = checkIsControlTopic($scope.topicName);
     }
  },
    true);
@@ -106,7 +108,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
   }
 
   $scope.selectTopicList = function (displayingControlTopics) {
-    $scope.selectedTopics = $scope.topics.filter(function(el) {return el.isControlTopic == displayingControlTopics})
+    $scope.selectedTopics = $scope.topics.filter(function(el) {return el.isControlTopic == $scope.displayingControlTopics})
   }
 
 
@@ -138,7 +140,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
                 topics.push(topicImproved);
                if (key == allData.data.length -1) {
                   $scope.topics = topics;
-                  $scope.selectedTopics = topics.filter(function(el) {return el.isControlTopic == false});
+                  $scope.selectedTopics = topics.filter(function(el) {return el.isControlTopic == $scope.displayingControlTopics});
                   console.log('Total topics fetched:', allData.data.length)
                   console.log('Length of improved topic array:', topics.length)
                   console.log('Selected topics(listed):', $scope.selectedTopics.length)
@@ -156,15 +158,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
 
         //$scope.selectTopicList(true);
 
-    }).then(function(topics){
-
-        angular.forEach($scope.topics, function(topic) {
-            //TODO Fetch Type Avro, Binary, Json
-            //When do that, what happens with selectedTopics? They are not going to be updated ?
-//            console.log(topic);
-
-        })
-    }); // TODO error message?
+    })
   }
 
   function sortTopics(type) {
@@ -185,13 +179,13 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
     return -1;
 }
 
-  //TODO
   function shortenControlCenterName(topic) {
       if (topic.isControlTopic) {
         return topic.topicName
           .replace('_confluent-controlcenter-0-', '...')
           // .replace('aggregate-topic-partition', 'aggregate-topic')
           .replace('MonitoringMessageAggregatorWindows', 'monitor-msg')
+          .replace('connect-configs', 'monitor-msg')
           .replace('aggregatedTopicPartitionTableWindows', 'aggregate-window')
           .replace('monitoring-aggregate-rekey', 'monitor-rekey')
           .replace('MonitoringStream', 'monitor-stream')
@@ -205,27 +199,9 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
       }
   }
 
-    //News
-    function loadSchemas (uuid) {
-      var start = new Date().getTime();
-
-      createConsumers(uuid);
-
-//          schemasPromise.then(function (allSchemas) {
-//             var end = new Date().getTime();
-////            $rootScope.schemas = allSchemas;
-//             $log.info("[" + (end - start) + "] msec - to get " + angular.fromJson(allSchemas).length + " schemas from topic _schemas"); //  + JSON.stringify(allSchemas)
-//             schemas = allSchemas
-//             return schemas;
-//          }, function (reason) {
-//            $log.error('Failed: ' + reason);
-//          }, function (update) {
-//            $log.info('Got notification: ' + update);
-//          });
-    }
 
   function loadSchemas(){
-    consumerFactory.createConsumers('json', '_schemas').then( function (response) {
+    consumerFactory.createConsumer('json', '_schemas').then( function (response) {
 
     var uuid=$cookies.getAll().uuid;
       if (response.status == 409 || response.status == 200) {
@@ -247,23 +223,15 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
     })
   }
 
-  //TODO Duplication
-  var TOPIC_CONFIG = {
-  //  KAFKA_TOPIC_DELETE_COMMAND : "kafka-topics --zookeeper zookeeper-host:2181/confluent --delete --topic",
-    // Pre-configure the Data Type on particular well-known topics
-    JSON_TOPICS: ["_schemas"],
-    BINARY_TOPICS: ["connect-configs", "connect-offsets", "__consumer_offsets", "_confluent-monitoring", "_confluent-controlcenter", "__confluent.support.metr"],
-    // If a topic starts with this particular prefix - it's a control topic
-    CONTROL_TOPICS: ["_confluent-controlcenter", "_confluent-command", "_confluent-metrics", "connect-configs", "connect-offsets", "__confluent", "__consumer_offsets", "_confluent-monitoring", "connect-status", "_schemas"]
-    };
+
   function getDataType (topicName) {
     var dataType = "...";
     var dataType_key;
     var dataType_value;
     // Check if we know the topic data type a priory
-    if (TOPIC_CONFIG.JSON_TOPICS && TOPIC_CONFIG.JSON_TOPICS.indexOf(topicName) > -1) {
+    if (KNOWN_TOPICS.JSON_TOPICS && KNOWN_TOPICS.JSON_TOPICS.indexOf(topicName) > -1) {
       dataType = "json";
-    } else if (TOPIC_CONFIG.BINARY_TOPICS && TOPIC_CONFIG.BINARY_TOPICS.indexOf(topicName.substring(0, 24)) > -1) {
+    } else if (KNOWN_TOPICS.BINARY_TOPICS && KNOWN_TOPICS.BINARY_TOPICS.indexOf(topicName.substring(0, 24)) > -1) {
       dataType = "binary";
     } else {
       // If topicDetails are not available wait
@@ -293,12 +261,9 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
       return getDataType(topicName);
     };
 
-
-
-  //TODO
     function checkIsControlTopic(topicName) {
       var isControlTopic = false;
-      angular.forEach(TOPIC_CONFIG.CONTROL_TOPICS, function (controlTopicPrefix) {
+      angular.forEach(KNOWN_TOPICS.CONTROL_TOPICS, function (controlTopicPrefix) {
         if (topicName.startsWith(controlTopicPrefix, 0))
           isControlTopic = true;
       });

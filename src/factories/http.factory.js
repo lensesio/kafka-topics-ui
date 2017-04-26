@@ -29,7 +29,7 @@ angular.
                 },function (responseError){
                     var msg = "Failed at method [" + method + "] [" + url + "] with error: \n" + JSON.stringify(responseError);
                     $log.error("HTTP ERROR: ",msg, '\nDATA SENT:', data);
-                    if(resolveError && responseError.status == 409) deferred.resolve(responseError); //resolve conflicts to handle
+                    if(resolveError && responseError.status === 409) deferred.resolve(responseError); //resolve conflicts to handle
                     else deferred.reject(msg);
                 });
 
