@@ -162,7 +162,7 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
 
   function consumerUUID() {
     var a = $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss");
-    $cookies.put('uuid', $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss-sss")); //TODO milis, do we need the cookie ?
+    $cookies.put('uuid', $filter('date')(Date.now(), "yyyy-MM-dd-hh-mm-ss")); //TODO milis, do we need the cookie ?
     return a;
   }
 

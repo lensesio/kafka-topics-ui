@@ -104,12 +104,13 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
   function makeConfigsArray(configs) {
 //    configs = {"segment.bytes":"104857600","cleanup.policy":"compact","compression.type":"producer"};
     var configArray = [];
+
     angular.forEach(configs, function(value, key) {
           var object = {
             configuration : key,
             value : value,
-            defaultValue : "abc",
-            documentation : "defsdsdsdsdsd"
+            defaultValue : getDefaultConfigValue(key),
+            documentation : getConfigDescription(key)
           };
           this.push(object);
     }, configArray);
@@ -247,7 +248,7 @@ $scope.slider = {
         .then(function(consumer) {
             consumerFactory.getDataFromBeginning(consumer, format, topicName).then(function (allData) {
                 if(allData === -1) {
-                    $log.debug(topicName, "FAILED TO GET DATA, NEED TO RETRY", allData, $scope.consumer, topicName);
+                    $log.debug(topicName, "FAILED TO GET DATA, NEED TO RETRY", allData, consumer, topicName);
                     createAndFetch(consumerFactory.getConsumerTypeRetry(format, topicName), topicName);
                 } else {
                       $log.debug(topicName, "GOT DATA, WILL RENDER", " [", allData.data.length, "] [", format, "] MESSAGES");
@@ -264,7 +265,7 @@ $scope.slider = {
     var format = consumerFactory.getConsumerType(topicName);//$scope.format; //TODO
 
     //TODO If partitions = all (somehow) then createAndFetch
-    if(partition === -1) {
+    if(partition == -1) {
         $scope.showAdvanced = false;
         createAndFetch(format, topicName);
         return;
@@ -294,6 +295,28 @@ $scope.slider = {
             });
         });
   }
+
+
+
+  function getDefaultConfigValue(configKey) {
+    var defaultConfigValue = "";
+    angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
+      if (kafkaDefault.property == configKey) {
+        defaultConfigValue = kafkaDefault.default;
+      }
+    });
+    return defaultConfigValue;
+  };
+
+  function getConfigDescription(configKey) {
+    var configDescription = "";
+    angular.forEach(KAFKA_DEFAULTS, function (kafkaDefault) {
+      if (kafkaDefault.property == configKey) {
+        configDescription = kafkaDefault.description;
+      }
+    });
+    return configDescription;
+  };
 
 });
 
