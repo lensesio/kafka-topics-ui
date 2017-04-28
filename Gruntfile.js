@@ -46,8 +46,7 @@ module.exports = function (grunt) {
           'bower_components/angular-ui-ace/ui-ace.min.js',
           'bower_components/spin.js/spin.min.js',
           'bower_components/angular-material/angular-material.min.js',
-                    'bower_components/angular-cookies/angular-cookies.min.js',
-
+          'bower_components/angular-cookies/angular-cookies.min.js',
           // 'bower_components/angularUtils-pagination/dirPagination.js',
           'bower_components/angular-material-data-table/dist/md-data-table.min.css',
           'bower_components/angular-material-data-table/dist/md-data-table.min.js',
@@ -56,7 +55,9 @@ module.exports = function (grunt) {
           'bower_components/angular-google-chart/ng-google-chart.min.js',
           'bower_components/handsontable/dist/handsontable.full.js',
           'bower_components/ngHandsontable/dist/ngHandsontable.js',
-          'bower_components/handsontable/dist/handsontable.full.css'
+          'bower_components/handsontable/dist/handsontable.full.css',
+          'bower_components/angularjs-slider/dist/rzslider.min.js',
+          'bower_components/angularjs-slider/dist/rzslider.css'
 
         ],
         dest: 'dist',

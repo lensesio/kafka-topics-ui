@@ -71,7 +71,6 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
 
 
   var schemas;
-  loadSchemas()
   $scope.displayingControlTopics = false;
   $scope.$watch(
     function () { return $routeParams.topicName },
@@ -85,7 +84,8 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
   $scope.$watch(
     function () { return $scope.cluster; },
     function () { if(typeof $scope.cluster == 'object'){
-       getLeftListTopics();
+      getLeftListTopics();
+      loadSchemas()
     } },
    true);
 
@@ -138,7 +138,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
                 }
 
                 topics.push(topicImproved);
-               if (key == allData.data.length -1) {
+               if (topics.length == allData.data.length) {
                   $scope.topics = topics;
                   $scope.selectedTopics = topics.filter(function(el) {return el.isControlTopic == $scope.displayingControlTopics});
                   console.log('Total topics fetched:', allData.data.length)
@@ -201,9 +201,8 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
 
 
   function loadSchemas(){
-    consumerFactory.createConsumer('json', '_schemas').then( function (response) {
-
-    var uuid=$cookies.getAll().uuid;
+    var uuid=consumerFactory.genUUID();
+    consumerFactory.createConsumer('json', '_schemas', uuid).then( function (response) {
       if (response.status == 409 || response.status == 200) {
 
         var consumer = {group :'kafka_topics_ui_json_' + uuid, instance: 'kafka-topics-ui-json' };

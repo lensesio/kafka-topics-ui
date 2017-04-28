@@ -1,5 +1,5 @@
 
-<div style="background-color:#fff;" ng-cloak  ng-hide="rows.length==0 && !partitionIsEmpty">
+<div style="background-color:#fff;" ng-cloak  ng-hide="rows.length==0 && !partitionIsEmpty && !seekToEnd">
 
     <!--<div ng-show="showAdvanced">-->
     <div ng-show="true">
@@ -7,7 +7,7 @@
 
             <div class="column"  style="background:#ddd;">
 
-                <div style="font-size:14px; margin-left:8px; font-size: 12px;">Total Messages Fetched: {{rows.length}}</div>
+                <div style="font-size:14px; margin-left:8px; font-size: 12px;">Total Messages Fetched: {{rows.length}}. Data type: {{format}} </div>
 
                 <div layout="row" style="background:#ddd;height:50px;">
                     <input flex="100" ng-model="searchMessages" ng-change="dataFlatTableCtrl.refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" class="toolbox-input" style="margin: 7px;">
@@ -18,17 +18,17 @@
                             class="toolbox-input"
                             style="float:right; margin: 7px;">
                             <!--ng-show="{{topic.partitions.length > 1}}" TODO-->
-                        <option value="-1">All partitions</option>
+                        <option value="-1" ng-selected>All partitions</option>
                         <option ng-repeat="partition in topic.partitions | orderBy : 'partition' track by $index" value="{{partition.partition}}">Partition {{partition.partition}}</option>
                     </select>
 
-                    <md-button ng-disabled="disableAllPartitionButtons">
+                    <md-button ng-disabled="disableAllPartitionButtons" ng-click="createAndFetch(format, topicName) ">
                         <md-tooltip md-direction="bottom"> Seek to beginning </md-tooltip>
                         <i class="fa fa-fast-backward" aria-hidden="true" style="font-size:16px"></i>
                     </md-button>
 
 
-                    <md-button ng-disabled="disableAllPartitionButtons">
+                    <md-button ng-disabled="disableAllPartitionButtons" ng-click="createAndFetchFromEnd(format, topicName) ">
                         <md-tooltip md-direction="bottom"> Seek to end </md-tooltip>
                         <i class="fa fa-fast-forward" aria-hidden="true" style="font-size:16px"></i>
                     </md-button>
@@ -72,7 +72,9 @@
     </div>
 
     <!--ng-show="!partitionIsEmpty"-->
-    <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber" >
+    <md-progress-linear md-mode="indeterminate" ng-show="showInnerSpinner"></md-progress-linear>
+
+    <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber" ng-hide="rows.length==0 || showInnerSpinner" >
         <!--Download button-->
         <div layout="row">
 
@@ -127,7 +129,8 @@
 
 <div ng-show="rows.length==0">
     <div style="color:grey; background: rgba(245, 245, 166, 0.57); padding: 20px; width:100%; font-size:14px">
-        <div ng-show="!partitionIsEmpty">Topic is empty</div>
+        <div ng-show="!partitionIsEmpty && !seekToEnd">Topic is empty</div>
         <div ng-show="partitionIsEmpty">Partition is empty. Pick another partition.</div>
+        <div ng-show="seekToEnd">No data fetched</div>
     </div>
 </div>

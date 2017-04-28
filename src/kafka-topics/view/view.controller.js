@@ -8,6 +8,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
   var topicMenuItem = $routeParams.menuItem;
 
   $scope.showSpinner = true;
+  $scope.showInnerSpinner = false ;
 //  $scope.showAdvanced = false;
 
       //TODO add error messages for failed requrests + false spinner
@@ -187,16 +188,15 @@ $scope.slider = {
  * DATA stuff
 ********************************/
    $scope.partitionIsEmpty = false;
-  // $scope.selectedPartition = -1;
+   $scope.seekToEnd = false;
+   $scope.selectedPartition = "-1";
 
   function setTopicMessages(allData, format, forPartition) {
-
     if(forPartition) {
         $scope.showAdvanced = true;
         $scope.disableAllPartitionButtons = true;
         if(allData.length === 0) $scope.partitionIsEmpty = true;
     }
-
      $scope.rows = allData;
      $scope.format=format;
      $scope.showSpinner = false;
@@ -238,6 +238,7 @@ $scope.slider = {
   $scope.hideTab = false;
 
   function createAndFetch(format, topicName) {
+    $scope.showInnerSpinner = true;
     $log.debug("... DATA FOR PARTITION [ ALL ]...");
     $scope.uuid = consumerFactory.genUUID();
     consumerFactory
@@ -250,12 +251,46 @@ $scope.slider = {
                 if(allData === -1) {
                     $log.debug(topicName, "FAILED TO GET DATA, NEED TO RETRY", allData, consumer, topicName);
                     createAndFetch(consumerFactory.getConsumerTypeRetry(format, topicName), topicName);
+                    $scope.showInnerSpinner = false;
                 } else {
-                      $log.debug(topicName, "GOT DATA, WILL RENDER", " [", allData.data.length, "] [", format, "] MESSAGES");
-                      setTopicMessages(allData.data, format, false)
+                    $log.debug(topicName, "GOT DATA, WILL RENDER", " [", allData.data.length, "] [", format, "] MESSAGES");
+                    setTopicMessages(allData.data, format, false)
+                    $scope.showInnerSpinner = false;
+                    $scope.seekToEnd = false;
                 }
             });
         });
+  }
+    function createAndFetchFromEnd(format, topicName) {
+    $scope.showInnerSpinner = true;
+    $log.debug("... DATA FOR PARTITION [ ALL ]...");
+    $scope.uuid = consumerFactory.genUUID();
+    consumerFactory
+        .createConsumer(format, topicName, $scope.uuid)
+        .then(function(res){
+            return consumerFactory.getConsumer(format, $scope.uuid);
+        })
+        .then(function(consumer) {
+            consumerFactory.getDataFromEnd(consumer, format, topicName).then(function (allData) {
+                if(allData === -1) {
+                    $log.debug(topicName, "FAILED TO GET DATA, NEED TO RETRY", allData, consumer, topicName);
+                    createAndFetchFromEnd(consumerFactory.getConsumerTypeRetry(format, topicName), topicName);
+                    $scope.showInnerSpinner = false;
+                } else {
+                    $log.debug(topicName, "GOT DATA, WILL RENDER", " [", allData.data.length, "] [", format, "] MESSAGES");
+                    setTopicMessages(allData.data, format, false)
+                    $scope.showInnerSpinner = false;
+                    $scope.seekToEnd = true;
+                }
+            });
+        });
+  }
+
+  $scope.createAndFetchFromEnd = function(format, topicName) {
+    createAndFetchFromEnd(format, topicName)
+  }
+  $scope.createAndFetch = function(format, topicName) {
+    createAndFetch(format, topicName)
   }
 
   $scope.assignPartitions = function assignPartitions(partition, offset, position, firstTime) {
@@ -267,6 +302,7 @@ $scope.slider = {
     //TODO If partitions = all (somehow) then createAndFetch
     if(partition == -1) {
         $scope.showAdvanced = false;
+        $scope.disableAllPartitionButtons = false;
         createAndFetch(format, topicName);
         return;
     }
