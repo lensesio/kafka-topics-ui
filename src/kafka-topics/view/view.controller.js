@@ -295,6 +295,7 @@ $scope.slider = {
 
   $scope.assignPartitions = function assignPartitions(partition, offset, position, firstTime) {
     $scope.selectedPartition = partition;
+    $scope.showInnerSpinner = true
 
     $log.debug("... DATA FOR PARTITION [" + partition + "]...", position);
     var format = consumerFactory.getConsumerType(topicName);//$scope.format; //TODO
@@ -325,8 +326,11 @@ $scope.slider = {
                 if(allData !== -1) {
                     if(firstTime && allData.data.length !== 0) { $scope.firstOffsetForPartition = allData.data[0].offset }
                     setTopicMessages(allData.data, format, true);
+                    $scope.showInnerSpinner = false;
+
                 } else {
                     $scope.cannotGetDataForPartition = "Cannot get data for partition [" + partitions + "]. Please refresh."
+                    $scope.showInnerSpinner = false;
                 }
             });
         });
