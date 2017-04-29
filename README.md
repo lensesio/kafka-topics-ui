@@ -31,6 +31,7 @@ then fall back to JSON, and finally fall back to Binary.
 ```
     git clone https://github.com/Landoop/kafka-topics-ui.git
     cd kafka-topics-ui
+    npm install -g bower
     npm install
     http-server .
 ```
