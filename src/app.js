@@ -19,6 +19,7 @@ var angularAPP = angular.module('angularAPP', [
   'treeView',
   'ngHandsontable',
   'rawView',
+  'base64',
   'rzModule'
 ]);
 

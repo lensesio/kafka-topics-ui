@@ -16,7 +16,7 @@ dataTreeViewModule.directive('treeView', function() {
 });
 
 
-dataTreeViewModule.controller('dataTreeViewCtrl', function ($scope, $log) {
+dataTreeViewModule.controller('dataTreeViewCtrl', function ($scope, $log, $base64) {
 
    $scope.$watch("data", function() {
         if($scope.data) {
@@ -25,6 +25,15 @@ dataTreeViewModule.controller('dataTreeViewCtrl', function ($scope, $log) {
    })
 
    $scope.paginationItems = 20;
+      $scope.$parent.$watch("format", function() {
+           if($scope.$parent.format) {
+               $scope.format = $scope.$parent.format
+
+           }
+      })
+   $scope.decode = function(string){
+   return $base64.decode(string)
+   }
 
    $scope.isAvroOrJsonValue = function (keyOrValue) {
       return keyOrValue=='json' || keyOrValue=='avro';

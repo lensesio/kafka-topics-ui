@@ -10,7 +10,7 @@
                 <div style="font-size:14px; margin-left:8px; font-size: 12px;">Total Messages Fetched: {{rows.length}}. Data type: {{format}} </div>
 
                 <div layout="row" style="background:#ddd;height:50px;">
-                    <input flex="100" ng-model="searchMessages" ng-change="dataFlatTableCtrl.refreshData()"  ng-model-options="{ debounce: 500 }" placeholder="filter" class="toolbox-input" style="margin: 7px;">
+                    <input flex="100" ng-model="searchMessages" ng-change="dataFlatTableCtrl.refreshData();refreshDataForDownload(searchMessages)"  ng-model-options="{ debounce: 500 }" placeholder="filter" class="toolbox-input" style="margin: 7px;">
 
                     <select flex="20" class="form-control button"
                             ng-model="selectedPartition"
@@ -78,13 +78,14 @@
         <!--Download button-->
         <div layout="row">
 
-            <md-button
-                    ng-hide="topic.totalMessages == 0"
-                    ng-click="showDownloadDiv = !showDownloadDiv"
-                    aria-label="Download data"
-                    aria-hidden="false">
-                <i class="fa fa-download" ng-show="!showDownloadDiv" aria-hidden="true" style="color:#333"></i>
-                <i class="fa fa-close" ng-show="showDownloadDiv" aria-hidden="true" style="color:#333"></i>
+
+
+            <md-button download="true"
+                       ng-hide="topic.totalMessages == 0"
+                       ng-click="downloadData(topicName, rows)"
+                       aria-label="Download data"
+                       aria-hidden="false">
+                <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
             </md-button>
         </div>
 
@@ -101,31 +102,6 @@
         </md-tab>
     </md-tabs>
 
-    <div class="downloadDiv" ng-show="showDownloadDiv">
-        <h4>Download Options</h4>
-        <ul>
-            <li>
-                <div class="checkbox checkbox-info">
-                    <input id="checkbox1" type="checkbox" checked="checked" class="fxhdr">
-                    <label for="checkbox1">Download Avro encoded file</label>
-                </div>
-            </li>
-            <li>
-                <div class="checkbox checkbox-success">
-                    <input id="checkbox4" type="checkbox" class="open-close">
-                    <label for="checkbox4"> Download only filtered data</label>
-                </div>
-            </li>
-        </ul>
-        <md-button style="float:right"  download="true"
-                   ng-click="downloadData(topicName, rows)"
-                   aria-label="Download data"
-                   aria-hidden="false">
-            <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
-        </md-button>
-
-    </div>
-</div>
 
 <div ng-show="rows.length==0">
     <div style="color:grey; background: rgba(245, 245, 166, 0.57); padding: 20px; width:100%; font-size:14px">

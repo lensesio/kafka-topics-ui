@@ -46,11 +46,15 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
   $scope.toggleList = function () {
      $rootScope.showList = !$rootScope.showList;
   };
+  $scope.refreshDataForDownload = function(searchFilter){
+  console.log(searchFilter)
+      $scope.dataForDownload = $filter('filter')($scope.rows, searchFilter)
+      console.log($scope.dataForDownload)
+  }
 
-  $scope.downloadData = function (topicName, data) {
-    $log.info("Download requested for " + data.length + " bytes ");
-    var json = data;
-    console.log(data)
+  $scope.downloadData = function (topicName) {
+    $log.info("Download requested for " + $scope.dataForDownload.length + " bytes ");
+    var json = $scope.dataForDownload;
     var blob = new Blob([json], {type: "application/json;charset=utf-8;"});
     var downloadLink = angular.element('<a></a>');
     downloadLink.attr('href', window.URL.createObjectURL(blob));
@@ -190,7 +194,7 @@ $scope.slider = {
    $scope.partitionIsEmpty = false;
    $scope.seekToEnd = false;
    $scope.selectedPartition = "-1";
-
+  
   function setTopicMessages(allData, format, forPartition) {
     if(forPartition) {
         $scope.showAdvanced = true;
@@ -198,6 +202,7 @@ $scope.slider = {
         if(allData.length === 0) $scope.partitionIsEmpty = true;
     }
      $scope.rows = allData;
+     $scope.dataForDownload = $scope.rows
      $scope.format=format;
      $scope.showSpinner = false;
 // TODO RETHINK THIS

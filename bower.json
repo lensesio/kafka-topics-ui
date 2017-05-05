@@ -33,7 +33,8 @@
     "angular-cookies": "^1.6.5",
     "angular-json-tree": "^1.0.1",
     "ngHandsontable": "0.13.0",
-    "angularjs-slider": "^6.1.1"
+    "angularjs-slider": "^6.1.1",
+    "angular-base64": "^2.0.3"
   },
   "resolutions": {
     "angular": "~1.6.4"

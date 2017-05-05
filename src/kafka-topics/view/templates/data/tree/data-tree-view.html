@@ -20,12 +20,12 @@
             <div layout="row" style="padding:10px">
                   <div layout="column" flex="100" layout-align="center left">
                     <div>
-                      <json-tree   object="t.key" root-name="'Key'" style="max-width: 100%;"></json-tree>
-                      <!--<div ng-if="!isAvroOrJsonValue(topic.keyType) ">{{t.key}}</div>-->
+                      <json-tree   object="t.key" root-name="'Key'" style="max-width: 100%;" ng-if="format != 'binary'"></json-tree>
+                      <json-tree   object="decode(t.key)" root-name="'Key'" style="max-width: 100%;" ng-if="format == 'binary'"></json-tree>
                     </div>
                     <div>
-                      <json-tree object="t.value" root-name="'Value'" style=" max-width: 100%;"></json-tree>
-                      <!--<div ng-if="!isAvroOrJsonValue(topic.valueType)">{{t.value}}</div>-->
+                      <json-tree object="t.value" root-name="'Value'" style=" max-width: 100%;" ng-if="format != 'binary'"></json-tree>
+                      <json-tree object="decode(t.value)" root-name="'Value'" style=" max-width: 100%;" ng-if="format == 'binary'"></json-tree>
                     </div>
                   </div>
 

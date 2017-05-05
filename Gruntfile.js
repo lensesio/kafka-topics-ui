@@ -57,6 +57,7 @@ module.exports = function (grunt) {
           'bower_components/ngHandsontable/dist/ngHandsontable.js',
           'bower_components/handsontable/dist/handsontable.full.css',
           'bower_components/angularjs-slider/dist/rzslider.min.js',
+          'bower_components/angular-base64/angular-base64.js',
           'bower_components/angularjs-slider/dist/rzslider.css'
 
         ],
