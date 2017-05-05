@@ -99,6 +99,12 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     });
   }
 
+  function getConsumerOffsets(consumer, topicName, partition) {
+        var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/offsets';
+        var data = {"partitions": [{"topic": topicName,"partition": parseInt(partition[0].partition)}]}
+        return HttpFactory.req('GET', url, data, '', CONTENT_TYPE_JSON, false,  true);
+      }
+
   /* PRIMITIVE REQUESTS RETURN PROMISES */
 
   function postConsumerAssignments(consumer, topicName, partitions) {
@@ -110,10 +116,9 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
 //    })
   }
 
-  function getConsumerAssignments() {
+  function getConsumerAssignments(consumer) {
     var url_tmp = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments';
-    HttpFactory.req('GET', url_tmp, '', '', '', false, false).then(function (res) {
-      $log.debug(topicName, "EXISTING ASSIGNMENTS", res.data);
+    return HttpFactory.req('GET', url_tmp, '', '', '', false, false).then(function (res) {
     })
   }
 
@@ -281,8 +286,11 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     getRecords: function (consumer, format) {
       return getRecords(consumer, format);
     },
-    getConsumerOffsets: function (consumer, topicName) {
-      return getConsumerOffsets(consumer, topicName);
+    getConsumerOffsets: function (consumer, topicName, partition) {
+      return getConsumerOffsets(consumer, topicName, partition);
+    },
+    getConsumerAssignments: function (consumer) {
+      return getConsumerAssignments(consumer);
     },
     getPartitions: function (topicName) {
       return getPartitions(topicName);
