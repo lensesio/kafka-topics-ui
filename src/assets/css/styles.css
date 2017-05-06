@@ -499,3 +499,9 @@ json-tree ul {
         transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
         color: grey;
 }
+
+@media screen and (min-width: 960px) {
+.listOpened {
+  margin-left: -8px;
+  }
+}

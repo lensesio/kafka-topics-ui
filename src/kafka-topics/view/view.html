@@ -1,5 +1,5 @@
 <md-progress-linear md-mode="indeterminate" ng-show="showSpinner"></md-progress-linear>
-<div layout="row" layout-margin layout-sm="column" layout-xs="column">
+<div layout="row" layout-margin layout-sm="column" layout-xs="column" ng-class="showList ? 'listOpened' : ''">
 
         <div flex>
             <md-card ng-hide="showSpinner" style="box-shadow:none;">
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                     <md-content>
-                        <div  ng-class="showList ? 'listOpened' : ''" class="view-container" id="view-container">
+                        <div class="view-container" id="view-container">
 
                             <!-- ACTUAL VIEW -->
                             <div flex style="width:100%; margin-top:0px">

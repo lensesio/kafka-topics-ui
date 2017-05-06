@@ -9,7 +9,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
 
   $scope.showSpinner = true;
   $scope.showInnerSpinner = false ;
-//  $scope.showAdvanced = false;
 
       //TODO add error messages for failed requrests + false spinner
       TopicFactory.getTopicSummary(topicName, $scope.cluster.KAFKA_REST)
@@ -27,16 +26,8 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
       $scope.allTopics = allTopics;
     });
 
-  $scope.showOrHideAdvanced = 'Show advanced';
   $scope.disableAllPartitionButtons = false;
-//  $scope.toggleAdvanced = function(){
-//  if($scope.showAdvanced)
-//    $scope.showOrHideAdvanced = 'Show advanced';
-//    else
-//    $scope.showOrHideAdvanced = 'Hide advanced';
-//
-//    $scope.showAdvanced = !$scope.showAdvanced
-//  }
+
 /*******************************
  * topic-toolbar.html
 ********************************/
