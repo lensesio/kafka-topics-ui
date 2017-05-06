@@ -24,7 +24,7 @@
       <!--<input flex="80" ng-model="search" placeholder="Search Topics" class="toolbox-input" style="margin: 7px;width:100%">-->
 
 
-      <div flex>
+      <div flex style="margin-top:-25px">
         <md-list class="md-dense" flex>
           <md-list-item dir-paginate="topic in selectedTopics | orderBy:query.order | filter : search | itemsPerPage:topicsPerPage"
                         pagination-id="topics"

@@ -278,6 +278,13 @@ $scope.slider = {
         return;
     }
 
+    if(position=='end'){
+      $scope.seekToEnd=true;
+    } else {
+      $seekToEnd=false;
+    }
+
+
     //TODO make a loading for data only for the case partition is empty// $scope.showSpinner = true;
     var partition = [ { "partition" : partition } ]; //create array because assignments works for all too.
 

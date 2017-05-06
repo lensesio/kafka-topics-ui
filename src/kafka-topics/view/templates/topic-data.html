@@ -84,7 +84,7 @@
 <div ng-show="rows.length==0">
     <div style="color:grey; background: rgba(245, 245, 166, 0.57); padding: 20px; width:100%; font-size:14px">
         <div ng-show="!partitionIsEmpty && !seekToEnd">Topic is empty</div>
-        <div ng-show="partitionIsEmpty">Partition is empty. Pick another partition.</div>
+        <div ng-show="partitionIsEmpty && !seekToEnd">Partition is empty. Pick another partition.</div>
         <div ng-show="seekToEnd">No data fetched</div>
     </div>
 </div>
