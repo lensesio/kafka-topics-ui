@@ -38,9 +38,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
      $rootScope.showList = !$rootScope.showList;
   };
   $scope.refreshDataForDownload = function(searchFilter){
-  console.log(searchFilter)
       $scope.dataForDownload = $filter('filter')($scope.rows, searchFilter)
-      console.log($scope.dataForDownload)
   }
 
   $scope.downloadData = function (topicName) {
@@ -167,13 +165,14 @@ $scope.slider = {
     }
      $scope.rows = allData;
      $scope.format=format;
+     $scope.dataForDownload = $scope.rows
+
      if(format == 'binary'){
        angular.forEach($scope.rows, function(row){
           row.key=$base64.decode(row.key)
           row.value=$base64.decode(row.value)
        })
       $scope.dataForDownload = $scope.rows
-
      }
      $scope.showSpinner = false;
 
