@@ -1,4 +1,4 @@
-angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScope, $filter, $log, $location,$cookies, $http, TopicFactory, env, $q, $timeout , consumerFactory, HttpFactory) {
+angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScope, $filter, $log, $location,$cookies, $http, $base64, TopicFactory, env, $q, $timeout , consumerFactory, HttpFactory) {
 
   $log.debug($routeParams.topicName, "Starting [ViewTopicCtrl]");
 
@@ -54,7 +54,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
 
   $scope.downloadData = function (topicName) {
     $log.info("Download requested for " + $scope.dataForDownload.length + " bytes ");
-    var json = $scope.dataForDownload;
+    var json = JSON.stringify($scope.dataForDownload);
     var blob = new Blob([json], {type: "application/json;charset=utf-8;"});
     var downloadLink = angular.element('<a></a>');
     downloadLink.attr('href', window.URL.createObjectURL(blob));
@@ -122,33 +122,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
     return configArray;
   }
 
-/*******************************
- * topic data / advanced / slider
-********************************/
-
-//$scope.slider = {
-//    minValue: 40,
-//    maxValue: 60,
-//    options: {
-//        floor: 0,
-//        ceil: 1000000,
-//        step: 1,
-//        minRange: 10,
-//        maxRange: 30,
-//        pushRange: true
-//    }
-//};
-
-//
-//$scope.slider = {
-//  minValue: 10,
-//  maxValue: 90,
-//  options: {
-//    floor: 0,
-//    ceil: 100,
-//  }
-//};
-//TODO delete me
 $scope.slider = {
        minValue: 0,
        maxValue: 10,
@@ -202,14 +175,16 @@ $scope.slider = {
         if(allData.length === 0) $scope.partitionIsEmpty = true;
     }
      $scope.rows = allData;
-     $scope.dataForDownload = $scope.rows
      $scope.format=format;
-     $scope.showSpinner = false;
-// TODO RETHINK THIS
-//       if(format=='binary') {
-//         $scope.hideTab = true;
-//       }
+     if(format == 'binary'){
+       angular.forEach($scope.rows, function(row){
+          row.key=$base64.decode(row.key)
+          row.value=$base64.decode(row.value)
+       })
+      $scope.dataForDownload = $scope.rows
 
+     }
+     $scope.showSpinner = false;
 
     if(allData.length > 0) {
 
@@ -364,7 +339,6 @@ $scope.slider = {
   };
 
 });
-
 
 angularAPP.factory('TopicFactory', function (HttpFactory) {
     var defaultContentType = 'application/vnd.kafka.avro.v2+json';
