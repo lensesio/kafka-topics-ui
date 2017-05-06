@@ -281,7 +281,7 @@ $scope.slider = {
     if(position=='end'){
       $scope.seekToEnd=true;
     } else {
-      $seekToEnd=false;
+      $scope.seekToEnd=false;
     }
 
 
