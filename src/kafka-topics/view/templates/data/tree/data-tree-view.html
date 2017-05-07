@@ -9,7 +9,7 @@
   <md-tab-body>
     <md-content class="normalcontent">
 
-      <md-list class="md-dense" flex style="padding:0px §0px">
+      <md-list class="md-dense" flex style="padding:0px 0px">
         <md-list-item class="md-2-line"
                       dir-paginate="t in rows |  filter:search:strict | itemsPerPage: paginationItems track by $index"
                       pagination-id="treeView"
@@ -34,8 +34,8 @@
                     <!--<small style="float:right;text-align:right;color:#ccc"><i>Offset: {{t.offset}}</i></small>-->
                   <!--</div>-->
               <div layout="column" flex="15" style="flex:0 0 100px">
-                <small style="float:right;text-align:right;color:rgba(0,0,0,0.59);font-size:11px">Partition: {{t.partition}}</small>
                 <small style="float:right;text-align:right;color:rgba(0,0,0,0.59);font-size:11px">Offset: {{t.offset}} </small>
+                <small style="float:right;text-align:right;color:rgba(0,0,0,0.59);font-size:11px">Partition: {{t.partition}}</small>
               </div>
             </div>
 
