@@ -1,0 +1,12 @@
+<div layout="row" layout-align="center center" layout-margin>
+
+  <md-card style="box-shadow:none; padding:10px" ng-repeat="cluster in allClusters" flex="40" layout="column">
+      <h4>{{cluster.NAME}}</h4>
+
+      <i class="fa fa-check-circle-o" aria-hidden="true" ng-if="cluster.isOk" style="color:green; font-size:30px"></i>
+      <i class="fa fa-times-circle-o" aria-hidden="true" ng-if="!cluster.isOk" style="color:red; font-size:30px"></i>
+
+      <p><b>ENDPOINT</b><br>{{cluster.KAFKA_REST}}</p>
+  </md-card>
+
+</div>

@@ -1,42 +1,57 @@
+<md-card flex="33" flex-sm="100" style="box-shadow:none;" >
 
-<md-content>
+  <md-toolbar class="md-hue-2">
+    <div class="md-toolbar-tools">
+      <h3>
+        <span><b>{{selectedTopics.length}}</b> TOPICS </span>
+      </h3>
+      <span flex></span>
+      <md-switch style="font-size:14px"  class="md-icon-button" ng-model='displayingControlTopics' ng-change="selectTopicList(displayingControlTopics)" aria-label="Show system topics">
+        <div ng-if="displayingControlTopics"><b>System Topics</b></div>
+        <div ng-if="!displayingControlTopics"><b>System Topics</b></div>
+      </md-switch>
+    </div>
+  </md-toolbar>
 
-  <div layout="column">
-    <!--Search-->
-    <div flex>
-      <md-input-container class="md-block" style="margin-bottom:-25px;">
-        <label>Search topics</label>
-        <input ng-model="search">
+  <md-content>
+    <div layout="column">
+
+      <md-input-container class="md-block" style="margin-bottom:0;">
+        <label>Search topics:</label>
+        <input ng-model="search" placeholder=" ">
       </md-input-container>
-    </div>
 
-    <!--Topics List-->
-    <div flex>
-      <md-list class="md-dense" flex>
-        <md-list-item dir-paginate="topic in topics| orderBy:'topic' | filter : search | itemsPerPage:topicsPerPage"
-                      pagination-id="topics"
-                      ng-click="listClick(topic)"
-                      class="md-2-line"
-                      current-page="normalTopicPage"
-                      ng-class="{ 'selectedListItem': topic == topicName }">
+      <!--<input flex="80" ng-model="search" placeholder="Search Topics" class="toolbox-input" style="margin: 7px;width:100%">-->
 
-          <div class="md-list-item-text" layout="column">
-            <h4>{{topic}}</h4>
-            <p style="font-size:12px;">
-              {{getPartitionMessage(topic)}}<span ng-if="hasExtraConfig(topic) > 0" style="display:inline-block;">
-&nbsp;&nbsp;  {{hasExtraConfig(topic)}} configs</span>
-            </p>
-          </div>
-          <div style="display:block;background-color:rgba(44, 152, 240, 0.3);border-radius: 5px; width:60px; color:#333; text-align:center; font-size:12px">
-            {{getDataType(topic)}}
-          </div>
-        </md-list-item>
-      </md-list>
-    </div>
 
-    <!--Pagination-->
-    <div flex class="leftlistPagination">
-      <dir-pagination-controls pagination-id="topics" style="margin:0;"></dir-pagination-controls>
+      <div flex style="margin-top:-25px">
+        <md-list class="md-dense" flex>
+          <md-list-item dir-paginate="topic in selectedTopics | orderBy:query.order | filter : search | itemsPerPage:topicsPerPage"
+                        pagination-id="topics"
+                        ng-click="listClick(topic.topicName, displayingControlTopics)"
+                        class="md-2-line"
+                        current-page="topicsPage"
+                        ng-class="{ 'selectedListItem': topicName == topic.topicName }">
+
+            <div class="md-list-item-text" layout="column">
+              <!--<h4>{{shortenControlCenterName(topic.topicName)}}</h4>-->
+              <h4>{{shortenControlCenterName(topic)}}</h4>
+              <p style="font-size:12px;">
+                {{topic.partitions}} Partitions &#10799; {{topic.replication}} Replication
+                <span ng-if="topic.customConfig > 0" style="display:inline-block;">
+                {{(topic.customConfig > 0) ? '| '+ topic.customConfig + 'configs' : ''}}
+                </span>
+              </p>
+            </div>
+            <div style="display:block;background-color:rgba(44, 152, 240, 0.3);border-radius: 5px; width:60px; color:#333; text-align:center; font-size:12px">
+              {{getDataType(topic.topicName)}}
+            </div>
+          </md-list-item>
+        </md-list>
+      </div>
+      <div flex class="leftlistPagination">
+        <dir-pagination-controls pagination-id="topics" style="margin:0;"></dir-pagination-controls>
+      </div>
     </div>
-  </div>
-</md-content>
+  </md-content>
+</md-card>

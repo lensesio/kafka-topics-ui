@@ -1,4 +1,8 @@
-angularAPP.controller('HomeCtrl', function ($log, toastFactory) {
-  $log.info("Starting kafka-topics controller : home");
-  toastFactory.hideToast();
+angularAPP.controller('HomeCtrl', function ($scope, $rootScope, env) {
+  $rootScope.showList = true;
+
+  $scope.$on('$routeChangeSuccess', function() {
+    $scope.kafkaRest = env.getSelectedCluster().KAFKA_REST;
+  });
+
 });

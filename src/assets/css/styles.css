@@ -301,7 +301,15 @@ md-card md-card-title {
 
 /* When a user has selected a topic in the topic list */
 .selectedListItem {
-    background-color: rgba(158, 158, 158, 0.2);
+    background-color:#fff;
+}
+
+.selectedListItemList {
+ background:rgba(158, 158, 158, 0.2);;
+}
+
+.nonSelectedListItem {
+ background:rgba(158, 158, 158, 0.2);;
 }
 
 
@@ -319,13 +327,6 @@ table tbody tr { border-top: 1px rgba(0,0,0,.12) solid; }
 .flat-table tr th {border:1px #ccc solid;}
 .blue {background-color:#dcedf7};
 
-.json-tree .branch-preview {
-    overflow: hidden;
-    font-style: italic;
-    max-width: 70%;
-    height: 1.5em;
-    opacity: .7;
-}
 
 .md-tabs
 {
@@ -357,3 +358,150 @@ md-tab-data {
 }
 #my-handsontable,
 hot-table {text-align:center}
+
+.labelTypeSm {
+    font-size: 12px;
+    padding: 5px;
+    background-color: #fb9678;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+}
+json-tree .branch-preview {
+    overflow: hidden;
+    font-style: italic;
+    max-width: 90%;
+    height: 14px;
+    opacity: .7;
+    font-size: 11px;
+    line-height: 14px;
+}
+
+json-tree .key {
+    color: #D02828;
+    padding: 5px 10px 5px 15px;
+    font-size: 13px;
+}
+
+json-tree json-node.expandable::before {
+  top:5px;
+  font-size:8px;
+}
+
+.selectedListItem {
+    background-color: rgba(158, 158, 158, 0.2);
+}
+
+label.checkbox {
+    margin: 6px 2px;
+    padding: 2px 0 2px 4px;
+    border: 1px dashed #bbb;
+    text-align: center;
+    display: inline-block;
+}
+
+json-tree .leaf-value {
+    word-break: break-all;
+    font-size: 12px;
+    opacity: 0.8;
+    line-height: 12px;
+}
+
+json-tree .key .key {
+    color: #D02828;
+    padding: 5px 10px 5px 15px;
+    font-size: 12px;
+}
+
+json-tree ul {
+    padding-left: 20px;
+    margin-top: 0;
+    font-size: 12px;
+}
+
+.handsontable th, .handsontable td {
+  text-align:left;
+}
+
+
+.custom-slider.rzslider .rz-bar {
+  /*background: #ffe4d1;*/
+  background: rgba(251, 150, 120, 0.33);;
+  height: 3px;
+}
+.custom-slider.rzslider .rz-selection {
+  background: #fb9678;
+}
+
+.custom-slider.rzslider .rz-pointer {
+  width: 8px;
+  height: 16px;
+  top: auto; /* to remove the default positioning */
+  bottom: 0;
+  background-color: #333;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.custom-slider.rzslider .rz-pointer:after {
+  display: none;
+}
+
+.custom-slider.rzslider .rz-bubble {
+  bottom: 14px;
+}
+
+.custom-slider.rzslider .rz-limit {
+  font-weight: bold;
+  color: #fb9678;
+}
+
+.custom-slider.rzslider .rz-tick {
+  width: 1px;
+  height: 10px;
+  margin-left: 4px;
+  border-radius: 0;
+  /*background: #ffe4d1;*/
+  background: rgba(251, 150, 120, 0.33);
+  top: -1px;
+}
+
+.custom-slider.rzslider .rz-tick.rz-selected {
+  background: #fb9678;
+}
+
+.toolbox-input {
+    display: block;
+    width: 100%;
+    height: 38px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.input-hint {
+    position: absolute;
+        left: 2px;
+        right: auto;
+        bottom: 7px;
+        font-size: 12px;
+        line-height: 14px;
+        transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+        color: grey;
+}
+
+@media screen and (min-width: 960px) {
+.listOpened {
+  margin-left: -8px;
+  }
+}

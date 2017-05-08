@@ -1,0 +1,89 @@
+
+<div style="background-color:#fff;" ng-cloak  ng-hide="rows.length==0 && !partitionIsEmpty && !seekToEnd">
+
+        <div class="partitionSelection" >
+
+            <div class="column"  style="background:#ddd;">
+
+                <div style="font-size:14px; margin-left:8px; font-size: 12px;">Total Messages Fetched: {{rows.length}}. Data type: {{format}} </div>
+
+                <div layout="row" style="background:#ddd;height:50px;">
+                    <input flex="80" ng-model="searchMessages" ng-change="dataFlatTableCtrl.refreshData();refreshDataForDownload(searchMessages)"  ng-model-options="{ debounce: 500 }" placeholder="filter" class="toolbox-input" style="margin: 7px;">
+
+                    <select flex="20" class="form-control button"
+                            ng-model="selectedPartition"
+                            ng-change="assignPartitions(selectedPartition, offset, 'beginning', true)"
+                            class="toolbox-input"
+                            style="float:right; margin: 7px;">
+                            <!--ng-show="{{topic.partitions.length > 1}}" TODO-->
+                        <option value="-1" ng-selected ng-disabled="disableAllPartitionsOption">All partitions</option>
+                        <option ng-repeat="partition in topic.partitions | orderBy : 'partition' track by $index" value="{{partition.partition}}">Partition {{partition.partition}}</option>
+                    </select>
+
+                    <md-button ng-hide="disableAllPartitionButtons" ng-click="createAndFetch(format, topicName) ">
+                        <md-tooltip md-direction="bottom"> Seek to beginning </md-tooltip>
+                        <i class="fa fa-fast-backward" aria-hidden="true" style="font-size:16px"></i>
+                    </md-button>
+                    <md-button ng-show="disableAllPartitionButtons" ng-click="assignPartitions(selectedPartition, 0, 'beginning', false)">
+                        <md-tooltip md-direction="bottom"> Seek to beginning </md-tooltip>
+                        <i class="fa fa-fast-backward" aria-hidden="true" style="font-size:16px"></i>
+                    </md-button>
+
+                    <md-button ng-hide="disableAllPartitionButtons" ng-click="createAndFetchFromEnd(format, topicName) ">
+                        <md-tooltip md-direction="bottom"> Seek to end </md-tooltip>
+                        <i class="fa fa-fast-forward" aria-hidden="true" style="font-size:16px"></i>
+                    </md-button>
+
+                    <md-input-container  class="md-block" style="margin-top:6px;"  ng-show="disableAllPartitionButtons">
+                        <label>Seek to offset</label>
+                        <input type="number" min="{{rows[0].offset}}"
+                               ng-model="slider.minValue"
+                               ng-change="assignPartitions(selectedPartition, slider.minValue, 'offset', false)"
+                               ng-model-options="{ debounce: 1500 }"/>
+                    </md-input-container>
+
+                    <md-button ng-show="disableAllPartitionButtons" ng-click="assignPartitions(selectedPartition, 0, 'end', false)">
+                        <md-tooltip md-direction="bottom"> Seek to end </md-tooltip>
+                        <i class="fa fa-fast-forward" aria-hidden="true" style="font-size:16px"></i>
+                    </md-button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <md-progress-linear md-mode="indeterminate" ng-show="showInnerSpinner"></md-progress-linear>
+
+    <md-tabs style="padding:0" md-dynamic-height md-border-bottom md-selected="selectedTabNnumber" ng-hide="rows.length==0 || showInnerSpinner" >
+        <!--Download button-->
+        <div layout="row">
+
+            <md-button download="true"
+                       ng-hide="topic.totalMessages == 0"
+                       ng-click="downloadData(topicName, rows)"
+                       aria-label="Download data"
+                       aria-hidden="false">
+                <i class="fa fa-download" aria-hidden="true" style="color:#333"></i>
+            </md-button>
+        </div>
+
+        <md-tab label="Topic" ng-click="onTabChanges('topic', cluster)" ng-if="!hideTab">
+            <tree-view data="rows" topic="topic" partitions="" search="searchMessages"></tree-view>
+        </md-tab>
+
+        <md-tab label="Table" ng-click="onTabChanges('table', cluster)" ng-if="!hideTab">
+            <flat-view data="rows" topic="topic" partitions="" search="searchMessages"></flat-view>
+        </md-tab>
+
+        <md-tab label="Raw Data" ng-click="onTabChanges('rawdata', cluster)">
+            <raw-view data="rows"  topic="topic" topicType="topic.valueType"></raw-view>
+        </md-tab>
+    </md-tabs>
+
+
+<div ng-show="rows.length==0">
+    <div style="color:grey; background: rgba(245, 245, 166, 0.57); padding: 20px; flex:1; font-size:14px">
+        <div ng-show="!partitionIsEmpty && !seekToEnd">Topic is empty</div>
+        <div ng-show="partitionIsEmpty && !seekToEnd">Partition is empty. Pick another partition.</div>
+        <div ng-show="seekToEnd">No data fetched</div>
+    </div>
+</div>

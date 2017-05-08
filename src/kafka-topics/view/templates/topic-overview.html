@@ -1,0 +1,28 @@
+<md-content>
+    <h4>Partitions</h4>
+
+    <p ng-if="topic.partitions.length > 1" style="font-size:14px">
+        Number of Partitions: {{topic.partitions.length}} <br>
+        Replication Factor: {{topic.partitions[0].replicas.length}}<br>
+    </p>
+    <table>
+        <thead>
+        <tr>
+            <th class="td-center">Partition</th>
+            <th class="td-center">Replica</th>
+            <th class="td-center">Replica Broker</th>
+            <th class="td-center">Is Leader</th>
+            <th class="td-center">Is in-sync</th>
+        </tr>
+        </thead>
+        <tbody ng-repeat="partition in topic.partitions | orderBy :  'partition' ">
+        <tr ng-repeat="replica in partition.replicas" style="background : {{ $parent.$odd ? '#ccc' : '#fff' }}">
+            <td class="td-center">{{partition.partition}}</td>
+            <td class="td-center">{{$index}}</td>
+            <td class="td-center">{{replica.broker}}</td>
+            <td class="td-center">{{replica.leader}}</td>
+            <td class="td-center">{{replica.in_sync}}</td>
+        </tr>
+        </tbody>
+    </table>
+</md-content>

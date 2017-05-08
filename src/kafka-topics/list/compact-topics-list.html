@@ -1,0 +1,31 @@
+
+<md-content>
+
+  <div layout="column">
+    <!--Search-->
+    <div flex>
+        <input ng-model="search" placeholder="search topics" style="width:230px; height:40px;">
+    </div>
+
+    <!--Topics List-->
+    <div flex style="height:1200px">
+      <md-list class="md-dense" flex>
+        <!--TODO all topics, remove pagination-->
+        <md-list-item dir-paginate="topic in normalTopics| orderBy:'topicName' | filter: search | itemsPerPage:100"
+                      pagination-id="topics"
+                      ng-click="listClick(topic.topicName, topic.isControlTopic)"
+                      class="md-2-line"
+                      ng-class="{ 'selectedListItem': topic.topicName == topicName }">
+
+          <p style="font-size:10px">{{shortenControlCenterName(topic)}}</p>
+        </md-list-item>
+      </md-list>
+    </div>
+
+    <!--Pagination-->
+    <div flex class="leftlistPagination">
+      <dir-pagination-controls pagination-id="topics" style="margin:0;"></dir-pagination-controls>
+    </div>
+  </div>
+
+</md-content>

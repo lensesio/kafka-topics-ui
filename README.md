@@ -61,24 +61,29 @@ If you use `nginx` to serve this ui, let angular manage routing with
 Use multiple Kafka Rest clusters in `env.js` :
 ```
 var clusters = [
-  {
-    NAME:"prod",
-    KAFKA_REST : "prod.url.com",// "The Kafka Rest url"
-    MAX_BYTES: "?max_bytes=50000",
-    COLOR: "#141414" // Optional
-  },
-  {
-  NAME:"dev",
-  KAFKA_REST : "dev.url.com", "The Kafka Rest url"
-  MAX_BYTES: "?max_bytes=50000",
-
-  COLOR: "red" // Optional
-  }
-]
+    {
+      NAME: "prod",
+      KAFKA_REST: "/api",
+      MAX_BYTES: "50000",
+      RECORD_POLL_TIMEOUT: "5000",
+      COLOR: "#141414", // Optional
+      DEBUG_LOGS_ENABLED: true
+    },
+    {
+      NAME: "dev",
+      KAFKA_REST: "localhost",
+      MAX_BYTES: "50000",
+      COLOR: "red",
+      RECORD_POLL_TIMEOUT: "5000",
+      DEBUG_LOGS_ENABLED: true
+    }
+  ];
 
 ```
 * Use `MAX_BYTES` to set the default maximum amount of bytes to fetch from each topic.
+* Use `RECORD_POLL_TIMEOUT` to set the timeout in ms.
 * Use `COLOR` to set different header colors for each set up cluster.
+* Set `DEBUG_LOGS_ENABLED` to true to enable the debug logs.
 
 ## Changelog
 [Here](https://github.com/Landoop/kafka-topics-ui/wiki/Changelog)
