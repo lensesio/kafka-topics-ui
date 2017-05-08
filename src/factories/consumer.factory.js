@@ -27,7 +27,7 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     }).then(function (res2) {
       return getRecords(consumer, format).then(function (r) {
         if (r.data.length !== 0) saveTopicTypeToCookie(topicName, format);
-        $log.debug(topicName, '6) DONE: GOT RECORDS', r.data.length);
+        $log.debug(topicName, '6) DONE: GOT RECORDS', r.data.length, r);
         $log.debug(topicName, '7) SAVING TYPE TO COOKIE', format);
         deleteConsumer(consumer, topicName);
         return r;

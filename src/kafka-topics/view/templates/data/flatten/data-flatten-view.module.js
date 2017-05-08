@@ -69,7 +69,7 @@ topicsListModule.factory('FlatTableFactory', function (HttpFactory) {
 //TODO Clean me up! ALL shit happens here
 dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, $routeParams, $filter, FlatTableFactory, env, hotRegisterer) {
 
- $scope.maxHeight = window.innerHeight - 215;
+ $scope.maxHeight = window.innerHeight - 310;
     if ($scope.maxHeight < 310) {$scope.maxHeight = 310}
 
 

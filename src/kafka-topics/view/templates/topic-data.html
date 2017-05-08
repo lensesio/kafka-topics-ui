@@ -1,7 +1,6 @@
 
 <div style="background-color:#fff;" ng-cloak  ng-hide="rows.length==0 && !partitionIsEmpty && !seekToEnd">
 
-    <div ng-show="true">
         <div class="partitionSelection" >
 
             <div class="column"  style="background:#ddd;">
@@ -17,7 +16,7 @@
                             class="toolbox-input"
                             style="float:right; margin: 7px;">
                             <!--ng-show="{{topic.partitions.length > 1}}" TODO-->
-                        <option value="-1" ng-selected>All partitions</option>
+                        <option value="-1" ng-selected ng-disabled="disableAllPartitionsOption">All partitions</option>
                         <option ng-repeat="partition in topic.partitions | orderBy : 'partition' track by $index" value="{{partition.partition}}">Partition {{partition.partition}}</option>
                     </select>
 
@@ -82,7 +81,7 @@
 
 
 <div ng-show="rows.length==0">
-    <div style="color:grey; background: rgba(245, 245, 166, 0.57); padding: 20px; width:100%; font-size:14px">
+    <div style="color:grey; background: rgba(245, 245, 166, 0.57); padding: 20px; flex:1; font-size:14px">
         <div ng-show="!partitionIsEmpty && !seekToEnd">Topic is empty</div>
         <div ng-show="partitionIsEmpty && !seekToEnd">Partition is empty. Pick another partition.</div>
         <div ng-show="seekToEnd">No data fetched</div>

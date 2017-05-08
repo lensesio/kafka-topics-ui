@@ -15,6 +15,11 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
       .then(function success(topic){
             topic.data.configs = makeConfigsArray(topic.data.configs);
             $scope.topic = topic.data;
+            if($scope.topic.partitions.length == 1) {
+              $scope.selectedPartition = '0'
+              $scope.disableAllPartitionsOption = true;
+            }
+
             $scope.showAdvanced = ($scope.topic.partitions.length == 1 ? true : false )
             $scope.disableAllPartitionButtons = ($scope.topic.partitions.length == 1 ? true : false )
       },
@@ -81,11 +86,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
   }
 
 /*******************************
- * topic-overview.html / partition
-********************************/
-
-
-/*******************************
  * topic-configuration.html
 ********************************/
 
@@ -110,15 +110,6 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
     }, configArray);
     return configArray;
   }
-
-$scope.slider = {
-       minValue: 0,
-       maxValue: 10,
-       options: {
-         floor: 0,//allData[0].offset,
-         ceil: 100//allData[allData.length - 1].offset,
-       }
-     };
 
 /*******************************
  * topic data / Tabs handling
@@ -146,8 +137,7 @@ $scope.slider = {
       $location.path ("cluster/"+ cluster.NAME + "/topic/" +  topicCategoryUrl + "/" + topicName +  "/" + $scope.selectedMenuItem + "/" + currentTabIndex, false);
   };
 
-
-  $scope.maxHeight = window.innerHeight - 215;
+  $scope.maxHeight = window.innerHeight - 300;
   if ($scope.maxHeight < 310) {$scope.maxHeight = 310}
 
 /*******************************
@@ -156,7 +146,7 @@ $scope.slider = {
    $scope.partitionIsEmpty = false;
    $scope.seekToEnd = false;
    $scope.selectedPartition = "-1";
-  
+
   function setTopicMessages(allData, format, forPartition) {
     if(forPartition) {
         $scope.showAdvanced = true;
@@ -179,24 +169,6 @@ $scope.slider = {
     if(allData.length > 0) {
 
      var floor = $scope.firstOffsetForPartition ? $scope.firstOffsetForPartition : allData[0].offset;
-
-     $scope.slider = {
-       id : 'slider-id',
-       minValue: allData[0].offset,
-       maxValue: allData[allData.length - 1].offset,
-       options: {
-         floor: floor,
-         ceil: allData[allData.length - 1].offset + 100,
-         draggableRangeOnly: true,
-//         onChange: function() {
-//             console.log('on change ', $scope.slider.minValue); // logs 'on end slider-id'
-//         },
-         onEnd: function(){
-             console.log('on end ', $scope.slider.minValue, $scope.selectedPartition); //TODO
-             $scope.assignPartitions($scope.selectedPartition, $scope.slider.minValue, 'offset', false)
-         }
-       }
-     };
      }
   }
 
@@ -312,8 +284,6 @@ $scope.slider = {
             });
         });
   }
-
-
 
   function getDefaultConfigValue(configKey) {
     var defaultConfigValue = "";

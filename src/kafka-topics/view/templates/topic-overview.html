@@ -1,12 +1,10 @@
 <md-content>
     <h4>Partitions</h4>
 
-    <p ng-if="topic.configs.length > 1" style="font-size:14px">
+    <p ng-if="topic.partitions.length > 1" style="font-size:14px">
         Number of Partitions: {{topic.partitions.length}} <br>
         Replication Factor: {{topic.partitions[0].replicas.length}}<br>
     </p>
-
-    <h4>Replicas</h4>
     <table>
         <thead>
         <tr>
