@@ -163,7 +163,7 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
         return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
         break;
       default:
-        $log.debug("EEEERROR", position)
+        $log.debug("Not a valid position", position)
     }
   }
 
