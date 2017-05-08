@@ -28,7 +28,9 @@ var clusters = [
    {
      NAME:"default",
      KAFKA_REST: "$KAFKA_REST_PROXY_URL",
-     MAX_BYTES: "?max_bytes=50000"
+     MAX_BYTES: "50000",
+     RECORD_POLL_TIMEOUT: "2000",
+     DEBUG_LOGS_ENABLED: true
    }
 ]
 EOF
