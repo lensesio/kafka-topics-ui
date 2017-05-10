@@ -24,7 +24,7 @@ dataTreeViewModule.controller('dataTreeViewCtrl', function ($scope, $log, $base6
         }
    })
 
-   $scope.paginationItems = $scope.$parent.maxHeight / 65;
+   $scope.paginationItems = Math.floor($scope.$parent.maxHeight / 65);
       $scope.$parent.$watch("format", function() {
            if($scope.$parent.format) {
                $scope.format = $scope.$parent.format

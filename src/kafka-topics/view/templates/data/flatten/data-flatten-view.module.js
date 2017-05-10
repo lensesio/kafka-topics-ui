@@ -81,7 +81,9 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, $rou
 
 
    $scope.$watch("search", function(newValue) {
+    if($scope.data){
     $scope.refreshData()
+    }
    })
 
 
@@ -117,12 +119,6 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, $rou
 
   $scope.isNotAvroOrJsonValue
   $scope.paginationItems = 20;
-
-  $scope.allCols = [
-     {id: "offset", label: "offset"},
-     {id: "partition", label: "partition"},
-     {id: "key", label: "key"},
-     {id: "value", label: "value"}];
 
   $scope.selectedCols = {};
 

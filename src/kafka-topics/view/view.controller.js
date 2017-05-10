@@ -234,6 +234,7 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
   $scope.createAndFetch = function(format, topicName) {
     createAndFetch(format, topicName)
   }
+  $scope.selectedOffset = {offset: 0}
 
   $scope.assignPartitions = function assignPartitions(partition, offset, position, firstTime) {
     $scope.selectedPartition = partition;
@@ -260,7 +261,9 @@ angularAPP.controller('ViewTopicCtrl', function ($scope, $routeParams, $rootScop
     //TODO make a loading for data only for the case partition is empty// $scope.showSpinner = true;
     var partition = [ { "partition" : partition } ]; //create array because assignments works for all too.
 
+    offset = parseInt(offset);
     if (!angular.isDefined(offset)){offset = 1}
+    $scope.selectedOffset.offset=offset;
     $scope.uuid = consumerFactory.genUUID();
 
     consumerFactory
