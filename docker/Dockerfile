@@ -14,7 +14,7 @@ RUN wget "https://github.com/mholt/caddy/releases/download/v0.9.5/caddy_linux_am
     && rm -f /caddy.tgz
 
 # Add and Setup Kafka-Topics-Ui
-RUN wget https://github.com/Landoop/kafka-topics-ui/releases/download/v0.9.1/kafka-topics-ui-0.9.1.tar.gz \
+RUN wget https://github.com/Landoop/kafka-topics-ui/releases/download/v0.9.2/kafka-topics-ui-0.9.2.tar.gz \
          -O /kafka-topics-ui.tar.gz \
     && mkdir /kafka-topics-ui \
     && tar xzf /kafka-topics-ui.tar.gz -C /kafka-topics-ui \

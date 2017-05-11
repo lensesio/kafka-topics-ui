@@ -1,12 +1,16 @@
-<div layout="row" layout-align="center center" layout-margin>
 
-  <md-card style="box-shadow:none; padding:10px" ng-repeat="cluster in allClusters" flex="40" layout="column">
-      <h4>{{cluster.NAME}}</h4>
-
-      <i class="fa fa-check-circle-o" aria-hidden="true" ng-if="cluster.isOk" style="color:green; font-size:30px"></i>
-      <i class="fa fa-times-circle-o" aria-hidden="true" ng-if="!cluster.isOk" style="color:red; font-size:30px"></i>
-
-      <p><b>ENDPOINT</b><br>{{cluster.KAFKA_REST}}</p>
-  </md-card>
-
-</div>
+<md-card style="margin:17px 17px 0 0;box-shadow:none;word-wrap: break-word;" layout="row" ng-repeat="cluster in allClusters">
+    <md-card-content>
+            <div style="margin: 0px 0px 12px;font-weight: 500; text-transform: uppercase; font-size: 14px;">{{cluster.NAME}}</div>
+            <div layout="row" layout-align="left center">
+                <div style="margin-right:10px">
+                    <i class="fa fa-check-circle-o" aria-hidden="true" ng-if="cluster.isOk" style="color:green;font-size:50px"></i>
+                    <i class="fa fa-times-circle-o" aria-hidden="true" ng-if="!cluster.isOk" style="color:red;font-size:50px"></i>
+                </div>
+                <div flex>
+                    <span style="color:green; font-size:30px" ng-if="!cluster.isOk" style="font-family:Roboto,'Helvetica Neue',sans-serif">Something went wrong</span>
+                    <p><b>ENDPOINT</b><br>{{cluster.KAFKA_REST}}</p>
+                </div>
+            </div>
+    </md-card-content>
+</md-card>
