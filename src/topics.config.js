@@ -5,6 +5,7 @@ var KNOWN_TOPICS = {
                   "__consumer_offsets",
                   "_confluent-monitoring",
                   "_confluent-controlcenter",
+                  "connect-statuses",
                   "__confluent.support.metr"],
   // If a topic starts with this particular prefix - it's a system topic
   CONTROL_TOPICS: ["_confluent-controlcenter", "_confluent-command", "_confluent-metrics", "connect-configs", "connect-offsets", "__confluent", "__consumer_offsets", "_confluent-monitoring", "connect-status", "_schemas"]

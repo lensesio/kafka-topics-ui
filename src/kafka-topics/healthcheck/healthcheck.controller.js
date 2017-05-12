@@ -1,6 +1,6 @@
 angularAPP.controller('HealthcheckCtrl', function ($scope, $rootScope, $http, $log, env) {
 
-  $rootScope.showList = false;
+  $rootScope.showList = true;
 
   var allClusters = env.getAllClusters();
 

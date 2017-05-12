@@ -36,9 +36,10 @@
 
                     <md-input-container  class="md-block" style="margin-top:6px;"  ng-show="disableAllPartitionButtons">
                         <label>Seek to offset</label>
-                        <input type="number" min="{{rows[0].offset}}"
-                               ng-model="slider.minValue"
-                               ng-change="assignPartitions(selectedPartition, slider.minValue, 'offset', false)"
+                        <input min="{{rows[0].offset}}"
+                               onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                               ng-model="selectedOffset.offset"
+                               ng-change="assignPartitions(selectedPartition, selectedOffset.offset, 'offset', false)"
                                ng-model-options="{ debounce: 1500 }"/>
                     </md-input-container>
 

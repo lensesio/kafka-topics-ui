@@ -21,10 +21,13 @@ dataTreeViewModule.controller('dataTreeViewCtrl', function ($scope, $log, $base6
    $scope.$watch("data", function() {
         if($scope.data) {
             $scope.rows = $scope.data; // because data is async/ly coming from an http call, we need to watch it, directive gets compiled from the beginning.
+            $scope.currentPage = 1
         }
    })
 
-   $scope.paginationItems = $scope.$parent.maxHeight / 65;
+
+
+   $scope.paginationItems = Math.floor($scope.$parent.maxHeight / 65);
       $scope.$parent.$watch("format", function() {
            if($scope.$parent.format) {
                $scope.format = $scope.$parent.format

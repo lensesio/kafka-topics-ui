@@ -11,7 +11,8 @@
 
       <md-list class="md-dense" flex style="padding:0px 0px">
         <md-list-item class="md-2-line"
-                      dir-paginate="t in rows |  filter:search:strict | itemsPerPage: paginationItems track by $index"
+                      dir-paginate="t in rows |  filter:search:strict | itemsPerPage: paginationItems"
+                      current-page="currentPage"
                       pagination-id="treeView"
                       style="border-bottom:1px solid #f4f5f7; padding: 5px 0 0">
 
@@ -20,19 +21,12 @@
             <div layout="row" style="padding:10px">
                   <div layout="column" flex="100" layout-align="center left">
                     <div>
-                      <json-tree   object="t.key" root-name="'Key'" style="max-width: 100%;" ></json-tree>
+                      <json-tree object="t.key" root-name="'Key'" style="max-width: 100%;" ></json-tree>
                     </div>
                     <div>
                       <json-tree object="t.value" root-name="'Value'" style=" max-width: 100%;" ></json-tree>
                     </div>
                   </div>
-
-                  <!--<span flex></span>-->
-
-                  <!--<div layout="column" flex="10" style="flex:0 0 100px">-->
-                    <!--<small style="float:right;text-align:right;color:#ccc"><i>Partition: {{t.partition}}</i></small>-->
-                    <!--<small style="float:right;text-align:right;color:#ccc"><i>Offset: {{t.offset}}</i></small>-->
-                  <!--</div>-->
               <div layout="column" flex="15" style="flex:0 0 100px">
                 <small style="float:right;text-align:right;color:rgba(0,0,0,0.59);font-size:11px">Offset: {{t.offset}} </small>
                 <small style="float:right;text-align:right;color:rgba(0,0,0,0.59);font-size:11px">Partition: {{t.partition}}</small>
