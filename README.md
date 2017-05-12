@@ -85,6 +85,22 @@ var clusters = [
 * Use `COLOR` to set different header colors for each set up cluster.
 * Set `DEBUG_LOGS_ENABLED` to true to enable the debug logs.
 
+### CP Version support
+Latest release is for CP 3.2.0 and above.
+
+For versions older than CP 3.2.0 you will need kafka topics ui [version 0.8.3](https://github.com/Landoop/kafka-topics-ui/releases/tag/v0.8.3).
+You can also build it from source by running:
+```
+    git clone https://github.com/Landoop/kafka-topics-ui.git
+    cd kafka-topics-ui
+    git checkout tags/v0.8.3 -b v0.8.3
+    npm install -g bower
+    npm install
+    http-server .
+```
+
+
+
 ## Changelog
 [Here](https://github.com/Landoop/kafka-topics-ui/wiki/Changelog)
 
