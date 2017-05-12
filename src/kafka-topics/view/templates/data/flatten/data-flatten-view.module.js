@@ -282,7 +282,7 @@ dataFlatTableModule.controller('dataFlatTableCtrl', function ($scope, $log, $rou
      var hotsinstance = hotRegisterer.getInstance('my-handsontable');
 
      hotsinstance.addHook('afterRender', function () {
-     $scope.hotsWidth = 15;
+     $scope.hotsWidth = 25;
        angular.forEach($scope.hotTableHeaders, function (value, key) {
         $scope.hotsWidth = $scope.hotsWidth + hotsinstance.getColWidth(key);
        })
