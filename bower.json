@@ -16,9 +16,9 @@
     "bower_components"
   ],
   "dependencies": {
-    "angular": "^1.6.5",
+    "angular": "1.6.4",
     "angular-route": "1.6.4",
-    "angular-animate": "^1.6.5",
+    "angular-animate": "1.6.4",
     "angular-aria": "1.5.9",
     "angular-ui-ace": "bower",
     "bootstrap": "^3.3.6",
