@@ -1,9 +1,7 @@
 angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $filter, $cookies, env, HttpFactory) {
 
-
   var CONTENT_TYPE_JSON = 'application/vnd.kafka.v2+json';
   var CONSUMER_NAME_PREFIX = 'kafka-topics-ui-';
-  var PRINT_DEBUG_CURLS = false;
 
   /**
    * Creates consumer + group with unique uuid and type in name.
@@ -12,7 +10,7 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     $log.debug(topicName, "CREATING CONSUMER: ", getConsumer(format, uuid), uuid);
     var url = env.KAFKA_REST().trim() + '/consumers/' + getConsumer(format, uuid).group;
     var data = '{"name": "' + getConsumer(format).instance + '", "format": "' + format + '", "auto.offset.reset": "earliest", "auto.commit.enable": "false"}';
-    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, env.DEBUG_LOGS_ENABLED());
   }
 
   /**
@@ -94,7 +92,7 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
         $log.debug(topicName, '3) DONE: ASSIGNED PARTITIONS TO CONSUMER');
         var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/' + beginningOrEnd;
         var data = preparePartitionData(topicName, partitions.data);
-        return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, PRINT_DEBUG_CURLS);
+        return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, env.DEBUG_LOGS_ENABLED());
       })
     });
   }
@@ -112,7 +110,7 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
     var data = preparePartitionData(topicName, partitions);
     $log.debug(topicName, "2) ACTUAL PARTITIONS TO ASSIGN", data);
     var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/assignments';
-    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, PRINT_DEBUG_CURLS);
+    return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', false, env.DEBUG_LOGS_ENABLED());
 //    })
   }
 
@@ -124,13 +122,13 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
 
   function getPartitions(topicName) {
     var url = env.KAFKA_REST().trim() + '/topics/' + topicName + '/partitions';
-    return HttpFactory.req('GET', url, '', '', 'application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json', false, PRINT_DEBUG_CURLS);
+    return HttpFactory.req('GET', url, '', '', 'application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json', false, env.DEBUG_LOGS_ENABLED());
   }
 
   function getRecords(consumer, format) {
     var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/records?timeout=' + env.RECORD_POLL_TIMEOUT() + '&max_bytes=' + env.MAX_BYTES().trim();
     var ACCEPT_HEADER = 'application/vnd.kafka.' + format + '.v2+json';
-    return HttpFactory.req('GET', url, '', CONTENT_TYPE_JSON, ACCEPT_HEADER, false, PRINT_DEBUG_CURLS);
+    return HttpFactory.req('GET', url, '', CONTENT_TYPE_JSON, ACCEPT_HEADER, false, env.DEBUG_LOGS_ENABLED());
   }
 
   function deleteConsumer(consumer, topicName) {
@@ -148,19 +146,19 @@ angularAPP.factory('consumerFactory', function ($rootScope, $http, $log, $q, $fi
         var data = {'partitions': [{'topic': topicName, 'partition': partition.partition}]};
         $log.debug(topicName, "3) SEEK PARTITION TO BEGINNING", data);
         var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/beginning';
-        return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+        return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, env.DEBUG_LOGS_ENABLED());
         break;
       case 'end':
         var data = {'partitions': [{'topic': topicName, 'partition': partition.partition}]};
         $log.debug(topicName, "3) SEEK PARTITION TO END", data);
         var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions/end';
-        return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+        return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, env.DEBUG_LOGS_ENABLED());
         break;
       case 'offset':
         var data = {'offsets': [{'topic': topicName, 'partition': partition.partition, 'offset': offset}]};
         $log.debug(topicName, "3) SEEK TO OFFSETS", data);
         var url = env.KAFKA_REST().trim() + '/consumers/' + consumer.group + '/instances/' + consumer.instance + '/positions';
-        return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, PRINT_DEBUG_CURLS);
+        return HttpFactory.req('POST', url, data, CONTENT_TYPE_JSON, '', true, env.DEBUG_LOGS_ENABLED());
         break;
       default:
         $log.debug("Not a valid position", position)

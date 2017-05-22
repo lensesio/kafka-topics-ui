@@ -3,7 +3,10 @@ angular.
     factory('HttpFactory', function ($http, $log, $q) {
 
     function printDebugCurl(method, url, data, contentType){
-          var curlCreateConsumer = 'curl -X '+ method +' -H "Content-Type: ' + contentType + '" ' + "--data '" + JSON.stringify(data) + "' " + url;
+          if (typeof data == 'object') {
+            data = angular.toJson(data)
+          }
+          var curlCreateConsumer = 'curl -X '+ method +' -H "Content-Type: ' + contentType + ' ' + '--data ' + data + ' ' + url;
           $log.debug("HttpFactory:  " + curlCreateConsumer);
       }
 
