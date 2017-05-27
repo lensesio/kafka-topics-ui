@@ -102,7 +102,7 @@ You can also build it from source by running:
 
 
 ## Changelog
-[Here](https://github.com/Landoop/kafka-topics-ui/wiki/Changelog)
+[Here](https://github.com/Landoop/kafka-topics-ui/releases)
 
 ## License
 
