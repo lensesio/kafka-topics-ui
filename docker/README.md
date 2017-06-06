@@ -38,3 +38,9 @@ Caddy server will proxy the traffic to the REST Proxy:
 If your REST Proxy uses self-signed SSL certificates, you can use the
 `PROXY_SKIP_VERIFY=true` environment variable to instruct the proxy to
 not verify the backend TLS certificate.
+
+# Configuration options
+
+You can control most of Kafka Topics UI settings via environment variables:
+`MAX_BYTES` (default 50000), `RECORD_POLL_TIMEOUT` (default 2000),
+`DEBUG_LOGS_ENABLED` (default true).
