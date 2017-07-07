@@ -99,6 +99,11 @@ You can also build it from source by running:
     http-server .
 ```
 
+**Important:** For Kafka REST Proxy 3.2.x you should set
+`consumer.request.timeout.ms=30000`. Without this option, Kafka REST Proxy will
+fail to return messages for large topics. Although the default value is `1000`,
+a bug in the Kafka REST code prevents you from manually setting (depending on
+some other consumer options) a value lower than `30000`.
 
 
 ## Changelog
