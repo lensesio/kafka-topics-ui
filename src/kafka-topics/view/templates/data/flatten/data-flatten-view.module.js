@@ -41,7 +41,7 @@ topicsListModule.factory('FlatTableFactory', function (HttpFactory) {
         for (var i in ob) {
             if (!ob.hasOwnProperty(i)) continue;
 
-            if ((typeof ob[i]) == 'object') {
+            if ((typeof ob[i]) == 'object' && ob[i] !== null) {
                 var flatObject = flattenObject(ob[i]);
 
                 for (var x in flatObject) {
