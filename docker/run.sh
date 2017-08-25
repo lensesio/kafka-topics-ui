@@ -5,6 +5,7 @@ MAX_BYTES="${MAX_BYTES:-50000}"
 RECORD_POLL_TIMEOUT="${RECORD_POLL_TIMEOUT:-2000}"
 DEBUG_LOGS_ENABLED="${DEBUG_LOGS_ENABLED:-true}"
 INSECURE_PROXY=""
+EXPERIMENTAL_PROXY_URL="${EXPERIMENTAL_PROXY_URL:-false}"
 
 if echo "$PROXY_SKIP_VERIFY" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
     INSECURE_PROXY=insecure_skip_verify
@@ -19,7 +20,11 @@ proxy /api/kafka-rest-proxy $KAFKA_REST_PROXY_URL {
     $INSECURE_PROXY
 }
 EOF
-KAFKA_REST_PROXY_URL=/api/kafka-rest-proxy
+    if echo "$EXPERIMENTAL_PROXY_URL" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
+        KAFKA_REST_PROXY_URL=api/kafka-rest-proxy
+    else
+        KAFKA_REST_PROXY_URL=/api/kafka-rest-proxy
+    fi
 fi
 
 if [[ -z "$KAFKA_REST_PROXY_URL" ]]; then
