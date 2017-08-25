@@ -54,3 +54,9 @@ Without this option, Kafka REST Proxy will fail to return messages for large
 topics. Although the default value is `1000`, a bug in the Kafka REST code
 prevents you from manually setting (depending on some other consumer options) a
 value lower than `30000`.
+
+# Logging
+
+In the latest iterations, the container will print informational messages during
+startup at stderr and web server logs at stdout. This way you may sent the logs
+(stdout) to your favorite log management solution.
