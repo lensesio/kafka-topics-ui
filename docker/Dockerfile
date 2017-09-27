@@ -21,7 +21,7 @@ RUN wget https://github.com/Landoop/kafka-topics-ui/releases/download/v0.9.2/kaf
     && rm -f /kafka-topics-ui.tar.gz
 
 # Add configuration and runtime files
-ADD Caddyfile /caddy/
+ADD Caddyfile /caddy/Caddyfile.template
 ADD run.sh /
 RUN chmod +x /run.sh
 

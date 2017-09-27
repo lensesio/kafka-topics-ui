@@ -7,6 +7,8 @@ DEBUG_LOGS_ENABLED="${DEBUG_LOGS_ENABLED:-true}"
 INSECURE_PROXY=""
 EXPERIMENTAL_PROXY_URL="${EXPERIMENTAL_PROXY_URL:-false}"
 
+cat /caddy/Caddyfile.template > /caddy/Caddyfile
+
 {
     if echo "$PROXY_SKIP_VERIFY" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
         INSECURE_PROXY=insecure_skip_verify
