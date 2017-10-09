@@ -185,7 +185,7 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
           .replace('_confluent-controlcenter-0-', '...')
           // .replace('aggregate-topic-partition', 'aggregate-topic')
           .replace('MonitoringMessageAggregatorWindows', 'monitor-msg')
-          .replace('connect-configs', 'monitor-msg')
+          //.replace('connect-configs', 'monitor-msg')
           .replace('aggregatedTopicPartitionTableWindows', 'aggregate-window')
           .replace('monitoring-aggregate-rekey', 'monitor-rekey')
           .replace('MonitoringStream', 'monitor-stream')
