@@ -4,7 +4,7 @@ var clusters = [
       NAME: "prod",
       KAFKA_REST: "/api",
       MAX_BYTES: "50000", 	// Sets the default maximum amount of bytes to fetch from each topic
-      RECORD_POLL_TIMEOUT: "5000",
+      RECORD_POLL_TIMEOUT: "3000",
       COLOR: "#141414", // Optional
       DEBUG_LOGS_ENABLED: true
     },
@@ -13,7 +13,7 @@ var clusters = [
       KAFKA_REST: "localhost",
       MAX_BYTES: "50000",
       COLOR: "red",
-      RECORD_POLL_TIMEOUT: "5000",
+      RECORD_POLL_TIMEOUT: "3000",
       DEBUG_LOGS_ENABLED: true
     }
   ];

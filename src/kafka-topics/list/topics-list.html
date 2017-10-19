@@ -34,8 +34,7 @@
                         ng-class="{ 'selectedListItem': topicName == topic.topicName }">
 
             <div class="md-list-item-text" layout="column">
-              <!--<h4>{{shortenControlCenterName(topic.topicName)}}</h4>-->
-              <h4>{{shortenControlCenterName(topic)}}</h4>
+              <h4>{{topic.topicName}}</h4>
               <p style="font-size:12px;">
                 {{topic.partitions}} Partitions &#10799; {{topic.replication}} Replication
                 <span ng-if="topic.customConfig > 0" style="display:inline-block;">
