@@ -89,10 +89,6 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
     } },
    true);
 
-  $scope.shortenControlCenterName = function (topic) {
-    return shortenControlCenterName(topic);
-  }
-
   $scope.query = { order: '-totalMessages', limit: 100, page: 1 };
 
   // This one is called each time - the user clicks on an md-table header (applies sorting)
@@ -178,26 +174,6 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
     }
     return -1;
 }
-
-  function shortenControlCenterName(topic) {
-      if (topic.isControlTopic) {
-        return topic.topicName
-          .replace('_confluent-controlcenter-0-', '...')
-          // .replace('aggregate-topic-partition', 'aggregate-topic')
-          .replace('MonitoringMessageAggregatorWindows', 'monitor-msg')
-          //.replace('connect-configs', 'monitor-msg')
-          .replace('aggregatedTopicPartitionTableWindows', 'aggregate-window')
-          .replace('monitoring-aggregate-rekey', 'monitor-rekey')
-          .replace('MonitoringStream', 'monitor-stream')
-          .replace('MonitoringVerifierStore', 'monitor-verifier')
-          .replace('...Group', '...group')
-          .replace('FIFTEEN_SECONDS', '15sec')
-          .replace('ONE_HOUR', '1hour')
-          .replace('ONE_WEEK', '1week');
-      } else {
-        return topic.topicName;
-      }
-  }
 
 
   function loadSchemas(){
