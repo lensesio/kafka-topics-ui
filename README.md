@@ -65,17 +65,16 @@ Use multiple Kafka Rest clusters in `env.js` :
 var clusters = [
     {
       NAME: "prod",
-      KAFKA_REST: "/api",
+      KAFKA_REST: "http://kafka-rest-ip:8082",
       MAX_BYTES: "50000",
       RECORD_POLL_TIMEOUT: "5000",
-      COLOR: "#141414", // Optional
       DEBUG_LOGS_ENABLED: true
     },
     {
       NAME: "dev",
       KAFKA_REST: "localhost",
       MAX_BYTES: "50000",
-      COLOR: "red",
+      COLOR: "#141414", // Optional
       RECORD_POLL_TIMEOUT: "5000",
       DEBUG_LOGS_ENABLED: true
     }
@@ -110,6 +109,16 @@ some other consumer options) a value lower than `30000`.
 
 ## Changelog
 [Here](https://github.com/Landoop/kafka-topics-ui/releases)
+
+## Common Issues
+
+If having `"CONNECTIVITY ERROR" problems` make sure the file `kafka-rest.properties` has CORS enabled.
+To enable CORS add the following configuration to that file, and restart the backend Kafka-Rest
+
+```
+access.control.allow.methods=GET,POST,PUT,DELETE,OPTIONS
+access.control.allow.origin=*
+```
 
 ## License
 
