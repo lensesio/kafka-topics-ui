@@ -120,6 +120,15 @@ access.control.allow.methods=GET,POST,PUT,DELETE,OPTIONS
 access.control.allow.origin=*
 ```
 
+If using a recent version of the Kafka-Topics-UI and Kafka-REST, make sure that you have properly configured
+Kafka-REST with the new consumer API. That requires setting up in the configuration of Kafka REST
+
+```
+bootstrap.servers=PLAINTEXT://ip-address-of-kafka-broker:9092
+```
+
+Make sure you restart Kafka REST after changing it's configuration files
+
 ## License
 
 The project is licensed under the [BSL](http://www.landoop.com/bsl) license.
