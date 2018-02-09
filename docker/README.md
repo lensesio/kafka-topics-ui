@@ -46,6 +46,17 @@ You can control most of Kafka Topics UI settings via environment variables:
 `MAX_BYTES` (default 50000), `RECORD_POLL_TIMEOUT` (default 2000),
 `DEBUG_LOGS_ENABLED` (default true).
 
+## Caddy options
+
+If you are using the internal Caddy proxy to contact the REST proxy, you can apply further configuration via the environment variable `CADDY_OPTIONS`.
+
+### CADDY_OPTIONS
+
+For instance, if you want to disable timeouts, you can do so via the caddy options:
+
+    docker run --rm -it -p 8000:8000 \
+               -e "CADDY_OPTIONS=timeouts none" \
+               landoop/kafka-topics-ui
 
 # Kafka REST Proxy Configuration
 

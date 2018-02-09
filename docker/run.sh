@@ -5,6 +5,7 @@ MAX_BYTES="${MAX_BYTES:-50000}"
 RECORD_POLL_TIMEOUT="${RECORD_POLL_TIMEOUT:-2000}"
 DEBUG_LOGS_ENABLED="${DEBUG_LOGS_ENABLED:-true}"
 INSECURE_PROXY=""
+CADDY_OPTIONS="${CADDY_OPTIONS:-}"
 EXPERIMENTAL_PROXY_URL="${EXPERIMENTAL_PROXY_URL:-false}"
 
 cat /caddy/Caddyfile.template > /caddy/Caddyfile
@@ -44,6 +45,13 @@ var clusters = [
      DEBUG_LOGS_ENABLED: $DEBUG_LOGS_ENABLED
    }
 ]
+EOF
+    fi
+
+    if [[ -n "${CADDY_OPTIONS}" ]]; then
+        echo "Applying custom options to Caddyfile"
+        cat <<EOF >>/caddy/Caddyfile
+$CADDY_OPTIONS
 EOF
     fi
 
