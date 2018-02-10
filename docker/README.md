@@ -43,8 +43,10 @@ not verify the backend TLS certificate.
 # Configuration options
 
 You can control most of Kafka Topics UI settings via environment variables:
-`MAX_BYTES` (default 50000), `RECORD_POLL_TIMEOUT` (default 2000),
-`DEBUG_LOGS_ENABLED` (default true).
+
+ * `MAX_BYTES` (default 50000)
+ * `RECORD_POLL_TIMEOUT` (default 2000)
+ * `DEBUG_LOGS_ENABLED` (default true).
 
 ## Caddy options
 
