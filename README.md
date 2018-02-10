@@ -80,6 +80,8 @@ var clusters = [
     }
   ];
 
+**Config**
+
 ```
 * Use `MAX_BYTES` to set the default maximum amount of bytes to fetch from each topic.
 * Use `RECORD_POLL_TIMEOUT` to set the timeout in ms.
