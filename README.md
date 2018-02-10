@@ -79,10 +79,10 @@ var clusters = [
       DEBUG_LOGS_ENABLED: true
     }
   ];
+```
 
 **Config**
 
-```
 * Use `MAX_BYTES` to set the default maximum amount of bytes to fetch from each topic.
 * Use `RECORD_POLL_TIMEOUT` to set the timeout in ms.
 * Use `COLOR` to set different header colors for each set up cluster.
