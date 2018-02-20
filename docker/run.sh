@@ -9,10 +9,15 @@ CADDY_OPTIONS="${CADDY_OPTIONS:-}"
 EXPERIMENTAL_PROXY_URL="${EXPERIMENTAL_PROXY_URL:-false}"
 PORT="${PORT:-8000}"
 
-cat /caddy/Caddyfile.template \
-    | sed -e "s/8000/$PORT/" > /caddy/Caddyfile
-
 {
+    echo "Landoop Kafka Topics UI ${KAFKA_TOPICS_UI_VERSION}"
+    echo "Visit <https://github.com/Landoop/kafka-topics-ui/tree/master/docker>"
+    echo "to find more about how you can configure this container."
+    echo
+
+    cat /caddy/Caddyfile.template \
+        | sed -e "s/8000/$PORT/" > /caddy/Caddyfile
+
     if echo "$PROXY_SKIP_VERIFY" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
         INSECURE_PROXY=insecure_skip_verify
     fi
