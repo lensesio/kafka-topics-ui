@@ -7,8 +7,10 @@ DEBUG_LOGS_ENABLED="${DEBUG_LOGS_ENABLED:-true}"
 INSECURE_PROXY=""
 CADDY_OPTIONS="${CADDY_OPTIONS:-}"
 EXPERIMENTAL_PROXY_URL="${EXPERIMENTAL_PROXY_URL:-false}"
+PORT="${PORT:-8000}"
 
-cat /caddy/Caddyfile.template > /caddy/Caddyfile
+cat /caddy/Caddyfile.template \
+    | sed -e "s/8000/$PORT/" > /caddy/Caddyfile
 
 {
     if echo "$PROXY_SKIP_VERIFY" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
@@ -59,7 +61,7 @@ EOF
     # redirect caddy to stderr as the logging would also get redirected.
     echo
     echo "Activating privacy features... done."
-    echo "http://0.0.0.0:8000"
+    echo "http://0.0.0.0:$PORT"
 } 1>&2
 
 exec /caddy/caddy -conf /caddy/Caddyfile -quiet

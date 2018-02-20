@@ -3,7 +3,7 @@
 [![](https://images.microbadger.com/badges/image/landoop/kafka-topics-ui.svg)](http://microbadger.com/images/landoop/kafka-topics-ui)
 
 This is a small docker image for Landoop's kafka-topics-ui.
-It serves the kafka-topics-ui from port 8000.
+It serves the kafka-topics-ui from port 8000 by default.
 A live version can be found at <https://kafka-topics-ui.landoop.com>
 
 The software is stateless and the only necessary option is your Kafka REST Proxy
@@ -42,23 +42,42 @@ not verify the backend TLS certificate.
 
 # Configuration options
 
+## Kafka Topics UI
+
 You can control most of Kafka Topics UI settings via environment variables:
 
  * `MAX_BYTES` (default 50000)
  * `RECORD_POLL_TIMEOUT` (default 2000)
  * `DEBUG_LOGS_ENABLED` (default true).
 
-## Caddy options
+## Docker Options
 
-If you are using the internal Caddy proxy to contact the REST proxy, you can apply further configuration via the environment variable `CADDY_OPTIONS`.
-
-### CADDY_OPTIONS
-
-For instance, if you want to disable timeouts, you can do so via the caddy options:
-
-    docker run --rm -it -p 8000:8000 \
-               -e "CADDY_OPTIONS=timeouts none" \
-               landoop/kafka-topics-ui
+- `PROXY=[true|false]`
+  
+  Whether to proxy REST Proxy endpoint via the internal webserver
+- `PROXY_SKIP_VERIFY=[true|false]`
+  
+  Whether to accept self-signed certificates when proxying REST Proxy
+  via https
+- `PORT=[PORT]`
+  
+  The port number to use for kafka-topics-ui. The default is `8000`.
+  Usually the main reason for using this is when you run the
+  container with `--net=host`, where you can't use docker's publish
+  flag (`-p HOST_PORT:8000`).
+- `CADDY_OPTIONS=[OPTIONS]`
+  
+  The webserver that powers the image is Caddy. Via this variable
+  you can add options that will be appended to its configuration
+  (Caddyfile). Variables than span multiple lines are supported.
+  
+  As an example, you can set Caddy to not apply timeouts via:
+  
+      -e "CADDY_OPTIONS=timeouts none"
+  
+  Or you can set basic authentication via:
+  
+      -e "CADDY_OPTIONS=basicauth / [USER] [PASS]"
 
 # Kafka REST Proxy Configuration
 
@@ -66,7 +85,9 @@ For Kafka REST Proxy 3.2.x you should set `consumer.request.timeout.ms=30000`.
 Without this option, Kafka REST Proxy will fail to return messages for large
 topics. Although the default value is `1000`, a bug in the Kafka REST code
 prevents you from manually setting (depending on some other consumer options) a
-value lower than `30000`.
+value lower than `30000`. It is also a good idea to set
+`consumer.max.poll.interval.ms` to a lower value than `consumer.request.timeout.ms`
+as per Kafka's docs.
 
 # Logging
 
