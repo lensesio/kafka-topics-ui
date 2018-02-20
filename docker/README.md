@@ -39,13 +39,13 @@ If your REST Proxy uses self-signed SSL certificates, you can use the
 `PROXY_SKIP_VERIFY=true` environment variable to instruct the proxy to
 not verify the backend TLS certificate.
 
-
 # Configuration options
 
 ## Kafka Topics UI
 
 You can control most of Kafka Topics UI settings via environment variables:
 
+ * `KAFKA_REST_PROXY_URL`
  * `MAX_BYTES` (default 50000)
  * `RECORD_POLL_TIMEOUT` (default 2000)
  * `DEBUG_LOGS_ENABLED` (default true).
@@ -88,6 +88,10 @@ prevents you from manually setting (depending on some other consumer options) a
 value lower than `30000`. It is also a good idea to set
 `consumer.max.poll.interval.ms` to a lower value than `consumer.request.timeout.ms`
 as per Kafka's docs.
+
+If you don't wish to proxy REST Proxy's api, you should permit CORS via setting
+`access.control.allow.methods=GET,POST,PUT,DELETE,OPTIONS` and
+`access.control.allow.origin=*`.
 
 # Logging
 
