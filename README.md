@@ -99,6 +99,7 @@ You can also build it from source by running:
     git checkout tags/v0.8.3 -b v0.8.3
     npm install -g bower
     npm install
+    bower install
     http-server .
 ```
 
