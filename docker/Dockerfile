@@ -1,5 +1,5 @@
 FROM alpine
-MAINTAINER Marios Andreopoulos <marios@landoop.com>
+MAINTAINER Chris Short <chris@chrisshort.net>
 
 WORKDIR /
 # Add needed tools
@@ -18,7 +18,9 @@ RUN wget "https://github.com/Landoop/kafka-topics-ui/releases/download/v${KAFKA_
          -O /kafka-topics-ui.tar.gz \
     && mkdir /kafka-topics-ui \
     && tar xzf /kafka-topics-ui.tar.gz -C /kafka-topics-ui \
-    && rm -f /kafka-topics-ui.tar.gz
+    && rm -f /kafka-topics-ui.tar.gz \
+    && mkdir -p /kafka-topics-ui/etc \
+    && cp /kafka-topics-ui/env.js /kafka-topics-ui/etc/env.js
 
 # Add configuration and runtime files
 ADD Caddyfile /caddy/Caddyfile.template

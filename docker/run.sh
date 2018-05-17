@@ -42,7 +42,7 @@ EOF
         echo "Kafka REST Proxy URL was not set via KAFKA_REST_PROXY_URL environment variable."
     else
         echo "Kafka REST Proxy URL to $KAFKA_REST_PROXY_URL."
-        cat <<EOF >kafka-topics-ui/env.js
+        cat <<EOF >kafka-topics-ui/etc/env.js
 var clusters = [
    {
      NAME:"default",
