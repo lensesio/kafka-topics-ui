@@ -13,15 +13,21 @@ angular.
     return {
         req: function(method, url, data, contentType, acceptType, resolveError, withDebug) {
              var deferred = $q.defer();
+             var headers = {};
+             // Fix: If Content-Type is empty string, kafka-rest(conflent v5.0.0) server response 400;
+             if(contentType && contentType !== '') {
+              headers["Content-Type"] = contentType;
+             }
+             if(acceptType && acceptType !== '') {
+              headers["Accept"] = acceptType;
+             }
+
              var request = {
                    method: method,
                    url: url,
                    data: data,
                    dataType: 'json',
-                   headers: {
-                            'Content-Type': contentType,
-                            'Accept': acceptType //'application/json'
-                            }
+                   headers: headers
                  };
 
              if(withDebug) printDebugCurl(method, url, data, contentType);
