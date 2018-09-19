@@ -6,7 +6,7 @@ RECORD_POLL_TIMEOUT="${RECORD_POLL_TIMEOUT:-2000}"
 DEBUG_LOGS_ENABLED="${DEBUG_LOGS_ENABLED:-true}"
 INSECURE_PROXY=""
 CADDY_OPTIONS="${CADDY_OPTIONS:-}"
-EXPERIMENTAL_PROXY_URL="${EXPERIMENTAL_PROXY_URL:-false}"
+RELATIVE_PROXY_URL="${RELATIVE_PROXY_URL:-false}"
 PORT="${PORT:-8000}"
 
 {
@@ -31,7 +31,7 @@ proxy /api/kafka-rest-proxy $KAFKA_REST_PROXY_URL {
     $INSECURE_PROXY
 }
 EOF
-        if echo "$EXPERIMENTAL_PROXY_URL" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
+        if echo "$RELATIVE_PROXY_URL" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
             KAFKA_REST_PROXY_URL=api/kafka-rest-proxy
         else
             KAFKA_REST_PROXY_URL=/api/kafka-rest-proxy
