@@ -16,7 +16,7 @@ PORT="${PORT:-8000}"
     echo
 
     cat /caddy/Caddyfile.template \
-        | sed -e "s/8000/$PORT/" > /caddy/Caddyfile
+        | sed -e "s/8000/$PORT/" > /tmp/Caddyfile
 
     if echo "$PROXY_SKIP_VERIFY" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
         INSECURE_PROXY=insecure_skip_verify
@@ -25,7 +25,7 @@ PORT="${PORT:-8000}"
     if echo $PROXY | egrep -sq "true|TRUE|y|Y|yes|YES|1" \
             && [[ ! -z "$KAFKA_REST_PROXY_URL" ]]; then
         echo "Enabling proxy."
-        cat <<EOF >>/caddy/Caddyfile
+        cat <<EOF >>/tmp/Caddyfile
 proxy /api/kafka-rest-proxy $KAFKA_REST_PROXY_URL {
     without /api/kafka-rest-proxy
     $INSECURE_PROXY
@@ -42,7 +42,7 @@ EOF
         echo "Kafka REST Proxy URL was not set via KAFKA_REST_PROXY_URL environment variable."
     else
         echo "Kafka REST Proxy URL to $KAFKA_REST_PROXY_URL."
-        cat <<EOF >kafka-topics-ui/env.js
+        cat <<EOF >/tmp/env.js
 var clusters = [
    {
      NAME:"default",
@@ -57,16 +57,22 @@ EOF
 
     if [[ -n "${CADDY_OPTIONS}" ]]; then
         echo "Applying custom options to Caddyfile"
-        cat <<EOF >>/caddy/Caddyfile
+        cat <<EOF >>/tmp/Caddyfile
 $CADDY_OPTIONS
 EOF
     fi
 
     # Here we emulate the output by Caddy. Why? Because we can't
     # redirect caddy to stderr as the logging would also get redirected.
-    echo
-    echo "Activating privacy features... done."
-    echo "http://0.0.0.0:$PORT"
+    cat <<EOF
+Note: if you use a PORT lower than 1024, please note that kafka-topics-ui can
+now run under any user. In the future a non-root user may become the default.
+In this case you will have to explicitly allow binding to such ports, either by
+setting the root user or something like '--sysctl net.ipv4.ip_unprivileged_port_start=0'.
+
+Activating privacy features... done."
+http://0.0.0.0:$PORT"
+EOF
 } 1>&2
 
-exec /caddy/caddy -conf /caddy/Caddyfile -quiet
+exec /caddy/caddy -conf /tmp/Caddyfile -quiet
