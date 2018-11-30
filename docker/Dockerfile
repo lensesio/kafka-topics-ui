@@ -1,6 +1,8 @@
 FROM alpine
 MAINTAINER Marios Andreopoulos <marios@landoop.com>
 
+ARG PORT=8080
+
 WORKDIR /
 # Add needed tools
 RUN apk add --no-cache ca-certificates wget \
@@ -14,6 +16,8 @@ RUN wget "https://github.com/mholt/caddy/releases/download/v0.10.11/caddy_v0.10.
 
 # Add and Setup Kafka-Topics-Ui
 ENV KAFKA_TOPICS_UI_VERSION="0.9.4"
+ENV SCHEMAREGISTRY_URL=${SCHEMAREGISTRY_URL}
+
 RUN wget "https://github.com/Landoop/kafka-topics-ui/releases/download/v${KAFKA_TOPICS_UI_VERSION}/kafka-topics-ui-${KAFKA_TOPICS_UI_VERSION}.tar.gz" \
          -O /kafka-topics-ui.tar.gz \
     && mkdir /kafka-topics-ui \
