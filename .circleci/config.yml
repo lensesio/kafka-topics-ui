@@ -53,12 +53,9 @@ workflows:
   build_test_deploy:
     jobs:
       - build
-      - test_app:
-          requires:
-            - build
       - deploy_stg:
           requires:
-            - test_app
+            - build
           filters:
             branches:
               only: infrastructure
