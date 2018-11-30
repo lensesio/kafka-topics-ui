@@ -28,14 +28,7 @@ jobs:
           docker_layer_caching: true
       - run: |
           cd docker
-          docker build -t $HEROKU_APP:$CIRCLE_BRANCH-$CIRCLE_SHA1 .
-      - run: |
-          mkdir -p docker-cache
-          docker save -o docker-cache/built-image.tar $HEROKU_APP:$CIRCLE_BRANCH-$CIRCLE_SHA1
-      - save_cache:
-          key: docker-cache-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - docker/docker-cache
+          heroku container:push web --app $HEROKU_APP
 
   deploy_stg:
     <<: *container_config
@@ -47,9 +40,6 @@ jobs:
           docker_layer_caching: true
       - run: |
           heroku container:login
-          docker load < docker-cache/built-image.tar
-          docker tag $HEROKU_APP:$CIRCLE_BRANCH-$CIRCLE_SHA1 $NS/$HEROKU_APP/web
-          docker push $NS/$HEROKU_APP/web
           heroku container:release web --app $HEROKU_APP
 
 workflows:
