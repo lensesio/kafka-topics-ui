@@ -7,7 +7,7 @@ references:
       - image: circleci/openjdk:8-jdk-browsers
         environment:
           NS: registry.heroku.com
-          HEROKU_APP: eil-kafka-topics-ui
+          HEROKU_APP: eil-kafka-topics-ui-stg
 
   load_docker_cache: &load_docker_cache
     restore_cache:
