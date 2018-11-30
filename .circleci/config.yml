@@ -28,6 +28,7 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - run: |
+          heroku container:login
           cd docker
           heroku container:push web --app $HEROKU_APP
 
