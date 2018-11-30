@@ -31,4 +31,4 @@ EXPOSE 8000
 
 # USER nobody:nogroup
 RUN ./run.sh
-CMD ["PORT=$PORT exec /caddy/caddy -conf /tmp/Caddyfile -quiet"]
+CMD ["exec /caddy/caddy -conf /tmp/Caddyfile -quiet"]
