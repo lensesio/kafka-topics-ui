@@ -23,7 +23,7 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - run: |
-          cd docker .
+          cd docker
           docker build -t $HEROKU_APP:$CIRCLE_BRANCH-$CIRCLE_SHA1 .
       - run: |
           mkdir -p docker-cache
