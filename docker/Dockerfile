@@ -27,8 +27,7 @@ ADD Caddyfile /caddy/Caddyfile.template
 ADD run.sh /
 RUN chmod +x /run.sh
 
-EXPOSE 8000
+EXPOSE $PORT
 
 # USER nobody:nogroup
-RUN ./run.sh
-CMD ["exec /caddy/caddy -conf /tmp/Caddyfile -quiet"]
+CMD ["./run.sh"]
