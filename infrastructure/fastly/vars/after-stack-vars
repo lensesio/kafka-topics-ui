@@ -1,0 +1,12 @@
+# vim: et sr sw=4 ts=4 smartindent syntax=sh:
+#
+# CONSUMED LAST BY ./deploy.sh
+#
+# The value of a var in here will override any previous val
+# it has been set.
+#
+# For vars that are generated from the values sourced from
+# common and stack-specific files ...
+#
+export TF_VAR_service_name="$TF_VAR_dns_to_fastly"
+export TF_VAR_dns_to_origin="$APP_NAME_IN_HEROKU.herokuapp.com"

@@ -1,0 +1,10 @@
+# vim: et sr sw=4 ts=4 smartindent syntax=sh:
+# 
+# vars specific to your stg stack
+# e.g.
+#
+# export TF_VAR_dns_to_fastly="staging.example.com"
+# export SOME_VAR="will be used by after-stack-vars file"
+#
+export APP_NAME_IN_HEROKU="eil-accounts-stg" # e.g. content-fe-stg
+export TF_VAR_dns_to_fastly="accounts-staging.eurostar.com" # e.g. staging.eurostar.com

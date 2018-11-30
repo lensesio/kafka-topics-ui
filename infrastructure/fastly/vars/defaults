@@ -1,0 +1,14 @@
+# vim: et sr sw=4 ts=4 smartindent syntax=sh:
+# default vars. CONSUMED FIRST BY ./deploy.sh
+#
+export TFSTATE_FOLDER="accounts" # first dir of s3 path to tfstate
+
+# $TF_VAR_health_check_path: health checks
+# ... BEFORE STARTING make sure the app has a url that will deliver
+# a direct 200 on a HEAD request. (i.e. not after a 3xx redirect)
+#
+# If your health check does not return a 200 with out redirect,
+# Fastly will consider all backends down: you'll see a nasty 503 msg
+# when you try hitting Fastly, even when hitting the app directly works.
+#
+export TF_VAR_health_check_path="/uk-en"

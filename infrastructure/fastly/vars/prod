@@ -1,0 +1,10 @@
+# vim: et sr sw=4 ts=4 smartindent syntax=sh:
+# 
+# vars specific to your prod stack
+# e.g.
+#
+# export TF_VAR_entry_point_dns="www.example.com"
+# export TF_VAR_heroku_dns_name="myapp-fe-prod.example.com"
+#
+export APP_NAME_IN_HEROKU="eil-accounts-prod" # e.g. content-fe-prod
+export TF_VAR_dns_to_fastly="accounts.eurostar.com" # e.g. www.eurostar.com
