@@ -30,4 +30,5 @@ RUN chmod +x /run.sh
 EXPOSE 8000
 
 # USER nobody:nogroup
-ENTRYPOINT ["/run.sh"]
+RUN ./run.sh
+CMD ["PORT=$PORT exec /caddy/caddy -conf /tmp/Caddyfile -quiet"]

@@ -13,6 +13,10 @@ references:
     restore_cache:
       key: docker-cache-{{ .Branch }}-{{ .Revision }}
 
+  install_heroku: &install_heroku
+    run: |
+      curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+
 jobs:
 
   build:
@@ -38,6 +42,7 @@ jobs:
     resource_class: small
     steps:
       - *load_docker_cache
+      - *install_heroku
       - setup_remote_docker:
           docker_layer_caching: true
       - run: |
