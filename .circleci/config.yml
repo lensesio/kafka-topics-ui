@@ -9,10 +9,6 @@ references:
           NS: registry.heroku.com
           HEROKU_APP: eil-kafka-topics-ui-stg
 
-  load_docker_cache: &load_docker_cache
-    restore_cache:
-      key: docker-cache-{{ .Branch }}-{{ .Revision }}
-
   install_heroku: &install_heroku
     run: |
       curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
@@ -26,7 +22,7 @@ jobs:
       - checkout
       - *install_heroku
       - setup_remote_docker:
-          docker_layer_caching: true
+          docker_layer_caching: false
       - run: |
           heroku container:login
           cd docker
@@ -39,7 +35,7 @@ jobs:
       - *load_docker_cache
       - *install_heroku
       - setup_remote_docker:
-          docker_layer_caching: true
+          docker_layer_caching: false
       - run: |
           heroku container:login
           heroku container:release web --app $HEROKU_APP
