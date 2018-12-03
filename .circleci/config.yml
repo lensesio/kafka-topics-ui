@@ -32,7 +32,6 @@ jobs:
     <<: *container_config
     resource_class: small
     steps:
-      - *load_docker_cache
       - *install_heroku
       - setup_remote_docker:
           docker_layer_caching: false
