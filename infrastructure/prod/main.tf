@@ -11,7 +11,7 @@ terraform {
   required_version = ">= 0.11.2"
   backend "s3" {
     bucket = "eil-tf-states"
-    key    = "kafka-topics-ui/aws/prod/terraform.tfstate"
+    key    = "kafka-topics-ui/prod/terraform.tfstate"
     region = "eu-west-1"
   }
 }
@@ -25,7 +25,7 @@ data "terraform_remote_state" "common" {
   backend = "s3"
   config {
     bucket = "eil-tf-states"
-    key    = "kafka-topics-ui/aws/common/terraform.tfstate"
+    key    = "kafka-topics-ui/common/terraform.tfstate"
     region = "eu-west-1"
   }
 }

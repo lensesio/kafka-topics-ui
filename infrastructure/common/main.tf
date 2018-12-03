@@ -8,7 +8,7 @@ terraform {
   required_version = ">= 0.11.2"
   backend "s3" {
     bucket = "eil-tf-states"
-    key    = "kafka-topics-ui/aws/common/terraform.tfstate"
+    key    = "kafka-topics-ui/common/terraform.tfstate"
     region = "eu-west-1"
   }
 }

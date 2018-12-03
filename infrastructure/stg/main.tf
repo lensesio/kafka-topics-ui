@@ -4,7 +4,6 @@ variable "heroku_region"           { default = "eu" }
 variable "heroku_email"            { description = "export TF_VAR_heroku_email as env variable or enter here" }
 variable "heroku_api_key"          { description = "export TF_VAR_heroku_api_key as env variable or enter here" }
 variable "heroku_organisation"     { default = "eurostar" }
-variable "auth_url"                { default = "https://api.stg.eurostar.com/auth" }
 variable "app_bind_address"        { default = "0.0.0.0" }
 variable "log_drain_endpoint"      { default = "syslog+tls://logs2.papertrailapp.com:13150" }
 
@@ -12,7 +11,7 @@ terraform {
   required_version = ">= 0.11.2"
   backend "s3" {
     bucket = "eil-tf-states"
-    key    = "kafka-topics-ui/aws/stg/terraform.tfstate"
+    key    = "kafka-topics-ui/stg/terraform.tfstate"
     region = "eu-west-1"
   }
 }
@@ -26,7 +25,7 @@ data "terraform_remote_state" "common" {
   backend = "s3"
   config {
     bucket = "eil-tf-states"
-    key    = "kafka-topics-ui/aws/common/terraform.tfstate"
+    key    = "kafka-topics-ui/common/terraform.tfstate"
     region = "eu-west-1"
   }
 }
