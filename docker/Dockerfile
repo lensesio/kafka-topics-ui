@@ -1,5 +1,6 @@
 FROM alpine
 
+ARG UI_PORT=8000
 ARG PORT=8080
 
 WORKDIR /
@@ -15,7 +16,7 @@ RUN wget "https://github.com/mholt/caddy/releases/download/v0.10.11/caddy_v0.10.
 
 # Add and Setup Kafka-Topics-Ui
 ENV KAFKA_TOPICS_UI_VERSION="0.9.4"
-ENV SCHEMAREGISTRY_URL=${SCHEMAREGISTRY_URL}
+ENV KAFKA_REST_PROXY_URL=${KAFKA_REST_PROXY_URL}
 ENV PROXY=$PROXY
 
 RUN wget "https://github.com/Landoop/kafka-topics-ui/releases/download/v${KAFKA_TOPICS_UI_VERSION}/kafka-topics-ui-${KAFKA_TOPICS_UI_VERSION}.tar.gz" \
@@ -31,7 +32,7 @@ ADD Caddyfile /caddy/Caddyfile.template
 ADD run.sh /
 RUN chmod +x /run.sh
 
-EXPOSE $PORT
+EXPOSE $UI_PORT
 
 # USER nobody:nogroup
 CMD ["./run.sh"]
