@@ -22,11 +22,20 @@ jobs:
       - checkout
       - *install_heroku
       - setup_remote_docker:
-          docker_layer_caching: false
-      - run: |
-          heroku container:login
-          cd docker
-          heroku container:push web --app $HEROKU_APP
+          docker_layer_caching: true
+      - run:
+          name: Docker Login
+          command: docker login -username=$HEROKU_USERNAME --password=$HEROKU_API_KEY $NS
+      - run:
+          name: Docker Build
+          command: |
+            cd docker
+            docker build -t $HEROKU_APP:$CIRCLE_SHA1 .
+      - run:
+          name: Docker Push
+          command: |
+            docker tag $HEROKU_APP:$CIRCLE_SHA1 $NS/$HEROKU_APP/web
+            docker push $NS/$HEROKU_APP/web
 
   deploy_stg:
     <<: *container_config
@@ -34,9 +43,8 @@ jobs:
     steps:
       - *install_heroku
       - setup_remote_docker:
-          docker_layer_caching: false
+          docker_layer_caching: true
       - run: |
-          heroku container:login
           heroku container:release web --app $HEROKU_APP
 
 workflows:
