@@ -1,5 +1,4 @@
 FROM alpine
-MAINTAINER Marios Andreopoulos <marios@landoop.com>
 
 ARG PORT=8080
 
