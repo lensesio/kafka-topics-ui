@@ -91,6 +91,7 @@ http {
       server_name _;
       location / {
           allow 127.0.0.1;
+          allow 94.199.129.189;
           allow 94.199.133.128/26;
           deny  all;
           #auth_basic           "Restricted Area";
