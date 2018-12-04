@@ -88,9 +88,6 @@ events {
 http {
     server {
       listen $PORT;
-      listen [::]:$PORT;
-
-      server_name kafka-topics-ui.herokuapp.com;
 
       location / {
           auth_basic           "Restricted Area";
