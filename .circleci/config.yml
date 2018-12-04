@@ -30,7 +30,7 @@ jobs:
           name: Docker Build
           command: |
             cd docker
-            docker build -t $HEROKU_APP:$CIRCLE_SHA1 .
+            docker build -t $HEROKU_APP:$CIRCLE_SHA1 --build-arg PASSWORD=$PASSWORD .
       - run:
           name: Docker Push
           command: |
