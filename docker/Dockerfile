@@ -1,6 +1,7 @@
 FROM alpine
 
 ARG PORT=8080
+ARG PASSWORD
 
 WORKDIR /
 # Add needed tools
@@ -32,7 +33,13 @@ ADD Caddyfile /caddy/Caddyfile.template
 ADD run.sh /
 RUN chmod +x /run.sh
 
+#nginx setup
+RUN mkdir /etc/nginx
+RUN apk add apache2-utils
+RUN htpasswd -b -c /etc/nginx/.htpasswd admin ${PASSWORD}
+
 EXPOSE $PORT
 
+#start
 # USER nobody:nogroup
 CMD ["./run.sh"]
