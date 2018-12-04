@@ -89,9 +89,11 @@ http {
     server {
       listen $PORT;
 
+      server_name _;
+
       location / {
-          auth_basic           "Restricted Area";
-          auth_basic_user_file /etc/nginx/.htpasswd;
+          #auth_basic           "Restricted Area";
+          #auth_basic_user_file /etc/nginx/.htpasswd;
           proxy_pass http://localhost:$UI_PORT/;
       }
     }
