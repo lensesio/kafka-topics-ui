@@ -1,6 +1,5 @@
 FROM alpine
 
-ARG UI_PORT=8000
 ARG PORT=8080
 
 WORKDIR /
@@ -32,7 +31,7 @@ ADD Caddyfile /caddy/Caddyfile.template
 ADD run.sh /
 RUN chmod +x /run.sh
 
-EXPOSE $UI_PORT
+EXPOSE $PORT
 
 # USER nobody:nogroup
 CMD ["./run.sh"]

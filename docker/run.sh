@@ -7,7 +7,8 @@ DEBUG_LOGS_ENABLED="${DEBUG_LOGS_ENABLED:-true}"
 INSECURE_PROXY=""
 CADDY_OPTIONS="${CADDY_OPTIONS:-}"
 EXPERIMENTAL_PROXY_URL="${EXPERIMENTAL_PROXY_URL:-false}"
-PORT="${PORT:-8000}"
+UI_PORT="${UI_PORT:-8000}"
+PORT="${PORT:-8080}"
 
 {
     echo "Landoop Kafka Topics UI ${KAFKA_TOPICS_UI_VERSION}"
@@ -16,7 +17,7 @@ PORT="${PORT:-8000}"
     echo
 
     cat /caddy/Caddyfile.template \
-        | sed -e "s/8000/$PORT/" > /tmp/Caddyfile
+        | sed -e "s/8000/$UI_PORT/" > /tmp/Caddyfile
 
     if echo "$PROXY_SKIP_VERIFY" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
         INSECURE_PROXY=insecure_skip_verify
@@ -65,14 +66,41 @@ EOF
     # Here we emulate the output by Caddy. Why? Because we can't
     # redirect caddy to stderr as the logging would also get redirected.
     cat <<EOF
-Note: if you use a PORT lower than 1024, please note that kafka-topics-ui can
+Note: if you use a UI_PORT lower than 1024, please note that kafka-topics-ui can
 now run under any user. In the future a non-root user may become the default.
-In this case you will have to explicitly allow binding to such ports, either by
-setting the root user or something like '--sysctl net.ipv4.ip_unprivileged_port_start=0'.
+In this case you will have to explicitly allow binding to such UI_PORTs, either by
+setting the root user or something like '--sysctl net.ipv4.ip_unprivileged_UI_PORT_start=0'.
 
 Activating privacy features... done."
-http://0.0.0.0:$PORT"
+http://0.0.0.0:$UI_PORT"
 EOF
 } 1>&2
+
+#nginx
+apk update
+apk add nginx
+apk add apache2-utils
+htpasswd -b -c /etc/nginx/.htpasswd admin W4yI54Ndy5oM3gA
+cat <<EOF >/etc/nginx/nginx.conf
+events {
+  worker_connections  1024;
+}
+http {
+    server {
+      listen $PORT;
+      listen [::]:$PORT;
+
+      server_name kafka-topics-ui.herokuapp.com;
+
+      location / {
+          auth_basic           "Restricted Area";
+          auth_basic_user_file /etc/nginx/.htpasswd;
+          proxy_pass http://localhost:$UI_PORT/;
+      }
+    }
+}
+EOF
+mkdir -p /run/nginx
+/usr/sbin/nginx
 
 exec /caddy/caddy -conf /tmp/Caddyfile -quiet
