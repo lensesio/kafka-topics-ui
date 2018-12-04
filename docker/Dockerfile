@@ -17,6 +17,7 @@ RUN wget "https://github.com/mholt/caddy/releases/download/v0.10.11/caddy_v0.10.
 ENV KAFKA_TOPICS_UI_VERSION="0.9.4"
 ENV KAFKA_REST_PROXY_URL=${KAFKA_REST_PROXY_URL}
 ENV PROXY=${PROXY}
+ENV PASSWORD=${PASSWORD}
 
 RUN wget "https://github.com/Landoop/kafka-topics-ui/releases/download/v${KAFKA_TOPICS_UI_VERSION}/kafka-topics-ui-${KAFKA_TOPICS_UI_VERSION}.tar.gz" \
          -O /kafka-topics-ui.tar.gz \
