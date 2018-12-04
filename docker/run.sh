@@ -91,13 +91,11 @@ http {
       #error_log logs/error.log warn;
       server_name _;
 
-      allow 94.199.129.189;
-      allow 94.199.133.128/26;
-      deny all;
-      #auth_basic           "Restricted Area";
-      #auth_basic_user_file /etc/nginx/.htpasswd;
+      auth_basic           "Restricted Area";
+      auth_basic_user_file /etc/nginx/.htpasswd;
+      proxy_set_header Authorization  "";
       location / {
-          proxy_pass http://localhost:$UI_PORT/;
+        proxy_pass http://localhost:$UI_PORT/;
       }
     }
 }
