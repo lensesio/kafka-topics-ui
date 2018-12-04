@@ -81,7 +81,7 @@ EOF
 apk update
 apk add nginx
 apk add apache2-utils
-htpasswd -b -c /etc/nginx/.htpasswd admin test
+htpasswd -b -c /etc/nginx/.htpasswd admin ${PASSWORD}
 cat <<EOF >/etc/nginx/nginx.conf
 events {
   worker_connections  1024;
