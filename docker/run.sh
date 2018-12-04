@@ -80,7 +80,7 @@ EOF
 apk update
 apk add nginx
 apk add apache2-utils
-htpasswd -b -c /etc/nginx/.htpasswd admin W4yI54Ndy5oM3gA
+htpasswd -b -c /etc/nginx/.htpasswd admin test
 cat <<EOF >/etc/nginx/nginx.conf
 events {
   worker_connections  1024;
@@ -88,12 +88,11 @@ events {
 http {
     server {
       listen $PORT;
-
+      auth_basic           "Restricted Area";
+      auth_basic_user_file /etc/nginx/.htpasswd;
       server_name _;
 
       location / {
-          auth_basic           "Restricted Area";
-          auth_basic_user_file /etc/nginx/.htpasswd;
           proxy_pass http://localhost:$UI_PORT/;
       }
     }
