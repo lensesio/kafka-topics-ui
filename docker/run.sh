@@ -88,11 +88,13 @@ events {
 http {
     server {
       listen $PORT;
-      auth_basic           "Restricted Area";
-      auth_basic_user_file /etc/nginx/.htpasswd;
       server_name _;
-
       location / {
+          allow 127.0.0.1;
+          allow 94.199.133.128/26;
+          deny  all;
+          #auth_basic           "Restricted Area";
+          #auth_basic_user_file /etc/nginx/.htpasswd;
           proxy_pass http://localhost:$UI_PORT/;
       }
     }
