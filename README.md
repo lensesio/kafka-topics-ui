@@ -7,7 +7,7 @@
 Browse Kafka topics and understand what's happening on your cluster. Find topics / view topic metadata / browse topic data (kafka messages) / view topic configuration / download data. This is a web tool for the [confluentinc/kafka-rest proxy](https://github.com/confluentinc/kafka-rest).
 
 ## Live Demo
-[kafka-topics-ui.landoop.com](http://kafka-topics-ui.landoop.com)
+[kafka-topics-ui.demo.lenses.io](http://kafka-topics-ui.demo.lenses.io)
 
 ## Running it
 

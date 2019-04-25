@@ -4,7 +4,7 @@
 
 This is a small docker image for Landoop's kafka-topics-ui.
 It serves the kafka-topics-ui from port 8000 by default.
-A live version can be found at <https://kafka-topics-ui.landoop.com>
+A live version can be found at <https://kafka-topics-ui.demo.lenses.io>
 
 The software is stateless and the only necessary option is your Kafka REST Proxy
 URL:
