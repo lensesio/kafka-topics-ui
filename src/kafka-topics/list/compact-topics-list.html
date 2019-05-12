@@ -13,7 +13,7 @@
         <!--TODO all topics, remove pagination-->
         <md-list-item dir-paginate="topic in normalTopics| orderBy:'topicName' | filter: search | itemsPerPage:100"
                       pagination-id="topics"
-                      ng-click="listClick(topic.topicName, topic.isControlTopic)"
+                      ng-click="listClick(topic, topic.isControlTopic)"
                       class="md-2-line"
                       ng-class="{ 'selectedListItem': topic.topicName == topicName }">
 

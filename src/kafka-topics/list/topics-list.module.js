@@ -111,9 +111,16 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
   var itemsPerPage = (window.innerHeight - 280) / 48;
   Math.floor(itemsPerPage) < 3 ? $scope.topicsPerPage =3 : $scope.topicsPerPage = Math.floor(itemsPerPage);
 
-  $scope.listClick = function (topicName, isControlTopic) {
+  $scope.listClick = function (topic, isControlTopic) {
+    TopicsListFactory.getTopicDetails(topic.topicName, $scope.cluster.KAFKA_REST.trim()).then(function(res){
+        var configsCounter = 0;
+        angular.forEach(res.data.configs, function(value, key) { configsCounter++;});
+        topic.partitions = res.data.partitions.length;
+        topic.replication = res.data.partitions[0].replicas.length;
+        topic.customConfig = configsCounter;
+    });
     var urlType = (isControlTopic == true) ? 'c' : 'n';
-    $location.path("cluster/" + $scope.cluster.NAME + "/topic/" + urlType + "/" + topicName, true);
+    $location.path("cluster/" + $scope.cluster.NAME + "/topic/" + urlType + "/" + topic.topicName, true);
   }
 
   function getLeftListTopics() {
@@ -122,34 +129,28 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
     TopicsListFactory.getTopics($scope.cluster.KAFKA_REST.trim()).then(function (allData){
         var topics = [];
         angular.forEach(allData.data, function(topic, key) {
-            TopicsListFactory.getTopicDetails(topic, $scope.cluster.KAFKA_REST.trim()).then(function(res){
-                var configsCounter = 0;
-                angular.forEach(res.data.configs, function(value, key) { configsCounter++;});
-                var topicImproved = {
-                    topicName : res.data.name,
-                    partitions : res.data.partitions.length,
-                    replication : res.data.partitions[0].replicas.length,
-                    customConfig : configsCounter,
-                    isControlTopic : checkIsControlTopic(res.data.name)
+            var topicImproved = {
+                topicName : topic,
+                partitions : "Unknown",
+                replication : "Unknown",
+                customConfig : null,
+                isControlTopic : checkIsControlTopic(topic)
+            }
+            topics.push(topicImproved);
+            if (topics.length == allData.data.length) {
+                $scope.topics = topics;
+                $scope.selectedTopics = topics.filter(function(el) {return el.isControlTopic == $scope.displayingControlTopics});
+                console.log('Total topics fetched:', allData.data.length)
+                console.log('Length of improved topic array:', topics.length)
+                console.log('Selected topics(listed):', $scope.selectedTopics.length)
+
+                $scope.topicsIndex = arrayObjectIndexOf($scope.selectedTopics, $routeParams.topicName, 'topicName' ) + 1;
+                $scope.topicsPage = Math.ceil($scope.topicsIndex / $scope.topicsPerPage);
+
+                if ($scope.topicsPage < 1) {
+                  $scope.topicsPage = 1
                 }
-
-                topics.push(topicImproved);
-               if (topics.length == allData.data.length) {
-                  $scope.topics = topics;
-                  $scope.selectedTopics = topics.filter(function(el) {return el.isControlTopic == $scope.displayingControlTopics});
-                  console.log('Total topics fetched:', allData.data.length)
-                  console.log('Length of improved topic array:', topics.length)
-                  console.log('Selected topics(listed):', $scope.selectedTopics.length)
-
-                  $scope.topicsIndex = arrayObjectIndexOf($scope.selectedTopics, $routeParams.topicName, 'topicName' ) + 1;
-                  $scope.topicsPage = Math.ceil($scope.topicsIndex / $scope.topicsPerPage);
-
-                  if ($scope.topicsPage < 1) {
-                    $scope.topicsPage = 1
-                  }
-               }
-            })
-
+            }
         })
 
         //$scope.selectTopicList(true);
