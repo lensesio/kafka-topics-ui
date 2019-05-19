@@ -20,8 +20,23 @@ dataTreeViewModule.controller('dataTreeViewCtrl', function ($scope, $log, $base6
 
    $scope.$watch("data", function() {
         if($scope.data) {
-            $scope.rows = $scope.data; // because data is async/ly coming from an http call, we need to watch it, directive gets compiled from the beginning.
-            $scope.currentPage = 1
+          var data = $scope.data;
+            data = $scope.data.map((row) => {
+              var formattedRow = row;
+              if (typeof row.value === 'string') {
+                try {
+                  formattedRow = Object.assign({}, row, {
+                    value: (typeof row.value === 'string') ? JSON.parse(row.value) : row.value,
+                  });
+                } catch (e) {
+                  console.warn('Value is not JSON compatible', e);
+                }
+              }
+              return formattedRow;
+            });
+          
+          $scope.rows = data; // because data is async/ly coming from an http call, we need to watch it, directive gets compiled from the beginning.
+          $scope.currentPage = 1
         }
    })
 
