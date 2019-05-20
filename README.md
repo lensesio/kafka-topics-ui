@@ -68,7 +68,8 @@ var clusters = [
       KAFKA_REST: "http://kafka-rest-ip:8082",
       MAX_BYTES: "50000",
       RECORD_POLL_TIMEOUT: "5000",
-      DEBUG_LOGS_ENABLED: true
+      DEBUG_LOGS_ENABLED: true,
+      LAZY_LOAD_TOPIC_META: false
     },
     {
       NAME: "dev",
@@ -76,7 +77,8 @@ var clusters = [
       MAX_BYTES: "50000",
       COLOR: "#141414", // Optional
       RECORD_POLL_TIMEOUT: "5000",
-      DEBUG_LOGS_ENABLED: true
+      DEBUG_LOGS_ENABLED: true,
+      LAZY_LOAD_TOPIC_META: false
     }
   ];
 ```
@@ -87,6 +89,7 @@ var clusters = [
 * Use `RECORD_POLL_TIMEOUT` to set the timeout in ms.
 * Use `COLOR` to set different header colors for each set up cluster.
 * Set `DEBUG_LOGS_ENABLED` to true to enable the debug logs.
+* Set `LAZY_LOAD_TOPIC_META` to true to lazy load topic meta information.
 
 ### CP Version support
 Latest release is for CP 3.2.0 and above.
