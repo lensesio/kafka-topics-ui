@@ -111,7 +111,7 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
   var itemsPerPage = (window.innerHeight - 280) / 48;
   Math.floor(itemsPerPage) < 3 ? $scope.topicsPerPage =3 : $scope.topicsPerPage = Math.floor(itemsPerPage);
 
-  $scope.listClick = function (topic, isControlTopic) {
+  function fillInTopicDetails(topic) {
     TopicsListFactory.getTopicDetails(topic.topicName, $scope.cluster.KAFKA_REST.trim()).then(function(res){
         var configsCounter = 0;
         angular.forEach(res.data.configs, function(value, key) { configsCounter++;});
@@ -119,6 +119,13 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
         topic.replication = res.data.partitions[0].replicas.length;
         topic.customConfig = configsCounter;
     });
+  }
+
+  $scope.listClick = function (topic, isControlTopic) {
+    // if lazy load is enabled, load meta on click.
+    if ($scope.cluster.LAZY_LOAD_TOPIC_META) {
+        fillInTopicDetails(topic);
+    }
     var urlType = (isControlTopic == true) ? 'c' : 'n';
     $location.path("cluster/" + $scope.cluster.NAME + "/topic/" + urlType + "/" + topic.topicName, true);
   }
@@ -135,6 +142,9 @@ topicsListModule.controller('KafkaTopicsListCtrl', function ($scope, $location, 
                 replication : "Unknown",
                 customConfig : null,
                 isControlTopic : checkIsControlTopic(topic)
+            }
+            if (!$scope.cluster.LAZY_LOAD_TOPIC_META) {
+                fillInTopicDetails(topicImproved);
             }
             topics.push(topicImproved);
             if (topics.length == allData.data.length) {
