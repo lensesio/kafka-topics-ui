@@ -6,7 +6,8 @@ var clusters = [
       MAX_BYTES: "50000", 	// Sets the default maximum amount of bytes to fetch from each topic
       RECORD_POLL_TIMEOUT: "3000",
       COLOR: "#141414", // Optional
-      DEBUG_LOGS_ENABLED: true
+      DEBUG_LOGS_ENABLED: true,
+      LAZY_LOAD_TOPIC_META: false
     },
     {
       NAME: "dev",
@@ -14,6 +15,7 @@ var clusters = [
       MAX_BYTES: "50000",
       COLOR: "red",
       RECORD_POLL_TIMEOUT: "3000",
-      DEBUG_LOGS_ENABLED: true
+      DEBUG_LOGS_ENABLED: true,
+      LAZY_LOAD_TOPIC_META: false
     }
   ];
