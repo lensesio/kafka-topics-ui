@@ -2,7 +2,7 @@
 
 [![](https://images.microbadger.com/badges/image/landoop/kafka-topics-ui.svg)](http://microbadger.com/images/landoop/kafka-topics-ui)
 
-This is a small docker image for Landoop's kafka-topics-ui.
+This is a small docker image for Lenses.io kafka-topics-ui.
 It serves the kafka-topics-ui from port 8000 by default.
 A live version can be found at <https://kafka-topics-ui.demo.lenses.io>
 
@@ -53,30 +53,30 @@ You can control most of Kafka Topics UI settings via environment variables:
 ## Docker Options
 
 - `PROXY=[true|false]`
-  
+
   Whether to proxy REST Proxy endpoint via the internal webserver
 - `PROXY_SKIP_VERIFY=[true|false]`
-  
+
   Whether to accept self-signed certificates when proxying REST Proxy
   via https
 - `PORT=[PORT]`
-  
+
   The port number to use for kafka-topics-ui. The default is `8000`.
   Usually the main reason for using this is when you run the
   container with `--net=host`, where you can't use docker's publish
   flag (`-p HOST_PORT:8000`).
 - `CADDY_OPTIONS=[OPTIONS]`
-  
+
   The webserver that powers the image is Caddy. Via this variable
   you can add options that will be appended to its configuration
   (Caddyfile). Variables than span multiple lines are supported.
-  
+
   As an example, you can set Caddy to not apply timeouts via:
-  
+
       -e "CADDY_OPTIONS=timeouts none"
-  
+
   Or you can set basic authentication via:
-  
+
       -e "CADDY_OPTIONS=basicauth / [USER] [PASS]"
 
 # Kafka REST Proxy Configuration
