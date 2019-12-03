@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Landoop/kafka-topics-ui.git"
+    "url": "git+https://github.com/lensesio/kafka-topics-ui.git"
   },
   "keywords": [
     "schema",
@@ -30,10 +30,10 @@
     "topics",
     "avro"
   ],
-  "author": "Landoop team",
-  "license": "http://landoop.com/bsl",
+  "author": "Lenses.io team",
+  "license": "https://lenses.io/legals/bsl/",
   "bugs": {
-    "url": "https://github.com/Landoop/kafka-topics-ui/issues"
+    "url": "https://github.com/lensesio/kafka-topics-ui/issues"
   },
-  "homepage": "https://github.com/Landoop/kafka-topics-ui#readme"
+  "homepage": "https://github.com/lensesio/kafka-topics-ui#readme"
 }

@@ -10,8 +10,8 @@ EXPERIMENTAL_PROXY_URL="${EXPERIMENTAL_PROXY_URL:-false}"
 PORT="${PORT:-8000}"
 
 {
-    echo "Landoop Kafka Topics UI ${KAFKA_TOPICS_UI_VERSION}"
-    echo "Visit <https://github.com/Landoop/kafka-topics-ui/tree/master/docker>"
+    echo "Lenses.io Kafka Topics UI ${KAFKA_TOPICS_UI_VERSION}"
+    echo "Visit <https://github.com/lensesio/kafka-topics-ui/tree/master/docker>"
     echo "to find more about how you can configure this container."
     echo
 
