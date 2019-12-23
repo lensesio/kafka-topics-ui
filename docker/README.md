@@ -1,4 +1,4 @@
-## Kafka Topics UI ##
+## Kafka Topics UI
 
 [![](https://images.microbadger.com/badges/image/landoop/kafka-topics-ui.svg)](http://microbadger.com/images/landoop/kafka-topics-ui)
 
@@ -27,8 +27,7 @@ Caddy server will proxy the traffic to the REST Proxy:
                landoop/kafka-topics-ui
 
 > **Important**: When proxying, for the `KAFKA_REST_PROXY_URL` you have to use
-> an IP address or a domain that can be resolved to it. **You can't use**
-> `localhost` even if you serve Kafka REST port from your localhost. The reason
+> an IP address or a domain that can be resolved to it. **You can't use** > `localhost` even if you serve Kafka REST port from your localhost. The reason
 > for this is that a docker container has its own network, so your _localhost_
 > is different from the container's _localhost_. As an example, if you are in
 > your home network and have an IP address of `192.168.5.65` and run Kafka REST
@@ -39,32 +38,44 @@ If your REST Proxy uses self-signed SSL certificates, you can use the
 `PROXY_SKIP_VERIFY=true` environment variable to instruct the proxy to
 not verify the backend TLS certificate.
 
+### Specifying multiple Kafka REST proxies
+
+You can specifying multiple Kafka proxies by separating proxy url's with a comma. Consider the following example:
+
+    docker run --rm -it -p 8000:8000 \
+               -e "KAFKA_REST_PROXY_URL=http://kafka.rest.proxy.url,http://other-kafka.rest.proxy.url" \
+               -e "PROXY=true" \
+               landoop/kafka-topics-ui
+
 # Configuration options
 
 ## Kafka Topics UI
 
 You can control most of Kafka Topics UI settings via environment variables:
 
- * `KAFKA_REST_PROXY_URL`
- * `MAX_BYTES` (default 50000)
- * `RECORD_POLL_TIMEOUT` (default 2000)
- * `DEBUG_LOGS_ENABLED` (default true).
+- `KAFKA_REST_PROXY_URL`
+- `MAX_BYTES` (default 50000)
+- `RECORD_POLL_TIMEOUT` (default 2000)
+- `DEBUG_LOGS_ENABLED` (default true).
 
 ## Docker Options
 
 - `PROXY=[true|false]`
 
   Whether to proxy REST Proxy endpoint via the internal webserver
+
 - `PROXY_SKIP_VERIFY=[true|false]`
 
   Whether to accept self-signed certificates when proxying REST Proxy
   via https
+
 - `PORT=[PORT]`
 
   The port number to use for kafka-topics-ui. The default is `8000`.
   Usually the main reason for using this is when you run the
   container with `--net=host`, where you can't use docker's publish
   flag (`-p HOST_PORT:8000`).
+
 - `CADDY_OPTIONS=[OPTIONS]`
 
   The webserver that powers the image is Caddy. Via this variable
