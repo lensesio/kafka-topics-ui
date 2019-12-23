@@ -43,15 +43,16 @@ EOF
     else
         echo "Kafka REST Proxy URL to $KAFKA_REST_PROXY_URL."
         cat <<EOF >/tmp/env.js
-var clusters = [
-   {
-     NAME:"default",
-     KAFKA_REST: "$KAFKA_REST_PROXY_URL",
+var proxies = "$KAFKA_REST_PROXY_URL";
+var clusters = proxies.split(' ').map((proxy, index) => {
+    return {
+     NAME:"instance-" + String(index + 1),
+     KAFKA_REST: proxy,
      MAX_BYTES: "$MAX_BYTES",
      RECORD_POLL_TIMEOUT: "$RECORD_POLL_TIMEOUT",
      DEBUG_LOGS_ENABLED: $DEBUG_LOGS_ENABLED
    }
-]
+})
 EOF
     fi
 
