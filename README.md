@@ -1,20 +1,20 @@
 # kafka-topics
 
-[![release](http://github-release-version.herokuapp.com/github/landoop/kafka-topics-ui/release.svg?style=flat)](https://github.com/landoop/kafka-topics-ui/releases/latest)
+[![GitHub release](https://img.shields.io/github/v/release/lensesio/kafka-topics-ui)](https://github.com/lensesio/kafka-topics-ui)
 [![docker](https://img.shields.io/docker/pulls/landoop/kafka-topics-ui.svg?style=flat)](https://hub.docker.com/r/landoop/kafka-topics-ui/)
 [![Join the chat at https://gitter.im/Landoop/support](https://img.shields.io/gitter/room/nwjs/nw.js.svg?maxAge=2592000)](https://gitter.im/Landoop/support?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Browse Kafka topics and understand what's happening on your cluster. Find topics / view topic metadata / browse topic data (kafka messages) / view topic configuration / download data. This is a web tool for the [confluentinc/kafka-rest proxy](https://github.com/confluentinc/kafka-rest).
 
 ## Live Demo
-[kafka-topics-ui.demo.lenses.io](http://kafka-topics-ui.demo.lenses.io)
+[kafka-topics-ui.demo.lenses.io](https://kafka-topics-ui.demo.lenses.io)
 
 ## Running it
 
 ```
     docker pull landoop/kafka-topics-ui
     docker run --rm -it -p 8000:8000 \
-               -e "KAFKA_REST_PROXY_URL=http://kafka-rest-proxy-host:port" \
+               -e "KAFKA_REST_PROXY_URL=https://kafka-rest-proxy-host:port" \
                -e "PROXY=true" \
                landoop/kafka-topics-ui
 ```
@@ -29,7 +29,7 @@ then fall back to JSON, and finally fall back to Binary.
 ## Build from source
 
 ```
-    git clone https://github.com/Landoop/kafka-topics-ui.git
+    git clone https://github.com/lensesio/kafka-topics-ui.git
     cd kafka-topics-ui
     npm install -g bower
     npm install -g http-server
@@ -37,7 +37,7 @@ then fall back to JSON, and finally fall back to Binary.
     bower install
     http-server -p 8080 .
 ```
-Web UI will be available at `http://localhost:8080`
+Web UI will be available at `https://localhost:8080`
 
 ### Nginx config
 
@@ -49,7 +49,7 @@ If you use `nginx` to serve this ui, let angular manage routing with
       add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
       add_header 'Access-Control-Allow-Headers' 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With' always;
 
-      proxy_pass http://kafka-rest-server-url:8082;
+      proxy_pass https://kafka-rest-server-url:8082;
       proxy_redirect off;
 
       proxy_set_header  X-Real-IP  $remote_addr;
@@ -65,7 +65,7 @@ Use multiple Kafka Rest clusters in `env.js` :
 var clusters = [
     {
       NAME: "prod",
-      KAFKA_REST: "http://kafka-rest-ip:8082",
+      KAFKA_REST: "https://kafka-rest-ip:8082",
       MAX_BYTES: "50000",
       RECORD_POLL_TIMEOUT: "5000",
       DEBUG_LOGS_ENABLED: true,
@@ -94,10 +94,10 @@ var clusters = [
 ### CP Version support
 Latest release is for CP 3.2.0 and above.
 
-For versions older than CP 3.2.0 you will need kafka topics ui [version 0.8.3](https://github.com/Landoop/kafka-topics-ui/releases/tag/v0.8.3).
+For versions older than CP 3.2.0 you will need kafka topics ui [version 0.8.3](https://github.com/lensesio/kafka-topics-ui/releases/tag/v0.8.3).
 You can also build it from source by running:
 ```
-    git clone https://github.com/Landoop/kafka-topics-ui.git
+    git clone https://github.com/lensesio/kafka-topics-ui.git
     cd kafka-topics-ui
     git checkout tags/v0.8.3 -b v0.8.3
     npm install -g bower
@@ -113,7 +113,7 @@ some other consumer options) a value lower than `30000`.
 
 
 ## Changelog
-[Here](https://github.com/Landoop/kafka-topics-ui/releases)
+[Here](https://github.com/lensesio/kafka-topics-ui/releases)
 
 ## Common Issues
 
@@ -136,15 +136,11 @@ Make sure you restart Kafka REST after changing it's configuration files
 
 ## License
 
-The project is licensed under the [BSL](http://www.landoop.com/bsl) license.
+The project is licensed under the [BSL](https://lenses.io/bsl) license.
 
 ## Relevant Projects
 
-* [schema-registry-ui](https://github.com/Landoop/schema-registry-ui), View, create, evolve and manage your Avro Schemas for multiple Kafka clusters
-* [kafka-connect-ui](https://github.com/Landoop/kafka-connect-ui), Set up and manage connectors for multiple connect clusters
-* [fast-data-dev](https://github.com/Landoop/fast-data-dev), Docker for Kafka developers (schema-registry,kafka-rest,zoo,brokers,landoop) 
-* [Landoop-On-Cloudera](https://github.com/Landoop/Landoop-On-Cloudera), Install and manage your kafka streaming-platform on you Cloudera CDH cluster
-
-
-
-<img src="http://www.landoop.com/images/landoop-dark.svg" width="13" /> www.landoop.com
+* [schema-registry-ui](https://github.com/lensesio/schema-registry-ui), View, create, evolve and manage your Avro Schemas for multiple Kafka clusters
+* [kafka-connect-ui](https://github.com/lensesio/kafka-connect-ui), Set up and manage connectors for multiple connect clusters
+* [fast-data-dev](https://github.com/lensesio/fast-data-dev), Docker for Kafka developers (schema-registry,kafka-rest,zoo,brokers,landoop) 
+* [Landoop-On-Cloudera](https://github.com/lensesio/Landoop-On-Cloudera), Install and manage your kafka streaming-platform on your Cloudera CDH cluster
