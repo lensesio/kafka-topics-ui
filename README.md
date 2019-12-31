@@ -37,11 +37,13 @@ then fall back to JSON, and finally fall back to Binary.
     bower install
     http-server -p 8080 .
 ```
-Web UI will be available at `https://localhost:8080`
+
+Web UI will be available at `http://localhost:8080`
 
 ### Nginx config
 
 If you use `nginx` to serve this ui, let angular manage routing with
+
 ```
     location / {
       add_header 'Access-Control-Allow-Origin' "$http_origin" always;
@@ -61,6 +63,7 @@ If you use `nginx` to serve this ui, let angular manage routing with
 ### Setup Kafka Rest clusters
 
 Use multiple Kafka Rest clusters in `env.js` :
+
 ```
 var clusters = [
     {
@@ -83,19 +86,27 @@ var clusters = [
   ];
 ```
 
+Alternatively, you can pass multiple proxies within `KAFKA_REST_PROXY_URL` env. variable by separating them with a comma.
+
+```
+KAFKA_REST_PROXY_URL="http://kafka-rest-ip:8082,http://other-kafka-rest-ip:8082"
+```
+
 **Config**
 
-* Use `MAX_BYTES` to set the default maximum amount of bytes to fetch from each topic.
-* Use `RECORD_POLL_TIMEOUT` to set the timeout in ms.
-* Use `COLOR` to set different header colors for each set up cluster.
-* Set `DEBUG_LOGS_ENABLED` to true to enable the debug logs.
-* Set `LAZY_LOAD_TOPIC_META` to true to lazy load topic meta information.
+- Use `MAX_BYTES` to set the default maximum amount of bytes to fetch from each topic.
+- Use `RECORD_POLL_TIMEOUT` to set the timeout in ms.
+- Use `COLOR` to set different header colors for each set up cluster.
+- Set `DEBUG_LOGS_ENABLED` to true to enable the debug logs.
+- Set `LAZY_LOAD_TOPIC_META` to true to lazy load topic meta information.
 
 ### CP Version support
+
 Latest release is for CP 3.2.0 and above.
 
 For versions older than CP 3.2.0 you will need kafka topics ui [version 0.8.3](https://github.com/lensesio/kafka-topics-ui/releases/tag/v0.8.3).
 You can also build it from source by running:
+
 ```
     git clone https://github.com/lensesio/kafka-topics-ui.git
     cd kafka-topics-ui
@@ -110,7 +121,6 @@ You can also build it from source by running:
 fail to return messages for large topics. Although the default value is `1000`,
 a bug in the Kafka REST code prevents you from manually setting (depending on
 some other consumer options) a value lower than `30000`.
-
 
 ## Changelog
 [Here](https://github.com/lensesio/kafka-topics-ui/releases)
