@@ -26,10 +26,11 @@ PORT="${PORT:-8000}"
             && [[ ! -z "$KAFKA_REST_PROXY_URL" ]]; then
         echo "Enabling proxy."
         cat <<EOF >>/tmp/Caddyfile
-proxy /api/kafka-rest-proxy $KAFKA_REST_PROXY_URL {
-    without /api/kafka-rest-proxy
-    $INSECURE_PROXY
+handle_path /api/kafka-rest-proxy/* {
+	rewrite * {path}
+	reverse_proxy $KAFKA_REST_PROXY_URL 
 }
+
 EOF
         if echo "$EXPERIMENTAL_PROXY_URL" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
             KAFKA_REST_PROXY_URL=api/kafka-rest-proxy
@@ -78,4 +79,4 @@ http://0.0.0.0:$PORT"
 EOF
 } 1>&2
 
-exec /caddy/caddy -conf /tmp/Caddyfile -quiet
+exec /caddy/caddy run -config /tmp/Caddyfile 
