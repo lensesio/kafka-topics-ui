@@ -8,7 +8,7 @@ INSECURE_PROXY=""
 CADDY_OPTIONS="${CADDY_OPTIONS:-}"
 EXPERIMENTAL_PROXY_URL="${EXPERIMENTAL_PROXY_URL:-false}"
 PORT="${PORT:-8000}"
-
+UI_HOST="${UI_HOST:-localhost}"
 {
     echo "Lenses.io Kafka Topics UI ${KAFKA_TOPICS_UI_VERSION}"
     echo "Visit <https://github.com/lensesio/kafka-topics-ui/tree/master/docker>"
@@ -16,7 +16,7 @@ PORT="${PORT:-8000}"
     echo
 
     cat /caddy/Caddyfile.template \
-        | sed -e "s/8000/$PORT/" > /tmp/Caddyfile
+        | sed -e "s/8000/$PORT/g; s/localhost/$UI_HOST/g" > /tmp/Caddyfile
 
     if echo "$PROXY_SKIP_VERIFY" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
         INSECURE_PROXY=insecure_skip_verify
@@ -26,10 +26,11 @@ PORT="${PORT:-8000}"
             && [[ ! -z "$KAFKA_REST_PROXY_URL" ]]; then
         echo "Enabling proxy."
         cat <<EOF >>/tmp/Caddyfile
-proxy /api/kafka-rest-proxy $KAFKA_REST_PROXY_URL {
-    without /api/kafka-rest-proxy
-    $INSECURE_PROXY
+handle_path /api/kafka-rest-proxy/* {
+	rewrite * {path}
+	reverse_proxy $KAFKA_REST_PROXY_URL 
 }
+
 EOF
         if echo "$EXPERIMENTAL_PROXY_URL" | egrep -sq "true|TRUE|y|Y|yes|YES|1"; then
             KAFKA_REST_PROXY_URL=api/kafka-rest-proxy
@@ -78,4 +79,4 @@ http://0.0.0.0:$PORT"
 EOF
 } 1>&2
 
-exec /caddy/caddy -conf /tmp/Caddyfile -quiet
+exec /caddy/caddy run -config /tmp/Caddyfile 

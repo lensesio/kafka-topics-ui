@@ -1,5 +1,6 @@
-0.0.0.0:8000
-tls off
-
-root /kafka-topics-ui
-log stdout
+http://localhost:8000
+root * /kafka-topics-ui
+file_server
+log {
+   output stdout
+}
